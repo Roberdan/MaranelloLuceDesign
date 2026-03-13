@@ -81,21 +81,41 @@ function initChat(M, section) {
       title: 'Fightthestroke Assistant',
       placeholder: 'Ask about programs, children, or outcomes…',
       welcomeMessage: 'Hi! I can help you with therapy programs, children outcomes, and volunteer management.',
+      avatar: 'https://github.com/Roberdan.png',
       quickActions: ['Show stats', 'List programs', 'Recent outcomes'],
       onSend(text) {
         return 'This is a demo response. In production, this would connect to your AI backend. You asked: "' + text + '"';
       },
     });
-    // Auto-open and add demo messages
-    if (ctrl?.open) {
-      setTimeout(() => {
+    // Override panel positioning for inline demo (not fixed)
+    setTimeout(() => {
+      const panel = container.querySelector('.mn-chat-panel');
+      const fab = container.querySelector('.mn-chat-fab');
+      if (panel) {
+        panel.style.position = 'absolute';
+        panel.style.bottom = '0';
+        panel.style.left = '0';
+        panel.style.right = '0';
+        panel.style.top = '0';
+        panel.style.width = '100%';
+        panel.style.height = '100%';
+        panel.style.borderRadius = 'var(--radius-lg)';
+      }
+      if (fab) {
+        fab.style.position = 'absolute';
+        fab.style.bottom = '12px';
+        fab.style.left = '12px';
+      }
+      container.style.position = 'relative';
+      // Open + add demo messages
+      if (ctrl?.open) {
         ctrl.open();
         if (ctrl.addMessage) {
           ctrl.addMessage('user', 'How many children are in the Milano program?');
           ctrl.addMessage('ai', 'The Milano early-intervention program currently supports **47 children** aged 0–6. 12 joined in the last quarter, and 3 are on the waiting list.');
         }
-      }, 300);
-    }
+      }
+    }, 300);
   } catch (e) {
     console.warn('[mn-chat] error:', e);
     placeholder(container, 'AI Chat');

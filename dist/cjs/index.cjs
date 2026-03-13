@@ -9304,10 +9304,12 @@ function aiChat(container, opts) {
   const { state, fab, panel, closeBtn } = els;
   function open() {
     panel.classList.add("mn-chat-panel--open");
+    panel.style.display = "flex";
     state.isOpen = true;
   }
   function close() {
     panel.classList.remove("mn-chat-panel--open");
+    panel.style.display = "none";
     state.isOpen = false;
   }
   function toggle() {
