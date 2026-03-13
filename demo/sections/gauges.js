@@ -108,11 +108,11 @@ export function createGaugesSection() {
 
   setTimeout(() => {
     if (window.Maranello?.initGauges) {
-      window.Maranello.initGauges(section);
+      window.Maranello.initGauges({ selector: '#gauges .mn-gauge__canvas', threshold: 0.1 });
     } else {
       console.warn('[gauges] Maranello.initGauges not ready');
     }
-  }, 120);
+  }, 300);
 
   return section;
 }

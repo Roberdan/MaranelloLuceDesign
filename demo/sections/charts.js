@@ -177,13 +177,16 @@ function initCharts(section) {
   C.liveGraph(g('live-1'), [...liveData], { width: 200, height: 60, color: '#FFC72C' });
   C.liveGraph(g('live-2'), liveData.map(v => Math.round(v * 0.6)), { width: 200, height: 60, color: '#00A651' });
 
-  C.progressRing(g('ring-1'), { value: 72, max: 100, width: 60, height: 60 });
-  C.progressRing(g('ring-2'), { value: 45, max: 100, width: 80, height: 80 });
-  C.progressRing(g('ring-3'), { value: 92, max: 100, width: 100, height: 100, color: '#00A651' });
+  const M = window.Maranello;
+  if (M.progressRing) {
+    M.progressRing(g('ring-1'), { value: 72, max: 100, width: 60, height: 60 });
+    M.progressRing(g('ring-2'), { value: 45, max: 100, width: 80, height: 80 });
+    M.progressRing(g('ring-3'), { value: 92, max: 100, width: 100, height: 100, color: '#00A651' });
+  }
 
-  const f1 = C.flipCounter(section.querySelector('#flip-1'), { value: 847 });
-  const f2 = C.flipCounter(section.querySelector('#flip-2'), { value: 4280 });
-  const f3 = C.flipCounter(section.querySelector('#flip-3'), { value: 92 });
+  const f1 = M.flipCounter?.(section.querySelector('#flip-1'), { value: 847 });
+  const f2 = M.flipCounter?.(section.querySelector('#flip-2'), { value: 4280 });
+  const f3 = M.flipCounter?.(section.querySelector('#flip-3'), { value: 92 });
 
   section.querySelector('#flip-inc')?.addEventListener('click', () => {
     [f1, f2, f3].forEach(f => f?.increment?.());

@@ -43,14 +43,14 @@ function esc(str) { return str.replace(/'/g, '&#39;'); }
 function therapyTasks() {
   const b = '2026-';
   const tasks = [
-    { id: 't1', name: 'Initial Assessment', start: b+'01-15', end: b+'02-28', progress: 100, color: '#FFC72C' },
-    { id: 't2', name: 'Physical Therapy Phase 1', start: b+'03-01', end: b+'05-15', progress: 75, color: '#4EA8DE', dependencies: ['t1'] },
-    { id: 't3', name: 'Cognitive Exercises', start: b+'03-15', end: b+'06-30', progress: 60, color: '#00A651', dependencies: ['t1'] },
-    { id: 't4', name: 'Speech & Language', start: b+'04-01', end: b+'07-31', progress: 40, color: '#D4622B', dependencies: ['t2'] },
-    { id: 't5', name: 'Family Training', start: b+'05-01', end: b+'07-15', progress: 25, color: '#8B5CF6', dependencies: ['t2','t3'] },
-    { id: 't6', name: 'Physical Therapy Phase 2', start: b+'06-01', end: b+'08-31', progress: 10, color: '#4EA8DE', dependencies: ['t2'] },
-    { id: 't7', name: 'Progress Evaluation', start: b+'08-01', end: b+'08-31', progress: 0, color: '#DC0000', dependencies: ['t4','t5','t6'] },
-    { id: 't8', name: 'Maintenance Program', start: b+'09-01', end: b+'11-30', progress: 0, color: '#FFC72C', dependencies: ['t7'] },
+    { id: 't1', title: 'Initial Assessment', start: b+'01-15', end: b+'02-28', progress: 100, color: '#FFC72C' },
+    { id: 't2', title: 'Physical Therapy Phase 1', start: b+'03-01', end: b+'05-15', progress: 75, color: '#4EA8DE', dependencies: ['t1'] },
+    { id: 't3', title: 'Cognitive Exercises', start: b+'03-15', end: b+'06-30', progress: 60, color: '#00A651', dependencies: ['t1'] },
+    { id: 't4', title: 'Speech & Language', start: b+'04-01', end: b+'07-31', progress: 40, color: '#D4622B', dependencies: ['t2'] },
+    { id: 't5', title: 'Family Training', start: b+'05-01', end: b+'07-15', progress: 25, color: '#8B5CF6', dependencies: ['t2','t3'] },
+    { id: 't6', title: 'Physical Therapy Phase 2', start: b+'06-01', end: b+'08-31', progress: 10, color: '#4EA8DE', dependencies: ['t2'] },
+    { id: 't7', title: 'Progress Evaluation', start: b+'08-01', end: b+'08-31', progress: 0, color: '#DC0000', dependencies: ['t4','t5','t6'] },
+    { id: 't8', title: 'Maintenance Program', start: b+'09-01', end: b+'11-30', progress: 0, color: '#FFC72C', dependencies: ['t7'] },
   ];
   return esc(JSON.stringify(tasks));
 }
@@ -58,11 +58,11 @@ function therapyTasks() {
 function researchTasks() {
   const b = '2026-';
   const tasks = [
-    { id: 'r1', name: 'Literature Review', start: b+'02-01', end: b+'03-31', progress: 90, color: '#FFC72C' },
-    { id: 'r2', name: 'Protocol Design', start: b+'03-15', end: b+'04-30', progress: 70, color: '#4EA8DE', dependencies: ['r1'] },
-    { id: 'r3', name: 'Ethics Approval', start: b+'04-15', end: b+'05-31', progress: 50, color: '#DC0000', dependencies: ['r2'] },
-    { id: 'r4', name: 'Data Collection', start: b+'06-01', end: b+'09-30', progress: 15, color: '#00A651', dependencies: ['r3'] },
-    { id: 'r5', name: 'Analysis & Report', start: b+'10-01', end: b+'11-30', progress: 0, color: '#8B5CF6', dependencies: ['r4'] },
+    { id: 'r1', title: 'Literature Review', start: b+'02-01', end: b+'03-31', progress: 90, color: '#FFC72C' },
+    { id: 'r2', title: 'Protocol Design', start: b+'03-15', end: b+'04-30', progress: 70, color: '#4EA8DE', dependencies: ['r1'] },
+    { id: 'r3', title: 'Ethics Approval', start: b+'04-15', end: b+'05-31', progress: 50, color: '#DC0000', dependencies: ['r2'] },
+    { id: 'r4', title: 'Data Collection', start: b+'06-01', end: b+'09-30', progress: 15, color: '#00A651', dependencies: ['r3'] },
+    { id: 'r5', title: 'Analysis & Report', start: b+'10-01', end: b+'11-30', progress: 0, color: '#8B5CF6', dependencies: ['r4'] },
   ];
   return esc(JSON.stringify(tasks));
 }
