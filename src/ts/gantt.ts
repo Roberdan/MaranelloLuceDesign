@@ -3,6 +3,7 @@
  * Creates an interactive, canvas-based Gantt timeline.
  */
 import type { GanttTask, GanttController, GanttRow } from './core/types';
+import { escapeHtml, isValidColor } from './core/sanitize';
 import {
   DEFAULTS, DPR, buildPalette, buildChildPalette, buildRange, buildRows,
   parseDate, daysBetween, contentH, themeColors,
@@ -62,7 +63,8 @@ export function gantt(
   Object.keys(pal).forEach((st) => {
     const span = document.createElement('span');
     span.className = 'mn-gantt-timeline__legend-item';
-    span.innerHTML = '<span class="mn-gantt-timeline__legend-swatch" style="background:' + pal[st] + ';"></span>' + st;
+    const safeCol = isValidColor(pal[st]) ? pal[st] : 'var(--grigio-alluminio)';
+    span.innerHTML = '<span class="mn-gantt-timeline__legend-swatch" style="background:' + safeCol + ';"></span>' + escapeHtml(st);
     leg.appendChild(span);
   });
   const todayLeg = document.createElement('span');

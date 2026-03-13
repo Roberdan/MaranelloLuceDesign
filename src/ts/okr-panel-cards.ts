@@ -4,6 +4,7 @@
  * @version 2.0.0
  */
 import { clamp } from './core/utils';
+import { isValidColor } from './core/sanitize';
 import {
   type OkrStatus, type OkrScope, type KeyResultInput, type ObjectiveInput,
   type Objective, type OkrStats,
@@ -38,7 +39,8 @@ export function calculateStats(objectives: Objective[]): OkrStats {
 export function createSummaryCard(
   status: OkrStatus, count: number, description: string, total: number,
 ): HTMLDivElement {
-  const color = STATUS_COLORS[status] || '#00A651';
+  const rawColor = STATUS_COLORS[status] || '#00A651';
+  const color = isValidColor(rawColor) ? rawColor : '#00A651';
   const p = total > 0 ? (count / total) * 100 : 0;
   const card = el('div', `mn-okr__summary-card mn-okr__summary-card--${status}`) as HTMLDivElement;
   const arcWrap = el('div', 'mn-okr__summary-arc') as HTMLDivElement;
@@ -67,7 +69,8 @@ export function createSummaryCard(
 
 export function createHero(stats: OkrStats, period: string): HTMLElement {
   const status = statusFromProgress(stats.average);
-  const color = STATUS_COLORS[status];
+  const rawHeroColor = STATUS_COLORS[status];
+  const color = isValidColor(rawHeroColor) ? rawHeroColor : '#00A651';
   const section = el('section', 'mn-okr__hero');
   const gaugeBlock = el('div', 'mn-okr__gauge-wrap') as HTMLDivElement;
   gaugeBlock.innerHTML = heroGaugeSVG(stats.average, color);

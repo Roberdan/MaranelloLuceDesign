@@ -3,6 +3,7 @@
  * Per-stage exit branches for On Hold / Withdrawn.
  */
 import type { PipelineStage, SankeyData, SankeyOptions, SankeyController } from './core/types';
+import { isValidColor } from './core/sanitize';
 import { resolveContainer, svgEl, svgText, trapPath, cumulativeReach, autoTextColor } from './funnel-helpers';
 
 const BAR_H = 38, GAP = 24, RAD = 6, VB_W = 420, PAD = 16, MIN_BAR = 0.35;
@@ -39,7 +40,8 @@ export function funnel(
     const svg = svgEl('svg', { viewBox: '0 0 ' + VB_W + ' ' + svgH, preserveAspectRatio: 'xMidYMid meet' }) as SVGSVGElement;
     svg.style.width = '100%'; svg.style.height = 'auto';
 
-    pipe.forEach((stage, i) => {
+    pipe.forEach((stageRaw, i) => {
+      const stage = isValidColor(stageRaw.color) ? stageRaw : { ...stageRaw, color: 'var(--grigio-alluminio)' };
       const barW = Math.max(PIPE_W * MIN_BAR, (stage.count / maxC) * PIPE_W);
       const barX = PIPE_L + (PIPE_W - barW) / 2;
       const y = PAD + i * (BAR_H + GAP);
@@ -69,8 +71,10 @@ export function funnel(
       svg.appendChild(svgText({ x: PIPE_L + PIPE_W / 2, y: y + 29, 'text-anchor': 'middle', 'font-size': 14, 'font-family': "'Barlow Condensed',sans-serif", fill: tc, 'font-weight': '700' }, cTxt));
 
       // Exit branches
-      if (stage.holdCount && stage.holdCount > 0) renderExitPill(svg, barX, y, 'left', stage.holdCount, data.onHold?.color || '#ea580c', '\u23F8');
-      if (stage.withdrawnCount && stage.withdrawnCount > 0) renderExitPill(svg, barX + barW, y, 'right', stage.withdrawnCount, data.withdrawn?.color || '#666', '\u2715');
+      const holdClr = isValidColor(data.onHold?.color || '') ? data.onHold!.color : '#ea580c';
+      const wdClr = isValidColor(data.withdrawn?.color || '') ? data.withdrawn!.color : '#666';
+      if (stage.holdCount && stage.holdCount > 0) renderExitPill(svg, barX, y, 'left', stage.holdCount, holdClr, '\u23F8');
+      if (stage.withdrawnCount && stage.withdrawnCount > 0) renderExitPill(svg, barX + barW, y, 'right', stage.withdrawnCount, wdClr, '\u2715');
 
       // Hover + Click selection
       const hit = svgEl('rect', { x: barX, y, width: barW, height: BAR_H, fill: 'transparent', cursor: 'pointer', 'pointer-events': 'all' });
@@ -101,11 +105,13 @@ export function funnel(
     // Legend
     const legendY = svgH - 4;
     if (data.onHold && data.onHold.count > 0) {
-      svg.appendChild(svgEl('circle', { cx: PIPE_L, cy: legendY, r: 4, fill: data.onHold.color, opacity: '0.8' }));
+      const ohLegClr = isValidColor(data.onHold.color) ? data.onHold.color : '#ea580c';
+      svg.appendChild(svgEl('circle', { cx: PIPE_L, cy: legendY, r: 4, fill: ohLegClr, opacity: '0.8' }));
       svg.appendChild(svgText({ x: PIPE_L + 8, y: legendY + 3, 'font-size': 9, 'font-family': "'Inter',sans-serif", fill: 'var(--grigio-medio,#999)', 'font-weight': '500' }, '\u23F8 On Hold: ' + data.onHold.count));
     }
     if (data.withdrawn && data.withdrawn.count > 0) {
-      svg.appendChild(svgEl('circle', { cx: PIPE_L + PIPE_W / 2 + 20, cy: legendY, r: 4, fill: data.withdrawn.color, opacity: '0.8' }));
+      const wdLegClr = isValidColor(data.withdrawn.color) ? data.withdrawn.color : '#666';
+      svg.appendChild(svgEl('circle', { cx: PIPE_L + PIPE_W / 2 + 20, cy: legendY, r: 4, fill: wdLegClr, opacity: '0.8' }));
       svg.appendChild(svgText({ x: PIPE_L + PIPE_W / 2 + 28, y: legendY + 3, 'font-size': 9, 'font-family': "'Inter',sans-serif", fill: 'var(--grigio-medio,#999)', 'font-weight': '500' }, '\u2715 Withdrawn: ' + data.withdrawn.count));
     }
     root.appendChild(svg);

@@ -4,6 +4,7 @@
  */
 
 import { icons } from './icons';
+import { escapeHtml } from './core/sanitize';
 import type { ProfileMenuItem, ProfileMenuSection } from './core/types';
 
 export type { ProfileMenuItem, ProfileMenuSection };

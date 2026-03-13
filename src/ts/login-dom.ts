@@ -4,6 +4,7 @@
  */
 
 import { cssVar, clamp, createElement } from './core/utils';
+import { escapeHtml, isValidColor } from './core/sanitize';
 
 export type LoginServiceStatus = 'healthy' | 'degraded' | 'unhealthy' | string;
 
@@ -33,7 +34,8 @@ function arc(cx: number, cy: number, r: number, sa: number, ea: number): string 
 }
 
 export function miniGaugeSVG(status: LoginServiceStatus, latencyMs: number | null, label: string): string {
-  const color = STATUS_COLORS[status] ?? cssVar('--stage-completed', '#6B7280');
+  let color = STATUS_COLORS[status] ?? cssVar('--stage-completed', '#6B7280');
+  if (!isValidColor(color)) color = 'var(--grigio-alluminio)';
   const pct = status === 'healthy' ? 95 : status === 'degraded' ? 55 : 10;
   const sz = 56, cx = sz / 2, cy = sz - 4, r = 22;
   const startAngle = Math.PI, needleAngle = startAngle + (clamp(pct, 0, 100) / 100) * Math.PI;
@@ -50,7 +52,7 @@ export function miniGaugeSVG(status: LoginServiceStatus, latencyMs: number | nul
   const ny = cy + Math.sin(needleAngle) * (r - 8);
   const latencyText = latencyMs != null ? `${latencyMs}ms` : '';
 
-  return `<svg viewBox="0 0 ${sz} ${sz}" width="${sz}" height="${sz}" aria-label="${label}">` +
+  return `<svg viewBox="0 0 ${sz} ${sz}" width="${sz}" height="${sz}" aria-label="${escapeHtml(label)}">` +
     `<path d="${arc(cx, cy, r, startAngle, 2 * Math.PI)}" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="4" stroke-linecap="round"/>` +
     `<path d="${arc(cx, cy, r, startAngle, needleAngle)}" fill="none" stroke="${color}" stroke-width="4" stroke-linecap="round" style="filter:drop-shadow(0 0 4px ${color}60)"/>` +
     ticks +
