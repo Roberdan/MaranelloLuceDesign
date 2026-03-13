@@ -1,6 +1,6 @@
 /**
  * Section 21 — API Reference
- * Grouped catalog of all 87 Maranello exports
+ * Grouped catalog of all 91 Maranello exports
  */
 
 const groups = [
@@ -15,7 +15,7 @@ const groups = [
     'cruiseLever','toggleLever','steppedRotary']],
   ['Data Viz', 'Maranello.*', [
     'funnel','gantt','dataTable','initOrgTree','okrPanel',
-    'mapView','progressRing','flipCounter']],
+    'mapView','socialGraph','progressRing','flipCounter','networkMessages','neuralNodes']],
   ['Panels', 'Maranello.*', [
     'detailPanel','createDetailPanel','openDetailPanel','closeDetailPanel',
     'openDrawer','closeDrawer','openModal','closeModal','toast','commandPalette',
@@ -55,7 +55,7 @@ function statsBar() {
   return `
     <div style="display:flex;flex-wrap:wrap;gap:var(--space-lg);justify-content:center;margin-bottom:var(--space-xl)">
       <span class="mn-label" style="color:var(--bianco-caldo)">
-        <strong style="color:var(--mn-accent);font-size:var(--text-h3)">87</strong> exports
+        <strong style="color:var(--mn-accent);font-size:var(--text-h3)">91</strong> exports
       </span>
       <span class="mn-label" style="color:var(--bianco-caldo)">
         <strong style="color:var(--mn-accent);font-size:var(--text-h3)">10</strong> chart types

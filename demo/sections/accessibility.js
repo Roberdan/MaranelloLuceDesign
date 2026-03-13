@@ -1,197 +1,222 @@
 /**
- * Accessibility section — a11y showcase with skip link, keyboard nav,
- * focus indicators, prefers-reduced-motion, prefers-color-scheme
+ * Accessibility section — MirrorBuddy-style panel with floating FAB + inline preview.
  */
+const STORAGE_KEY = 'mn-a11y-settings';
+const STYLE_ID = 'mn-a11y-demo-style';
+const FONT_ID = 'mn-a11y-demo-font';
+const FAB_ID = 'mn-a11y-demo-fab';
+const FLOAT_ID = 'mn-a11y-demo-floating';
+const VOICES = ['Balanced Voice', 'Calm Guide', 'Clarity Boost', 'Low Stimulation'];
+const PROFILES = [
+  { id: 'dyslexia', label: 'Dyslexia', icon: '📖', tone: '#448AFF', flags: ['dyslexiaFont', 'largeText', 'highSpacing'] },
+  { id: 'adhd', label: 'ADHD', icon: '🎯', tone: '#8B5CF6', flags: ['reducedMotion', 'focusIndicators', 'mutedColors'] },
+  { id: 'visual', label: 'Visual', icon: '👁', tone: '#FFB300', flags: ['highContrast', 'largeText', 'focusIndicators'] },
+  { id: 'motor', label: 'Motor', icon: '🖐', tone: '#00A651', flags: ['largerClickTargets', 'reducedMotion'] },
+  { id: 'autism', label: 'Autism', icon: '🧩', tone: '#14B8A6', flags: ['reducedMotion', 'mutedColors', 'consistentLayout'] },
+  { id: 'hearing', label: 'Hearing', icon: '🔇', tone: '#F43F5E', flags: ['visualAlerts', 'captionsPreference'] },
+  { id: 'motor-plus', label: 'Motor+', icon: '♿', tone: '#16A34A', flags: ['largerClickTargets', 'reducedMotion', 'keyboardOnly'] },
+];
+const TOGGLES = [['largeText', 'Large Text'], ['highContrast', 'High Contrast'], ['reducedMotion', 'Reduced Motion'], ['dyslexiaFont', 'Dyslexia Font'], ['focusIndicators', 'Focus Indicators']];
+const BODY_CLASSES = { largeText: 'mn-a11y-large-text', highContrast: 'mn-a11y-high-contrast', reducedMotion: 'mn-a11y-reduced-motion', dyslexiaFont: 'mn-a11y-dyslexia-font', focusIndicators: 'mn-a11y-focus', highSpacing: 'mn-a11y-high-spacing', largerClickTargets: 'mn-a11y-click-targets', mutedColors: 'mn-a11y-muted-colors', consistentLayout: 'mn-a11y-consistent-layout', visualAlerts: 'mn-a11y-visual-alerts', captionsPreference: 'mn-a11y-captions', keyboardOnly: 'mn-a11y-keyboard-only' };
+
 export function createAccessibilitySection() {
+  ensureStyles();
+  const state = loadState();
   const section = document.createElement('section');
   section.id = 'accessibility';
   section.className = 'mn-section-light';
-  section.setAttribute('aria-label', 'Accessibility Features');
+  section.setAttribute('aria-label', 'Accessibility Settings');
   section.innerHTML = `
     <div class="mn-container">
       <p class="mn-section-number">15 — Accessibility</p>
       <h2 class="mn-title-section" style="margin-bottom:var(--space-lg)">Accessibility</h2>
-      <p class="mn-body" style="margin-bottom:var(--space-2xl)">
-        WCAG 2.1 AA compliance built into every component. Keyboard navigation,
-        screen reader support, and user preference respect.
-      </p>
-
-      ${skipLinkDemo()}
-      ${keyboardNavDemo()}
-      ${focusIndicatorDemo()}
-      ${motionPreferenceDemo()}
-      ${colorSchemeDemo()}
-      ${ariaDemo()}
-    </div>
-  `;
-  wireA11yEvents(section);
+      <p class="mn-body" style="margin-bottom:var(--space-lg)">MirrorBuddy-inspired accessibility controls with quick profiles, focused toggles, a themed voice selector, and a persistent gold FAB.</p>
+      <p class="mn-micro" style="margin-bottom:var(--space-xl);color:var(--grigio-medio)">The live panel is shown inline below for preview, while the floating action button opens the same interface as a slide-up overlay from the bottom-right.</p>
+      <div class="mn-a11y-demo-stage">${panelMarkup('inline')}</div>
+    </div>`;
+  requestAnimationFrame(() => mountSection(section, state));
   return section;
 }
 
-function skipLinkDemo() {
-  return `
-    <h3 class="mn-title-sub" style="margin-bottom:var(--space-lg)">Skip Links</h3>
-    <div class="mn-card-dark" style="padding:var(--space-xl);margin-bottom:var(--space-2xl)">
-      <p class="mn-body" style="margin-bottom:var(--space-md)">
-        Press <kbd style="background:var(--grigio-scuro);padding:2px 8px;border-radius:4px">Tab</kbd>
-        to reveal the skip link below. It jumps to main content, bypassing navigation.
-      </p>
-      <div style="position:relative;overflow:hidden;height:60px;border:1px dashed var(--grigio-scuro);border-radius:8px;display:flex;align-items:center;justify-content:center">
-        <a href="#demo-root" class="mn-skip-link"
-          style="position:absolute;top:-40px;left:8px;padding:8px 16px;background:var(--mn-accent);color:var(--nero-profondo);border-radius:4px;font-weight:600;transition:top 0.2s;z-index:1"
-          onfocus="this.style.top='8px'" onblur="this.style.top='-40px'">
-          Skip to main content
-        </a>
-        <span class="mn-micro">Tab here to see the skip link appear</span>
-      </div>
-    </div>`;
+function mountSection(section, state) {
+  const floating = mountFloatingPanel();
+  const fab = mountFab();
+  const panels = [section.querySelector('[data-a11y-panel="inline"]'), floating].filter(Boolean);
+  panels.forEach((panel) => {
+    initVoiceDropdown(panel);
+    panel.addEventListener('click', (event) => handlePanelClick(event, state, { fab, floating }));
+  });
+  fab.addEventListener('click', () => toggleFloating(floating, fab, !floating.classList.contains('mn-a11y-demo-panel--open')));
+  document.addEventListener('click', (event) => {
+    if (!floating.classList.contains('mn-a11y-demo-panel--open')) return;
+    if (floating.contains(event.target) || fab.contains(event.target)) return;
+    toggleFloating(floating, fab, false);
+  });
+  document.addEventListener('keydown', (event) => { if (event.key === 'Escape') toggleFloating(floating, fab, false); });
+  const syncPosition = () => positionFloating(fab, floating);
+  syncPosition();
+  window.addEventListener('resize', syncPosition, { passive: true });
+  render(state, panels, fab);
 }
 
-function keyboardNavDemo() {
-  return `
-    <h3 class="mn-title-sub" style="margin-bottom:var(--space-lg)">Keyboard Navigation</h3>
-    <div class="mn-card-dark" style="padding:var(--space-xl);margin-bottom:var(--space-2xl)">
-      <p class="mn-body" style="margin-bottom:var(--space-lg)">
-        All interactive elements are keyboard-accessible. Try navigating with Tab, Enter, and Arrow keys.
-      </p>
-      <div style="display:flex;gap:var(--space-md);flex-wrap:wrap" role="toolbar" aria-label="Demo toolbar">
-        <button class="mn-btn mn-btn--accent" tabindex="0">First Action</button>
-        <button class="mn-btn mn-btn--ghost" tabindex="0">Second Action</button>
-        <button class="mn-btn" tabindex="0">Third Action</button>
-        <button class="mn-btn mn-btn--sm" tabindex="0">Fourth Action</button>
-      </div>
-      <div style="margin-top:var(--space-lg)">
-        <p class="mn-micro" id="a11y-key-output" aria-live="polite" style="color:var(--mn-accent)">
-          Press any key while focused above...
-        </p>
-      </div>
-    </div>`;
+function handlePanelClick(event, state, ctx) {
+  const profile = event.target.closest('[data-profile]');
+  const toggle = event.target.closest('[data-toggle]');
+  const option = event.target.closest('[data-voice-option]');
+  if (profile) state.profiles = state.profiles.includes(profile.dataset.profile) ? state.profiles.filter((id) => id !== profile.dataset.profile) : [...state.profiles, profile.dataset.profile];
+  if (toggle) {
+    const next = !derive(state)[toggle.dataset.toggle];
+    state.manual[toggle.dataset.toggle] = next;
+  }
+  if (option) state.voice = option.dataset.voice;
+  if (event.target.closest('[data-reset]')) resetState(state);
+  if (event.target.closest('[data-close]') && !event.target.disabled) toggleFloating(ctx.floating, ctx.fab, false);
+  render(state, document.querySelectorAll('[data-a11y-panel]'), ctx.fab);
 }
 
-function focusIndicatorDemo() {
-  return `
-    <h3 class="mn-title-sub" style="margin-bottom:var(--space-lg)">Focus Indicators</h3>
-    <div class="mn-grid-3" style="margin-bottom:var(--space-2xl)">
-      <div class="mn-card-dark" style="padding:var(--space-xl)">
-        <h4 class="mn-label" style="color:var(--mn-accent);margin-bottom:var(--space-md)">Buttons</h4>
-        <p class="mn-micro" style="margin-bottom:var(--space-md)">2px solid outline with 2px offset on focus-visible</p>
-        <button class="mn-btn mn-btn--accent">Focus Me</button>
-      </div>
-      <div class="mn-card-dark" style="padding:var(--space-xl)">
-        <h4 class="mn-label" style="color:var(--mn-accent);margin-bottom:var(--space-md)">Inputs</h4>
-        <p class="mn-micro" style="margin-bottom:var(--space-md)">Ring highlight with accent color on focus</p>
-        <input class="mn-input" type="text" placeholder="Tab to focus" aria-label="Demo input">
-      </div>
-      <div class="mn-card-dark" style="padding:var(--space-xl)">
-        <h4 class="mn-label" style="color:var(--mn-accent);margin-bottom:var(--space-md)">Links</h4>
-        <p class="mn-micro" style="margin-bottom:var(--space-md)">Underline + outline for maximum visibility</p>
-        <a href="#accessibility" style="color:var(--mn-accent)">Focus this link</a>
-      </div>
-    </div>`;
+function render(state, panels, fab) {
+  const effective = derive(state);
+  saveState(state);
+  applyBodySettings(effective);
+  panels.forEach((panel) => {
+    panel.querySelectorAll('[data-profile]').forEach((button) => button.classList.toggle('mn-a11y-demo-profile--active', state.profiles.includes(button.dataset.profile)));
+    panel.querySelectorAll('[data-toggle]').forEach((button) => {
+      const on = effective[button.dataset.toggle];
+      button.classList.toggle('mn-a11y-demo-switch--on', on);
+      button.setAttribute('aria-checked', String(on));
+    });
+    const trigger = panel.querySelector('[data-voice-label]');
+    if (trigger) trigger.textContent = `${state.voice} `;
+    panel.querySelectorAll('[data-voice-option]').forEach((button) => {
+      const active = button.dataset.voice === state.voice;
+      button.classList.toggle('mn-dropdown__item--active', active);
+      button.setAttribute('aria-selected', String(active));
+    });
+    const summary = panel.querySelector('[data-summary]');
+    if (summary) summary.textContent = summaryText(state, effective);
+  });
+  fab.classList.toggle('mn-a11y-demo-fab--active', document.getElementById(FLOAT_ID)?.classList.contains('mn-a11y-demo-panel--open'));
 }
 
-function motionPreferenceDemo() {
-  return `
-    <h3 class="mn-title-sub" style="margin-bottom:var(--space-lg)">Motion Preferences</h3>
-    <div class="mn-card-dark" style="padding:var(--space-xl);margin-bottom:var(--space-2xl)">
-      <p class="mn-body" style="margin-bottom:var(--space-md)">
-        All animations respect <code style="color:var(--mn-accent)">prefers-reduced-motion</code>.
-        When enabled, transitions are instant and gauge needles skip to final position.
-      </p>
-      <div class="mn-grid-2">
-        <div style="text-align:center">
-          <div id="a11y-motion-status" class="mn-label" style="padding:var(--space-md);border:1px solid var(--grigio-scuro);border-radius:8px">
-            Checking motion preference...
-          </div>
-        </div>
-        <div>
-          <p class="mn-micro">Affected components:</p>
-          <ul style="list-style:none;padding:0;margin-top:var(--space-sm)">
-            <li class="mn-micro" style="padding:var(--space-xs) 0">Gauge needle animation</li>
-            <li class="mn-micro" style="padding:var(--space-xs) 0">Flip counter transitions</li>
-            <li class="mn-micro" style="padding:var(--space-xs) 0">Chart entrance effects</li>
-            <li class="mn-micro" style="padding:var(--space-xs) 0">Modal/toast slide-in</li>
-            <li class="mn-micro" style="padding:var(--space-xs) 0">Page scroll behavior</li>
-          </ul>
-        </div>
-      </div>
-    </div>`;
-}
-
-function colorSchemeDemo() {
-  return `
-    <h3 class="mn-title-sub" style="margin-bottom:var(--space-lg)">Color Scheme</h3>
-    <div class="mn-card-dark" style="padding:var(--space-xl);margin-bottom:var(--space-2xl)">
-      <p class="mn-body" style="margin-bottom:var(--space-lg)">
-        Four themes respond to system preferences and manual selection.
-        Colorblind theme uses a WCAG-safe palette with distinct hues.
-      </p>
-      <div class="mn-grid-4">
-        ${themeChip('Nero', '#0a0a0a', '#fafafa')}
-        ${themeChip('Avorio', '#FAF3E6', '#2c2c2c')}
-        ${themeChip('Editorial', '#f5f5f5', '#1a1a1a')}
-        ${themeChip('Colorblind', '#0a0a0a', '#4D9DE0')}
-      </div>
-    </div>`;
-}
-
-function themeChip(name, bg, fg) {
-  return `<div style="padding:var(--space-lg);text-align:center;border-radius:8px;background:${bg};color:${fg};border:1px solid var(--grigio-scuro)">
-    <span style="font-family:var(--font-display);font-weight:600">${name}</span>
+function panelMarkup(mode) {
+  const inline = mode === 'inline';
+  return `<div class="mn-card-dark mn-a11y-demo-panel${inline ? ' mn-a11y-demo-panel--inline' : ''}"${inline ? '' : ` id="${FLOAT_ID}" aria-modal="true"`} data-a11y-panel="${mode}" role="dialog" aria-label="Accessibility settings">
+    <div class="mn-a11y-demo-header"><div><p class="mn-label" style="color:var(--mn-accent);margin-bottom:4px">Accessibility Settings</p><p class="mn-micro">Profiles, quick settings, and a themed voice selector.</p></div><button class="mn-a11y-demo-close" type="button" data-close ${inline ? 'disabled aria-disabled="true" title="Inline preview stays visible"' : 'aria-label="Close accessibility settings"'}>${inline ? '—' : '×'}</button></div>
+    <div class="mn-a11y-demo-label">Quick Profiles</div><div class="mn-a11y-demo-grid">${PROFILES.map((item) => `<button class="mn-a11y-demo-profile" type="button" data-profile="${item.id}" style="--tone:${item.tone}"><span class="mn-a11y-demo-profile__icon">${item.icon}</span><span>${item.label}</span></button>`).join('')}</div>
+    <div class="mn-a11y-demo-label">Quick Settings</div><div class="mn-a11y-demo-list">${TOGGLES.map(([id, label]) => `<div class="mn-a11y-demo-row"><span>${label}</span><button class="mn-a11y-demo-switch" type="button" data-toggle="${id}" role="switch" aria-checked="false" aria-label="${label}"><span></span></button></div>`).join('')}</div>
+    <div class="mn-a11y-demo-label">Voice Selector</div>${voiceMarkup()}
+    <div class="mn-a11y-demo-footer"><button class="mn-btn mn-btn--ghost mn-a11y-demo-reset" type="button" data-reset>Reset to Defaults</button><p class="mn-micro" data-summary></p></div>
   </div>`;
 }
 
-function ariaDemo() {
-  return `
-    <h3 class="mn-title-sub" style="margin-bottom:var(--space-lg)">ARIA Support</h3>
-    <div class="mn-grid-2">
-      <div class="mn-card-dark" style="padding:var(--space-xl)">
-        <h4 class="mn-label" style="color:var(--mn-accent);margin-bottom:var(--space-md)">Built-in ARIA</h4>
-        <ul style="list-style:none;padding:0">
-          ${ariaItem('role="dialog"', 'Modals and panels')}
-          ${ariaItem('aria-live="polite"', 'Toast notifications')}
-          ${ariaItem('aria-label', 'Charts and gauges')}
-          ${ariaItem('role="toolbar"', 'Button groups')}
-          ${ariaItem('aria-expanded', 'Dropdowns and panels')}
-        </ul>
-      </div>
-      <div class="mn-card-dark" style="padding:var(--space-xl)">
-        <h4 class="mn-label" style="color:var(--mn-accent);margin-bottom:var(--space-md)">Contrast Ratios</h4>
-        <ul style="list-style:none;padding:0">
-          ${ariaItem('4.5:1 minimum', 'Normal text')}
-          ${ariaItem('3:1 minimum', 'Large text and UI')}
-          ${ariaItem('7:1 enhanced', 'Colorblind theme')}
-          ${ariaItem('Focus ring', '3px accent outline')}
-        </ul>
-      </div>
-    </div>`;
+function voiceMarkup() {
+  return `<div class="mn-dropdown mn-a11y-demo-voice" data-voice-dropdown><button class="mn-dropdown__trigger" type="button"><span data-voice-label>${VOICES[0]} </span></button><div class="mn-dropdown__menu">${VOICES.map((voice) => `<button class="mn-dropdown__item" type="button" data-voice-option data-voice="${voice}">${voice}</button>`).join('')}</div></div>`;
 }
 
-function ariaItem(attr, desc) {
-  return `<li style="display:flex;justify-content:space-between;padding:var(--space-xs) 0;border-bottom:1px solid var(--grigio-scuro)">
-    <code class="mn-micro" style="color:var(--mn-accent)">${attr}</code>
-    <span class="mn-micro">${desc}</span>
-  </li>`;
+function mountFab() {
+  document.getElementById(FAB_ID)?.remove();
+  const fab = document.createElement('button');
+  fab.id = FAB_ID;
+  fab.className = 'mn-a11y-demo-fab';
+  fab.type = 'button';
+  fab.setAttribute('aria-label', 'Open accessibility settings');
+  fab.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M15 7l2.5-2.5M15 7l2.5 2.5M11 17H4M9 17l-2.5-2.5M9 17l-2.5 2.5M20 12H9M15 12l-2.5-2.5M15 12l-2.5 2.5"/></svg>`;
+  document.body.appendChild(fab);
+  return fab;
 }
 
-function wireA11yEvents(section) {
-  requestAnimationFrame(() => {
-    const toolbar = section.querySelector('[role="toolbar"]');
-    const output = section.querySelector('#a11y-key-output');
-    if (toolbar && output) {
-      toolbar.addEventListener('keydown', (e) => {
-        output.textContent = `Key pressed: ${e.key} (code: ${e.code})`;
-      });
-    }
-    const motionEl = section.querySelector('#a11y-motion-status');
-    if (motionEl) {
-      const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
-      const update = () => {
-        motionEl.textContent = mq.matches ? 'Reduced motion: ENABLED' : 'Reduced motion: not active';
-        motionEl.style.color = mq.matches ? 'var(--rosso-corsa)' : 'var(--verde-racing)';
-      };
-      update();
-      mq.addEventListener('change', update);
-    }
-  });
+function mountFloatingPanel() {
+  document.getElementById(FLOAT_ID)?.remove();
+  const shell = document.createElement('div');
+  shell.innerHTML = panelMarkup('floating');
+  document.body.appendChild(shell.firstElementChild);
+  return document.getElementById(FLOAT_ID);
+}
+
+function toggleFloating(panel, fab, open) {
+  panel.classList.toggle('mn-a11y-demo-panel--open', open);
+  fab.setAttribute('aria-expanded', String(open));
+}
+
+function positionFloating(fab, panel) {
+  const chat = document.querySelector('.mn-chat-fab');
+  const bottom = chat ? Math.max(92, Math.round(window.innerHeight - chat.getBoundingClientRect().top + 16)) : 24;
+  fab.style.bottom = `${bottom}px`;
+  panel.style.bottom = `${bottom + 64}px`;
+}
+
+function derive(state) {
+  const profileFlags = Object.fromEntries(Object.keys(BODY_CLASSES).map((key) => [key, false]));
+  state.profiles.forEach((id) => PROFILES.find((profile) => profile.id === id)?.flags.forEach((flag) => { profileFlags[flag] = true; }));
+  const merged = { ...profileFlags };
+  Object.keys(state.manual).forEach((key) => { if (state.manual[key] !== null) merged[key] = state.manual[key]; });
+  return merged;
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return normalizeState(JSON.parse(raw));
+  } catch { /* ignore */ }
+  return normalizeState(seedFromMaranello());
+}
+
+function seedFromMaranello() {
+  const seed = window.Maranello?.loadA11ySettings?.() || (() => {
+    if (!window.Maranello?.a11yPanel) return null;
+    try { const ctrl = window.Maranello.a11yPanel(); const current = ctrl?.getSettings?.(); ctrl?.destroy?.(); return current; }
+    catch { return null; }
+  })();
+  return { profiles: [], voice: VOICES[0], manual: { largeText: seed ? ['lg', 'xl'].includes(seed.fontSize) : null, highContrast: seed?.highContrast ?? null, reducedMotion: seed?.reducedMotion ?? null, dyslexiaFont: null, focusIndicators: seed?.focusVisible ?? null } };
+}
+
+function normalizeState(value = {}) {
+  return { profiles: Array.isArray(value.profiles) ? value.profiles : [], voice: VOICES.includes(value.voice) ? value.voice : VOICES[0], manual: { largeText: value.manual?.largeText ?? null, highContrast: value.manual?.highContrast ?? null, reducedMotion: value.manual?.reducedMotion ?? null, dyslexiaFont: value.manual?.dyslexiaFont ?? null, focusIndicators: value.manual?.focusIndicators ?? null } };
+}
+
+function resetState(state) {
+  state.profiles = [];
+  state.voice = VOICES[0];
+  Object.keys(state.manual).forEach((key) => { state.manual[key] = null; });
+}
+
+function saveState(state) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch { /* ignore */ }
+}
+
+function applyBodySettings(effective) {
+  Object.entries(BODY_CLASSES).forEach(([key, klass]) => document.body.classList.toggle(klass, Boolean(effective[key])));
+  if (effective.dyslexiaFont && !document.getElementById(FONT_ID)) {
+    const style = document.createElement('style');
+    style.id = FONT_ID;
+    style.textContent = "@font-face{font-family:'OpenDyslexic';font-style:normal;font-weight:400;font-display:swap;src:url('https://cdn.jsdelivr.net/fontsource/fonts/opendyslexic@latest/latin-400-normal.woff2') format('woff2'),url('https://cdn.jsdelivr.net/fontsource/fonts/opendyslexic@latest/latin-400-normal.woff') format('woff');}";
+    document.head.appendChild(style);
+  }
+}
+
+function summaryText(state, effective) {
+  const labels = PROFILES.filter((profile) => state.profiles.includes(profile.id)).map((profile) => profile.label);
+  const flags = TOGGLES.filter(([key]) => effective[key]).map(([, label]) => label);
+  const extra = [['highSpacing', 'Higher spacing'], ['largerClickTargets', 'Large click targets'], ['mutedColors', 'Muted colors'], ['consistentLayout', 'Consistent layout'], ['visualAlerts', 'Visual alerts'], ['captionsPreference', 'Captions preferred'], ['keyboardOnly', 'Keyboard-only mode']].filter(([key]) => effective[key]).map(([, label]) => label);
+  const active = [...labels, ...flags, ...extra];
+  return active.length ? `Active: ${active.join(' · ')} · Voice: ${state.voice}` : `Defaults active · Voice: ${state.voice}`;
+}
+
+function initVoiceDropdown(panel) {
+  const dropdown = panel.querySelector('[data-voice-dropdown]');
+  if (!dropdown) return;
+  if (window.Maranello?.initDropdown) { window.Maranello.initDropdown(dropdown); return; }
+  const trigger = dropdown.querySelector('.mn-dropdown__trigger');
+  trigger?.addEventListener('click', (event) => { event.stopPropagation(); dropdown.classList.toggle('mn-dropdown--open'); });
+  document.addEventListener('click', () => dropdown.classList.remove('mn-dropdown--open'));
+}
+
+function ensureStyles() {
+  if (document.getElementById(STYLE_ID)) return;
+  const style = document.createElement('style');
+  style.id = STYLE_ID;
+  style.textContent = `
+    .mn-a11y-demo-stage{max-width:720px}.mn-a11y-demo-panel{padding:var(--space-xl);border:1px solid var(--grigio-scuro);border-radius:var(--radius-xl);background:linear-gradient(180deg,#20201d,#121212);box-shadow:0 24px 48px rgba(0,0,0,.36);display:grid;gap:var(--space-md)}.mn-a11y-demo-panel--inline{position:relative}.mn-a11y-demo-panel:not(.mn-a11y-demo-panel--inline){position:fixed;right:24px;width:min(380px,calc(100vw - 32px));z-index:1050;opacity:0;transform:translateY(24px) scale(.98);pointer-events:none;transition:opacity .22s ease,transform .22s ease}.mn-a11y-demo-panel--open{opacity:1;transform:translateY(0) scale(1);pointer-events:auto}.mn-a11y-demo-header,.mn-a11y-demo-row,.mn-a11y-demo-footer{display:flex;align-items:center;justify-content:space-between;gap:var(--space-md)}.mn-a11y-demo-header{align-items:flex-start}.mn-a11y-demo-label{font:600 var(--text-micro)/1 var(--font-display);letter-spacing:.08em;text-transform:uppercase;color:var(--giallo-ferrari)}.mn-a11y-demo-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:var(--space-sm)}.mn-a11y-demo-profile{display:grid;justify-items:start;gap:6px;padding:14px;border:1px solid color-mix(in srgb,var(--tone) 54%,#fff 12%);border-radius:var(--radius-lg);background:linear-gradient(180deg,color-mix(in srgb,var(--tone) 30%,#111),color-mix(in srgb,var(--tone) 14%,#111));color:var(--bianco-caldo);font:600 var(--text-small)/1.2 var(--font-body);box-shadow:inset 0 0 0 1px rgba(255,255,255,.04);cursor:pointer}.mn-a11y-demo-profile--active{transform:translateY(-1px);box-shadow:0 0 0 2px color-mix(in srgb,var(--tone) 70%,#fff 18%),0 18px 28px rgba(0,0,0,.24)}.mn-a11y-demo-profile__icon{font-size:1.2rem}.mn-a11y-demo-list{display:grid;gap:var(--space-sm)}.mn-a11y-demo-row{padding:12px 14px;border:1px solid var(--grigio-scuro);border-radius:var(--radius-md);background:rgba(255,255,255,.03)}.mn-a11y-demo-switch,.mn-a11y-demo-close,.mn-a11y-demo-fab{border:none;cursor:pointer}.mn-a11y-demo-switch{width:48px;height:28px;border-radius:999px;background:rgba(255,255,255,.14);padding:3px;transition:background .2s ease}.mn-a11y-demo-switch span{display:block;width:22px;height:22px;border-radius:999px;background:#fff;transition:transform .2s ease}.mn-a11y-demo-switch--on{background:var(--giallo-ferrari)}.mn-a11y-demo-switch--on span{transform:translateX(20px);background:#111}.mn-a11y-demo-close{width:36px;height:36px;border-radius:999px;background:rgba(255,255,255,.06);color:var(--bianco-caldo);font-size:1.25rem}.mn-a11y-demo-close:disabled{opacity:.5;cursor:not-allowed}.mn-a11y-demo-footer{align-items:flex-end}.mn-a11y-demo-footer p{max-width:320px;text-align:right}.mn-a11y-demo-voice,.mn-a11y-demo-voice .mn-dropdown__trigger,.mn-a11y-demo-voice .mn-dropdown__menu{width:100%}.mn-a11y-demo-voice .mn-dropdown__menu{max-height:220px;overflow:auto}.mn-a11y-demo-fab{position:fixed;right:24px;width:48px;height:48px;border-radius:999px;background:var(--giallo-ferrari);color:#111;box-shadow:0 18px 30px rgba(0,0,0,.32);display:grid;place-items:center;z-index:1040}.mn-a11y-demo-fab svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.mn-a11y-demo-fab--active{box-shadow:0 0 0 3px rgba(255,199,44,.35),0 18px 30px rgba(0,0,0,.32)}body.mn-a11y-large-text{font-size:1.2em}body.mn-a11y-high-spacing{line-height:1.85;letter-spacing:.01em}body.mn-a11y-high-contrast .mn-card-dark,body.mn-a11y-high-contrast .mn-dropdown__trigger,body.mn-a11y-high-contrast .mn-dropdown__menu,body.mn-a11y-high-contrast .mn-a11y-demo-row{border-color:var(--bianco-puro)!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.5)}body.mn-a11y-reduced-motion *,body.mn-a11y-reduced-motion *::before,body.mn-a11y-reduced-motion *::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}body.mn-a11y-dyslexia-font{font-family:'OpenDyslexic','Inter',sans-serif}body.mn-a11y-focus :is(a,button,input,textarea,select,[tabindex]:not([tabindex='-1'])):focus-visible{outline:3px solid var(--giallo-ferrari)!important;outline-offset:3px}body.mn-a11y-click-targets :is(button,a,.mn-dropdown__item,.mn-dropdown__trigger){min-height:44px;min-width:44px}body.mn-a11y-muted-colors #demo-root{filter:saturate(.82) contrast(.98)}body.mn-a11y-consistent-layout .mn-card-dark,body.mn-a11y-consistent-layout .mn-a11y-demo-panel{backdrop-filter:none}body.mn-a11y-visual-alerts .mn-a11y-demo-panel::after{content:'Visual alerts on';position:absolute;top:16px;right:56px;padding:4px 10px;border-radius:999px;background:rgba(244,63,94,.16);color:#FDA4AF;font:600 10px/1 var(--font-display);letter-spacing:.06em;text-transform:uppercase}body.mn-a11y-captions .mn-a11y-demo-panel .mn-a11y-demo-label::after{content:' captions';color:var(--grigio-chiaro)}body.mn-a11y-keyboard-only{cursor:default}@media (max-width:720px){.mn-a11y-demo-footer{align-items:stretch;flex-direction:column}.mn-a11y-demo-footer p{max-width:none;text-align:left}}
+  `;
+  document.head.appendChild(style);
 }

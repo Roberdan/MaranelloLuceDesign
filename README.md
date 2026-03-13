@@ -32,7 +32,7 @@ Part of the [Convergio](https://github.com/Roberdan/MyConvergio) ecosystem.
 | **CSS Tokens** | Colors, spacing, typography, shadows, gradients | 422 tokens |
 | **CSS Components** | Cards, buttons, badges, tables, forms, layouts | 92 files |
 | **Web Components** | `<mn-gauge>`, `<mn-chart>`, `<mn-gantt>`, `<mn-mapbox>` + 20 more | 24 WCs |
-| **Headless JS** | Canvas charts, gauges, speedometers, maps, data tables | 87 APIs |
+| **Headless JS** | Canvas charts, gauges, speedometers, maps, data tables, social graphs | 88 APIs |
 | **Integration Layer** | Theme bridge, resets, utilities — drop-in for any SPA | 4 modules |
 
 - **4 themes**: Nero (dark), Avorio (warm light), Editorial (mixed), Colorblind (WCAG AA)
@@ -204,7 +204,7 @@ Buttons, stat cards, tags, dividers, tables, status indicators, navigation bars,
 `mn-gauge`, `mn-chart`, `mn-gantt`, `mn-data-table`, `mn-date-picker`, `mn-funnel`, `mn-map`, `mn-hbar`, `mn-speedometer`, `mn-toast`, `mn-modal`, `mn-tabs`, `mn-theme-toggle`, `mn-command-palette`, `mn-login`, `mn-profile`, `mn-chat`, `mn-detail-panel`, `mn-system-status`, `mn-ferrari-control`, `mn-okr`, `mn-a11y`
 
 ### Headless JS Engines
-Charts (donut, area, bar, bubble, sparkline, sparkbar, radar, half-gauge, live), Gantt timeline, Gauge/Speedometer (Ferrari instrument cluster), Funnel/Sankey, Data Table (sort/filter/paginate), Map View (Mapbox), HBar charts, OKR panels, Forms validation, Controls (rotary, slider, Ferrari dials)
+Charts (donut, area, bar, bubble, sparkline, sparkbar, radar, half-gauge, live), Gantt timeline, Gauge/Speedometer (Ferrari instrument cluster), Funnel/Sankey, Data Table (sort/filter/paginate), Map View (Mapbox), Social Graph, HBar charts, OKR panels, Forms validation, Controls (rotary, slider, Ferrari dials)
 
 ### Layouts
 Data tables (standard, compact, panel), detail panels (base, comments, Gantt), org trees, heatmaps, capacity heatmaps, network graphs, command palette, chat, login, sim panels, horizontal bars, funnels
@@ -344,7 +344,7 @@ Now use semantic CSS variables everywhere:
 
 ## Preview
 
-> **[▶ Live Demo](https://roberdan.github.io/MaranelloLuceDesign/)** — 23 interactive sections, 87 APIs, 4 themes
+> **[▶ Live Demo](https://roberdan.github.io/MaranelloLuceDesign/)** — 24 interactive sections, 88 APIs, 4 themes
 
 <details open>
 <summary><strong>🌙 Nero Theme (Dark)</strong></summary>

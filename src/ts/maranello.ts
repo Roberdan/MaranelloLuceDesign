@@ -5,7 +5,7 @@
  */
 
 import { VERSION, eventBus, cssVar, getTheme, setTheme, cycleTheme } from './index';
-import { getAccent, clamp, lerp, hiDpiCanvas, createElement } from './core/utils';
+import { getAccent, clamp, lerp, hiDpiCanvas, createElement, escapeHtml } from './core/utils';
 import { formatNumber, formatDate, debounce, throttle } from './core/utils';
 import { icons, renderIcon, iconCatalog } from './icons';
 import { navIcons } from './icons-nav';
@@ -90,6 +90,9 @@ import { emit, on, off, bind, autoBind, onDrillDown } from './data-binding-event
 import { updateGauge, bindChart, autoBindSliders, bindControl } from './data-binding-ui';
 import { initGauges, initScrollReveal, initNavTracking, relativeLuminance, autoContrast } from './observers';
 import { gridLayout } from './grid-layout';
+import { socialGraph } from './social-graph';
+import { networkMessages } from './network-messages';
+import { neuralNodes } from './neural-nodes';
 import { registerExtras } from './maranello-exports';
 
 declare global {
@@ -120,6 +123,7 @@ M.clamp = clamp;
 M.lerp = lerp;
 M.hiDpiCanvas = hiDpiCanvas;
 M.createElement = createElement;
+M.escapeHtml = escapeHtml;
 M.formatNumber = formatNumber;
 M.formatDate = formatDate;
 M.debounce = debounce;
@@ -165,9 +169,12 @@ M.funnel = funnel;
 M.aiChat = aiChat;
 M.flipCounter = flipCounter;
 M.progressRing = progressRing;
+M.networkMessages = networkMessages;
+M.neuralNodes = neuralNodes;
 M.hBarChart = hBarChart;
 M.okrPanel = okrPanel;
 M.gridLayout = gridLayout;
+M.socialGraph = socialGraph;
 M.chartInteract = chartInteract;
 M.sparklineInteract = sparklineInteract;
 

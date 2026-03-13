@@ -29,6 +29,9 @@ export {
   hiDpiCanvas,
 } from './core/utils';
 
+export { networkMessages } from './network-messages';
+export { neuralNodes } from './neural-nodes';
+
 // Design tokens
 export {
   COLOR,
@@ -108,6 +111,7 @@ export { gantt } from './gantt';
 export { mapView } from './map-view';
 export { mapboxView } from './map-mapbox';
 export type { MapboxMarker, MapboxViewOptions, MapboxViewController } from './map-mapbox';
+export { socialGraph } from './social-graph';
 
 // Controls (panels, drawers, org tree)
 export {

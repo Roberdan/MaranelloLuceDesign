@@ -1,0 +1,128 @@
+/**
+ * Network section — message mesh + augmented brain.
+ */
+const M = () => window.Maranello || {};
+const esc = (value) => (typeof M().escapeHtml === 'function' ? M().escapeHtml(String(value)) : String(value));
+
+const NODE_NAMES = ['API Gateway', 'Auth Service', 'Data Lake', 'ML Engine', 'Therapy API', 'Analytics', 'Cache', 'CDN'];
+const MSG_COLORS = { success: '#00A651', data: '#FFC72C', alert: '#DC0000', query: '#4EA8DE' };
+const NODE_COLORS = ['#FFC72C', '#4EA8DE', '#00A651', '#FFC72C', '#4EA8DE', '#00A651', '#FFC72C', '#4EA8DE'];
+
+function buildNodes() {
+  return NODE_NAMES.map((label, index) => {
+    const angle = (Math.PI * 2 * index) / NODE_NAMES.length - Math.PI / 2;
+    return {
+      id: label.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+      label,
+      x: 0.5 + Math.cos(angle) * 0.34,
+      y: 0.5 + Math.sin(angle) * 0.34,
+      color: NODE_COLORS[index],
+      size: 10,
+    };
+  });
+}
+
+function buildConnections(nodes) {
+  return nodes.flatMap((node, index) => {
+    const ring = { from: node.id, to: nodes[(index + 1) % nodes.length].id, color: 'rgba(255,255,255,0.12)' };
+    const skip = { from: node.id, to: nodes[(index + 2) % nodes.length].id, color: 'rgba(78,168,222,0.18)' };
+    return index < nodes.length / 2 ? [ring, skip] : [ring];
+  });
+}
+
+function legendItem(color, label) {
+  return `<span class="mn-micro" style="display:inline-flex;align-items:center;gap:6px;color:var(--avorio)"><span style="width:10px;height:10px;border-radius:999px;background:${color}"></span>${esc(label)}</span>`;
+}
+
+function placeholder(target, title) {
+  target.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;padding:var(--space-xl)"><p class="mn-label" style="color:var(--grigio-medio);text-align:center"><strong>${esc(title)}</strong><br><span class="mn-micro">Visualization unavailable</span></p></div>`;
+}
+
+function randomPick(items) {
+  return items[Math.floor(Math.random() * items.length)];
+}
+
+function randomMessage(nodes, connections) {
+  const link = randomPick(connections);
+  const kind = randomPick(Object.keys(MSG_COLORS));
+  return {
+    from: link.from,
+    to: link.to,
+    color: MSG_COLORS[kind],
+    speed: 0.7 + Math.random() * 1.8,
+    size: 4 + Math.random() * 2,
+    label: kind === 'alert' ? '!' : kind[0].toUpperCase(),
+  };
+}
+
+export function createNetworkSection() {
+  const nodes = buildNodes();
+  const connections = buildConnections(nodes);
+  const section = document.createElement('section');
+  section.id = 'network';
+  section.className = 'mn-section-dark';
+  section.innerHTML = `
+    <div class="mn-container">
+      <p class="mn-section-number">03B — Networked Intelligence</p>
+      <h2 class="mn-title-section" style="margin-bottom:var(--space-sm)">Network Messages &amp; Augmented Brain</h2>
+      <p class="mn-body" style="margin-bottom:var(--space-2xl)">Two living signal visualizations: a service mesh with flowing packets and an organic neural field with cascading energy.</p>
+      <div class="mn-card-dark" style="padding:var(--space-xl);margin-bottom:var(--space-2xl)">
+        <div style="display:flex;justify-content:space-between;gap:var(--space-lg);flex-wrap:wrap;align-items:center;margin-bottom:var(--space-md)">
+          <div>
+            <h3 class="mn-title-sub" style="margin-bottom:var(--space-xs)">Mesh Network Messages</h3>
+            <p class="mn-micro" style="color:var(--grigio-medio)">8 services, animated connections, auto-traffic every 2 seconds.</p>
+          </div>
+          <button class="mn-btn mn-btn--accent" id="network-burst">Send Burst</button>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:var(--space-md);margin-bottom:var(--space-md)">
+          ${legendItem(MSG_COLORS.success, 'Success')}${legendItem(MSG_COLORS.data, 'Data')}${legendItem(MSG_COLORS.alert, 'Alert')}${legendItem(MSG_COLORS.query, 'Query')}
+        </div>
+        <div id="network-messages-demo" style="width:100%;height:340px;border-radius:12px;overflow:hidden;background:radial-gradient(circle at top, rgba(255,199,44,0.08), rgba(5,8,14,0.92))"></div>
+      </div>
+      <div class="mn-card-dark" style="padding:var(--space-xl)">
+        <div style="display:flex;justify-content:space-between;gap:var(--space-lg);flex-wrap:wrap;align-items:center;margin-bottom:var(--space-md)">
+          <div>
+            <h3 class="mn-title-sub" style="margin-bottom:var(--space-xs)">Augmented Brain</h3>
+            <p class="mn-micro" style="color:var(--grigio-medio)">40 drifting nodes, luminous synapses, and pulse cascades.</p>
+          </div>
+          <div style="display:flex;gap:var(--space-md);flex-wrap:wrap;align-items:center">
+            <button class="mn-btn mn-btn--accent" id="brain-pulse">Trigger Pulse</button>
+            <label class="mn-micro" for="brain-activity" style="display:flex;gap:var(--space-sm);align-items:center;color:var(--grigio-chiaro)">Activity Level <input id="brain-activity" type="range" min="0" max="100" value="55"></label>
+          </div>
+        </div>
+        <div id="neural-nodes-demo" style="width:100%;height:400px;border-radius:12px;overflow:hidden;background:radial-gradient(circle at center, rgba(78,168,222,0.12), rgba(3,6,12,0.96))"></div>
+      </div>
+    </div>
+  `;
+  requestAnimationFrame(() => initNetwork(section, nodes, connections));
+  return section;
+}
+
+function initNetwork(section, nodes, connections) {
+  const networkEl = section.querySelector('#network-messages-demo');
+  const neuralEl = section.querySelector('#neural-nodes-demo');
+  const api = M();
+  if (!api.networkMessages || !api.neuralNodes) {
+    if (networkEl) placeholder(networkEl, 'Network Messages');
+    if (neuralEl) placeholder(neuralEl, 'Neural Nodes');
+    return;
+  }
+
+  const network = api.networkMessages(networkEl, { nodes, connections, particleTrail: true, glowEffect: true });
+  const brain = api.neuralNodes(neuralEl, { nodeCount: 40, particleCount: 2, pulseSpeed: 1.1, interactive: true });
+  if (!network || !brain) return;
+
+  clearInterval(section._mnNetworkTimer);
+  section._mnNetworkTimer = window.setInterval(() => network.send(randomMessage(nodes, connections)), 2000);
+  section.querySelector('#network-burst')?.addEventListener('click', () => {
+    network.burst(Array.from({ length: 5 }, () => randomMessage(nodes, connections)));
+  });
+  section.querySelector('#brain-pulse')?.addEventListener('click', () => brain.pulse());
+  section.querySelector('#brain-activity')?.addEventListener('input', (event) => {
+    const level = Number(event.target.value || 0) / 100;
+    brain.setActivity(level);
+  });
+  brain.setActivity(0.55);
+  network.send(randomMessage(nodes, connections));
+  window.setTimeout(() => brain.pulse(0), 500);
+}

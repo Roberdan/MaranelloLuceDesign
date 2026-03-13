@@ -156,6 +156,8 @@ __export(index_exports, {
   mapboxView: () => mapboxView,
   markerRadius: () => markerRadius,
   navIcons: () => navIcons,
+  networkMessages: () => networkMessages,
+  neuralNodes: () => neuralNodes,
   normalizeBars: () => normalizeBars,
   normalizeHex: () => normalizeHex2,
   objectIcons: () => objectIcons,
@@ -182,11 +184,12 @@ __export(index_exports, {
   renderPersonResults: () => renderPersonResults,
   renderSkeleton: () => renderSkeleton,
   renderers: () => renderers,
-  resolveContainer: () => resolveContainer,
+  resolveContainer: () => resolveContainer3,
   saveSettings: () => saveSettings,
   setTheme: () => setTheme,
   showTip: () => showTip2,
   showToast: () => showToast,
+  socialGraph: () => socialGraph,
   sparkline: () => sparkline,
   sparklineInteract: () => sparklineInteract,
   speedoPalette: () => speedoPalette2,
@@ -366,6 +369,435 @@ function hiDpiCanvas(canvas, width, height) {
 }
 function escapeHtml(str) {
   return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+
+// src/ts/network-messages.ts
+function resolveContainer(container) {
+  if (typeof container === "string") {
+    const found = document.querySelector(container);
+    return found instanceof HTMLElement ? found : null;
+  }
+  return container instanceof HTMLElement ? container : null;
+}
+function alpha(color, opacity) {
+  const hex = color.replace("#", "");
+  const full = hex.length === 3 ? hex.replace(/./g, "$&$&") : hex;
+  const value = parseInt(full, 16);
+  if (Number.isNaN(value)) return `rgba(255,199,44,${opacity})`;
+  return `rgba(${value >> 16 & 255},${value >> 8 & 255},${value & 255},${opacity})`;
+}
+function networkMessages(container, opts = { nodes: [], connections: [] }) {
+  const target = resolveContainer(container);
+  if (!target) return null;
+  const host = target;
+  const options = {
+    particleTrail: true,
+    glowEffect: true,
+    ...opts
+  };
+  let nodes = options.nodes.slice();
+  const messages = [];
+  const flashes = [];
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+  let raf = 0;
+  let last = performance.now();
+  host.innerHTML = "";
+  host.style.position = "relative";
+  host.style.overflow = "hidden";
+  if (options.width) host.style.width = `${options.width}px`;
+  if (options.height) host.style.height = `${options.height}px`;
+  canvas.style.cssText = "display:block;width:100%;height:100%";
+  canvas.setAttribute("aria-label", "Network message flow");
+  host.appendChild(canvas);
+  const getMap = () => new Map(nodes.map((node) => [node.id, node]));
+  const point = (node) => ({ x: node.x * canvas.clientWidth, y: node.y * canvas.clientHeight });
+  const ro = window.ResizeObserver ? new ResizeObserver(resize) : null;
+  const mo = new MutationObserver(() => draw(16));
+  function resize() {
+    const width = options.width ?? Math.max(320, host.clientWidth || 640);
+    const height = options.height ?? Math.max(220, host.clientHeight || 320);
+    hiDpiCanvas(canvas, width, height);
+  }
+  function drawParticle(color, x, y, radius, label) {
+    ctx.save();
+    if (options.glowEffect) {
+      ctx.shadowColor = color;
+      ctx.shadowBlur = radius * 3;
+    }
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(x, y, radius, 0, Math.PI * 2);
+    ctx.fill();
+    if (label) {
+      ctx.shadowBlur = 0;
+      ctx.fillStyle = "#05070c";
+      ctx.font = `600 ${Math.max(9, radius * 2.1)}px Inter, sans-serif`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(label.slice(0, 3), x, y + 0.5);
+    }
+    ctx.restore();
+  }
+  function draw(dt) {
+    const width = canvas.clientWidth || 1;
+    const height = canvas.clientHeight || 1;
+    const map = getMap();
+    ctx.clearRect(0, 0, width, height);
+    ctx.fillStyle = "rgba(3,7,12,0.36)";
+    ctx.fillRect(0, 0, width, height);
+    ctx.save();
+    ctx.lineWidth = 1.15;
+    ctx.setLineDash([6, 8]);
+    for (const link of options.connections) {
+      const from = map.get(link.from), to = map.get(link.to);
+      if (!from || !to) continue;
+      const a = point(from), b = point(to);
+      const active = messages.some((msg) => msg.from === link.from && msg.to === link.to);
+      ctx.strokeStyle = link.color ?? (active ? alpha("#FFC72C", 0.45) : "rgba(255,255,255,0.16)");
+      ctx.beginPath();
+      ctx.moveTo(a.x, a.y);
+      ctx.lineTo(b.x, b.y);
+      ctx.stroke();
+    }
+    ctx.restore();
+    for (let i = flashes.length - 1; i >= 0; i--) {
+      const flash = flashes[i];
+      flash.life -= dt * 26e-4;
+      flash.radius += dt * 0.05;
+      if (flash.life <= 0) {
+        flashes.splice(i, 1);
+        continue;
+      }
+      ctx.save();
+      ctx.strokeStyle = alpha(flash.color, flash.life * 0.75);
+      ctx.lineWidth = 1.5 + flash.life * 2;
+      if (options.glowEffect) {
+        ctx.shadowColor = flash.color;
+        ctx.shadowBlur = 10 * flash.life;
+      }
+      ctx.beginPath();
+      ctx.arc(flash.x, flash.y, flash.radius, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+    }
+    for (let i = messages.length - 1; i >= 0; i--) {
+      const msg = messages[i];
+      const from = map.get(msg.from), to = map.get(msg.to);
+      if (!from || !to) {
+        messages.splice(i, 1);
+        continue;
+      }
+      msg.progress += dt / 1500 * msg.speed;
+      const a = point(from), b = point(to);
+      const x = lerp(a.x, b.x, msg.progress), y = lerp(a.y, b.y, msg.progress);
+      if (options.particleTrail) {
+        msg.trail.push({ x, y });
+        if (msg.trail.length > 10) msg.trail.shift();
+        msg.trail.forEach((p, index) => {
+          drawParticle(msg.color ?? to.color ?? "#FFC72C", p.x, p.y, msg.size * (0.35 + index / 18), void 0);
+          ctx.save();
+          ctx.globalAlpha = (index + 1) / msg.trail.length * 0.18;
+          ctx.fillStyle = msg.color ?? to.color ?? "#FFC72C";
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, msg.size * (0.35 + index / 18), 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        });
+      }
+      if (msg.progress >= 1) {
+        flashes.push({ x: b.x, y: b.y, radius: 4, life: 1, color: msg.color ?? to.color ?? "#FFC72C" });
+        messages.splice(i, 1);
+        continue;
+      }
+      drawParticle(msg.color ?? to.color ?? "#FFC72C", x, y, msg.size, msg.label);
+    }
+    for (const node of nodes) {
+      const p = point(node), size = node.size ?? 10, color = node.color ?? "#4EA8DE";
+      ctx.save();
+      if (options.glowEffect) {
+        ctx.shadowColor = color;
+        ctx.shadowBlur = size * 1.4;
+      }
+      ctx.fillStyle = alpha(color, 0.2);
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, size * 1.7, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, size, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+      ctx.fillStyle = "#f5f1e6";
+      ctx.font = "600 12px Inter, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(node.label, p.x, p.y + size + 18);
+    }
+  }
+  function loop(now) {
+    const dt = Math.min(48, now - last || 16);
+    last = now;
+    draw(dt);
+    raf = requestAnimationFrame(loop);
+  }
+  function send(msg) {
+    const map = getMap();
+    if (!map.get(msg.from) || !map.get(msg.to)) return;
+    messages.push({
+      ...msg,
+      progress: 0,
+      speed: Math.max(0.5, Math.min(3, msg.speed ?? 1)),
+      size: msg.size ?? 4,
+      trail: []
+    });
+  }
+  resize();
+  ro?.observe(host);
+  mo.observe(document.body, { attributes: true, attributeFilter: ["class"] });
+  raf = requestAnimationFrame(loop);
+  return {
+    send,
+    burst: (msgs) => msgs.forEach(send),
+    setNodes: (next) => {
+      nodes = next.slice();
+      const map = getMap();
+      for (let i = messages.length - 1; i >= 0; i--) {
+        if (!map.get(messages[i].from) || !map.get(messages[i].to)) messages.splice(i, 1);
+      }
+    },
+    destroy: () => {
+      cancelAnimationFrame(raf);
+      ro?.disconnect();
+      mo.disconnect();
+      host.innerHTML = "";
+    }
+  };
+}
+
+// src/ts/neural-nodes.ts
+var DEFAULT_COLORS = ["#FFC72C", "#4EA8DE", "#00A651"];
+function resolveContainer2(container) {
+  const found = typeof container === "string" ? document.querySelector(container) : container;
+  return found instanceof HTMLElement ? found : null;
+}
+function alpha2(color, opacity) {
+  const full = color.replace("#", "").replace(/^(.)(.)(.)$/, "$1$1$2$2$3$3");
+  const value = parseInt(full, 16);
+  return Number.isNaN(value) ? `rgba(255,199,44,${opacity})` : `rgba(${value >> 16 & 255},${value >> 8 & 255},${value & 255},${opacity})`;
+}
+function neuralNodes(container, opts = {}) {
+  const target = resolveContainer2(container);
+  if (!target) return null;
+  const host = target;
+  const options = {
+    nodeCount: 30,
+    connectionDensity: 0.15,
+    colors: DEFAULT_COLORS,
+    pulseSpeed: 1,
+    particleCount: 2,
+    interactive: true,
+    ...opts
+  };
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+  let nodes = [];
+  let connections = [];
+  let particles = [];
+  const waves = [];
+  const activations = [];
+  let activity = 0.55;
+  let hovered = -1;
+  let raf = 0;
+  let frame = 0;
+  let last = performance.now();
+  host.innerHTML = "";
+  host.style.position = "relative";
+  host.style.overflow = "hidden";
+  if (options.width) host.style.width = `${options.width}px`;
+  if (options.height) host.style.height = `${options.height}px`;
+  canvas.style.cssText = "display:block;width:100%;height:100%";
+  canvas.setAttribute("aria-label", "Neural nodes visualization");
+  host.appendChild(canvas);
+  const ro = window.ResizeObserver ? new ResizeObserver(resize) : null;
+  const onMove = (event) => {
+    const rect = canvas.getBoundingClientRect(), x = event.clientX - rect.left, y = event.clientY - rect.top;
+    hovered = nodes.findIndex((node) => Math.hypot(node.x - x, node.y - y) < 18 + node.energy * 8);
+  };
+  const onLeave = () => {
+    hovered = -1;
+  };
+  function resize() {
+    hiDpiCanvas(canvas, options.width ?? Math.max(360, host.clientWidth || 720), options.height ?? Math.max(280, host.clientHeight || 360));
+    if (!nodes.length) initNodes();
+    rebuildConnections();
+  }
+  function initNodes() {
+    const width = canvas.clientWidth || 1, height = canvas.clientHeight || 1;
+    nodes = Array.from({ length: options.nodeCount }, (_, index) => ({
+      x: 24 + Math.random() * (width - 48),
+      y: 24 + Math.random() * (height - 48),
+      vx: (Math.random() - 0.5) * 0.025,
+      vy: (Math.random() - 0.5) * 0.025,
+      color: options.colors[index % options.colors.length],
+      phase: Math.random() * Math.PI * 2,
+      energy: Math.random() * 0.4
+    }));
+  }
+  function rebuildConnections() {
+    const threshold = Math.min(canvas.clientWidth, canvas.clientHeight) * (0.14 + options.connectionDensity * 0.28);
+    connections = [];
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const dist = Math.hypot(nodes[i].x - nodes[j].x, nodes[i].y - nodes[j].y);
+        if (dist < threshold) connections.push({ a: i, b: j });
+      }
+    }
+    particles = connections.flatMap((_, index) => Array.from({ length: options.particleCount }, (_2, lane) => ({
+      connection: index,
+      lane,
+      t: Math.random(),
+      speed: 12e-5 + Math.random() * 18e-5
+    })));
+  }
+  function triggerPulse(nodeIndex = Math.floor(Math.random() * nodes.length)) {
+    if (!nodes[nodeIndex]) return;
+    const graph = Array.from({ length: nodes.length }, () => []);
+    connections.forEach((link) => {
+      graph[link.a].push(link.b);
+      graph[link.b].push(link.a);
+    });
+    const queue = [[nodeIndex, 0]];
+    const seen = /* @__PURE__ */ new Set([nodeIndex]);
+    const start = performance.now();
+    while (queue.length) {
+      const [index, hop] = queue.shift();
+      activations.push({ at: start + hop * 100, index });
+      graph[index].forEach((next) => {
+        if (seen.has(next)) return;
+        seen.add(next);
+        queue.push([next, hop + 1]);
+      });
+    }
+  }
+  function update(dt, now) {
+    const width = canvas.clientWidth || 1, height = canvas.clientHeight || 1;
+    while (activations[0] && activations[0].at <= now) {
+      const current = activations.shift();
+      const node = nodes[current.index];
+      if (!node) continue;
+      node.energy = 1.9;
+      waves.push({ x: node.x, y: node.y, radius: 4, life: 1, color: node.color });
+    }
+    nodes.forEach((node) => {
+      node.vx = (node.vx + (Math.random() - 0.5) * 25e-4 * dt) * 0.985;
+      node.vy = (node.vy + (Math.random() - 0.5) * 25e-4 * dt) * 0.985;
+      node.x += node.vx * dt;
+      node.y += node.vy * dt;
+      if (node.x < 16 || node.x > width - 16) node.vx *= -1;
+      if (node.y < 16 || node.y > height - 16) node.vy *= -1;
+      node.x = Math.max(16, Math.min(width - 16, node.x));
+      node.y = Math.max(16, Math.min(height - 16, node.y));
+      node.energy = Math.max(0, node.energy - dt * 16e-4);
+    });
+    if (++frame % 14 === 0) rebuildConnections();
+    particles.forEach((particle) => {
+      particle.t = (particle.t + dt * particle.speed * (0.45 + activity * 1.8) * options.pulseSpeed) % 1;
+    });
+    for (let i = waves.length - 1; i >= 0; i--) {
+      waves[i].life -= dt * 13e-4 * options.pulseSpeed;
+      waves[i].radius += dt * 0.11 * options.pulseSpeed;
+      if (waves[i].life <= 0) waves.splice(i, 1);
+    }
+  }
+  function draw(now) {
+    const width = canvas.clientWidth || 1, height = canvas.clientHeight || 1;
+    ctx.clearRect(0, 0, width, height);
+    ctx.fillStyle = "rgba(4,10,18,0.28)";
+    ctx.fillRect(0, 0, width, height);
+    connections.forEach((link) => {
+      const a = nodes[link.a], b = nodes[link.b];
+      const emphasized = hovered === link.a || hovered === link.b;
+      const gradient = ctx.createLinearGradient(a.x, a.y, b.x, b.y);
+      gradient.addColorStop(0, alpha2(a.color, emphasized ? 0.48 : 0.26 + a.energy * 0.18));
+      gradient.addColorStop(0.55, alpha2(b.color, 0.18 + Math.max(a.energy, b.energy) * 0.16));
+      gradient.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.strokeStyle = gradient;
+      ctx.lineWidth = emphasized ? 2 : 1.1;
+      ctx.beginPath();
+      ctx.moveTo(a.x, a.y);
+      ctx.lineTo(b.x, b.y);
+      ctx.stroke();
+    });
+    const visibleLanes = Math.max(1, Math.round(options.particleCount * (0.3 + activity * 0.7)));
+    particles.forEach((particle) => {
+      if (particle.lane >= visibleLanes) return;
+      const link = connections[particle.connection];
+      if (!link) return;
+      const a = nodes[link.a], b = nodes[link.b];
+      const x = a.x + (b.x - a.x) * particle.t, y = a.y + (b.y - a.y) * particle.t;
+      ctx.save();
+      ctx.fillStyle = alpha2(a.color, 0.65 + activity * 0.25);
+      ctx.shadowColor = a.color;
+      ctx.shadowBlur = 6 + activity * 8;
+      ctx.beginPath();
+      ctx.arc(x, y, 1.6 + activity * 1.8, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    });
+    waves.forEach((wave) => {
+      ctx.save();
+      ctx.strokeStyle = alpha2(wave.color, wave.life * 0.65);
+      ctx.lineWidth = 1.5 + wave.life * 2;
+      ctx.shadowColor = wave.color;
+      ctx.shadowBlur = 10;
+      ctx.beginPath();
+      ctx.arc(wave.x, wave.y, wave.radius, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+    });
+    nodes.forEach((node, index) => {
+      const pulse = 2.4 + Math.sin(now * 2e-3 * options.pulseSpeed + node.phase) * 1.4 + node.energy * 3.2 + (hovered === index ? 2 : 0);
+      ctx.save();
+      ctx.fillStyle = alpha2(node.color, 0.2);
+      ctx.shadowColor = node.color;
+      ctx.shadowBlur = 12 + node.energy * 12;
+      ctx.beginPath();
+      ctx.arc(node.x, node.y, pulse + 4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = node.color;
+      ctx.beginPath();
+      ctx.arc(node.x, node.y, pulse, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    });
+  }
+  function loop(now) {
+    const dt = Math.min(48, now - last || 16);
+    last = now;
+    update(dt, now);
+    draw(now);
+    raf = requestAnimationFrame(loop);
+  }
+  resize();
+  ro?.observe(host);
+  if (options.interactive) {
+    canvas.addEventListener("mousemove", onMove);
+    canvas.addEventListener("mouseleave", onLeave);
+  }
+  raf = requestAnimationFrame(loop);
+  return {
+    pulse: triggerPulse,
+    setActivity: (level) => {
+      activity = Math.max(0, Math.min(1, level));
+    },
+    destroy: () => {
+      cancelAnimationFrame(raf);
+      ro?.disconnect();
+      canvas.removeEventListener("mousemove", onMove);
+      canvas.removeEventListener("mouseleave", onLeave);
+      host.innerHTML = "";
+    }
+  };
 }
 
 // src/ts/core/tokens.ts
@@ -5307,6 +5739,288 @@ function mapboxView(container, opts) {
   };
 }
 
+// src/ts/social-graph.ts
+var GROUP_COLORS = {
+  default: "#FFC72C",
+  Therapists: "#00A651",
+  Researchers: "#4EA8DE",
+  Volunteers: "#FFC72C",
+  Families: "#8B5CF6",
+  Staff: "#DC0000"
+};
+function socialGraph(container, opts = { nodes: [], edges: [] }) {
+  const target = typeof container === "string" ? document.querySelector(container) : container;
+  if (!(target instanceof HTMLElement)) return null;
+  const hostEl = target;
+  hostEl.innerHTML = "";
+  hostEl.style.position = "relative";
+  hostEl.style.overflow = "hidden";
+  const canvas = document.createElement("canvas");
+  canvas.style.cssText = "display:block;width:100%;height:100%;touch-action:none;";
+  const tip = document.createElement("div");
+  tip.className = "mn-chart-tooltip";
+  tip.style.cssText = "position:absolute;pointer-events:none;opacity:0;transition:opacity .12s ease;max-width:220px;";
+  hostEl.append(canvas, tip);
+  let width = 0, height = 0, raf = 0, frame = 0;
+  let nodes = [], edges = [];
+  let nodeMap = /* @__PURE__ */ new Map(), linked = /* @__PURE__ */ new Map();
+  let running = opts.animate !== false, hoveredId = null, highlightedId = null;
+  let dragging = null, dragMoved = false, resizeObs = null;
+  const dpr2 = () => window.devicePixelRatio || 1;
+  const activeId = () => hoveredId ?? highlightedId;
+  const showLabels = opts.showLabels !== false;
+  const showTip4 = (node, x, y) => {
+    tip.innerHTML = '<div class="mn-chart-tooltip__label">' + escapeHtml(node.label) + "</div>" + (node.detail ? '<div style="font-size:.68rem;color:var(--chart-label,#9e9e9e)">' + escapeHtml(node.detail) + "</div>" : "");
+    tip.style.opacity = "1";
+    const tw = tip.offsetWidth || 140, th = tip.offsetHeight || 44;
+    tip.style.left = Math.max(6, Math.min(width - tw - 6, x - tw / 2)) + "px";
+    tip.style.top = Math.max(6, Math.min(height - th - 6, y - th - 14)) + "px";
+  };
+  const hideTip4 = () => {
+    tip.style.opacity = "0";
+  };
+  const colorOf = (node) => opts.groups?.[node.group || ""] || GROUP_COLORS[node.group || ""] || GROUP_COLORS.default;
+  const inside = (node) => {
+    if (node.avatar) return node.avatar.slice(0, 2);
+    const parts = node.label.split(/\s+/).filter(Boolean).slice(0, 2);
+    return (parts.map((part) => part[0]).join("") || node.id.slice(0, 2)).toUpperCase();
+  };
+  const point = (event) => {
+    const rect = canvas.getBoundingClientRect();
+    return { x: event.clientX - rect.left, y: event.clientY - rect.top };
+  };
+  const hit = (x, y) => [...nodes].reverse().find((node) => Math.hypot(x - node.x, y - node.y) <= (node.size || 16) + 3) || null;
+  function resize() {
+    const rect = hostEl.getBoundingClientRect();
+    width = Math.max(320, Math.round(opts.width ?? rect.width ?? 0));
+    height = Math.max(240, Math.round(opts.height ?? rect.height ?? 0));
+    const scale = dpr2();
+    canvas.width = Math.round(width * scale);
+    canvas.height = Math.round(height * scale);
+    canvas.style.width = width + "px";
+    canvas.style.height = height + "px";
+    draw();
+  }
+  function rebuild(nextNodes, nextEdges) {
+    const prev = nodeMap;
+    nodes = nextNodes.map((node, index) => {
+      const old = prev.get(node.id);
+      const angle = index / Math.max(nextNodes.length, 1) * Math.PI * 2;
+      const radius = Math.min(width || 640, height || 420) * 0.28;
+      return {
+        ...node,
+        x: node.x ?? old?.x ?? (width || 640) / 2 + Math.cos(angle) * radius * (0.55 + Math.random() * 0.45),
+        y: node.y ?? old?.y ?? (height || 420) / 2 + Math.sin(angle) * radius * (0.55 + Math.random() * 0.45),
+        vx: old?.vx ?? 0,
+        vy: old?.vy ?? 0,
+        fx: 0,
+        fy: 0
+      };
+    });
+    nodeMap = new Map(nodes.map((node) => [node.id, node]));
+    edges = nextEdges.filter((edge) => nodeMap.has(edge.source) && nodeMap.has(edge.target));
+    linked = new Map(nodes.map((node) => [node.id, /* @__PURE__ */ new Set()]));
+    edges.forEach((edge) => {
+      linked.get(edge.source)?.add(edge.target);
+      linked.get(edge.target)?.add(edge.source);
+    });
+    frame = 0;
+    running = opts.animate !== false && nodes.length > 1;
+    loop();
+    draw();
+  }
+  function step() {
+    if (!running || nodes.length < 2) {
+      running = false;
+      return;
+    }
+    const area = Math.max(width * height, 1), k = Math.sqrt(area / Math.max(nodes.length, 1));
+    nodes.forEach((node) => {
+      node.fx = 0;
+      node.fy = 0;
+    });
+    for (let i = 0; i < nodes.length; i += 1) {
+      for (let j = i + 1; j < nodes.length; j += 1) {
+        const a = nodes[i], b = nodes[j];
+        const dx = a.x - b.x, dy = a.y - b.y, dist = Math.max(12, Math.hypot(dx, dy));
+        const force = k * k / dist, nx = dx / dist, ny = dy / dist;
+        a.fx += nx * force;
+        a.fy += ny * force;
+        b.fx -= nx * force;
+        b.fy -= ny * force;
+      }
+    }
+    edges.forEach((edge) => {
+      const a = nodeMap.get(edge.source), b = nodeMap.get(edge.target);
+      if (!a || !b) return;
+      const dx = b.x - a.x, dy = b.y - a.y, dist = Math.max(12, Math.hypot(dx, dy));
+      const force = dist * dist / k * 0.02 * (edge.weight || 1), nx = dx / dist, ny = dy / dist;
+      a.fx += nx * force;
+      a.fy += ny * force;
+      b.fx -= nx * force;
+      b.fy -= ny * force;
+    });
+    const cx = width / 2, cy = height / 2, temp = Math.max(0.35, 16 * (1 - frame / 200));
+    nodes.forEach((node) => {
+      if (dragging?.id === node.id) {
+        node.vx = 0;
+        node.vy = 0;
+        return;
+      }
+      node.fx += (cx - node.x) * 0.02;
+      node.fy += (cy - node.y) * 0.02;
+      node.vx = (node.vx + node.fx * 8e-3) * 0.88;
+      node.vy = (node.vy + node.fy * 8e-3) * 0.88;
+      const mag = Math.max(1, Math.hypot(node.vx, node.vy)), move = Math.min(temp, mag);
+      node.x += node.vx / mag * move;
+      node.y += node.vy / mag * move;
+      const pad2 = (node.size || 16) + 10;
+      node.x = Math.min(width - pad2, Math.max(pad2, node.x));
+      node.y = Math.min(height - pad2, Math.max(pad2, node.y));
+    });
+    frame += 1;
+    if (frame >= 200) running = false;
+  }
+  function draw() {
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    ctx.setTransform(dpr2(), 0, 0, dpr2(), 0, 0);
+    ctx.clearRect(0, 0, width, height);
+    const focus = activeId(), neighbors = focus ? linked.get(focus) || /* @__PURE__ */ new Set() : null;
+    edges.forEach((edge) => {
+      const a = nodeMap.get(edge.source), b = nodeMap.get(edge.target);
+      if (!a || !b) return;
+      const emphasize = !focus || edge.source === focus || edge.target === focus;
+      ctx.save();
+      ctx.globalAlpha = focus ? emphasize ? 0.8 : 0.1 : 0.28;
+      ctx.strokeStyle = edge.color || "#d5d9e0";
+      ctx.lineWidth = Math.max(1, (edge.weight || 1) * (emphasize ? 1.5 : 1));
+      ctx.beginPath();
+      ctx.moveTo(a.x, a.y);
+      ctx.lineTo(b.x, b.y);
+      ctx.stroke();
+      ctx.restore();
+    });
+    nodes.forEach((node) => {
+      const radius = node.size || 16, isFocus = node.id === focus, isNear = neighbors?.has(node.id);
+      ctx.save();
+      ctx.globalAlpha = focus ? isFocus || isNear ? 1 : 0.18 : 1;
+      ctx.fillStyle = colorOf(node);
+      if (isFocus) {
+        ctx.shadowColor = colorOf(node);
+        ctx.shadowBlur = 16;
+      }
+      ctx.beginPath();
+      ctx.arc(node.x, node.y, radius + (isFocus ? 2 : 0), 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      ctx.lineWidth = isFocus ? 2.5 : 1;
+      ctx.strokeStyle = "rgba(255,255,255,.72)";
+      ctx.stroke();
+      ctx.fillStyle = "#111";
+      ctx.font = `600 ${Math.max(10, radius * 0.8)}px Inter, sans-serif`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(inside(node), node.x, node.y + 0.5, radius * 1.5);
+      if (showLabels) {
+        ctx.fillStyle = "rgba(245,245,245,.92)";
+        ctx.font = "500 12px Inter, sans-serif";
+        ctx.textBaseline = "top";
+        ctx.fillText(node.label, node.x, node.y + radius + 8);
+      }
+      ctx.restore();
+    });
+  }
+  function tick() {
+    raf = 0;
+    step();
+    draw();
+    if (running) loop();
+  }
+  function loop() {
+    if (!raf && running) raf = requestAnimationFrame(tick);
+  }
+  const onMove = (event) => {
+    const p = point(event);
+    if (dragging) {
+      dragMoved = true;
+      dragging.x = p.x;
+      dragging.y = p.y;
+      frame = Math.min(frame, 140);
+      running = true;
+      loop();
+      draw();
+      showTip4(dragging, p.x, p.y);
+      return;
+    }
+    const node = hit(p.x, p.y);
+    if (node?.id !== hoveredId) {
+      hoveredId = node?.id || null;
+      opts.onHover?.(node || null);
+      draw();
+    }
+    if (node) {
+      canvas.style.cursor = "pointer";
+      showTip4(node, p.x, p.y);
+    } else {
+      canvas.style.cursor = "default";
+      hideTip4();
+    }
+  };
+  const onUp = () => {
+    dragging = null;
+    canvas.style.cursor = hoveredId ? "pointer" : "default";
+  };
+  canvas.addEventListener("mousedown", (event) => {
+    const p = point(event), node = hit(p.x, p.y);
+    if (!node) return;
+    dragging = node;
+    dragMoved = false;
+    hoveredId = node.id;
+    opts.onHover?.(node);
+    showTip4(node, p.x, p.y);
+    draw();
+  });
+  canvas.addEventListener("mousemove", onMove);
+  canvas.addEventListener("mouseleave", () => {
+    if (!dragging) {
+      hoveredId = null;
+      opts.onHover?.(null);
+      hideTip4();
+      draw();
+    }
+  });
+  canvas.addEventListener("click", (event) => {
+    if (dragMoved) return;
+    const p = point(event), node = hit(p.x, p.y);
+    if (node && opts.onClick) opts.onClick(node);
+  });
+  document.addEventListener("mousemove", onMove);
+  document.addEventListener("mouseup", onUp);
+  if (window.ResizeObserver && (!opts.width || !opts.height)) {
+    resizeObs = new ResizeObserver(resize);
+    resizeObs.observe(hostEl);
+  }
+  resize();
+  rebuild(opts.nodes || [], opts.edges || []);
+  return {
+    addNode: (node) => rebuild([...nodes, node], edges),
+    removeNode: (id) => rebuild(nodes.filter((node) => node.id !== id), edges.filter((edge) => edge.source !== id && edge.target !== id)),
+    highlight: (id) => {
+      highlightedId = id;
+      draw();
+    },
+    setData: (nextNodes, nextEdges) => rebuild(nextNodes, nextEdges),
+    destroy: () => {
+      if (raf) cancelAnimationFrame(raf);
+      resizeObs?.disconnect();
+      document.removeEventListener("mousemove", onMove);
+      document.removeEventListener("mouseup", onUp);
+      hostEl.innerHTML = "";
+    }
+  };
+}
+
 // src/ts/controls.ts
 function openDetailPanel(id) {
   const panel = document.getElementById(id);
@@ -6977,7 +7691,7 @@ function hexLum2(hex) {
 function autoTextColor(bg) {
   return hexLum2(bg) > 0.35 ? "#111" : "#fff";
 }
-function resolveContainer(c) {
+function resolveContainer3(c) {
   if (typeof c === "string") return document.querySelector(c);
   return c instanceof Element ? c : null;
 }
@@ -7020,7 +7734,7 @@ var PIPE_L = 80;
 var PIPE_R = 340;
 var PIPE_W = PIPE_R - PIPE_L;
 function funnel(container, options) {
-  const target = resolveContainer(container);
+  const target = resolveContainer3(container);
   if (!target) throw new Error("funnel: container not found.");
   const host = target;
   const opts = { animate: true, ...options };
@@ -9374,6 +10088,7 @@ M.clamp = clamp;
 M.lerp = lerp;
 M.hiDpiCanvas = hiDpiCanvas;
 M.createElement = createElement;
+M.escapeHtml = escapeHtml;
 M.formatNumber = formatNumber;
 M.formatDate = formatDate;
 M.debounce = debounce;
@@ -9411,9 +10126,12 @@ M.funnel = funnel;
 M.aiChat = aiChat;
 M.flipCounter = flipCounter;
 M.progressRing = progressRing;
+M.networkMessages = networkMessages;
+M.neuralNodes = neuralNodes;
 M.hBarChart = hBarChart;
 M.okrPanel = okrPanel;
 M.gridLayout = gridLayout;
+M.socialGraph = socialGraph;
 M.chartInteract = chartInteract;
 M.sparklineInteract = sparklineInteract;
 M.openDetailPanel = openDetailPanel;

@@ -7,6 +7,7 @@ import { createTokensSection } from './sections/tokens.js';
 import { createCardsSection } from './sections/cards.js';
 import { createDashboardSection } from './sections/dashboard.js';
 import { createChartsSection } from './sections/charts.js';
+import { createNetworkSection } from './sections/network.js';
 import { createControlsSection } from './sections/controls.js';
 import { createFormsSection } from './sections/forms.js';
 import { createTablesSection } from './sections/tables.js';
@@ -21,6 +22,7 @@ import { createDetailPanelSection } from './sections/detail-panel.js';
 import { createInteractiveSection } from './sections/interactive.js';
 import { createOkrSection } from './sections/okr-panel.js';
 import { createMapSection } from './sections/map.js';
+import { createSocialGraphSection } from './sections/social-graph.js';
 import { createAdvancedSection } from './sections/advanced.js';
 import { createWebComponentsSection } from './sections/web-components.js';
 import { createAccessibilitySection } from './sections/accessibility.js';
@@ -35,6 +37,7 @@ const sections = [
   createCardsSection(),
   createDashboardSection(),
   createChartsSection(),
+  createNetworkSection(),
   createControlsSection(),
   createFormsSection(),
   createTablesSection(),
@@ -49,6 +52,7 @@ const sections = [
   createInteractiveSection(),
   createOkrSection(),
   createMapSection(),
+  createSocialGraphSection(),
   createAdvancedSection(),
   createWebComponentsSection(),
   createAccessibilitySection(),
@@ -99,7 +103,7 @@ function createFooter() {
         <a href="https://www.fightthestroke.org/donorbox" style="color:var(--mn-accent)">Donate to Fightthestroke</a>
       </p>
       <p class="mn-micro" style="color:var(--grigio-scuro);margin-top:var(--space-sm)">
-        v3.1.0 — 4 themes · 87 APIs · 23 Web Components
+        v3.1.0 — 4 themes · 91 APIs · 23 Web Components
       </p>
     </div>
   `;

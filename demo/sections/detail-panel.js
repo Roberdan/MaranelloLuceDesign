@@ -2,7 +2,7 @@
  * Detail Panel section — drill-down panels, inline editors, data tables
  */
 
-const M = () => window.Maranello;
+const M = () => window.Maranello || {};
 
 const STATUS_COLORS = {
   Active: 'var(--mn-verde)',
@@ -110,18 +110,19 @@ function initDetailPanel(section) {
 
 function initDrillDown(section) {
   const host = section.querySelector('#dp-panel-host');
-  if (!host) return;
+  const api = M();
+  if (!host || typeof api.onDrillDown !== 'function' || typeof api.createDetailPanel !== 'function') return;
 
   let activePanel = null;
 
-  M().onDrillDown('#dp-card-grid [data-drilldown]', (_el, ctx) => {
+  api.onDrillDown('#dp-card-grid [data-drilldown]', (_el, ctx) => {
     const prog = PROGRAMS.find(p => p.id === ctx.drilldown);
     if (!prog) return;
 
     if (activePanel) { activePanel.destroy(); }
     host.innerHTML = '';
 
-    activePanel = M().createDetailPanel(host, {
+    activePanel = api.createDetailPanel(host, {
       title: prog.name,
       tabs: ['Overview', 'Activities', 'Quality'],
       schema: buildSchema(),
@@ -239,9 +240,10 @@ function initEditors(section) {
 
 function initDataTable(section) {
   const host = section.querySelector('#dp-table-host');
-  if (!host) return;
+  const api = M();
+  if (!host || typeof api.dataTable !== 'function') return;
 
-  M().dataTable(host, {
+  api.dataTable(host, {
     columns: [
       { key: 'id', label: 'ID', width: '80px', sortable: true },
       { key: 'activity', label: 'Activity', sortable: true },
