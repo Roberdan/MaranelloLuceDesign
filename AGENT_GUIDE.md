@@ -1,7 +1,7 @@
-<!-- v3.1.0 | 2025-07-21 -->
+<!-- v3.2.0 | 2026-03-13 -->
 # AI Agent Guide — Maranello Luce Design
 
-Single source of truth for AI agents. Package: `maranello-luce-design-business` v3.0.0.
+Single source of truth for AI agents. Package: `maranello-luce-design-business` v3.2.0.
 
 ## Decision Tree
 
@@ -21,13 +21,19 @@ Single source of truth for AI agents. Package: `maranello-luce-design-business` 
 | KPI gauge | `FerrariGauge` / `createGauge` | `/gauge` | Canvas |
 | Speed gauge | `speedometer` | `.` | Canvas |
 | Project timeline | `gantt` | `/gantt` | Canvas+DOM |
-| Pipeline | `funnel` | `.` | SVG+DOM |
+| Pipeline/funnel | `funnel` | `.` | SVG+DOM |
 | Data grid | `dataTable` | `.` | DOM |
 | Record detail | `openDetailPanel` | `/controls` | DOM |
 | OKR tracking | `okrPanel` | `.` | DOM |
-| Geographic data | `mapView` | `.` | Canvas+DOM |
+| Canvas map | `mapView` | `.` | Canvas+DOM |
+| Mapbox map | `mapboxView` | `.` | Mapbox GL |
 | Date input | `datePicker` | `.` | DOM |
 | Notifications | `toast` | `.` | DOM |
+| AI chat widget | `aiChat` | `.` | DOM |
+| Login screen | `loginScreen` | `.` | DOM |
+| Profile menu | `profileMenu` | `.` | DOM |
+| Grid layout | `gridLayout` | `.` | CSS Grid |
+| Command palette | `commandPalette` | `.` | DOM |
 | Dialog | `openModal` | `.` | DOM |
 | Quick actions | `commandPalette` | `.` | DOM |
 | AI assistant | `buildUI` | `.` | DOM |

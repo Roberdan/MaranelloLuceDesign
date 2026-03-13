@@ -30,3 +30,6 @@
 @import "./layouts-sidebar.css";
 @import "./layouts-sim-panel.css";
 @import "./layouts-toolbar-drawer.css";
+@import './layouts-mapbox.css';
+@import "./layouts-widget.css";
+@import "./layouts-grid-templates.css";

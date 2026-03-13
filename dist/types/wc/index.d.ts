@@ -4,9 +4,9 @@
  *
  * Usage:
  *   import { registerAll } from '@maranello/wc';
- *   registerAll(); // ensures all 22 WCs are loaded and registered
+ *   registerAll(); // ensures all WCs are loaded and registered
  */
-declare const WC_TAGS: readonly ["mn-a11y", "mn-chart", "mn-chat", "mn-command-palette", "mn-data-table", "mn-date-picker", "mn-detail-panel", "mn-ferrari-control", "mn-funnel", "mn-gantt", "mn-gauge", "mn-hbar", "mn-login", "mn-map", "mn-modal", "mn-okr", "mn-profile", "mn-speedometer", "mn-system-status", "mn-tab", "mn-tabs", "mn-theme-toggle", "mn-toast"];
+declare const WC_TAGS: readonly ["mn-a11y", "mn-chart", "mn-chat", "mn-command-palette", "mn-data-table", "mn-date-picker", "mn-detail-panel", "mn-ferrari-control", "mn-funnel", "mn-gantt", "mn-gauge", "mn-hbar", "mn-login", "mn-map", "mn-mapbox", "mn-modal", "mn-okr", "mn-profile", "mn-speedometer", "mn-system-status", "mn-tab", "mn-tabs", "mn-theme-toggle", "mn-toast"];
 type WcTag = (typeof WC_TAGS)[number];
 /** Import all WC modules (side-effect: each calls customElements.define). */
 export declare function registerAll(): Promise<void>;

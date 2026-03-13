@@ -116,6 +116,7 @@ __export(index_exports, {
   getMarkerColors: () => getMarkerColors,
   getTheme: () => getTheme,
   getVisibleProjected: () => getVisibleProjected,
+  gridLayout: () => gridLayout,
   hBarChart: () => hBarChart,
   halfGauge: () => halfGauge,
   hexLum: () => hexLum2,
@@ -152,6 +153,7 @@ __export(index_exports, {
   loginScreen: () => loginScreen,
   manettino: () => manettino,
   mapView: () => mapView,
+  mapboxView: () => mapboxView,
   markerRadius: () => markerRadius,
   navIcons: () => navIcons,
   normalizeBars: () => normalizeBars,
@@ -361,6 +363,9 @@ function hiDpiCanvas(canvas, width, height) {
   const ctx = canvas.getContext("2d");
   if (ctx) ctx.scale(dpr2, dpr2);
   return dpr2;
+}
+function escapeHtml(str) {
+  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 }
 
 // src/ts/core/tokens.ts
@@ -1011,7 +1016,15 @@ function buildUI(container, opts) {
     activeAgentId: opts.activeAgent ?? (opts.agents?.[0]?.id ?? null)
   };
   const fab = el("button", "mn-chat-fab", { "aria-label": "Open AI assistant", title: "AI Assistant" });
-  fab.innerHTML = opts.avatar ? `<img src="${opts.avatar}" class="mn-chat-fab__avatar" alt="AI">` : ICON_SPARK;
+  if (opts.avatar) {
+    const fabImg = document.createElement("img");
+    fabImg.src = opts.avatar;
+    fabImg.className = "mn-chat-fab__avatar";
+    fabImg.alt = "AI";
+    fab.appendChild(fabImg);
+  } else {
+    fab.innerHTML = ICON_SPARK;
+  }
   const pulse = el("span", "mn-chat-fab__pulse");
   fab.appendChild(pulse);
   container.appendChild(fab);
@@ -1207,8 +1220,13 @@ function initMessages(state, els, opts) {
       const card = el("button", "mn-chat-agent-card", { type: "button" });
       if (agent.id === state.activeAgentId) card.classList.add("mn-chat-agent-card--active");
       const iconEl = el("span", "mn-chat-agent-card__icon");
-      if (agent.icon && /<svg/i.test(agent.icon)) iconEl.innerHTML = agent.icon;
-      else iconEl.textContent = agent.icon ?? "\u{1F916}";
+      if (agent.icon && /<svg/i.test(agent.icon)) {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(agent.icon, "image/svg+xml");
+        const svg = doc.querySelector("svg");
+        if (svg && !doc.querySelector("parsererror")) iconEl.appendChild(svg);
+        else iconEl.textContent = "\u{1F916}";
+      } else iconEl.textContent = agent.icon ?? "\u{1F916}";
       card.appendChild(iconEl);
       card.appendChild(el("span", "mn-chat-agent-card__label", { text: agent.label ?? agent.id }));
       card.addEventListener("click", () => {
@@ -2524,13 +2542,14 @@ function positionTooltip(tip, x, y) {
   tip.style.top = top + "px";
 }
 function buildTooltipHTML(meta, index, series) {
+  const esc = escapeHtml;
   if (meta.type === "area" || meta.type === "line") {
     const datasets = meta.datasets;
-    let html = '<div class="mn-chart-tooltip__label">' + (meta.labels && meta.labels[index] ? meta.labels[index] : "Point " + (index + 1)) + "</div>";
+    let html = '<div class="mn-chart-tooltip__label">' + esc(meta.labels && meta.labels[index] ? meta.labels[index] : "Point " + (index + 1)) + "</div>";
     datasets.forEach((ds, i) => {
       if (index < ds.data.length) {
         const color = ds.color || series[i % series.length];
-        html += '<div style="display:flex;align-items:center;gap:6px;margin-top:3px;"><span class="mn-chart-tooltip__dot" style="background:' + color + ';"></span><span style="color:var(--chart-label,#9e9e9e);font-size:0.65rem;">' + (ds.label || "Series " + (i + 1)) + '</span><span class="mn-chart-tooltip__value" style="margin-left:auto;color:' + color + ';">' + ds.data[index].toFixed(1) + "</span></div>";
+        html += '<div style="display:flex;align-items:center;gap:6px;margin-top:3px;"><span class="mn-chart-tooltip__dot" style="background:' + color + ';"></span><span style="color:var(--chart-label,#9e9e9e);font-size:0.65rem;">' + esc(ds.label || "Series " + (i + 1)) + '</span><span class="mn-chart-tooltip__value" style="margin-left:auto;color:' + color + ';">' + ds.data[index].toFixed(1) + "</span></div>";
       }
     });
     return html;
@@ -2538,19 +2557,19 @@ function buildTooltipHTML(meta, index, series) {
   if (meta.type === "bar") {
     const d = meta.data[index];
     const color = d.color || series[index % series.length];
-    return '<div class="mn-chart-tooltip__label">' + (d.label || "Bar " + (index + 1)) + '</div><div class="mn-chart-tooltip__value" style="color:' + color + ';">' + d.value + "</div>";
+    return '<div class="mn-chart-tooltip__label">' + esc(d.label || "Bar " + (index + 1)) + '</div><div class="mn-chart-tooltip__value" style="color:' + color + ';">' + d.value + "</div>";
   }
   if (meta.type === "donut") {
     const seg = meta.segments[index];
-    return '<div style="display:flex;align-items:center;gap:6px;"><span class="mn-chart-tooltip__dot" style="background:' + seg.color + ';"></span><span class="mn-chart-tooltip__value">' + seg.value + "</span></div>" + (seg.label ? '<div class="mn-chart-tooltip__label">' + seg.label + "</div>" : "") + '<div style="color:var(--chart-label,#9e9e9e);font-size:0.6rem;">' + seg.pct + "%</div>";
+    return '<div style="display:flex;align-items:center;gap:6px;"><span class="mn-chart-tooltip__dot" style="background:' + seg.color + ';"></span><span class="mn-chart-tooltip__value">' + seg.value + "</span></div>" + (seg.label ? '<div class="mn-chart-tooltip__label">' + esc(seg.label) + "</div>" : "") + '<div style="color:var(--chart-label,#9e9e9e);font-size:0.6rem;">' + seg.pct + "%</div>";
   }
   if (meta.type === "bubble") {
     const b = meta.data[index];
-    return '<div class="mn-chart-tooltip__label">' + (b.label || "Point") + '</div><div style="font-size:0.65rem;color:var(--chart-label,#9e9e9e);">x: ' + b.x + " \xB7 y: " + b.y + (b.z ? " \xB7 size: " + b.z : "") + "</div>";
+    return '<div class="mn-chart-tooltip__label">' + esc(b.label || "Point") + '</div><div style="font-size:0.65rem;color:var(--chart-label,#9e9e9e);">x: ' + b.x + " \xB7 y: " + b.y + (b.z ? " \xB7 size: " + b.z : "") + "</div>";
   }
   if (meta.type === "radar") {
     const r = meta.data[index];
-    return '<div class="mn-chart-tooltip__label">' + r.label + '</div><div class="mn-chart-tooltip__value" style="color:var(--chart-default,#FFC72C);">' + r.value + '<span style="color:var(--chart-axis,#616161);font-size:0.6rem;">/' + meta.max + "</span></div>";
+    return '<div class="mn-chart-tooltip__label">' + esc(r.label) + '</div><div class="mn-chart-tooltip__value" style="color:var(--chart-default,#FFC72C);">' + r.value + '<span style="color:var(--chart-axis,#616161);font-size:0.6rem;">/' + meta.max + "</span></div>";
   }
   return "";
 }
@@ -4416,18 +4435,18 @@ function showTip(s, hit, clientX, clientY) {
   const col = isChild ? cPal[task.state] || cssVar("--stage-completed", "#6B7280") : pal[task.state] || cssVar("--stage-completed", "#6B7280");
   const sd = parseDate(task.start), ed = parseDate(task.end);
   const dur = sd && ed ? Math.round(daysBetween(sd, ed)) : null;
-  let h = '<div class="mn-chart-tooltip__label">' + task.title + "</div>";
-  if (task.account) h += '<div style="color:var(--chart-label,#9e9e9e);font-size:0.6rem;">' + task.account + "</div>";
+  let h = '<div class="mn-chart-tooltip__label">' + escapeHtml(String(task.title ?? "")) + "</div>";
+  if (task.account) h += '<div style="color:var(--chart-label,#9e9e9e);font-size:0.6rem;">' + escapeHtml(String(task.account)) + "</div>";
   h += '<div style="display:flex;flex-direction:column;gap:2px;margin-top:4px;">';
   h += '<span style="color:var(--chart-label,#9e9e9e);font-size:0.6rem;">Start: <b style="color:var(--grigio-alluminio,#c8c8c8);">' + fmtDateFull(sd) + "</b></span>";
   h += '<span style="color:var(--chart-label,#9e9e9e);font-size:0.6rem;">End: <b style="color:var(--grigio-alluminio,#c8c8c8);">' + fmtDateFull(ed) + "</b></span>";
   if (dur !== null) h += '<span style="color:var(--chart-label,#9e9e9e);font-size:0.6rem;">Duration: ' + dur + " days</span>";
   h += '</div><div style="display:flex;align-items:center;gap:4px;margin-top:3px;">';
   h += '<span class="mn-chart-tooltip__dot" style="background:' + col + ';"></span>';
-  h += '<span style="color:' + col + ';font-size:0.65rem;">' + (task.state || "Unknown") + "</span></div>";
+  h += '<span style="color:' + col + ';font-size:0.65rem;">' + escapeHtml(String(task.state ?? "Unknown")) + "</span></div>";
   if (task.progress !== void 0 && !isChild) h += '<div style="color:var(--chart-default,#FFC72C);font-size:0.65rem;margin-top:2px;">' + Math.round(task.progress * 100) + "% complete</div>";
-  if (isChild && task.owner) h += '<div style="color:var(--chart-label,#9e9e9e);font-size:0.6rem;margin-top:2px;">Owner: ' + task.owner + "</div>";
-  if (isChild && task.type) h += '<div style="color:var(--chart-label,#9e9e9e);font-size:0.6rem;">Type: ' + task.type + "</div>";
+  if (isChild && task.owner) h += '<div style="color:var(--chart-label,#9e9e9e);font-size:0.6rem;margin-top:2px;">Owner: ' + escapeHtml(String(task.owner)) + "</div>";
+  if (isChild && task.type) h += '<div style="color:var(--chart-label,#9e9e9e);font-size:0.6rem;">Type: ' + escapeHtml(String(task.type)) + "</div>";
   const tip = s.tip;
   tip.innerHTML = h;
   tip.classList.add("mn-chart-tooltip--visible");
@@ -5076,7 +5095,7 @@ function mapView(container, opts) {
     tip.classList.remove("mn-chart-tooltip--visible");
   });
   function showTip4(m) {
-    tip.innerHTML = '<div class="mn-chart-tooltip__label">' + (m.label || "Marker") + "</div>" + (m.detail ? '<div style="color:var(--chart-label,#9e9e9e);font-size:0.6rem;">' + m.detail + "</div>" : "");
+    tip.innerHTML = '<div class="mn-chart-tooltip__label">' + escapeHtml(String(m.label || "Marker")) + "</div>" + (m.detail ? '<div style="color:var(--chart-label,#9e9e9e);font-size:0.6rem;">' + escapeHtml(String(m.detail)) + "</div>" : "");
     tip.classList.add("mn-chart-tooltip--visible");
     const tipW = tip.offsetWidth || 120;
     let left = m._x - tipW / 2;
@@ -5124,6 +5143,142 @@ function mapView(container, opts) {
     destroy: () => {
       container.innerHTML = "";
     }
+  };
+}
+
+// src/ts/map-mapbox.ts
+var DARK_STYLE = "mapbox://styles/mapbox/dark-v11";
+var DEFAULT_STAGES = [
+  { id: "prospect", label: "Prospect", color: "#4EA8DE" },
+  { id: "exploration", label: "Exploration", color: "#FFC72C" },
+  { id: "sprint", label: "Sprint", color: "#00A651" },
+  { id: "wrap-up", label: "Wrap-up", color: "#D4622B" },
+  { id: "completed", label: "Completed", color: "#8B5CF6" },
+  { id: "on-hold", label: "On Hold", color: "#DC0000" }
+];
+function getMapboxGL() {
+  if (typeof mapboxgl !== "undefined") return mapboxgl;
+  if (typeof window !== "undefined" && window.mapboxgl) return window.mapboxgl;
+  return null;
+}
+function mapboxView(container, opts) {
+  const target = typeof container === "string" ? document.querySelector(container) : container;
+  if (!target) return null;
+  const host = target;
+  const root = target;
+  const mb = getMapboxGL();
+  if (!mb) {
+    host.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:200px;color:var(--text-dim,#666);font-size:0.8rem">mapbox-gl not loaded. Add &lt;script src="mapbox-gl.js"&gt; to use this component.</div>';
+    return null;
+  }
+  const o = {
+    accessToken: "",
+    style: DARK_STYLE,
+    center: [12, 42.5],
+    zoom: 3,
+    projection: "globe",
+    markers: [],
+    clusterRadius: 50,
+    clusterMaxZoom: 14,
+    showLegend: true,
+    choropleth: null,
+    ...opts,
+    stages: opts?.stages ?? DEFAULT_STAGES
+  };
+  if (o.accessToken) mb.accessToken = o.accessToken;
+  host.innerHTML = "";
+  const mapDiv = document.createElement("div");
+  mapDiv.style.cssText = "width:100%;height:100%;min-height:300px";
+  host.appendChild(mapDiv);
+  const map = new mb.Map({
+    container: mapDiv,
+    style: o.style,
+    center: o.center,
+    zoom: o.zoom,
+    projection: o.projection,
+    attributionControl: false
+  });
+  map.addControl(new mb.NavigationControl({ showCompass: true }), "top-right");
+  map.addControl(new mb.AttributionControl({ compact: true }));
+  const stageColors = {};
+  o.stages.forEach((s) => {
+    stageColors[s.id] = s.color;
+  });
+  function markerColor(m) {
+    if (m.color) return m.color;
+    if (m.stage && stageColors[m.stage]) return stageColors[m.stage];
+    return "#FFC72C";
+  }
+  let markerInstances = [];
+  function renderMarkers(markers) {
+    markerInstances.forEach((m) => m.remove());
+    markerInstances = [];
+    markers.forEach((m) => {
+      const el4 = document.createElement("div");
+      el4.className = "mn-mapbox-marker";
+      const color = markerColor(m);
+      el4.style.cssText = `width:14px;height:14px;border-radius:50%;background:${color};border:2px solid rgba(255,255,255,0.8);box-shadow:0 0 8px ${color}80;cursor:pointer;transition:transform 0.15s`;
+      if (m.count && m.count > 1) {
+        el4.style.cssText += ";width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:700;color:#000";
+        el4.textContent = String(m.count);
+      }
+      el4.addEventListener("mouseenter", () => {
+        el4.style.transform = "scale(1.4)";
+      });
+      el4.addEventListener("mouseleave", () => {
+        el4.style.transform = "";
+      });
+      const popup = new mb.Popup({ offset: 20, closeButton: false, className: "mn-mapbox-popup" }).setHTML(`<div style="font-weight:600;margin-bottom:2px">${m.label}</div>${m.detail ? `<div style="font-size:0.75rem;opacity:0.7">${m.detail}</div>` : ""}`);
+      const marker = new mb.Marker({ element: el4 }).setLngLat([m.lon, m.lat]).setPopup(popup).addTo(map);
+      if (o.onClick) {
+        el4.addEventListener("click", () => o.onClick(m));
+      }
+      markerInstances.push(marker);
+    });
+  }
+  function renderLegend2() {
+    if (!o.showLegend || !o.stages.length) return;
+    const legend = document.createElement("div");
+    legend.className = "mn-mapbox-legend";
+    legend.style.cssText = "position:absolute;bottom:8px;left:8px;display:flex;gap:10px;padding:6px 10px;background:rgba(0,0,0,0.7);border-radius:6px;font-size:0.65rem;z-index:1";
+    o.stages.forEach((s) => {
+      legend.innerHTML += `<span style="display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:${s.color};display:inline-block"></span><span style="color:var(--text-dim,#999)">${s.label}</span></span>`;
+    });
+    root.style.position = "relative";
+    root.appendChild(legend);
+  }
+  map.on("load", () => {
+    renderMarkers(o.markers);
+    renderLegend2();
+    if (o.choropleth) {
+      const ch = o.choropleth;
+      map.addSource("choropleth", { type: "vector", url: ch.sourceUrl });
+      map.addLayer({
+        id: "choropleth-fill",
+        type: "fill",
+        source: "choropleth",
+        "source-layer": ch.sourceLayer,
+        paint: {
+          "fill-color": ["interpolate", ["linear"], ["get", ch.property], ...ch.stops.flat()],
+          "fill-opacity": 0.5
+        }
+      }, "waterway-label");
+    }
+  });
+  return {
+    setMarkers: (markers) => {
+      o.markers = markers;
+      renderMarkers(markers);
+    },
+    flyTo: (lat, lon, zoom) => map.flyTo({ center: [lon, lat], zoom: zoom ?? map.getZoom(), duration: 1500 }),
+    setStyle: (style) => map.setStyle(style),
+    resize: () => map.resize(),
+    destroy: () => {
+      markerInstances.forEach((m) => m.remove());
+      map.remove();
+      root.innerHTML = "";
+    },
+    getMap: () => map
   };
 }
 
@@ -9025,6 +9180,54 @@ function attachEvents(canvas, tipEls, state, callbacks) {
   };
 }
 
+// src/ts/grid-layout.ts
+var TEMPLATES = [
+  "overview-4col",
+  "sidebar-main",
+  "triple-equal",
+  "dashboard-kpi",
+  "focus-detail",
+  "masonry-auto"
+];
+var CLASS_PREFIX = "mn-grid-template--";
+function gridLayout(container, template = "masonry-auto", options) {
+  const target = typeof container === "string" ? document.querySelector(container) : container;
+  if (!target) return null;
+  const host = target;
+  const opts = { gap: "", padding: "", animate: true, ...options };
+  let current = template;
+  host.classList.add("mn-grid-template");
+  if (opts.gap) host.style.gap = opts.gap;
+  if (opts.padding) host.style.padding = opts.padding;
+  function applyTemplate(name) {
+    TEMPLATES.forEach((item) => host.classList.remove(CLASS_PREFIX + item));
+    host.classList.add(CLASS_PREFIX + name);
+    current = name;
+    if (opts.animate) {
+      const { children } = host;
+      for (let index = 0; index < children.length; index += 1) {
+        const child = children[index];
+        child.style.opacity = "0";
+        child.style.transform = "translateY(8px)";
+        setTimeout(() => {
+          child.style.transition = "opacity 0.3s ease, transform 0.3s ease";
+          child.style.opacity = "1";
+          child.style.transform = "none";
+        }, index * 50);
+      }
+    }
+  }
+  applyTemplate(current);
+  return {
+    setTemplate: applyTemplate,
+    getTemplate: () => current,
+    destroy: () => {
+      host.classList.remove("mn-grid-template");
+      TEMPLATES.forEach((item) => host.classList.remove(CLASS_PREFIX + item));
+    }
+  };
+}
+
 // src/ts/maranello-exports.ts
 function registerExtras(M2) {
   M2.SPEEDO_FONT = SPEEDO_FONT;
@@ -9080,6 +9283,54 @@ function registerExtras(M2) {
 }
 
 // src/ts/maranello.ts
+function aiChat(container, opts) {
+  const full = {
+    onSend: opts?.onSend ?? null,
+    onQuickAction: opts?.onQuickAction ?? null,
+    quickActions: opts?.quickActions ?? [],
+    placeholder: opts?.placeholder ?? "Type a message\u2026",
+    title: opts?.title ?? "AI Assistant",
+    welcomeMessage: opts?.welcomeMessage ?? null,
+    avatar: opts?.avatar ?? null,
+    agents: opts?.agents ?? [],
+    activeAgent: opts?.activeAgent ?? null,
+    onAgentChange: opts?.onAgentChange ?? (() => {
+    }),
+    onVoice: opts?.onVoice ?? (() => {
+    })
+  };
+  const els = buildUI(container, full);
+  initMessages(els.state, els, full);
+  const { state, fab, panel, closeBtn } = els;
+  function open() {
+    panel.classList.add("mn-chat-panel--open");
+    state.isOpen = true;
+  }
+  function close() {
+    panel.classList.remove("mn-chat-panel--open");
+    state.isOpen = false;
+  }
+  function toggle() {
+    state.isOpen ? close() : open();
+  }
+  fab.addEventListener("click", toggle);
+  closeBtn.addEventListener("click", close);
+  return {
+    open,
+    close,
+    toggle,
+    isOpen: () => state.isOpen,
+    addMessage: (role, content) => state.addMessage(role, content),
+    setTyping: (show) => state.setTyping(show),
+    clear: () => state.clear(),
+    showPulse: () => {
+      els.pulse.classList.add("mn-chat-fab__pulse--active");
+    },
+    destroy: () => {
+      container.innerHTML = "";
+    }
+  };
+}
 var M = window.Maranello = window.Maranello || {};
 M.VERSION = VERSION;
 M.emit = emit2;
@@ -9128,12 +9379,14 @@ M.gantt = gantt;
 M.dataTable = dataTable;
 M.datePicker = datePicker;
 M.mapView = mapView;
+M.mapboxView = mapboxView;
 M.funnel = funnel;
-M.aiChat = buildUI;
+M.aiChat = aiChat;
 M.flipCounter = flipCounter;
 M.progressRing = progressRing;
 M.hBarChart = hBarChart;
 M.okrPanel = okrPanel;
+M.gridLayout = gridLayout;
 M.chartInteract = chartInteract;
 M.sparklineInteract = sparklineInteract;
 M.openDetailPanel = openDetailPanel;

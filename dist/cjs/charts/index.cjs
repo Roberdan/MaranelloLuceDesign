@@ -45,6 +45,9 @@ module.exports = __toCommonJS(index_exports);
 function cssVar(name, fallback = "") {
   return getComputedStyle(document.documentElement).getPropertyValue(name).trim() || fallback;
 }
+function escapeHtml(str) {
+  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
 
 // src/ts/charts-helpers.ts
 var dpr = window.devicePixelRatio || 1;
@@ -919,13 +922,14 @@ function positionTooltip(tip, x, y) {
   tip.style.top = top + "px";
 }
 function buildTooltipHTML(meta, index, series) {
+  const esc = escapeHtml;
   if (meta.type === "area" || meta.type === "line") {
     const datasets = meta.datasets;
-    let html = '<div class="mn-chart-tooltip__label">' + (meta.labels && meta.labels[index] ? meta.labels[index] : "Point " + (index + 1)) + "</div>";
+    let html = '<div class="mn-chart-tooltip__label">' + esc(meta.labels && meta.labels[index] ? meta.labels[index] : "Point " + (index + 1)) + "</div>";
     datasets.forEach((ds, i) => {
       if (index < ds.data.length) {
         const color = ds.color || series[i % series.length];
-        html += '<div style="display:flex;align-items:center;gap:6px;margin-top:3px;"><span class="mn-chart-tooltip__dot" style="background:' + color + ';"></span><span style="color:var(--chart-label,#9e9e9e);font-size:0.65rem;">' + (ds.label || "Series " + (i + 1)) + '</span><span class="mn-chart-tooltip__value" style="margin-left:auto;color:' + color + ';">' + ds.data[index].toFixed(1) + "</span></div>";
+        html += '<div style="display:flex;align-items:center;gap:6px;margin-top:3px;"><span class="mn-chart-tooltip__dot" style="background:' + color + ';"></span><span style="color:var(--chart-label,#9e9e9e);font-size:0.65rem;">' + esc(ds.label || "Series " + (i + 1)) + '</span><span class="mn-chart-tooltip__value" style="margin-left:auto;color:' + color + ';">' + ds.data[index].toFixed(1) + "</span></div>";
       }
     });
     return html;
@@ -933,19 +937,19 @@ function buildTooltipHTML(meta, index, series) {
   if (meta.type === "bar") {
     const d = meta.data[index];
     const color = d.color || series[index % series.length];
-    return '<div class="mn-chart-tooltip__label">' + (d.label || "Bar " + (index + 1)) + '</div><div class="mn-chart-tooltip__value" style="color:' + color + ';">' + d.value + "</div>";
+    return '<div class="mn-chart-tooltip__label">' + esc(d.label || "Bar " + (index + 1)) + '</div><div class="mn-chart-tooltip__value" style="color:' + color + ';">' + d.value + "</div>";
   }
   if (meta.type === "donut") {
     const seg = meta.segments[index];
-    return '<div style="display:flex;align-items:center;gap:6px;"><span class="mn-chart-tooltip__dot" style="background:' + seg.color + ';"></span><span class="mn-chart-tooltip__value">' + seg.value + "</span></div>" + (seg.label ? '<div class="mn-chart-tooltip__label">' + seg.label + "</div>" : "") + '<div style="color:var(--chart-label,#9e9e9e);font-size:0.6rem;">' + seg.pct + "%</div>";
+    return '<div style="display:flex;align-items:center;gap:6px;"><span class="mn-chart-tooltip__dot" style="background:' + seg.color + ';"></span><span class="mn-chart-tooltip__value">' + seg.value + "</span></div>" + (seg.label ? '<div class="mn-chart-tooltip__label">' + esc(seg.label) + "</div>" : "") + '<div style="color:var(--chart-label,#9e9e9e);font-size:0.6rem;">' + seg.pct + "%</div>";
   }
   if (meta.type === "bubble") {
     const b = meta.data[index];
-    return '<div class="mn-chart-tooltip__label">' + (b.label || "Point") + '</div><div style="font-size:0.65rem;color:var(--chart-label,#9e9e9e);">x: ' + b.x + " \xB7 y: " + b.y + (b.z ? " \xB7 size: " + b.z : "") + "</div>";
+    return '<div class="mn-chart-tooltip__label">' + esc(b.label || "Point") + '</div><div style="font-size:0.65rem;color:var(--chart-label,#9e9e9e);">x: ' + b.x + " \xB7 y: " + b.y + (b.z ? " \xB7 size: " + b.z : "") + "</div>";
   }
   if (meta.type === "radar") {
     const r = meta.data[index];
-    return '<div class="mn-chart-tooltip__label">' + r.label + '</div><div class="mn-chart-tooltip__value" style="color:var(--chart-default,#FFC72C);">' + r.value + '<span style="color:var(--chart-axis,#616161);font-size:0.6rem;">/' + meta.max + "</span></div>";
+    return '<div class="mn-chart-tooltip__label">' + esc(r.label) + '</div><div class="mn-chart-tooltip__value" style="color:var(--chart-default,#FFC72C);">' + r.value + '<span style="color:var(--chart-axis,#616161);font-size:0.6rem;">/' + meta.max + "</span></div>";
   }
   return "";
 }

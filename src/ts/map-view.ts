@@ -3,6 +3,7 @@
  * Canvas-based world map with clustered markers, tooltips, and theme awareness.
  */
 import type { MapMarker, MapViewOptions, MapViewController } from './core/types';
+import { escapeHtml } from './core/utils';
 import {
   DPR, CONTINENTS, detectTheme, getMarkerColors,
   project, getVisibleProjected, clusterMarkers,
@@ -114,8 +115,8 @@ export function mapView(
   });
 
   function showTip(m: RenderedMarker): void {
-    tip.innerHTML = '<div class="mn-chart-tooltip__label">' + (m.label || 'Marker') + '</div>' +
-      (m.detail ? '<div style="color:var(--chart-label,#9e9e9e);font-size:0.6rem;">' + m.detail + '</div>' : '');
+    tip.innerHTML = '<div class="mn-chart-tooltip__label">' + escapeHtml(String(m.label || 'Marker')) + '</div>' +
+      (m.detail ? '<div style="color:var(--chart-label,#9e9e9e);font-size:0.6rem;">' + escapeHtml(String(m.detail)) + '</div>' : '');
     tip.classList.add('mn-chart-tooltip--visible');
     const tipW = tip.offsetWidth || 120;
     let left = m._x - tipW / 2;

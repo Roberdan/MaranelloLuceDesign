@@ -137,7 +137,13 @@ export function initMessages(state: ChatUIState, els: ChatUIElements, opts: Requ
       const card = el('button', 'mn-chat-agent-card', { type: 'button' });
       if (agent.id === state.activeAgentId) card.classList.add('mn-chat-agent-card--active');
       const iconEl = el('span', 'mn-chat-agent-card__icon');
-      if (agent.icon && /<svg/i.test(agent.icon)) iconEl.innerHTML = agent.icon;
+      if (agent.icon && /<svg/i.test(agent.icon)) {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(agent.icon, 'image/svg+xml');
+        const svg = doc.querySelector('svg');
+        if (svg && !doc.querySelector('parsererror')) iconEl.appendChild(svg);
+        else iconEl.textContent = '\u{1F916}';
+      }
       else iconEl.textContent = agent.icon ?? '\u{1F916}';
       card.appendChild(iconEl);
       card.appendChild(el('span', 'mn-chat-agent-card__label', { text: agent.label ?? agent.id }));

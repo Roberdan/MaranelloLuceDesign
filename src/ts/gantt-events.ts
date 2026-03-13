@@ -3,7 +3,7 @@
  * Mouse, keyboard, wheel, resize, and theme-change events for the gantt chart.
  */
 import type { GanttRow } from './core/types';
-import { cssVar } from './core/utils';
+import { cssVar, escapeHtml } from './core/utils';
 import {
   parseDate, daysBetween, fmtDateFull,
   buildPalette, buildChildPalette, buildSeverity,
@@ -57,18 +57,18 @@ function showTip(s: GanttState, hit: Record<string, unknown>, clientX: number, c
   const col = isChild ? (cPal[task.state as string] || cssVar('--stage-completed', '#6B7280')) : (pal[task.state as string] || cssVar('--stage-completed', '#6B7280'));
   const sd = parseDate(task.start), ed = parseDate(task.end);
   const dur = (sd && ed) ? Math.round(daysBetween(sd, ed)) : null;
-  let h = '<div class="mn-chart-tooltip__label">' + task.title + '</div>';
-  if (task.account) h += '<div style="color:var(--chart-label,#9e9e9e);font-size:0.6rem;">' + task.account + '</div>';
+  let h = '<div class="mn-chart-tooltip__label">' + escapeHtml(String(task.title ?? '')) + '</div>';
+  if (task.account) h += '<div style="color:var(--chart-label,#9e9e9e);font-size:0.6rem;">' + escapeHtml(String(task.account)) + '</div>';
   h += '<div style="display:flex;flex-direction:column;gap:2px;margin-top:4px;">';
   h += '<span style="color:var(--chart-label,#9e9e9e);font-size:0.6rem;">Start: <b style="color:var(--grigio-alluminio,#c8c8c8);">' + fmtDateFull(sd) + '</b></span>';
   h += '<span style="color:var(--chart-label,#9e9e9e);font-size:0.6rem;">End: <b style="color:var(--grigio-alluminio,#c8c8c8);">' + fmtDateFull(ed) + '</b></span>';
   if (dur !== null) h += '<span style="color:var(--chart-label,#9e9e9e);font-size:0.6rem;">Duration: ' + dur + ' days</span>';
   h += '</div><div style="display:flex;align-items:center;gap:4px;margin-top:3px;">';
   h += '<span class="mn-chart-tooltip__dot" style="background:' + col + ';"></span>';
-  h += '<span style="color:' + col + ';font-size:0.65rem;">' + (task.state || 'Unknown') + '</span></div>';
+  h += '<span style="color:' + col + ';font-size:0.65rem;">' + escapeHtml(String(task.state ?? 'Unknown')) + '</span></div>';
   if (task.progress !== undefined && !isChild) h += '<div style="color:var(--chart-default,#FFC72C);font-size:0.65rem;margin-top:2px;">' + Math.round((task.progress as number) * 100) + '% complete</div>';
-  if (isChild && task.owner) h += '<div style="color:var(--chart-label,#9e9e9e);font-size:0.6rem;margin-top:2px;">Owner: ' + task.owner + '</div>';
-  if (isChild && task.type) h += '<div style="color:var(--chart-label,#9e9e9e);font-size:0.6rem;">Type: ' + task.type + '</div>';
+  if (isChild && task.owner) h += '<div style="color:var(--chart-label,#9e9e9e);font-size:0.6rem;margin-top:2px;">Owner: ' + escapeHtml(String(task.owner)) + '</div>';
+  if (isChild && task.type) h += '<div style="color:var(--chart-label,#9e9e9e);font-size:0.6rem;">Type: ' + escapeHtml(String(task.type)) + '</div>';
   const tip = s.tip as HTMLDivElement;
   tip.innerHTML = h; tip.classList.add('mn-chart-tooltip--visible'); tip.setAttribute('aria-hidden', 'true');
   let left = clientX + 12, top = clientY - tip.offsetHeight - 12;

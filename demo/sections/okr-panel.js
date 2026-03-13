@@ -15,10 +15,7 @@ export function createOkrSection() {
       </p>
 
       <div class="mn-card-dark" style="padding:var(--space-xl);margin-bottom:var(--space-2xl)">
-        <mn-okr
-          objectives='${okrData()}'
-          options='${okrOptions()}'
-        ></mn-okr>
+        <div id="okr-panel-root"></div>
       </div>
 
       <h3 class="mn-title-sub" style="text-align:center;margin-bottom:var(--space-xl)">
@@ -38,49 +35,53 @@ export function createOkrSection() {
       </div>
     </div>
   `;
+
+  requestAnimationFrame(() => initOkr(section));
   return section;
 }
 
-function esc(str) { return str.replace(/'/g, '&#39;'); }
+function initOkr(section) {
+  const M = window.Maranello;
+  if (!M?.okrPanel) return;
+  const root = section.querySelector('#okr-panel-root');
+  if (!root) return;
 
-function okrData() {
-  const objectives = [
-    {
-      id: 'o1',
-      title: 'Expand Therapy Access in Northern Italy',
-      progress: 62,
-      keyResults: [
-        { id: 'kr1', title: 'Open centers in Torino and Bologna', progress: 75, target: 2, current: 1.5 },
-        { id: 'kr2', title: 'Enroll 500 children in therapy programs', progress: 68, target: 500, current: 340 },
-        { id: 'kr3', title: 'Achieve 90% family satisfaction score', progress: 94, target: 90, current: 85 },
-        { id: 'kr4', title: 'Reduce wait time to under 2 weeks', progress: 40, target: 14, current: 22 },
-      ],
-    },
-    {
-      id: 'o2',
-      title: 'Strengthen Research Partnerships',
-      progress: 55,
-      keyResults: [
-        { id: 'kr5', title: 'Publish 4 peer-reviewed papers', progress: 50, target: 4, current: 2 },
-        { id: 'kr6', title: 'Secure 3 university collaborations', progress: 67, target: 3, current: 2 },
-        { id: 'kr7', title: 'Launch Brain Research Initiative pilot', progress: 30, target: 1, current: 0.3 },
-      ],
-    },
-    {
-      id: 'o3',
-      title: 'Grow Volunteer Network',
-      progress: 78,
-      keyResults: [
-        { id: 'kr8', title: 'Recruit 100 new volunteers', progress: 85, target: 100, current: 85 },
-        { id: 'kr9', title: 'Achieve 80% volunteer retention rate', progress: 72, target: 80, current: 58 },
-      ],
-    },
-  ];
-  return esc(JSON.stringify(objectives));
-}
-
-function okrOptions() {
-  return esc(JSON.stringify({ title: 'Q1 2026 Objectives', period: 'Jan - Mar 2026' }));
+  M.okrPanel(root, {
+    title: 'Q1 2026 Objectives',
+    period: 'Jan — Mar 2026',
+    objectives: [
+      {
+        title: 'Expand Therapy Access in Northern Italy',
+        progress: 62,
+        status: 'at-risk',
+        keyResults: [
+          { title: 'Open centers in Torino and Bologna', current: 1.5, target: 2 },
+          { title: 'Enroll 500 children in therapy programs', current: 340, target: 500 },
+          { title: 'Achieve 90% family satisfaction score', current: 85, target: 90, unit: '%' },
+          { title: 'Reduce wait time to under 2 weeks', current: 22, target: 14 },
+        ],
+      },
+      {
+        title: 'Strengthen Research Partnerships',
+        progress: 55,
+        status: 'at-risk',
+        keyResults: [
+          { title: 'Publish 4 peer-reviewed papers', current: 2, target: 4 },
+          { title: 'Secure 3 university collaborations', current: 2, target: 3 },
+          { title: 'Launch Brain Research Initiative pilot', current: 0.3, target: 1 },
+        ],
+      },
+      {
+        title: 'Grow Volunteer Network',
+        progress: 78,
+        status: 'on-track',
+        keyResults: [
+          { title: 'Recruit 100 new volunteers', current: 85, target: 100 },
+          { title: 'Achieve 80% volunteer retention rate', current: 58, target: 80, unit: '%' },
+        ],
+      },
+    ],
+  });
 }
 
 function regionCard(region, keyResults) {

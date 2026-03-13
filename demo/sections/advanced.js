@@ -160,9 +160,52 @@ export function createAdvancedSection() {
         <span class="mn-micro mn-text-muted" style="margin-left:var(--space-md)">or press ⌘K / Ctrl+K</span>
       </div>
 
+      <!-- Command Palette DOM (hidden until opened) -->
+      <div id="demo-cmd-palette" class="mn-command-palette" style="position:fixed;inset:0;z-index:9000;display:none;align-items:flex-start;justify-content:center;padding-top:20vh;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px)">
+        <div style="background:var(--nero-soft,#1a1a1a);border:1px solid var(--grigio-scuro,#333);border-radius:12px;width:480px;max-width:90vw;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.5)">
+          <input class="mn-command-palette__input" placeholder="Search commands…" style="width:100%;padding:14px 16px;background:transparent;border:none;border-bottom:1px solid var(--grigio-scuro,#333);color:var(--grigio-alluminio,#ccc);font-size:0.95rem;outline:none">
+          <div style="max-height:240px;overflow-y:auto;padding:8px">
+            <div class="mn-command-palette__item" style="padding:10px 16px;border-radius:6px;cursor:pointer;display:flex;align-items:center;gap:8px" data-action="theme-nero">
+              <span class="mn-command-palette__item-text">🌙 Switch to Nero theme</span>
+            </div>
+            <div class="mn-command-palette__item" style="padding:10px 16px;border-radius:6px;cursor:pointer;display:flex;align-items:center;gap:8px" data-action="theme-avorio">
+              <span class="mn-command-palette__item-text">☀️ Switch to Avorio theme</span>
+            </div>
+            <div class="mn-command-palette__item" style="padding:10px 16px;border-radius:6px;cursor:pointer;display:flex;align-items:center;gap:8px" data-action="go-charts">
+              <span class="mn-command-palette__item-text">📊 Go to Charts</span>
+            </div>
+            <div class="mn-command-palette__item" style="padding:10px 16px;border-radius:6px;cursor:pointer;display:flex;align-items:center;gap:8px" data-action="go-gauges">
+              <span class="mn-command-palette__item-text">🔧 Go to Gauges</span>
+            </div>
+            <div class="mn-command-palette__item" style="padding:10px 16px;border-radius:6px;cursor:pointer;display:flex;align-items:center;gap:8px" data-action="go-controls">
+              <span class="mn-command-palette__item-text">🎛️ Go to Controls</span>
+            </div>
+            <div class="mn-command-palette__item" style="padding:10px 16px;border-radius:6px;cursor:pointer;display:flex;align-items:center;gap:8px" data-action="go-forms">
+              <span class="mn-command-palette__item-text">📝 Go to Forms</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="demo-section-label">Drawer Panel</div>
       <div class="mn-mb-2xl">
         <button class="mn-machined-btn" id="adv-drawer-open"><span class="mn-machined-btn__indicator"></span>Open Drawer</button>
+      </div>
+
+      <!-- Drawer DOM -->
+      <div class="mn-drawer__backdrop" id="adv-drawer-backdrop" style="position:fixed;inset:0;z-index:8000;background:rgba(0,0,0,0.5);opacity:0;pointer-events:none;transition:opacity 0.3s"></div>
+      <div class="mn-drawer" id="adv-drawer" style="position:fixed;top:0;right:-360px;width:360px;height:100%;z-index:8001;background:var(--nero-soft,#1a1a1a);border-left:1px solid var(--grigio-scuro,#333);box-shadow:-10px 0 30px rgba(0,0,0,0.4);transition:right 0.3s ease;overflow-y:auto;padding:var(--space-xl)">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-xl)">
+          <span class="mn-label" style="color:var(--mn-accent)">Detail Drawer</span>
+          <button class="mn-machined-btn mn-machined-btn--off" id="adv-drawer-close" style="padding:4px 8px;font-size:0.7rem">✕</button>
+        </div>
+        <p class="mn-body" style="margin-bottom:var(--space-lg)">Drawer panel for side content. Click × or outside to close.</p>
+        <div class="mn-card-dark" style="padding:var(--space-lg);margin-bottom:var(--space-md)">
+          <div class="mn-label" style="margin-bottom:var(--space-sm)">Quick Stats</div>
+          <div class="mn-micro" style="color:var(--grigio-medio)">Active programs: 47</div>
+          <div class="mn-micro" style="color:var(--grigio-medio)">Children enrolled: 340</div>
+          <div class="mn-micro" style="color:var(--grigio-medio)">Quality score: 92%</div>
+        </div>
       </div>
     </div>
   `;
@@ -206,23 +249,51 @@ function initAdvanced(section) {
     });
   }
 
-  // Command Palette
+  // Command Palette — use DOM element + commandPalette(id) API
+  let cmdCtrl = null;
   if (M?.commandPalette) {
-    M.commandPalette({
-      commands: [
-        { id: 'theme-nero', label: 'Switch to Nero theme', action: () => M.setTheme?.('nero') },
-        { id: 'theme-avorio', label: 'Switch to Avorio theme', action: () => M.setTheme?.('avorio') },
-        { id: 'go-charts', label: 'Go to Charts', action: () => document.querySelector('#charts')?.scrollIntoView({ behavior: 'smooth' }) },
-        { id: 'go-gauges', label: 'Go to Gauges', action: () => document.querySelector('#gauges')?.scrollIntoView({ behavior: 'smooth' }) },
-      ],
-    });
-    section.querySelector('#adv-cmd-palette')?.addEventListener('click', () => {
-      document.querySelector('.mn-command-palette')?.classList.add('mn-command-palette--open');
-    });
+    const paletteEl = section.querySelector('#demo-cmd-palette');
+    if (paletteEl) {
+      cmdCtrl = M.commandPalette('demo-cmd-palette');
+      // Override open/close to toggle display
+      const origOpen = cmdCtrl.open;
+      const origClose = cmdCtrl.close;
+      cmdCtrl.open = () => { paletteEl.style.display = 'flex'; origOpen(); };
+      cmdCtrl.close = () => { origClose(); paletteEl.style.display = 'none'; };
+      // Close on backdrop click
+      paletteEl.addEventListener('click', (e) => { if (e.target === paletteEl) cmdCtrl.close(); });
+      // Wire item actions
+      paletteEl.querySelectorAll('.mn-command-palette__item').forEach(item => {
+        item.addEventListener('click', () => {
+          const action = item.dataset.action;
+          if (action === 'theme-nero') M.setTheme?.('nero');
+          else if (action === 'theme-avorio') M.setTheme?.('avorio');
+          else if (action?.startsWith('go-')) {
+            document.querySelector('#' + action.replace('go-', ''))?.scrollIntoView({ behavior: 'smooth' });
+          }
+          cmdCtrl.close();
+        });
+        item.addEventListener('mouseenter', () => { item.style.background = 'rgba(255,199,44,0.1)'; });
+        item.addEventListener('mouseleave', () => { item.style.background = ''; });
+      });
+    }
   }
-
-  // Drawer
-  section.querySelector('#adv-drawer-open')?.addEventListener('click', () => {
-    if (M?.openDrawer) M.openDrawer({ title: 'Detail Drawer', content: '<p class="mn-body">Drawer panel for side content. Close with × or click outside.</p>' });
+  section.querySelector('#adv-cmd-palette')?.addEventListener('click', () => {
+    if (cmdCtrl) cmdCtrl.open();
   });
+
+  // Drawer — use DOM elements + manual open/close
+  const drawerEl = section.querySelector('#adv-drawer');
+  const drawerBackdrop = section.querySelector('#adv-drawer-backdrop');
+  function openDrawerPanel() {
+    if (drawerEl) drawerEl.style.right = '0';
+    if (drawerBackdrop) { drawerBackdrop.style.opacity = '1'; drawerBackdrop.style.pointerEvents = 'auto'; }
+  }
+  function closeDrawerPanel() {
+    if (drawerEl) drawerEl.style.right = '-360px';
+    if (drawerBackdrop) { drawerBackdrop.style.opacity = '0'; drawerBackdrop.style.pointerEvents = 'none'; }
+  }
+  section.querySelector('#adv-drawer-open')?.addEventListener('click', openDrawerPanel);
+  section.querySelector('#adv-drawer-close')?.addEventListener('click', closeDrawerPanel);
+  drawerBackdrop?.addEventListener('click', closeDrawerPanel);
 }

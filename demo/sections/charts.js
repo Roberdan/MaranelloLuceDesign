@@ -193,9 +193,9 @@ function initCharts(section) {
     [f1, f2, f3].forEach(f => f?.increment?.());
   });
   section.querySelector('#flip-rand')?.addEventListener('click', () => {
-    f1?.set?.(Math.floor(Math.random() * 1200));
-    f2?.set?.(Math.floor(Math.random() * 6000));
-    f3?.set?.(Math.floor(Math.random() * 100));
+    f1?.setValue?.(Math.floor(Math.random() * 1200));
+    f2?.setValue?.(Math.floor(Math.random() * 6000));
+    f3?.setValue?.(Math.floor(Math.random() * 100));
   });
 
   // Wire chart interactivity (hover tooltips + click)

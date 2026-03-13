@@ -2,7 +2,7 @@
  * Maranello Luce Design - Chart interaction (tooltips, crosshair, hover)
  * Provides chartInteract (multi-type) and sparklineInteract (overlay canvas).
  */
-import { cssVar } from './core/utils';
+import { cssVar, escapeHtml } from './core/utils';
 
 const DPR = window.devicePixelRatio || 1;
 let activeTooltip: HTMLDivElement | null = null;
@@ -32,21 +32,22 @@ interface ChartMeta {
 }
 
 function buildTooltipHTML(meta: ChartMeta, index: number, series: string[]): string {
+  const esc = escapeHtml;
   if (meta.type === 'area' || meta.type === 'line') {
     const datasets = meta.datasets as Array<{ data: number[]; color?: string; label?: string }>;
-    let html = '<div class="mn-chart-tooltip__label">' + (meta.labels && (meta.labels as string[])[index] ? (meta.labels as string[])[index] : 'Point ' + (index + 1)) + '</div>';
+    let html = '<div class="mn-chart-tooltip__label">' + esc(meta.labels && (meta.labels as string[])[index] ? (meta.labels as string[])[index] : 'Point ' + (index + 1)) + '</div>';
     datasets.forEach((ds, i) => {
       if (index < ds.data.length) {
         const color = ds.color || series[i % series.length];
-        html += '<div style="display:flex;align-items:center;gap:6px;margin-top:3px;"><span class="mn-chart-tooltip__dot" style="background:' + color + ';"></span><span style="color:var(--chart-label,#9e9e9e);font-size:0.65rem;">' + (ds.label || 'Series ' + (i + 1)) + '</span><span class="mn-chart-tooltip__value" style="margin-left:auto;color:' + color + ';">' + ds.data[index].toFixed(1) + '</span></div>';
+        html += '<div style="display:flex;align-items:center;gap:6px;margin-top:3px;"><span class="mn-chart-tooltip__dot" style="background:' + color + ';"></span><span style="color:var(--chart-label,#9e9e9e);font-size:0.65rem;">' + esc(ds.label || 'Series ' + (i + 1)) + '</span><span class="mn-chart-tooltip__value" style="margin-left:auto;color:' + color + ';">' + ds.data[index].toFixed(1) + '</span></div>';
       }
     });
     return html;
   }
-  if (meta.type === 'bar') { const d = (meta.data as Array<{ label?: string; value: number; color?: string }>)[index]; const color = d.color || series[index % series.length]; return '<div class="mn-chart-tooltip__label">' + (d.label || 'Bar ' + (index + 1)) + '</div><div class="mn-chart-tooltip__value" style="color:' + color + ';">' + d.value + '</div>'; }
-  if (meta.type === 'donut') { const seg = (meta.segments as Array<{ color: string; value: number; label?: string; pct: number }>)[index]; return '<div style="display:flex;align-items:center;gap:6px;"><span class="mn-chart-tooltip__dot" style="background:' + seg.color + ';"></span><span class="mn-chart-tooltip__value">' + seg.value + '</span></div>' + (seg.label ? '<div class="mn-chart-tooltip__label">' + seg.label + '</div>' : '') + '<div style="color:var(--chart-label,#9e9e9e);font-size:0.6rem;">' + seg.pct + '%</div>'; }
-  if (meta.type === 'bubble') { const b = (meta.data as Array<{ label?: string; x: number; y: number; z?: number }>)[index]; return '<div class="mn-chart-tooltip__label">' + (b.label || 'Point') + '</div><div style="font-size:0.65rem;color:var(--chart-label,#9e9e9e);">x: ' + b.x + ' \u00B7 y: ' + b.y + (b.z ? ' \u00B7 size: ' + b.z : '') + '</div>'; }
-  if (meta.type === 'radar') { const r = (meta.data as Array<{ label: string; value: number }>)[index]; return '<div class="mn-chart-tooltip__label">' + r.label + '</div><div class="mn-chart-tooltip__value" style="color:var(--chart-default,#FFC72C);">' + r.value + '<span style="color:var(--chart-axis,#616161);font-size:0.6rem;">/' + meta.max + '</span></div>'; }
+  if (meta.type === 'bar') { const d = (meta.data as Array<{ label?: string; value: number; color?: string }>)[index]; const color = d.color || series[index % series.length]; return '<div class="mn-chart-tooltip__label">' + esc(d.label || 'Bar ' + (index + 1)) + '</div><div class="mn-chart-tooltip__value" style="color:' + color + ';">' + d.value + '</div>'; }
+  if (meta.type === 'donut') { const seg = (meta.segments as Array<{ color: string; value: number; label?: string; pct: number }>)[index]; return '<div style="display:flex;align-items:center;gap:6px;"><span class="mn-chart-tooltip__dot" style="background:' + seg.color + ';"></span><span class="mn-chart-tooltip__value">' + seg.value + '</span></div>' + (seg.label ? '<div class="mn-chart-tooltip__label">' + esc(seg.label) + '</div>' : '') + '<div style="color:var(--chart-label,#9e9e9e);font-size:0.6rem;">' + seg.pct + '%</div>'; }
+  if (meta.type === 'bubble') { const b = (meta.data as Array<{ label?: string; x: number; y: number; z?: number }>)[index]; return '<div class="mn-chart-tooltip__label">' + esc(b.label || 'Point') + '</div><div style="font-size:0.65rem;color:var(--chart-label,#9e9e9e);">x: ' + b.x + ' \u00B7 y: ' + b.y + (b.z ? ' \u00B7 size: ' + b.z : '') + '</div>'; }
+  if (meta.type === 'radar') { const r = (meta.data as Array<{ label: string; value: number }>)[index]; return '<div class="mn-chart-tooltip__label">' + esc(r.label) + '</div><div class="mn-chart-tooltip__value" style="color:var(--chart-default,#FFC72C);">' + r.value + '<span style="color:var(--chart-axis,#616161);font-size:0.6rem;">/' + meta.max + '</span></div>'; }
   return '';
 }
 

@@ -1,11 +1,12 @@
 const _base = new URL(".", import.meta.url).href;
 async function resolveEngine() {
+  if (window.Maranello?.FerrariGauge) return window.Maranello.FerrariGauge;
   try {
     const mod = await import(new URL("../ts/gauge-engine.js", _base).href);
     if (mod?.FerrariGauge) return mod.FerrariGauge;
   } catch {
   }
-  return window.Maranello?.FerrariGauge ?? null;
+  return null;
 }
 function cssLink(path) {
   const link = document.createElement("link");

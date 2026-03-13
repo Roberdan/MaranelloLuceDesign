@@ -76,25 +76,30 @@ function initChat(M, section) {
     return;
   }
 
-  M.aiChat(container, {
-    title: 'Fightthestroke Assistant',
-    placeholder: 'Ask about programs, children, or outcomes…',
-    messages: [
-      {
-        role: 'user',
-        content: 'How many children are in the Milano program?',
+  try {
+    const ctrl = M.aiChat(container, {
+      title: 'Fightthestroke Assistant',
+      placeholder: 'Ask about programs, children, or outcomes…',
+      welcomeMessage: 'Hi! I can help you with therapy programs, children outcomes, and volunteer management.',
+      quickActions: ['Show stats', 'List programs', 'Recent outcomes'],
+      onSend(text) {
+        return 'This is a demo response. In production, this would connect to your AI backend. You asked: "' + text + '"';
       },
-      {
-        role: 'assistant',
-        content:
-          'The Milano early-intervention program currently supports 47 children aged 0–6. ' +
-          '12 joined in the last quarter, and 3 are on the waiting list.',
-      },
-    ],
-    onSend(text) {
-      console.log('[mn-chat] sent:', text);
-    },
-  });
+    });
+    // Auto-open and add demo messages
+    if (ctrl?.open) {
+      setTimeout(() => {
+        ctrl.open();
+        if (ctrl.addMessage) {
+          ctrl.addMessage('user', 'How many children are in the Milano program?');
+          ctrl.addMessage('ai', 'The Milano early-intervention program currently supports **47 children** aged 0–6. 12 joined in the last quarter, and 3 are on the waiting list.');
+        }
+      }, 300);
+    }
+  } catch (e) {
+    console.warn('[mn-chat] error:', e);
+    placeholder(container, 'AI Chat');
+  }
 }
 
 function initLogin(M, section) {
@@ -106,19 +111,25 @@ function initLogin(M, section) {
     return;
   }
 
-  M.loginScreen(container, {
-    title: 'Fightthestroke Portal',
-    subtitle: 'Sign in to manage programs',
-    logo: null,
-    providers: [
-      { name: 'Google', icon: 'google', url: '#' },
-      { name: 'Microsoft', icon: 'microsoft', url: '#' },
-      { name: 'Email / Password', icon: 'email', url: '#' },
-    ],
-    onLogin(provider) {
-      console.log('[mn-login] provider:', provider);
-    },
-  });
+  try {
+    M.loginScreen(container, {
+      appTitle: 'Fight',
+      appTitleAccent: 'Stroke',
+      subtitle: 'Therapy Management Portal',
+      version: 'v3.1.0',
+      env: 'demo',
+      buttonLabel: 'Sign in with SSO',
+      checks: [
+        { name: 'API Gateway', status: 'healthy' },
+        { name: 'Database', status: 'healthy' },
+        { name: 'ML Engine', status: 'degraded' },
+      ],
+      onLogin() { console.log('[mn-login] clicked'); },
+    });
+  } catch (e) {
+    console.warn('[mn-login] error:', e);
+    placeholder(container, 'Login Screen');
+  }
 }
 
 function initProfile(M, section) {
@@ -130,19 +141,28 @@ function initProfile(M, section) {
     return;
   }
 
-  M.profileMenu(container, {
-    name: 'Francesca Fedeli',
-    email: 'f.fedeli@fightthestroke.org',
-    avatar: null,
-    role: 'Director',
-    actions: [
-      { label: 'View Profile', icon: 'user', action: () => console.log('[mn-profile] View Profile') },
-      { label: 'Settings', icon: 'settings', action: () => console.log('[mn-profile] Settings') },
-      { label: 'Switch Theme', icon: 'theme', action: () => console.log('[mn-profile] Switch Theme') },
-      { label: 'Sign Out', icon: 'logout', action: () => console.log('[mn-profile] Sign Out') },
-    ],
-    onSignOut() {
-      console.log('[mn-profile] signed out');
-    },
-  });
+  try {
+    const trigger = document.createElement('div');
+    trigger.style.cssText = 'display:flex;align-items:center;justify-content:center;height:100%;padding:var(--space-xl)';
+    container.innerHTML = '';
+    container.appendChild(trigger);
+    M.profileMenu(trigger, {
+      name: 'Francesca Fedeli',
+      email: 'f.fedeli@fightthestroke.org',
+      avatarUrl: null,
+      sections: [
+        { items: [
+          { label: 'View Profile', action: () => console.log('[mn-profile] View Profile') },
+          { label: 'Settings', action: () => console.log('[mn-profile] Settings') },
+        ]},
+        { items: [
+          { label: 'Switch Theme', action: () => { window.Maranello?.cycleTheme?.(); } },
+          { label: 'Sign Out', action: () => console.log('[mn-profile] Sign Out') },
+        ]},
+      ],
+    });
+  } catch (e) {
+    console.warn('[mn-profile] error:', e);
+    placeholder(container, 'Profile Menu');
+  }
 }

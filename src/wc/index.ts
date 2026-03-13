@@ -4,7 +4,7 @@
  *
  * Usage:
  *   import { registerAll } from '@maranello/wc';
- *   registerAll(); // ensures all 22 WCs are loaded and registered
+ *   registerAll(); // ensures all WCs are loaded and registered
  */
 
 const WC_TAGS = [
@@ -22,6 +22,7 @@ const WC_TAGS = [
   'mn-hbar',
   'mn-login',
   'mn-map',
+  'mn-mapbox',
   'mn-modal',
   'mn-okr',
   'mn-profile',
@@ -56,6 +57,7 @@ export async function registerAll(): Promise<void> {
     import('./mn-hbar.js'),
     import('./mn-login.js'),
     import('./mn-map.js'),
+    import('./mn-mapbox.js'),
     import('./mn-modal.js'),
     import('./mn-okr.js'),
     import('./mn-profile.js'),

@@ -1,38 +1,64 @@
-# Maranello Luce Design System
+# 🏎️ Maranello Luce Design System
 
-**A Ferrari Luce-inspired design system for business dashboards and data-rich applications.**
+<p align="center">
+  <img src="docs/screenshots/hero-nero.png" alt="Maranello Luce Design — Nero Theme" width="800">
+</p>
 
-Inspired by the interior design language of the [Ferrari Luce](https://www.ferrari.com/it-IT/auto/ferrari-luce) -- warm leather tones, precise instrument typography, and cockpit-grade controls translated into CSS tokens, Web Components, and headless Canvas/SVG engines.
+<p align="center">
+  <strong>Ferrari Luce-inspired design system for business dashboards.</strong><br>
+  Warm leather tones · Cockpit-grade controls · Canvas data engines<br><br>
+  <a href="https://roberdan.github.io/MaranelloLuceDesign/demo/">▶ Live Demo</a> ·
+  <a href="#quick-start">Quick Start</a> ·
+  <a href="docs/INTEGRATION.md">Integration Guide</a> ·
+  <a href="AGENT_GUIDE.md">AI Agent Guide</a>
+</p>
 
-Part of the [Convergio](https://github.com/Roberdan/MyConvergio) project ecosystem.
+<p align="center">
+  <img src="https://img.shields.io/badge/version-3.2.0-FFC72C?style=flat-square" alt="v3.2.0">
+  <img src="https://img.shields.io/badge/license-MIT-green?style=flat-square" alt="MIT">
+  <img src="https://img.shields.io/badge/tests-198_passed-00A651?style=flat-square" alt="198 tests">
+  <img src="https://img.shields.io/badge/zero_deps-vanilla_TS-4EA8DE?style=flat-square" alt="Zero deps">
+  <img src="https://img.shields.io/badge/themes-4_(nero%2C_avorio%2C_editorial%2C_colorblind)-D4622B?style=flat-square" alt="4 themes">
+</p>
+
+---
+
+Part of the [Convergio](https://github.com/Roberdan/MyConvergio) ecosystem.
 
 ## Features
 
-- **3-layer architecture**: CSS-only primitives, Web Components, Headless JS (Canvas/SVG)
-- **CSS @layer architecture**: 11 cascade layers (`tokens` through `utilities`) for predictable specificity
-- **4 themes**: Nero (dark), Avorio (warm light), Editorial (mixed default), Colorblind (WCAG high-contrast)
-- **Dual-mode Web Components**: ESM import or CDN IIFE fallback — zero `window.Maranello` polling
-- **WCAG 2.2 AA**: keyboard navigation, contrast ratios, `prefers-color-scheme` auto-switching
-- **AI-discoverable**: `components.json` + `components-detail.json` catalogs, semantic class names
-- **Zero runtime dependencies**: pure CSS + vanilla TypeScript (optional peer dep: `mapbox-gl` for maps)
-- **Multiple output formats**: ESM, CJS, IIFE, standalone CSS
+| Layer | What | Count |
+|-------|------|-------|
+| **CSS Tokens** | Colors, spacing, typography, shadows, gradients | 422 tokens |
+| **CSS Components** | Cards, buttons, badges, tables, forms, layouts | 92 files |
+| **Web Components** | `<mn-gauge>`, `<mn-chart>`, `<mn-gantt>`, `<mn-mapbox>` + 20 more | 24 WCs |
+| **Headless JS** | Canvas charts, gauges, speedometers, maps, data tables | 87 APIs |
+| **Integration Layer** | Theme bridge, resets, utilities — drop-in for any SPA | 4 modules |
+
+- **4 themes**: Nero (dark), Avorio (warm light), Editorial (mixed), Colorblind (WCAG AA)
+- **CSS @layer cascade**: 12 layers for zero-specificity conflicts
+- **Grid templates**: 6 responsive presets (`overview-4col`, `sidebar-main`, `masonry-auto`...)
+- **Widget containers**: `mn-widget` with title bar, actions, collapse, loading states
+- **WCAG 2.2 AA**: keyboard nav, ARIA, `prefers-color-scheme` auto
+- **Zero runtime deps**: pure CSS + vanilla TypeScript
+- **AI-discoverable**: `components.json` + `AGENT_GUIDE.md` for AI agent integration
 
 ## Quick Start
 
 ### Git dependency (primary)
 
 ```bash
-npm install github:Roberdan/MaranelloLuceDesign#v3.0.0
+npm install github:Roberdan/MaranelloLuceDesign#v3.2.0
 ```
 
 ### CDN (no build step)
 
 ```html
 <!-- CSS -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v3.0.0/dist/css/index.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v3.2.0/dist/css/index.css">
 
 <!-- JS (IIFE -- attaches to window.M) -->
-<script src="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v3.0.0/dist/iife/maranello.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v3.2.0/dist/iife/maranello.min.js"></script>
 ```
 
 ### ESM import (per-component, tree-shakeable)
@@ -89,7 +115,7 @@ Key token categories: colors (nero, grigio, avorio, accento, semantic), typograp
 
 ## CSS @layer Architecture
 
-v3.0.0 wraps all 70 CSS source files in explicit `@layer` blocks. The 11 layers, in cascade order:
+v3.2.0 wraps all 70 CSS source files in explicit `@layer` blocks. The 11 layers, in cascade order:
 
 | Layer | Contents |
 |-------|----------|
@@ -148,8 +174,8 @@ Custom elements with `mn-` prefix. Work in any framework or plain HTML. v3 uses 
 **CDN mode** (all WCs via IIFE, no build step):
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v3.0.0/dist/css/index.css">
-<script src="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v3.0.0/dist/iife/maranello.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v3.2.0/dist/css/index.css">
+<script src="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v3.2.0/dist/iife/maranello.min.js"></script>
 <mn-gauge value="72" label="CPU" theme="nero"></mn-gauge>
 <mn-data-table src="/api/data" sortable paginate></mn-data-table>
 <mn-toast message="Saved" type="success" duration="3000"></mn-toast>
@@ -286,15 +312,42 @@ dist/
 
 See the [live demo](https://roberdan.github.io/MaranelloLuceDesign/) for a full component gallery.
 
+## Integration Layer (NEW in v3.2.0)
+
+Drop-in theming for any SPA. One CSS import activates the full Maranello palette:
+
+```html
+<!-- Add to your app -->
+<link rel="stylesheet" href="dist/css/integration.css">
+<body data-theme="maranello">
+```
+
+Now use semantic CSS variables everywhere:
+
+```css
+.my-card {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+.my-card:hover {
+  box-shadow: var(--shadow-elevated);
+  border-color: var(--accent);
+}
+```
+
+**Utility classes included**: `mn-panel`, `mn-badge--success`, `mn-btn-accent`, `mn-status-dot--danger`, `mn-gradient-text`, `mn-fade-in`
+
+**Grid templates**: `mn-grid-template--overview-4col`, `mn-grid-template--sidebar-main`, `mn-grid-template--masonry-auto`
+
+**Widget containers**: `mn-widget` with `mn-widget__header`, `mn-widget__body`, `mn-widget__actions`
+
 ## Preview
 
-> **[▶ Live Demo](https://roberdan.github.io/MaranelloLuceDesign/demo/)** — full interactive component catalog
+> **[▶ Live Demo](https://roberdan.github.io/MaranelloLuceDesign/demo/)** — 23 interactive sections, 87 APIs, 4 themes
 
-### Nero Theme (Dark)
-
-<p align="center">
-  <img src="docs/screenshots/hero-nero.png" alt="Hero — Nero theme" width="720">
-</p>
+<details open>
+<summary><strong>🌙 Nero Theme (Dark)</strong></summary>
 
 <p align="center">
   <img src="docs/screenshots/gauges-nero.png" alt="Ferrari Gauge Binnacle — Nero" width="720">
@@ -312,7 +365,10 @@ See the [live demo](https://roberdan.github.io/MaranelloLuceDesign/) for a full 
   <img src="docs/screenshots/cockpit-nero.png" alt="Cockpit Speedometers — Nero" width="720">
 </p>
 
-### Avorio Theme (Light)
+</details>
+
+<details>
+<summary><strong>☀️ Avorio Theme (Light)</strong></summary>
 
 <p align="center">
   <img src="docs/screenshots/hero-avorio.png" alt="Hero — Avorio theme" width="720">
@@ -322,16 +378,18 @@ See the [live demo](https://roberdan.github.io/MaranelloLuceDesign/) for a full 
   <img src="docs/screenshots/charts-avorio.png" alt="Charts — Avorio theme" width="720">
 </p>
 
-## Sponsor
+</details>
 
-This project is built with data inspired by [Fightthestroke Foundation](https://www.fightthestroke.org/) — an Italian non-profit supporting children affected by stroke through technology and therapy.
+## Sponsor ❤️
 
-**[❤️ Donate to Fightthestroke](https://www.fightthestroke.org/donorbox)**
+This project uses fictional data inspired by [**Fightthestroke Foundation**](https://www.fightthestroke.org/) — an Italian non-profit supporting children affected by stroke through technology and therapy.
+
+**[🫶 Donate to Fightthestroke](https://www.fightthestroke.org/donorbox)** — every euro funds therapy programs for children.
 
 ## Copyright
 
-(c) Roberdan 2026
+(c) Roberdan 2026 — Roberto D'Angelo
 
 ## License
 
-[MIT](LICENSE)
+[MIT](LICENSE) — Use freely in personal and commercial projects.

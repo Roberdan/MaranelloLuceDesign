@@ -61,14 +61,14 @@ export function createMapSection() {
 }
 
 const MAP_MARKERS = [
-  { lat: 45.464, lon: 9.190, label: 'Milano Center 1', status: 'active' },
-  { lat: 45.470, lon: 9.205, label: 'Milano Center 2', status: 'active' },
-  { lat: 45.458, lon: 9.175, label: 'Milano Center 3', status: 'active' },
-  { lat: 41.902, lon: 12.496, label: 'Roma Center 1', status: 'active' },
-  { lat: 41.890, lon: 12.510, label: 'Roma Center 2', status: 'active' },
-  { lat: 45.070, lon: 7.687, label: 'Torino Center', status: 'active' },
-  { lat: 43.769, lon: 11.255, label: 'Firenze Center', status: 'warning' },
-  { lat: 44.494, lon: 11.343, label: 'Bologna (Planned)', status: 'planned' },
+  { id: 'm1', lat: 45.464, lon: 9.190, label: 'Milano Center 1', detail: 'Active · 120 children', color: '#00A651' },
+  { id: 'm2', lat: 45.510, lon: 9.280, label: 'Milano Center 2', detail: 'Active · 85 children', color: '#00A651' },
+  { id: 'm3', lat: 45.420, lon: 9.120, label: 'Milano Center 3', detail: 'Active · 95 children', color: '#00A651' },
+  { id: 'r1', lat: 41.902, lon: 12.496, label: 'Roma Center 1', detail: 'Active · 110 children', color: '#00A651' },
+  { id: 'r2', lat: 41.850, lon: 12.600, label: 'Roma Center 2', detail: 'Active · 72 children', color: '#00A651' },
+  { id: 't1', lat: 45.070, lon: 7.687, label: 'Torino Center', detail: 'Active · 64 children', color: '#00A651' },
+  { id: 'f1', lat: 43.769, lon: 11.255, label: 'Firenze Center', detail: 'Warning · capacity 92%', color: '#FFC72C' },
+  { id: 'b1', lat: 44.494, lon: 11.343, label: 'Bologna (Planned)', detail: 'Opening Q3 2026', color: '#8B5CF6' },
 ];
 
 function mountMap(section) {
@@ -81,13 +81,9 @@ function mountMap(section) {
       container.innerHTML = '';
       M.mapView(container, {
         markers: MAP_MARKERS,
-        width: 800,
-        height: 400,
-        theme: 'dark',
-        zoom: 4,
-        center: [42.5, 12.0],
-        clusterRadius: 25,
-        minClusterSize: 10,
+        zoom: 6,
+        padding: 40,
+        onClick: (m) => console.log('[map] clicked:', m.label),
       });
       return;
     } catch (err) {

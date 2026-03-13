@@ -51,8 +51,20 @@ export function createControlsSection() {
 
       <div class="demo-section-label">Slider Controls</div>
       <div class="mn-flex-col mn-gap-lg mn-mb-2xl" style="max-width:420px">
-        <div id="ctrl-slider-1"></div>
-        <div id="ctrl-slider-2"></div>
+        <div>
+          <span class="mn-micro" style="color:var(--grigio-chiaro);display:block;margin-bottom:var(--space-xs)">Therapy Intensity</span>
+          <div id="ctrl-slider-1" class="mn-slider" style="height:8px;border-radius:4px;background:var(--grigio-scuro);cursor:pointer;position:relative">
+            <div class="mn-slider__track" style="position:absolute;inset:0;border-radius:4px"></div>
+          </div>
+          <div class="mn-micro" style="color:var(--grigio-medio);margin-top:var(--space-xs)"><span id="slider-1-val">72</span>%</div>
+        </div>
+        <div>
+          <span class="mn-micro" style="color:var(--grigio-chiaro);display:block;margin-bottom:var(--space-xs)">Volunteer Capacity</span>
+          <div id="ctrl-slider-2" class="mn-slider" style="height:8px;border-radius:4px;background:var(--grigio-scuro);cursor:pointer;position:relative">
+            <div class="mn-slider__track" style="position:absolute;inset:0;border-radius:4px"></div>
+          </div>
+          <div class="mn-micro" style="color:var(--grigio-medio);margin-top:var(--space-xs)"><span id="slider-2-val">45</span>%</div>
+        </div>
       </div>
 
       <div class="demo-section-label">Rotary Selectors</div>
@@ -118,11 +130,14 @@ export function createControlsSection() {
 
       <div class="demo-section-label">Drag Rotary</div>
       <div class="mn-flex-center mn-gap-2xl mn-mb-2xl">
-        <div id="ctrl-drag-rotary" class="mn-rotary" style="width:120px;height:120px">
-          <div class="mn-rotary__housing" style="width:100%;height:100%;border-radius:50%;background:var(--nero-2);border:2px solid var(--grigio-scuro);position:relative">
+        <div id="ctrl-drag-rotary" class="mn-rotary" style="width:140px">
+          <div class="mn-rotary__housing" style="width:120px;height:120px;border-radius:50%;background:var(--nero-2);border:2px solid var(--grigio-scuro);position:relative;margin:0 auto">
+            <div class="mn-rotary__dial" style="position:absolute;inset:0;border-radius:50%"></div>
             <div class="mn-rotary__pointer" style="position:absolute;top:10%;left:50%;width:2px;height:40%;background:var(--mn-accent);transform-origin:bottom center"></div>
+            <div class="mn-rotary__notches"></div>
           </div>
-          <div class="mn-rotary__label mn-micro" style="text-align:center;margin-top:var(--space-xs);color:var(--grigio-chiaro)">Drive Mode</div>
+          <div class="mn-rotary__value mn-micro" style="text-align:center;margin-top:var(--space-xs);color:var(--mn-accent);font-weight:600"></div>
+          <span class="mn-rotary__label mn-micro" style="display:block;text-align:center;margin-top:2px;color:var(--grigio-chiaro)">Drive Mode</span>
         </div>
       </div>
     </div>
@@ -138,12 +153,12 @@ function initControls(section) {
 
   if (M.initSlider) {
     M.initSlider(section.querySelector('#ctrl-slider-1'), {
-      value: 72, min: 0, max: 100, label: 'Therapy Intensity', fill: 'warm',
-      onChange: (v) => {},
+      value: 72, min: 0, max: 100, label: 'Therapy Intensity',
+      onChange: (v) => { const el = section.querySelector('#slider-1-val'); if (el) el.textContent = String(v); },
     });
     M.initSlider(section.querySelector('#ctrl-slider-2'), {
-      value: 45, min: 0, max: 100, label: 'Volunteer Capacity', fill: 'cool',
-      onChange: (v) => {},
+      value: 45, min: 0, max: 100, label: 'Volunteer Capacity',
+      onChange: (v) => { const el = section.querySelector('#slider-2-val'); if (el) el.textContent = String(v); },
     });
   }
 
@@ -185,8 +200,8 @@ function initControls(section) {
 
   if (M.initDragRotary) {
     M.initDragRotary(section.querySelector('#ctrl-drag-rotary'), {
-      positions: ['Off', 'Eco', 'Normal', 'Sport', 'Race'],
-      label: 'Drive Mode', initial: 2,
+      steps: ['Off', 'Eco', 'Normal', 'Sport', 'Race'],
+      initial: 2,
     });
   }
 

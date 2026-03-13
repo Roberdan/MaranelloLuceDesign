@@ -29,6 +29,7 @@ import { gantt } from './gantt';
 import { dataTable } from './data-table';
 import { datePicker } from './date-picker';
 import { mapView } from './map-view';
+import { mapboxView } from './map-mapbox';
 import { funnel } from './funnel';
 import { hBarChart } from './charts-hbar';
 import {
@@ -38,7 +39,45 @@ import { chartInteract, sparklineInteract } from './chart-interact';
 import { openDetailPanel, closeDetailPanel, openDrawer, closeDrawer, initOrgTree } from './controls';
 import { createDetailPanel } from './detail-panel';
 import { registerDatePicker, editors } from './detail-panel-editors';
-import { buildUI as aiChat } from './ai-chat-dom';
+import { buildUI } from './ai-chat-dom';
+import { initMessages } from './ai-chat-messages';
+import type { AIChatOptions, AIChatController } from './ai-chat-dom';
+
+function aiChat(container: HTMLElement, opts?: Partial<AIChatOptions>): AIChatController {
+  const full: Required<AIChatOptions> = {
+    onSend: opts?.onSend ?? null,
+    onQuickAction: opts?.onQuickAction ?? null,
+    quickActions: opts?.quickActions ?? [],
+    placeholder: opts?.placeholder ?? 'Type a message…',
+    title: opts?.title ?? 'AI Assistant',
+    welcomeMessage: opts?.welcomeMessage ?? null,
+    avatar: opts?.avatar ?? null,
+    agents: opts?.agents ?? [],
+    activeAgent: opts?.activeAgent ?? null,
+    onAgentChange: opts?.onAgentChange ?? (() => {}),
+    onVoice: opts?.onVoice ?? (() => {}),
+  } as Required<AIChatOptions>;
+  const els = buildUI(container, full);
+  initMessages(els.state, els, full);
+  const { state, fab, panel, closeBtn } = els;
+
+  function open() { panel.classList.add('mn-chat-panel--open'); state.isOpen = true; }
+  function close() { panel.classList.remove('mn-chat-panel--open'); state.isOpen = false; }
+  function toggle() { state.isOpen ? close() : open(); }
+
+  fab.addEventListener('click', toggle);
+  closeBtn.addEventListener('click', close);
+
+  return {
+    open, close, toggle,
+    isOpen: () => state.isOpen,
+    addMessage: (role, content) => state.addMessage!(role, content),
+    setTyping: (show) => state.setTyping!(show),
+    clear: () => state.clear!(),
+    showPulse: () => { els.pulse.classList.add('mn-chat-fab__pulse--active'); },
+    destroy: () => { container.innerHTML = ''; },
+  };
+}
 import { flipCounter } from './flip-counter';
 import { progressRing } from './progress-ring';
 import { cruiseLever, toggleLever } from './controls-ferrari';
@@ -50,6 +89,7 @@ import { okrPanel } from './okr-panel';
 import { emit, on, off, bind, autoBind, onDrillDown } from './data-binding-events';
 import { updateGauge, bindChart, autoBindSliders, bindControl } from './data-binding-ui';
 import { initGauges, initScrollReveal, initNavTracking, relativeLuminance, autoContrast } from './observers';
+import { gridLayout } from './grid-layout';
 import { registerExtras } from './maranello-exports';
 
 declare global {
@@ -120,12 +160,14 @@ M.gantt = gantt;
 M.dataTable = dataTable;
 M.datePicker = datePicker;
 M.mapView = mapView;
+M.mapboxView = mapboxView;
 M.funnel = funnel;
 M.aiChat = aiChat;
 M.flipCounter = flipCounter;
 M.progressRing = progressRing;
 M.hBarChart = hBarChart;
 M.okrPanel = okrPanel;
+M.gridLayout = gridLayout;
 M.chartInteract = chartInteract;
 M.sparklineInteract = sparklineInteract;
 

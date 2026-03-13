@@ -133,11 +133,11 @@ function hbarRows() {
 }
 
 const FUNNEL_STAGES = [
-  { label: 'Prospect', count: 47, color: '#4EA8DE', pct: 100 },
-  { label: 'Exploration', count: 32, color: '#FFC72C', pct: 68 },
-  { label: 'Sprint', count: 21, color: '#00A651', pct: 45 },
-  { label: 'Wrap-Up', count: 12, color: '#D4622B', pct: 26 },
-  { label: 'Completed', count: 6, color: '#8B5CF6', pct: 13 },
+  { label: 'Prospect', count: 47, color: '#4EA8DE', pct: 100, holdCount: 3, withdrawnCount: 2 },
+  { label: 'Exploration', count: 32, color: '#FFC72C', pct: 68, holdCount: 2, withdrawnCount: 1 },
+  { label: 'Sprint', count: 21, color: '#00A651', pct: 45, holdCount: 1, withdrawnCount: 0 },
+  { label: 'Wrap-Up', count: 12, color: '#D4622B', pct: 26, holdCount: 0, withdrawnCount: 1 },
+  { label: 'Completed', count: 6, color: '#8B5CF6', pct: 13, holdCount: 0, withdrawnCount: 0 },
 ];
 
 function funnelRows() {
@@ -173,7 +173,13 @@ function tryRenderCharts(section) {
       funnelEl.innerHTML = '';
       const ctrl = M.funnel(funnelEl, {
         data: {
-          pipeline: FUNNEL_STAGES.map(s => ({ label: s.label, count: s.count, color: s.color })),
+          pipeline: FUNNEL_STAGES.map(s => ({
+            label: s.label, count: s.count, color: s.color,
+            holdCount: s.holdCount, withdrawnCount: s.withdrawnCount,
+          })),
+          onHold: { label: 'On Hold', count: 6, color: '#D4622B' },
+          withdrawn: { label: 'Withdrawn', count: 4, color: '#DC0000' },
+          total: 47,
         },
       });
     } catch (_) { /* CSS fallback already rendered */ }
@@ -182,7 +188,7 @@ function tryRenderCharts(section) {
   const treeEl = section.querySelector('#layouts-org-tree');
   if (treeEl && !treeEl.dataset.rendered) {
     treeEl.dataset.rendered = '1';
-    treeEl.innerHTML = buildOrgTree({
+    treeEl.innerHTML = '<div class="mn-org-tree"><ul class="mn-org-tree__list">' + buildOrgTree({
       name: 'Francesca Fedeli', role: 'CEO',
       children: [
         { name: 'Therapy Division', role: 'Director',
@@ -205,26 +211,26 @@ function tryRenderCharts(section) {
           ]
         },
       ]
-    });
+    }) + '</ul></div>';
     if (M.initOrgTree) M.initOrgTree(treeEl);
   }
 }
 
 function buildOrgTree(node) {
   const hasKids = node.children && node.children.length;
+  const toggleIcon = hasKids ? '▸' : '';
   const toggleCls = hasKids ? 'mn-org-tree__toggle mn-org-tree__toggle--expanded' : 'mn-org-tree__toggle mn-org-tree__toggle--leaf';
-  let html = `<div class="mn-org-tree__item">
-    <div class="${toggleCls}">
-      <div class="mn-org-tree__node">
-        <span class="mn-org-tree__name">${node.name}</span>
-        <span class="mn-org-tree__role">${node.role}</span>
-      </div>
+  let html = `<li class="mn-org-tree__item">
+    <div class="mn-org-tree__node">
+      <span class="${toggleCls}">${toggleIcon}</span>
+      <span class="mn-org-tree__label">${node.name}</span>
+      <span class="mn-org-tree__meta">${node.role}</span>
     </div>`;
   if (hasKids) {
-    html += '<div class="mn-org-tree__children">';
+    html += '<div class="mn-org-tree__children"><ul class="mn-org-tree__list">';
     node.children.forEach(c => { html += buildOrgTree(c); });
-    html += '</div>';
+    html += '</ul></div>';
   }
-  html += '</div>';
+  html += '</li>';
   return html;
 }

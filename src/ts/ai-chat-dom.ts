@@ -166,7 +166,15 @@ export function buildUI(container: HTMLElement, opts: Required<AIChatOptions>): 
   };
 
   const fab = el('button', 'mn-chat-fab', { 'aria-label': 'Open AI assistant', title: 'AI Assistant' });
-  fab.innerHTML = opts.avatar ? `<img src="${opts.avatar}" class="mn-chat-fab__avatar" alt="AI">` : ICON_SPARK;
+  if (opts.avatar) {
+    const fabImg = document.createElement('img');
+    fabImg.src = opts.avatar;
+    fabImg.className = 'mn-chat-fab__avatar';
+    fabImg.alt = 'AI';
+    fab.appendChild(fabImg);
+  } else {
+    fab.innerHTML = ICON_SPARK;
+  }
   const pulse = el('span', 'mn-chat-fab__pulse');
   fab.appendChild(pulse);
   container.appendChild(fab);

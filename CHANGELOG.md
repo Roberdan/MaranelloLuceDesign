@@ -5,6 +5,38 @@ All notable changes to this project will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.2.0] - 13 Mar 2026
+
+### Added
+- **Integration CSS layer** — 4-module drop-in theming for external SPAs (`@layer integration`)
+  - `integration-theme-bridge.css` — `[data-theme="maranello"]` activates full token palette
+  - `integration-reset.css` — body/heading/input/table/scrollbar resets
+  - `integration-utilities.css` — `mn-panel`, `mn-badge-*`, `mn-btn-*`, `mn-status-dot-*`, `mn-gradient-text`, `mn-fade-in`
+  - `integration-status.css` — Gantt/pipeline status: done/in-progress/pending/blocked/merging
+- **Widget container** — `mn-widget` with title bar, action buttons, collapse, loading shimmer
+- **Grid templates** — 6 responsive presets: `overview-4col`, `sidebar-main`, `triple-equal`, `dashboard-kpi`, `focus-detail`, `masonry-auto`
+- **`gridLayout(container, template)`** — JS helper for dynamic grid template switching with staggered entry animation
+- **Mapbox component** — `mapboxView()` JS API + `<mn-mapbox>` WC with dark globe, cluster markers, stage colors, choropleth
+- **`escapeHtml()`** utility — shared XSS sanitization for all tooltip/innerHTML paths
+
+### Fixed
+- **5 XSS vulnerabilities** — `ai-chat-dom.ts` (avatar injection), `ai-chat-messages.ts` (SVG injection), `chart-interact.ts` (label injection), `gantt-events.ts` (task field injection), `map-view.ts` (marker injection)
+- **`aiChat` IIFE wrapper** — now returns full controller with `open()`, `close()`, `addMessage()`, `setTyping()` (was returning raw DOM elements)
+- **`flipCounter` button** — `set()` → `setValue()` (matching actual API)
+- **`commandPalette`** — now creates proper DOM with ID string (was passing object)
+- **`openDrawer`** — now creates drawer element with proper backdrop (was passing object)
+- **`profileMenu`** — fixed trigger element + `sections` options (was passing wrong shape)
+- **`loginScreen`** — fixed option names (`appTitle`, `subtitle`, `checks`, not `title`/`providers`)
+- **Org tree** — proper `ul > li > .mn-org-tree__node > .mn-org-tree__toggle + .mn-org-tree__label` structure
+- **`initDragRotary`** — `positions` → `steps` parameter name
+- **Sliders** — added `mn-slider` CSS class + track/fill/thumb DOM structure
+- **Map markers** — spread markers to prevent over-clustering, added `id`/`detail`/`color` fields
+- **Funnel pipeline** — added `holdCount`, `withdrawnCount`, `onHold`/`withdrawn` exit data
+
+### Changed
+- CI hardened: removed `|| true` from tests, added `npm audit`, added Playwright e2e, added scrub check
+- Bumped to v3.2.0
+
 ## [3.0.0] - 13 Mar 2026
 
 ### Added

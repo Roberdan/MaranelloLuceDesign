@@ -106,6 +106,8 @@ export { gantt } from './gantt';
 
 // Map view
 export { mapView } from './map-view';
+export { mapboxView } from './map-mapbox';
+export type { MapboxMarker, MapboxViewOptions, MapboxViewController } from './map-mapbox';
 
 // Controls (panels, drawers, org tree)
 export {
@@ -217,6 +219,9 @@ export type {
   TipElements, MapEventState, MapEventCallbacks, EventCleanup,
 } from './map-view-events';
 export * from './map-view-helpers';
+
+export { gridLayout } from './grid-layout';
+export type { GridTemplateName, GridLayoutOptions, GridLayoutController } from './grid-layout';
 
 // Maranello facade (auto-init)
 export { Maranello } from './maranello';

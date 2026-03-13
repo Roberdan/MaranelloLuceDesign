@@ -169,3 +169,13 @@ export function hiDpiCanvas(
   if (ctx) ctx.scale(dpr, dpr);
   return dpr;
 }
+
+/** Escape HTML special characters to prevent XSS injection. */
+export function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
