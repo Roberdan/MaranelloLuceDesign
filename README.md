@@ -1,7 +1,7 @@
 # 🏎️ Maranello Luce Design System
 
 <p align="center">
-  <img src="docs/screenshots/hero-nero.png" alt="Maranello Luce Design — Nero Theme" width="800">
+  <img src="docs/screenshots/hero-nero.png" alt="Maranello Luce Operations Dashboard — Nero Theme" width="800">
 </p>
 
 <p align="center">
@@ -344,25 +344,25 @@ Now use semantic CSS variables everywhere:
 
 ## Preview
 
-> **[▶ Live Demo](https://roberdan.github.io/MaranelloLuceDesign/)** — 24 interactive sections, 88 APIs, 4 themes
+> **[▶ Live Demo](https://roberdan.github.io/MaranelloLuceDesign/)** — 24 interactive sections, 88 APIs, 4 themes, Maranello Luce AI Operations demo
 
 <details open>
 <summary><strong>🌙 Nero Theme (Dark)</strong></summary>
 
 <p align="center">
-  <img src="docs/screenshots/gauges-nero.png" alt="Ferrari Gauge Binnacle — Nero" width="720">
+  <img src="docs/screenshots/gauges-nero.png" alt="Maranello Luce Instrument Binnacle — Nero" width="720">
 </p>
 
 <p align="center">
-  <img src="docs/screenshots/charts-nero.png" alt="Charts & Data Visualization — Nero" width="720">
+  <img src="docs/screenshots/charts-nero.png" alt="Maranello Luce Charts & Data Visualization — Nero" width="720">
 </p>
 
 <p align="center">
-  <img src="docs/screenshots/controls-nero.png" alt="Ferrari Controls — Nero" width="720">
+  <img src="docs/screenshots/controls-nero.png" alt="Maranello Luce Control Surface — Nero" width="720">
 </p>
 
 <p align="center">
-  <img src="docs/screenshots/cockpit-nero.png" alt="Cockpit Speedometers — Nero" width="720">
+  <img src="docs/screenshots/cockpit-nero.png" alt="Maranello Luce Cockpit Telemetry — Nero" width="720">
 </p>
 
 </details>
@@ -371,11 +371,11 @@ Now use semantic CSS variables everywhere:
 <summary><strong>☀️ Avorio Theme (Light)</strong></summary>
 
 <p align="center">
-  <img src="docs/screenshots/hero-avorio.png" alt="Hero — Avorio theme" width="720">
+  <img src="docs/screenshots/hero-avorio.png" alt="Maranello Luce Hero — Avorio theme" width="720">
 </p>
 
 <p align="center">
-  <img src="docs/screenshots/charts-avorio.png" alt="Charts — Avorio theme" width="720">
+  <img src="docs/screenshots/charts-avorio.png" alt="Maranello Luce Charts — Avorio theme" width="720">
 </p>
 
 </details>

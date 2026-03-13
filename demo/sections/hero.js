@@ -8,7 +8,6 @@ export function createHeroSection() {
   section.className = 'mn-section-dark';
   section.style.cssText = 'min-height:100vh;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden';
   section.innerHTML = `
-    <!-- Ambient glow -->
     <div style="position:absolute;top:-200px;left:50%;transform:translateX(-50%);width:800px;height:600px;background:radial-gradient(ellipse,rgba(255,199,44,0.06) 0%,transparent 70%);pointer-events:none"></div>
 
     <div class="mn-container" style="text-align:center;position:relative;z-index:1">
@@ -19,22 +18,21 @@ export function createHeroSection() {
       <p class="mn-section-number" style="letter-spacing:0.2em;margin-bottom:var(--space-md)">MARANELLO LUCE DESIGN SYSTEM</p>
 
       <h1 class="mn-title-hero" style="font-size:clamp(3rem,8vw,6rem);margin-bottom:var(--space-sm);line-height:0.95">
-        <span style="color:var(--mn-accent)">Fight</span><span style="color:var(--bianco-caldo,#f5f5f5)">The</span><span style="color:var(--verde-racing)">Stroke</span>
+        <span style="color:var(--mn-accent)">Mirror</span><span style="color:var(--bianco-caldo,#f5f5f5)">Design</span>
       </h1>
 
       <div class="mn-divider-gold--accent mn-divider-gold" style="margin:var(--space-lg) auto"></div>
 
       <h2 class="mn-title-sub" style="color:var(--grigio-alluminio);margin-bottom:var(--space-xl);font-weight:400;letter-spacing:0.1em">
-        FOUNDATION DASHBOARD
+        MIRRORDESIGN OPERATIONS DASHBOARD
       </h2>
 
       <p class="mn-body" style="max-width:640px;margin:0 auto var(--space-2xl);color:var(--grigio-medio);line-height:1.7">
         A fictional demonstration of the Maranello Luce Design System — Ferrari-inspired
-        dashboards with 90+ components, 4 themes, and Canvas 2D engines.
-        Data inspired by the <strong style="color:var(--grigio-chiaro)">FightTheStroke Foundation</strong>.
+        dashboards for agent orchestration, model routing, token budgets, and inference pipelines.
+        Maranello Luce is an <strong style="color:var(--grigio-chiaro)">agentic AI operations platform</strong>.
       </p>
 
-      <!-- Design principles — speedometers -->
       <div style="display:flex;gap:var(--space-2xl);justify-content:center;flex-wrap:wrap;margin-bottom:var(--space-2xl)">
         <div style="text-align:center">
           <canvas id="hero-speedo-1" width="140" height="140" style="width:140px;height:140px"></canvas>
@@ -58,27 +56,26 @@ export function createHeroSection() {
         </div>
       </div>
 
-      <!-- KPI stat strip -->
       <div class="mn-stat-row">
         <div class="mn-stat">
-          <div class="mn-stat__value" style="color:var(--mn-accent)">2,847</div>
-          <div class="mn-stat__unit">EUR thousands</div>
-          <div class="mn-stat__label">Total Donations</div>
+          <div class="mn-stat__value" style="color:var(--mn-accent)">284.7</div>
+          <div class="mn-stat__unit">$k</div>
+          <div class="mn-stat__label">Total Token Spend</div>
         </div>
         <div class="mn-stat">
           <div class="mn-stat__value">312</div>
-          <div class="mn-stat__unit">people</div>
-          <div class="mn-stat__label">Active Volunteers</div>
+          <div class="mn-stat__unit">agents</div>
+          <div class="mn-stat__label">Active Agents</div>
         </div>
         <div class="mn-stat">
-          <div class="mn-stat__value" style="color:var(--verde-racing)">1,456</div>
-          <div class="mn-stat__unit">children</div>
-          <div class="mn-stat__label">Children Helped</div>
+          <div class="mn-stat__value" style="color:var(--verde-racing)">14,560</div>
+          <div class="mn-stat__unit">tasks</div>
+          <div class="mn-stat__label">Tasks Completed</div>
         </div>
         <div class="mn-stat">
           <div class="mn-stat__value">18,340</div>
-          <div class="mn-stat__unit">hours</div>
-          <div class="mn-stat__label">Therapy Hours</div>
+          <div class="mn-stat__unit">hrs</div>
+          <div class="mn-stat__label">Compute Hours</div>
         </div>
       </div>
 

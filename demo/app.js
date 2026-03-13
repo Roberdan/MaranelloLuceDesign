@@ -98,8 +98,7 @@ function createFooter() {
     <div class="mn-container">
       <div class="mn-divider-gold--accent mn-divider-gold" style="margin-bottom:var(--space-xl)"></div>
       <p class="mn-label" style="color:var(--mn-accent);margin-bottom:var(--space-sm)">Maranello Luce Design System</p>
-      <p class="mn-micro" style="color:var(--grigio-medio)">Demo built with fictional data inspired by FightTheStroke Foundation. All data is illustrative and does not represent real information.</p>
-      <p class="mn-micro" style="color:var(--grigio-medio);margin-top:var(--space-xs)"><a href="https://www.fightthestroke.org/donorbox" style="color:var(--mn-accent)">Donate to FightTheStroke</a></p>
+      <p class="mn-micro" style="color:var(--grigio-medio)">Demo built with fictional Maranello Luce operations data. All data is illustrative and does not represent a real platform.</p>
       <p class="mn-micro" style="color:var(--grigio-scuro);margin-top:var(--space-sm)">v3.1.0 — 4 themes · 91 APIs · 23 Web Components</p>
     </div>`;
   return footer;

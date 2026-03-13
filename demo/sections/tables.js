@@ -1,32 +1,32 @@
 const PAGE_SIZE = 9;
-const GROUP_ORDER = ['Active', 'Assessment', 'Planned'];
+const GROUP_ORDER = ['Running', 'Queued', 'Planned'];
 const COLUMNS = [
-  { key: 'program', label: 'Program' },
+  { key: 'program', label: 'Pipeline' },
   { key: 'owner', label: 'Owner' },
   { key: 'status', label: 'Status' },
-  { key: 'quality', label: 'Quality' },
+  { key: 'quality', label: 'Accuracy' },
   { key: 'impact', label: 'Impact' },
-  { key: 'city', label: 'City' },
+  { key: 'region', label: 'Region' },
 ];
 const PROGRAMS = [
-  { group: 'Active', program: 'Milano Therapy Sprint', owner: 'Dr. Lucia Rinaldi', role: 'Therapist', status: 'Active', quality: 92, impact: 'High', city: 'Milano' },
-  { group: 'Active', program: 'Torino Mobility Lab', owner: 'Elia Ferri', role: 'Coordinator', status: 'At Risk', quality: 67, impact: 'Critical', city: 'Torino' },
-  { group: 'Active', program: 'Bologna Outreach Route', owner: 'Paolo Ricci', role: 'Program Lead', status: 'Active', quality: 81, impact: 'Med', city: 'Bologna' },
-  { group: 'Active', program: 'Firenze Family Studio', owner: 'Marta Leone', role: 'Care Navigator', status: 'Blocked', quality: 41, impact: 'Critical', city: 'Firenze' },
-  { group: 'Assessment', program: 'Roma Intake Atlas', owner: 'Sofia Greco', role: 'Researcher', status: 'Planning', quality: 58, impact: 'Med', city: 'Roma' },
-  { group: 'Assessment', program: 'Genova Speech Review', owner: 'Giulia Serra', role: 'Speech Therapist', status: 'At Risk', quality: 72, impact: 'High', city: 'Genova' },
-  { group: 'Planned', program: 'Padova Remote Bridge', owner: 'Elena Piva', role: 'Telehealth Lead', status: 'Planning', quality: 63, impact: 'Med', city: 'Padova' },
-  { group: 'Planned', program: 'Napoli Recovery Mesh', owner: 'Chiara D Amico', role: 'Therapist', status: 'Planning', quality: 76, impact: 'High', city: 'Napoli' },
-  { group: 'Planned', program: 'Cagliari Island Pilot', owner: 'Davide Piras', role: 'Coordinator', status: 'Planning', quality: 54, impact: 'Med', city: 'Cagliari' },
-  { group: 'Active', program: 'Verona Upper Limb Lab', owner: 'Federica Longhi', role: 'Therapist', status: 'Active', quality: 87, impact: 'High', city: 'Verona' },
-  { group: 'Active', program: 'Bari Speech Reset', owner: 'Andrea Valente', role: 'Speech Therapist', status: 'At Risk', quality: 69, impact: 'Critical', city: 'Bari' },
-  { group: 'Assessment', program: 'Milano Insight Board', owner: 'Beatrice Rota', role: 'Psychologist', status: 'Planning', quality: 64, impact: 'High', city: 'Milano' },
-  { group: 'Planned', program: 'Palermo Home Practice', owner: 'Sara Fontana', role: 'Family Coach', status: 'Planning', quality: 57, impact: 'Med', city: 'Palermo' },
-  { group: 'Planned', program: 'Trento Data Checkpoint', owner: 'Lorenzo Sala', role: 'Analyst', status: 'Planning', quality: 71, impact: 'High', city: 'Trento' },
-  { group: 'Active', program: 'Como Precision Track', owner: 'Riccardo Villa', role: 'Therapist', status: 'Blocked', quality: 48, impact: 'Critical', city: 'Como' },
-  { group: 'Assessment', program: 'Parma Triage Studio', owner: 'Alice Neri', role: 'Care Planner', status: 'At Risk', quality: 74, impact: 'High', city: 'Parma' },
-  { group: 'Planned', program: 'Lecce Family Orbit', owner: 'Francesca Greco', role: 'Family Coach', status: 'Planning', quality: 62, impact: 'Med', city: 'Lecce' },
-  { group: 'Active', program: 'Aosta Daily Motion', owner: 'Tommaso Galli', role: 'Therapist', status: 'Active', quality: 90, impact: 'High', city: 'Aosta' },
+  { group: 'Running', program: 'Pipeline Alpha', owner: 'Agent Opus', role: 'Orchestrator', status: 'Active', quality: 97, impact: 'High', region: 'us-east-1' },
+  { group: 'Running', program: 'Pipeline Beta', owner: 'Agent Sonnet', role: 'Executor', status: 'At Risk', quality: 82, impact: 'Critical', region: 'eu-west-1' },
+  { group: 'Running', program: 'Pipeline Gamma', owner: 'Agent Haiku', role: 'Monitor', status: 'Active', quality: 91, impact: 'Med', region: 'ap-southeast-1' },
+  { group: 'Running', program: 'Pipeline Delta', owner: 'Validator Mesh', role: 'Validator', status: 'Blocked', quality: 58, impact: 'Critical', region: 'us-west-2' },
+  { group: 'Queued', program: 'Pipeline Epsilon', owner: 'Gemini Research', role: 'Research Agent', status: 'Planning', quality: 76, impact: 'Med', region: 'sa-east-1' },
+  { group: 'Queued', program: 'Pipeline Zeta', owner: 'GPT Router', role: 'Runtime Lead', status: 'At Risk', quality: 74, impact: 'High', region: 'eu-central-1' },
+  { group: 'Planned', program: 'Pipeline Eta', owner: 'Prompt Forge', role: 'Prompt Lead', status: 'Planning', quality: 69, impact: 'Med', region: 'ap-northeast-1' },
+  { group: 'Planned', program: 'Pipeline Theta', owner: 'Cache Sentinel', role: 'Platform Agent', status: 'Planning', quality: 83, impact: 'High', region: 'us-east-2' },
+  { group: 'Planned', program: 'Pipeline Iota', owner: 'Eval Ops', role: 'Quality Agent', status: 'Planning', quality: 72, impact: 'Med', region: 'eu-west-2' },
+  { group: 'Running', program: 'Pipeline Kappa', owner: 'Claude Router', role: 'Orchestrator', status: 'Active', quality: 95, impact: 'High', region: 'us-east-1' },
+  { group: 'Running', program: 'Pipeline Lambda', owner: 'Budget Guard', role: 'Control Agent', status: 'At Risk', quality: 71, impact: 'Critical', region: 'ap-southeast-2' },
+  { group: 'Queued', program: 'Pipeline Mu', owner: 'Replay Lab', role: 'Evaluator', status: 'Planning', quality: 77, impact: 'High', region: 'eu-west-1' },
+  { group: 'Planned', program: 'Pipeline Nu', owner: 'Storage Mesh', role: 'Infra Agent', status: 'Planning', quality: 68, impact: 'Med', region: 'ca-central-1' },
+  { group: 'Planned', program: 'Pipeline Xi', owner: 'Ops Relay', role: 'Monitor', status: 'Planning', quality: 81, impact: 'High', region: 'me-central-1' },
+  { group: 'Running', program: 'Pipeline Omicron', owner: 'Fallback Grid', role: 'Executor', status: 'Blocked', quality: 54, impact: 'Critical', region: 'us-west-1' },
+  { group: 'Queued', program: 'Pipeline Pi', owner: 'Judge Suite', role: 'Validator', status: 'At Risk', quality: 79, impact: 'High', region: 'eu-north-1' },
+  { group: 'Planned', program: 'Pipeline Rho', owner: 'Cache Bloom', role: 'Platform Agent', status: 'Planning', quality: 73, impact: 'Med', region: 'ap-south-1' },
+  { group: 'Running', program: 'Pipeline Sigma', owner: 'Token Ledger', role: 'Budget Agent', status: 'Active', quality: 94, impact: 'High', region: 'us-east-1' },
 ];
 
 export function createTablesSection() {
@@ -46,63 +46,37 @@ export function createTablesSection() {
     </style>
     <div class="mn-container">
       <p class="mn-section-number">06 — Data Display</p>
-      <h2 class="mn-title-section" style="margin-bottom:var(--space-lg)">Interactive Therapy Table</h2>
-      <p class="mn-body" style="margin-bottom:var(--space-2xl)">Column filters, grouped portfolio rows, status LEDs, quality bars, and ownership detail for FightTheStroke programs.</p>
-      <div class="mn-card-dark" style="padding:var(--space-xl)">
-        <div class="mn-tag-group" style="margin-bottom:var(--space-md)"><span class="mn-tag mn-tag--light mn-tag--xs">Filter every column</span><span class="mn-tag mn-tag--light mn-tag--xs">Sort with header arrows</span><span class="mn-tag mn-tag--light mn-tag--xs">Collapse each group</span></div>
-        <div id="therapy-table-host"></div>
-      </div>
+      <h2 class="mn-title-section" style="margin-bottom:var(--space-lg)">Interactive Deployment Table</h2>
+      <p class="mn-body" style="margin-bottom:var(--space-2xl)">Column filters, grouped deployment rows, status LEDs, accuracy bars, and ownership detail for Maranello Luce agent deployments.</p>
+      <div class="mn-card-dark" style="padding:var(--space-xl)"><div class="mn-tag-group" style="margin-bottom:var(--space-md)"><span class="mn-tag mn-tag--light mn-tag--xs">Filter every column</span><span class="mn-tag mn-tag--light mn-tag--xs">Sort with header arrows</span><span class="mn-tag mn-tag--light mn-tag--xs">Collapse each group</span></div><div id="deployment-table-host"></div></div>
     </div>`;
   requestAnimationFrame(() => initTable(section));
   return section;
 }
 
 function initTable(section) {
-  const host = section.querySelector('#therapy-table-host');
+  const host = section.querySelector('#deployment-table-host');
   const state = { page: 1, sortKey: 'program', sortDir: 1, filters: Object.fromEntries(COLUMNS.map((col) => [col.key, ''])), collapsed: {} };
   const render = () => {
     const filtered = orderRows(PROGRAMS.filter((row) => COLUMNS.every((col) => String(row[col.key]).toLowerCase().includes(state.filters[col.key]))), state);
     const pages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
     state.page = Math.min(state.page, pages);
     const pageRows = filtered.slice((state.page - 1) * PAGE_SIZE, state.page * PAGE_SIZE);
-    host.innerHTML = `<div class="mn-table-wrap"><table class="mn-table"><thead><tr>${COLUMNS.map((col) => `<th><button type="button" class="mn-rich-table__headbtn" data-sort="${col.key}">${col.label}<span>${arrow(col.key, state)}</span></button></th>`).join('')}</tr><tr>${COLUMNS.map((col) => `<th><input class="mn-rich-table__filter" data-filter="${col.key}" value="${esc(state.filters[col.key])}" placeholder="Filter"></th>`).join('')}</tr></thead><tbody>${groupedRows(pageRows, state)}</tbody></table></div><div class="mn-rich-table__footer"><span class="mn-micro" style="color:var(--grigio-chiaro)">Showing ${pageRows.length} of ${filtered.length} programs</span><div class="mn-dots">${Array.from({ length: pages }, (_, index) => `<button class="mn-dot ${index + 1 === state.page ? 'mn-dot--active' : ''}" data-page="${index + 1}" aria-label="Page ${index + 1}"></button>`).join('')}</div></div>`;
+    host.innerHTML = `<div class="mn-table-wrap"><table class="mn-table"><thead><tr>${COLUMNS.map((col) => `<th><button type="button" class="mn-rich-table__headbtn" data-sort="${col.key}">${col.label}<span>${arrow(col.key, state)}</span></button></th>`).join('')}</tr><tr>${COLUMNS.map((col) => `<th><input class="mn-rich-table__filter" data-filter="${col.key}" value="${esc(state.filters[col.key])}" placeholder="Filter"></th>`).join('')}</tr></thead><tbody>${groupedRows(pageRows, state)}</tbody></table></div><div class="mn-rich-table__footer"><span class="mn-micro" style="color:var(--grigio-chiaro)">Showing ${pageRows.length} of ${filtered.length} deployments</span><div class="mn-dots">${Array.from({ length: pages }, (_, index) => `<button class="mn-dot ${index + 1 === state.page ? 'mn-dot--active' : ''}" data-page="${index + 1}" aria-label="Page ${index + 1}"></button>`).join('')}</div></div>`;
     bind(host, state, render);
   };
   render();
 }
 
 function bind(host, state, render) {
-  host.querySelectorAll('[data-sort]').forEach((btn) => btn.addEventListener('click', () => {
-    const key = btn.getAttribute('data-sort');
-    state.sortDir = state.sortKey === key ? state.sortDir * -1 : 1;
-    state.sortKey = key;
-    render();
-  }));
-  host.querySelectorAll('[data-filter]').forEach((input) => input.addEventListener('input', () => {
-    state.filters[input.getAttribute('data-filter')] = input.value.trim().toLowerCase();
-    state.page = 1;
-    render();
-  }));
-  host.querySelectorAll('[data-group]').forEach((row) => row.addEventListener('click', () => {
-    const group = row.getAttribute('data-group');
-    state.collapsed[group] = !state.collapsed[group];
-    render();
-  }));
+  host.querySelectorAll('[data-sort]').forEach((btn) => btn.addEventListener('click', () => { const key = btn.getAttribute('data-sort'); state.sortDir = state.sortKey === key ? state.sortDir * -1 : 1; state.sortKey = key; render(); }));
+  host.querySelectorAll('[data-filter]').forEach((input) => input.addEventListener('input', () => { state.filters[input.getAttribute('data-filter')] = input.value.trim().toLowerCase(); state.page = 1; render(); }));
+  host.querySelectorAll('[data-group]').forEach((row) => row.addEventListener('click', () => { const group = row.getAttribute('data-group'); state.collapsed[group] = !state.collapsed[group]; render(); }));
   host.querySelectorAll('[data-page]').forEach((btn) => btn.addEventListener('click', () => { state.page = Number(btn.getAttribute('data-page')); render(); }));
 }
 
-function groupedRows(rows, state) {
-  return GROUP_ORDER.map((group) => {
-    const items = rows.filter((row) => row.group === group);
-    if (!items.length) return '';
-    const open = !state.collapsed[group];
-    return `<tr class="mn-rich-table__group" data-group="${group}"><td colspan="${COLUMNS.length}">${open ? '▼' : '▶'} ${group.toUpperCase()} ${items.length}</td></tr>${open ? items.map((row) => `<tr class="mn-rich-table__row"><td><strong>${row.program}</strong><div class="mn-micro" style="color:var(--grigio-medio)">${row.group}</div></td><td>${ownerCell(row)}</td><td><span class="mn-status mn-status--${statusTone(row.status)}"><span class="mn-status__dot"></span> ${row.status}</span></td><td>${qualityCell(row.quality)}</td><td><span class="mn-rich-table__badge mn-rich-table__badge--${row.impact.toLowerCase()}">${row.impact}</span></td><td>${row.city}</td></tr>`).join('') : ''}`;
-  }).join('');
-}
-
-function orderRows(rows, state) {
-  return GROUP_ORDER.flatMap((group) => rows.filter((row) => row.group === group).sort((a, b) => compare(a[state.sortKey], b[state.sortKey], state.sortDir)));
-}
+function groupedRows(rows, state) { return GROUP_ORDER.map((group) => { const items = rows.filter((row) => row.group === group); if (!items.length) return ''; const open = !state.collapsed[group]; return `<tr class="mn-rich-table__group" data-group="${group}"><td colspan="${COLUMNS.length}">${open ? '▼' : '▶'} ${group.toUpperCase()} ${items.length}</td></tr>${open ? items.map((row) => `<tr class="mn-rich-table__row"><td><strong>${row.program}</strong><div class="mn-micro" style="color:var(--grigio-medio)">${row.group}</div></td><td>${ownerCell(row)}</td><td><span class="mn-status mn-status--${statusTone(row.status)}"><span class="mn-status__dot"></span> ${row.status}</span></td><td>${qualityCell(row.quality)}</td><td><span class="mn-rich-table__badge mn-rich-table__badge--${row.impact.toLowerCase()}">${row.impact}</span></td><td>${row.region}</td></tr>`).join('') : ''}`; }).join(''); }
+function orderRows(rows, state) { return GROUP_ORDER.flatMap((group) => rows.filter((row) => row.group === group).sort((a, b) => compare(a[state.sortKey], b[state.sortKey], state.sortDir))); }
 function compare(a, b, dir) { return (typeof a === 'number' && typeof b === 'number' ? a - b : String(a).localeCompare(String(b))) * dir; }
 function arrow(key, state) { return state.sortKey !== key ? '▲▼' : state.sortDir > 0 ? '▲' : '▼'; }
 function ownerCell(row) { return `<div class="mn-rich-table__owner"><span class="mn-rich-table__avatar">${row.owner.split(' ').map((part) => part[0]).join('').slice(0, 2)}</span><div><strong>${row.owner}</strong><div class="mn-micro" style="color:var(--grigio-medio)">${row.role}</div></div></div>`; }

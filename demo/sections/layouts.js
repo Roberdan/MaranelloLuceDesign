@@ -5,251 +5,26 @@ export function createLayoutsSection() {
   const section = document.createElement('section');
   section.id = 'layouts';
   section.className = 'mn-section-dark';
-
   section.innerHTML = `
-    <div class="mn-container">
-      <p class="mn-section-number">15 — Navigation & Layouts</p>
-      <h2 class="mn-title-section" style="margin-bottom:var(--space-sm)">Navigation &amp; Layouts</h2>
-      <p class="mn-body" style="margin-bottom:var(--space-2xl)">
-        Sidebar navigation, notification center, horizontal bar chart ranking, and funnel pipeline.
-      </p>
-
-      <!-- Two-column: sidebar + notifications -->
-      <div class="mn-grid-2" style="margin-bottom:var(--space-2xl);align-items:start">
-
-        <!-- Sidebar preview -->
-        <div>
-          <p class="mn-label" style="color:var(--mn-accent);margin-bottom:var(--space-md)">Sidebar Navigation</p>
-          <div class="mn-sidebar" style="position:relative;height:340px;border-radius:8px">
-            <div class="mn-sidebar__header">
-              <span class="mn-sidebar__brand">Fight<span style="color:var(--giallo-ferrari)">Stroke</span></span>
-            </div>
-            <nav class="mn-sidebar__nav">
-              <div class="mn-sidebar__group">
-                <div class="mn-sidebar__group-label">Portfolio</div>
-                <a class="mn-sidebar__item mn-sidebar__item--active">
-                  <span class="mn-sidebar__item-label">Dashboard</span>
-                </a>
-                <a class="mn-sidebar__item">
-                  <span class="mn-sidebar__item-label">Analytics</span>
-                </a>
-                <a class="mn-sidebar__item">
-                  <span class="mn-sidebar__item-label">Resources</span>
-                </a>
-              </div>
-              <div class="mn-sidebar__group">
-                <div class="mn-sidebar__group-label">Management</div>
-                <a class="mn-sidebar__item">
-                  <span class="mn-sidebar__item-label">Engagements</span>
-                </a>
-                <a class="mn-sidebar__item">
-                  <span class="mn-sidebar__item-label">Quality</span>
-                </a>
-                <a class="mn-sidebar__item">
-                  <span class="mn-sidebar__item-label">Impact</span>
-                </a>
-              </div>
-              <div class="mn-sidebar__group">
-                <div class="mn-sidebar__group-label">System</div>
-                <a class="mn-sidebar__item">
-                  <span class="mn-sidebar__item-label">Admin</span>
-                </a>
-              </div>
-            </nav>
-            <div class="mn-sidebar__footer">
-              <span class="mn-micro" style="color:var(--grigio-medio)">v9.3.0</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Notification panel -->
-        <div>
-          <p class="mn-label" style="color:var(--mn-accent);margin-bottom:var(--space-md)">Notification Center</p>
-          <div class="mn-card-dark" style="padding:0;overflow:hidden;border-radius:8px">
-            <div style="padding:var(--space-md) var(--space-lg);border-bottom:1px solid var(--grigio-scuro);display:flex;justify-content:space-between">
-              <span class="mn-label">Notifications</span>
-              <span class="mn-micro" style="color:var(--mn-accent)">3 unread</span>
-            </div>
-            ${notifItem('Quality alert: Milano Hub dropped to 72%', '2 min ago', true, '#DC0000')}
-            ${notifItem('RTB report generated for EMEA Studio 3', '15 min ago', true, '#FFC72C')}
-            ${notifItem('Sync completed — 47 engagements updated', '1 hour ago', false, '#00A651')}
-          </div>
-        </div>
-      </div>
-
-      <!-- Horizontal bar chart: Team Health Ranking -->
-      <p class="mn-label" style="color:var(--mn-accent);margin-bottom:var(--space-md)">Team Health Ranking</p>
-      <div class="mn-card-dark" style="padding:var(--space-xl);margin-bottom:var(--space-2xl)" id="layouts-hbar">
-        ${hbarRows()}
-      </div>
-
-      <!-- Funnel pipeline -->
-      <p class="mn-label" style="color:var(--mn-accent);margin-bottom:var(--space-md)">Engagement Pipeline</p>
-      <div class="mn-card-dark" style="padding:var(--space-xl)" id="layouts-funnel">
-        ${funnelRows()}
-      </div>
-
-      <!-- Org Tree -->
-      <p class="mn-label" style="color:var(--mn-accent);margin-top:var(--space-2xl);margin-bottom:var(--space-md)">Organization Tree</p>
-      <div class="mn-card-dark" style="padding:var(--space-xl)" id="layouts-org-tree"></div>
-    </div>
-  `;
-
-  section.addEventListener('mn-ready', () => tryRenderCharts(section));
-  setTimeout(() => tryRenderCharts(section), 200);
-
-  // Wire notification close buttons
-  setTimeout(() => {
-    section.querySelectorAll('.mn-notif-close').forEach(btn => {
-      btn.addEventListener('mouseenter', () => { btn.style.color = 'var(--mn-accent)'; btn.style.background = 'rgba(255,199,44,0.1)'; });
-      btn.addEventListener('mouseleave', () => { btn.style.color = ''; btn.style.background = ''; });
-      btn.addEventListener('click', () => {
-        const item = btn.closest('.mn-notif-item');
-        if (item) { item.style.opacity = '0'; item.style.maxHeight = '0'; item.style.padding = '0'; setTimeout(() => item.remove(), 300); }
-      });
-    });
-  }, 100);
+    <div class="mn-container"><p class="mn-section-number">15 — Navigation & Layouts</p><h2 class="mn-title-section" style="margin-bottom:var(--space-sm)">Navigation &amp; Layouts</h2><p class="mn-body" style="margin-bottom:var(--space-2xl)">Sidebar navigation, notification center, horizontal bar chart ranking, and deployment funnel pipeline.</p><div class="mn-grid-2" style="margin-bottom:var(--space-2xl);align-items:start"><div><p class="mn-label" style="color:var(--mn-accent);margin-bottom:var(--space-md)">Sidebar Navigation</p><div class="mn-sidebar" style="position:relative;height:340px;border-radius:8px"><div class="mn-sidebar__header"><span class="mn-sidebar__brand">Mirror<span style="color:var(--giallo-ferrari)">Design</span></span></div><nav class="mn-sidebar__nav"><div class="mn-sidebar__group"><div class="mn-sidebar__group-label">Operations</div><a class="mn-sidebar__item mn-sidebar__item--active"><span class="mn-sidebar__item-label">Dashboard</span></a><a class="mn-sidebar__item"><span class="mn-sidebar__item-label">Telemetry</span></a><a class="mn-sidebar__item"><span class="mn-sidebar__item-label">Pipelines</span></a></div><div class="mn-sidebar__group"><div class="mn-sidebar__group-label">Runtime</div><a class="mn-sidebar__item"><span class="mn-sidebar__item-label">Agents</span></a><a class="mn-sidebar__item"><span class="mn-sidebar__item-label">Quality</span></a><a class="mn-sidebar__item"><span class="mn-sidebar__item-label">Budgets</span></a></div><div class="mn-sidebar__group"><div class="mn-sidebar__group-label">System</div><a class="mn-sidebar__item"><span class="mn-sidebar__item-label">Admin</span></a></div></nav><div class="mn-sidebar__footer"><span class="mn-micro" style="color:var(--grigio-medio)">v9.3.0</span></div></div></div><div><p class="mn-label" style="color:var(--mn-accent);margin-bottom:var(--space-md)">Notification Center</p><div class="mn-card-dark" style="padding:0;overflow:hidden;border-radius:8px"><div style="padding:var(--space-md) var(--space-lg);border-bottom:1px solid var(--grigio-scuro);display:flex;justify-content:space-between"><span class="mn-label">Notifications</span><span class="mn-micro" style="color:var(--mn-accent)">3 unread</span></div>${notifItem('Budget alert: us-east-1 reached 72% of monthly token plan', '2 min ago', true, '#DC0000')}${notifItem('Canary report generated for Pipeline Gamma', '15 min ago', true, '#FFC72C')}${notifItem('Sync completed — 47 pipeline states refreshed', '1 hour ago', false, '#00A651')}</div></div></div><p class="mn-label" style="color:var(--mn-accent);margin-bottom:var(--space-md)">Pipeline Ranking</p><div class="mn-card-dark" style="padding:var(--space-xl);margin-bottom:var(--space-2xl)" id="layouts-hbar">${hbarRows()}</div><p class="mn-label" style="color:var(--mn-accent);margin-bottom:var(--space-md)">Deployment Pipeline</p><div class="mn-card-dark" style="padding:var(--space-xl)" id="layouts-funnel">${funnelRows()}</div><p class="mn-label" style="color:var(--mn-accent);margin-top:var(--space-2xl);margin-bottom:var(--space-md)">Organization Tree</p><div class="mn-card-dark" style="padding:var(--space-xl)" id="layouts-org-tree"></div></div>`;
+  section.addEventListener('mn-ready', () => tryRenderCharts(section)); setTimeout(() => tryRenderCharts(section), 200);
+  setTimeout(() => { section.querySelectorAll('.mn-notif-close').forEach((btn) => { btn.addEventListener('mouseenter', () => { btn.style.color = 'var(--mn-accent)'; btn.style.background = 'rgba(255,199,44,0.1)'; }); btn.addEventListener('mouseleave', () => { btn.style.color = ''; btn.style.background = ''; }); btn.addEventListener('click', () => { const item = btn.closest('.mn-notif-item'); if (item) { item.style.opacity = '0'; item.style.maxHeight = '0'; item.style.padding = '0'; setTimeout(() => item.remove(), 300); } }); }); }, 100);
   return section;
 }
-
-function notifItem(title, time, unread, accentColor) {
-  const bg = unread ? 'background:rgba(255,199,44,0.04)' : '';
-  return `<div class="mn-notif-item" style="padding:var(--space-md) var(--space-lg);border-bottom:1px solid var(--grigio-scuro);display:flex;gap:var(--space-md);align-items:flex-start;${bg};transition:opacity 0.3s,max-height 0.3s;overflow:hidden">
-    <div style="width:8px;height:8px;border-radius:50%;background:${accentColor};margin-top:5px;flex-shrink:0"></div>
-    <div style="flex:1">
-      <div class="mn-body" style="font-size:0.85rem">${title}</div>
-      <div class="mn-micro" style="color:var(--grigio-medio);margin-top:2px">${time}</div>
-    </div>
-    <button class="mn-notif-close" style="background:none;border:none;color:var(--grigio-medio);cursor:pointer;padding:4px;border-radius:4px;transition:color 0.15s,background 0.15s;display:flex;align-items:center" aria-label="Dismiss"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-  </div>`;
-}
-
-const TEAMS = [
-  { name: 'Team Alpha', pct: 94, color: '#00A651' },
-  { name: 'Team Beta', pct: 87, color: '#00A651' },
-  { name: 'Team Gamma', pct: 81, color: '#4EA8DE' },
-  { name: 'Team Delta', pct: 74, color: '#FFC72C' },
-  { name: 'Team Epsilon', pct: 68, color: '#FFC72C' },
-  { name: 'Team Zeta', pct: 52, color: '#DC0000' },
-  { name: 'Team Eta', pct: 41, color: '#DC0000' },
-];
-
-function hbarRows() {
-  return TEAMS.map(t => `
-    <div style="display:flex;align-items:center;gap:var(--space-md);margin-bottom:var(--space-sm)">
-      <span class="mn-micro" style="width:110px;color:var(--grigio-chiaro);flex-shrink:0">${t.name}</span>
-      <div style="flex:1;height:12px;background:var(--grigio-scuro);border-radius:4px;overflow:hidden">
-        <div style="height:100%;width:${t.pct}%;background:${t.color};border-radius:4px;transition:width 0.6s ease"></div>
-      </div>
-      <span class="mn-micro" style="width:36px;text-align:right;color:${t.color}">${t.pct}%</span>
-    </div>`).join('');
-}
-
-const FUNNEL_STAGES = [
-  { label: 'Prospect', count: 47, color: '#4EA8DE', pct: 100, holdCount: 3, withdrawnCount: 2 },
-  { label: 'Exploration', count: 32, color: '#FFC72C', pct: 68, holdCount: 2, withdrawnCount: 1 },
-  { label: 'Sprint', count: 21, color: '#00A651', pct: 45, holdCount: 1, withdrawnCount: 0 },
-  { label: 'Wrap-Up', count: 12, color: '#D4622B', pct: 26, holdCount: 0, withdrawnCount: 1 },
-  { label: 'Completed', count: 6, color: '#8B5CF6', pct: 13, holdCount: 0, withdrawnCount: 0 },
-];
-
-function funnelRows() {
-  return FUNNEL_STAGES.map(s => `
-    <div style="display:flex;align-items:center;gap:var(--space-md);margin-bottom:var(--space-md)">
-      <span class="mn-micro" style="width:90px;flex-shrink:0;color:var(--grigio-chiaro)">${s.label}</span>
-      <div style="flex:1;height:28px;background:var(--grigio-scuro);border-radius:4px;overflow:hidden">
-        <div style="height:100%;width:${s.pct}%;background:${s.color};opacity:0.85;display:flex;align-items:center;padding-left:var(--space-sm);transition:width 0.6s ease">
-          <span class="mn-micro" style="color:#fff;font-weight:600">${s.count}</span>
-        </div>
-      </div>
-      <span class="mn-micro" style="width:28px;text-align:right;color:var(--grigio-medio)">${s.pct}%</span>
-    </div>`).join('');
-}
-
+function notifItem(title, time, unread, accentColor) { const bg = unread ? 'background:rgba(255,199,44,0.04)' : ''; return `<div class="mn-notif-item" style="padding:var(--space-md) var(--space-lg);border-bottom:1px solid var(--grigio-scuro);display:flex;gap:var(--space-md);align-items:flex-start;${bg};transition:opacity 0.3s,max-height 0.3s;overflow:hidden"><div style="width:8px;height:8px;border-radius:50%;background:${accentColor};margin-top:5px;flex-shrink:0"></div><div style="flex:1"><div class="mn-body" style="font-size:0.85rem">${title}</div><div class="mn-micro" style="color:var(--grigio-medio);margin-top:2px">${time}</div></div><button class="mn-notif-close" style="background:none;border:none;color:var(--grigio-medio);cursor:pointer;padding:4px;border-radius:4px;transition:color 0.15s,background 0.15s;display:flex;align-items:center" aria-label="Dismiss"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>`; }
+const TEAMS = [{ name: 'Pipeline Alpha', pct: 94, color: '#00A651' }, { name: 'Pipeline Beta', pct: 87, color: '#00A651' }, { name: 'Pipeline Gamma', pct: 81, color: '#4EA8DE' }, { name: 'Pipeline Delta', pct: 74, color: '#FFC72C' }, { name: 'Pipeline Epsilon', pct: 68, color: '#FFC72C' }, { name: 'Pipeline Zeta', pct: 52, color: '#DC0000' }, { name: 'Pipeline Eta', pct: 41, color: '#DC0000' }];
+function hbarRows() { return TEAMS.map(t => `<div style="display:flex;align-items:center;gap:var(--space-md);margin-bottom:var(--space-sm)"><span class="mn-micro" style="width:110px;color:var(--grigio-chiaro);flex-shrink:0">${t.name}</span><div style="flex:1;height:12px;background:var(--grigio-scuro);border-radius:4px;overflow:hidden"><div style="height:100%;width:${t.pct}%;background:${t.color};border-radius:4px;transition:width 0.6s ease"></div></div><span class="mn-micro" style="width:36px;text-align:right;color:${t.color}">${t.pct}%</span></div>`).join(''); }
+const FUNNEL_STAGES = [{ label: 'Draft', count: 47, color: '#4EA8DE', pct: 100, holdCount: 3, withdrawnCount: 2 }, { label: 'Validated', count: 32, color: '#FFC72C', pct: 68, holdCount: 2, withdrawnCount: 1 }, { label: 'Running', count: 21, color: '#00A651', pct: 45, holdCount: 1, withdrawnCount: 0 }, { label: 'Evaluating', count: 12, color: '#D4622B', pct: 26, holdCount: 0, withdrawnCount: 1 }, { label: 'Shipped', count: 6, color: '#8B5CF6', pct: 13, holdCount: 0, withdrawnCount: 0 }];
+function funnelRows() { return FUNNEL_STAGES.map(s => `<div style="display:flex;align-items:center;gap:var(--space-md);margin-bottom:var(--space-md)"><span class="mn-micro" style="width:90px;flex-shrink:0;color:var(--grigio-chiaro)">${s.label}</span><div style="flex:1;height:28px;background:var(--grigio-scuro);border-radius:4px;overflow:hidden"><div style="height:100%;width:${s.pct}%;background:${s.color};opacity:0.85;display:flex;align-items:center;padding-left:var(--space-sm);transition:width 0.6s ease"><span class="mn-micro" style="color:#fff;font-weight:600">${s.count}</span></div></div><span class="mn-micro" style="width:28px;text-align:right;color:var(--grigio-medio)">${s.pct}%</span></div>`).join(''); }
 function tryRenderCharts(section) {
-  const M = window.Maranello;
-  if (!M) return;
-
-  const hbarEl = section.querySelector('#layouts-hbar');
-  if (M.hBarChart && hbarEl && !hbarEl.dataset.rendered) {
-    hbarEl.dataset.rendered = '1';
-    try {
-      hbarEl.innerHTML = '';
-      M.hBarChart(hbarEl, { bars: TEAMS.map(t => ({ label: t.name, value: t.pct, color: t.color })), title: 'Team Health Ranking', unit: '%', showGrid: true, showValues: true });
-    } catch (_) { /* CSS fallback already rendered */ }
-  }
-
-  const funnelEl = section.querySelector('#layouts-funnel');
-  if (M.funnel && funnelEl && !funnelEl.dataset.rendered) {
-    funnelEl.dataset.rendered = '1';
-    try {
-      funnelEl.innerHTML = '';
-      const ctrl = M.funnel(funnelEl, {
-        animate: true,
-        showLabels: true,
-        showCounts: true,
-        onClick: (stage) => {
-          if (M.toast) M.toast({ type: 'info', title: stage.label, message: `${stage.count} engagements in ${stage.label} stage` });
-        },
-        data: {
-          pipeline: FUNNEL_STAGES.map(s => ({
-            label: s.label, count: s.count, color: s.color,
-            holdCount: s.holdCount, withdrawnCount: s.withdrawnCount,
-          })),
-          onHold: { label: 'On Hold', count: 6, color: '#D4622B' },
-          withdrawn: { label: 'Withdrawn', count: 4, color: '#DC0000' },
-          total: 47,
-        },
-      });
-    } catch (_) { /* CSS fallback already rendered */ }
-  }
-
+  const M = window.Maranello; if (!M) return;
+  const hbarEl = section.querySelector('#layouts-hbar'); if (M.hBarChart && hbarEl && !hbarEl.dataset.rendered) { hbarEl.dataset.rendered = '1'; try { hbarEl.innerHTML = ''; M.hBarChart(hbarEl, { bars: TEAMS.map(t => ({ label: t.name, value: t.pct, color: t.color })), title: 'Pipeline Ranking', unit: '%', showGrid: true, showValues: true }); } catch (_) {} }
+  const funnelEl = section.querySelector('#layouts-funnel'); if (M.funnel && funnelEl && !funnelEl.dataset.rendered) { funnelEl.dataset.rendered = '1'; try { funnelEl.innerHTML = ''; M.funnel(funnelEl, { animate: true, showLabels: true, showCounts: true, onClick: (stage) => { if (M.toast) M.toast({ type: 'info', title: stage.label, message: `${stage.count} deployments in ${stage.label}` }); }, data: { pipeline: FUNNEL_STAGES.map(s => ({ label: s.label, count: s.count, color: s.color, holdCount: s.holdCount, withdrawnCount: s.withdrawnCount })), onHold: { label: 'On Hold', count: 6, color: '#D4622B' }, withdrawn: { label: 'Withdrawn', count: 4, color: '#DC0000' }, total: 47 } }); } catch (_) {} }
   const treeEl = section.querySelector('#layouts-org-tree');
   if (treeEl && !treeEl.dataset.rendered) {
     treeEl.dataset.rendered = '1';
-    treeEl.innerHTML = '<div class="mn-org-tree"><ul class="mn-org-tree__list">' + buildOrgTree({
-      name: 'Francesca Fedeli', role: 'CEO',
-      children: [
-        { name: 'Therapy Division', role: 'Director',
-          children: [
-            { name: 'Milano Center', role: 'Lead' },
-            { name: 'Roma Center', role: 'Lead' },
-            { name: 'Torino Center', role: 'Lead' },
-          ]
-        },
-        { name: 'Research', role: 'Director',
-          children: [
-            { name: 'Clinical Trials', role: 'PI' },
-            { name: 'Data Science', role: 'Lead' },
-          ]
-        },
-        { name: 'Operations', role: 'COO',
-          children: [
-            { name: 'Fundraising', role: 'Mgr' },
-            { name: 'Volunteers', role: 'Coord' },
-          ]
-        },
-      ]
-    }) + '</ul></div>';
+    treeEl.innerHTML = '<div class="mn-org-tree"><ul class="mn-org-tree__list">' + buildOrgTree({ name: 'Maranello Luce Platform', role: 'Control Plane', children: [{ name: 'Agent Opus', role: 'Strategic Lead', children: [{ name: 'Pipeline Alpha', role: 'Orchestrator' }, { name: 'Pipeline Beta', role: 'Orchestrator' }, { name: 'Pipeline Gamma', role: 'Orchestrator' }] }, { name: 'Agent Sonnet', role: 'Execution Lead', children: [{ name: 'Inference Queue', role: 'Runtime' }, { name: 'Eval Service', role: 'Validator' }] }, { name: 'Agent Haiku', role: 'Monitoring Lead', children: [{ name: 'Budget Sentinel', role: 'Monitor' }, { name: 'Cache Relay', role: 'Platform' }] }] }) + '</ul></div>';
     if (M.initOrgTree) M.initOrgTree(treeEl);
   }
 }
-
-function buildOrgTree(node) {
-  const hasKids = node.children && node.children.length;
-  const toggleIcon = hasKids ? '▸' : '';
-  const toggleCls = hasKids ? 'mn-org-tree__toggle mn-org-tree__toggle--expanded' : 'mn-org-tree__toggle mn-org-tree__toggle--leaf';
-  let html = `<li class="mn-org-tree__item">
-    <div class="mn-org-tree__node">
-      <span class="${toggleCls}">${toggleIcon}</span>
-      <span class="mn-org-tree__label">${node.name}</span>
-      <span class="mn-org-tree__meta">${node.role}</span>
-    </div>`;
-  if (hasKids) {
-    html += '<div class="mn-org-tree__children"><ul class="mn-org-tree__list">';
-    node.children.forEach(c => { html += buildOrgTree(c); });
-    html += '</ul></div>';
-  }
-  html += '</li>';
-  return html;
-}
+function buildOrgTree(node) { const hasKids = node.children && node.children.length; const toggleIcon = hasKids ? '▸' : ''; const toggleCls = hasKids ? 'mn-org-tree__toggle mn-org-tree__toggle--expanded' : 'mn-org-tree__toggle mn-org-tree__toggle--leaf'; let html = `<li class="mn-org-tree__item"><div class="mn-org-tree__node"><span class="${toggleCls}">${toggleIcon}</span><span class="mn-org-tree__label">${node.name}</span><span class="mn-org-tree__meta">${node.role}</span></div>`; if (hasKids) { html += '<div class="mn-org-tree__children"><ul class="mn-org-tree__list">'; node.children.forEach(c => { html += buildOrgTree(c); }); html += '</ul></div>'; } html += '</li>'; return html; }

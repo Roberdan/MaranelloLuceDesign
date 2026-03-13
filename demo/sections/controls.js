@@ -36,7 +36,7 @@ export function createControlsSection() {
       <div class="demo-section-label">Temperature Badges</div>
       <div class="mn-mb-2xl" style="display:flex;gap:var(--space-lg);flex-wrap:wrap">${TEMP_BADGES.map(([label, color, mod]) => `<span class="mn-temp-badge${mod}" style="--temp-color:${color}">${label}</span>`).join('')}</div>
       <div class="demo-section-label">Slider Controls</div>
-      <div class="mn-flex-col mn-gap-lg mn-mb-2xl" style="max-width:420px">${slider('ctrl-slider-1', 'Therapy Intensity', 72)}${slider('ctrl-slider-2', 'Volunteer Capacity', 45)}</div>
+      <div class="mn-flex-col mn-gap-lg mn-mb-2xl" style="max-width:420px">${slider('ctrl-slider-1', 'Routing Intensity', 72)}${slider('ctrl-slider-2', 'Agent Capacity', 45)}</div>
       <div class="demo-section-label">Rotary Selectors</div>
       <div class="mn-flex-center mn-gap-2xl mn-flex-wrap mn-mb-2xl"><div id="ctrl-rotary-1"></div><div id="ctrl-rotary-2"></div></div>
       <div class="mn-divider-gold mn-my-2xl"></div>
@@ -69,11 +69,11 @@ export function createControlsSection() {
 function initControls(section) {
   const M = window.Maranello;
   if (!M) return;
-  if (M.initSlider) [['#ctrl-slider-1', 72, 'Therapy Intensity', '#slider-1-val'], ['#ctrl-slider-2', 45, 'Volunteer Capacity', '#slider-2-val']].forEach(([id, value, label, out]) => {
+  if (M.initSlider) [['#ctrl-slider-1', 72, 'Routing Intensity', '#slider-1-val'], ['#ctrl-slider-2', 45, 'Agent Capacity', '#slider-2-val']].forEach(([id, value, label, out]) => {
     M.initSlider(section.querySelector(id), { value, min: 0, max: 100, label, onChange: (v) => { const el = section.querySelector(out); if (el) el.textContent = String(v); } });
   });
-  if (M.initRotary) [{ id: '#ctrl-rotary-1', positions: ['Intake', 'Review', 'Therapy', 'Monitor', 'Archive'], label: 'Program Stage', initial: 2 }, { id: '#ctrl-rotary-2', positions: ['Daily', 'Weekly', 'Monthly', 'Quarterly'], label: 'Report Frequency', initial: 1 }].forEach((cfg) => M.initRotary(section.querySelector(cfg.id), cfg));
-  if (M.manettino) M.manettino(section.querySelector('#ctrl-manettino'), { positions: ['Intake', 'Review', 'Therapy', 'Monitor', 'Archive'], label: 'Program Stage', initial: 2 });
+  if (M.initRotary) [{ id: '#ctrl-rotary-1', positions: ['Draft', 'Route', 'Infer', 'Validate', 'Archive'], label: 'Pipeline Stage', initial: 2 }, { id: '#ctrl-rotary-2', positions: ['Daily', 'Weekly', 'Monthly', 'Quarterly'], label: 'Report Frequency', initial: 1 }].forEach((cfg) => M.initRotary(section.querySelector(cfg.id), cfg));
+  if (M.manettino) M.manettino(section.querySelector('#ctrl-manettino'), { positions: ['Draft', 'Route', 'Infer', 'Validate', 'Archive'], label: 'Pipeline Stage', initial: 2 });
   if (M.cruiseLever) M.cruiseLever(section.querySelector('#ctrl-cruise'), { positions: ['Off', 'Low', 'Medium', 'High', 'Urgent'], label: 'Priority', initial: 1 });
   if (M.toggleLever) [['#ctrl-lever-on', 'Auto-Assign', true], ['#ctrl-lever-off', 'Notifications', false]].forEach(([id, label, state]) => M.toggleLever(section.querySelector(id), { label, state }));
   if (M.steppedRotary) M.steppedRotary(section.querySelector('#ctrl-stepped'), { positions: ['S', 'M', 'L', 'XL'], label: 'Effort', initial: 1 });
