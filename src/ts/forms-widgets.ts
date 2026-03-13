@@ -5,6 +5,7 @@
  */
 
 import { eventBus } from './core/events';
+import { escapeHtml } from './core/sanitize';
 
 export interface TagInputApi {
   getTags: () => string[];
@@ -129,9 +130,16 @@ export function initFileUpload(container: Element | null): FileUploadApi | null 
   function updateLabel(): void {
     const textEl = root.querySelector('.mn-file-upload__text') as HTMLElement | null;
     if (textEl && files.length > 0) {
-      textEl.innerHTML = files.length === 1
-        ? '<strong>' + files[0].name + '</strong>'
-        : '<strong>' + files.length + ' files</strong> selected';
+      textEl.textContent = '';
+      const strong = document.createElement('strong');
+      if (files.length === 1) {
+        strong.textContent = files[0].name;
+        textEl.appendChild(strong);
+      } else {
+        strong.textContent = files.length + ' files';
+        textEl.appendChild(strong);
+        textEl.appendChild(document.createTextNode(' selected'));
+      }
     }
   }
   return {
