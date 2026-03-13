@@ -70,10 +70,22 @@ export function createChartsSection() {
         ${halfWrap('hg-lg',260,156,'4.2MW','power')}
       </div>
 
-      <h3 class="mn-title-sub" style="margin-bottom:var(--space-md)">Live Graphs</h3>
-      <div style="display:flex;gap:var(--space-2xl);flex-wrap:wrap;margin-bottom:var(--space-2xl)">
-        ${liveWrap('live-1','Donations live','EURk')}
-        ${liveWrap('live-2','Sessions live','sessions')}
+      <h3 class="mn-title-sub" style="margin-bottom:var(--space-md)">Live Trends</h3>
+      <div style="display:flex;gap:var(--space-xl);flex-wrap:wrap;margin-bottom:var(--space-2xl)">
+        <div class="mn-card-dark" style="padding:var(--space-lg);flex:1;min-width:260px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-md)">
+            <span class="mn-label">Donations Trend</span>
+            <span class="mn-micro" style="color:var(--mn-accent)">+12% ↑</span>
+          </div>
+          <canvas id="trend-1" width="460" height="60" style="width:100%;height:60px"></canvas>
+        </div>
+        <div class="mn-card-dark" style="padding:var(--space-lg);flex:1;min-width:260px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-md)">
+            <span class="mn-label">Therapy Sessions</span>
+            <span class="mn-micro" style="color:var(--verde-racing)">+8% ↑</span>
+          </div>
+          <canvas id="trend-2" width="460" height="60" style="width:100%;height:60px"></canvas>
+        </div>
       </div>
 
       <h3 class="mn-title-sub" style="margin-bottom:var(--space-md)">Progress Rings</h3>
@@ -108,9 +120,6 @@ function donutWrap(id, w, h, val, label) {
 function halfWrap(id, w, h, val, unit) {
   return `<div style="text-align:center"><canvas id="${id}" width="${w}" height="${h}"></canvas><div class="mn-micro" style="color:var(--mn-accent)">${val} <span style="color:var(--grigio-chiaro)">${unit}</span></div></div>`;
 }
-function liveWrap(id, label, unit) {
-  return `<div class="mn-card-dark" style="padding:var(--space-md);flex:1;min-width:280px"><div class="mn-label" style="margin-bottom:var(--space-sm)">${label}</div><canvas id="${id}" width="500" height="80" style="width:100%;height:80px"></canvas><div id="${id}-value" class="mn-micro" aria-live="polite" style="color:var(--avorio);margin-top:var(--space-sm)">Last value — ${unit}</div></div>`;
-}
 function ringWrap(id, sz, pct, label) {
   return `<div style="text-align:center"><div id="${id}" style="width:${sz}px;height:${sz}px;display:inline-block"></div><div class="mn-micro" style="color:var(--grigio-chiaro);margin-top:4px">${pct} ${label}</div></div>`;
 }
@@ -138,7 +147,6 @@ function initCharts(section) {
   const donutLarge = [{ label: 'Completed', value: 92, color: '#FFC72C' }, { label: 'Remaining', value: 8, color: '#2a2a2a' }];
   const radarData = [{ label: 'Mobility', value: 85 }, { label: 'Speech', value: 72 }, { label: 'Cognition', value: 68 }, { label: 'Social', value: 90 }, { label: 'Motor', value: 78 }, { label: 'Emotional', value: 82 }];
   const bubbleData = [{ x: 30, y: 70, z: 18, color: '#FFC72C', label: 'Milano' }, { x: 55, y: 55, z: 14, color: '#00A651', label: 'Roma' }, { x: 75, y: 80, z: 22, color: '#4EA8DE', label: 'Torino' }, { x: 45, y: 30, z: 10, color: '#DC0000', label: 'At Risk' }, { x: 85, y: 45, z: 16, color: '#D4622B', label: 'Firenze' }];
-  const liveCharts = [{ id: 'live-1', unit: 'EURk', color: '#FFC72C', data: [42,48,55,52,61,58,65,63,70,68] }, { id: 'live-2', unit: 'sessions', color: '#00A651', data: [25,29,33,31,37,35,39,38,42,41] }];
 
   C.sparkline(g('spark-1'), sparkData, { color: '#FFC72C', width: 100, height: 32 });
   C.sparkline(g('spark-2'), [30,35,28,40,38,45], { color: '#4EA8DE', width: 100, height: 32 });
@@ -154,23 +162,8 @@ function initCharts(section) {
   C.halfGauge(g('hg-md'), { value: 87, max: 100, width: 180, height: 108 });
   C.halfGauge(g('hg-lg'), { value: 75, max: 100, width: 260, height: 156 });
 
-  const paintLive = ({ id, data, color, unit }) => {
-    C.liveGraph(g(id), data, { width: 500, height: 80, color });
-    const last = data[data.length - 1], out = g(`${id}-value`);
-    if (out) out.textContent = `${last} ${unit}`;
-  };
-  liveCharts.forEach(paintLive);
-  clearInterval(section._mnLiveTimer);
-  section._mnLiveTimer = window.setInterval(() => {
-    liveCharts.forEach((chart) => {
-      const prev = chart.data[chart.data.length - 1];
-      const delta = Math.round((Math.random() - 0.5) * 8);
-      const next = Math.max(20, Math.min(120, prev + delta));
-      chart.data.push(next);
-      if (chart.data.length > 20) chart.data.shift();
-      paintLive(chart);
-    });
-  }, 3000);
+  C.sparkline(g('trend-1'), [42,48,55,52,61,58,65,63,70,68,72,75,80,84,88], { color: '#FFC72C', width: 460, height: 60 });
+  C.sparkline(g('trend-2'), [25,29,33,31,37,35,39,38,42,41,44,46,48,50,52], { color: '#00A651', width: 460, height: 60 });
 
   const M = window.Maranello;
   g('radar-score').innerHTML = `<span style="color:var(--mn-accent)">${Math.round(radarData.reduce((sum, { value }) => sum + value, 0) / radarData.length)}/100</span> overall score`;
