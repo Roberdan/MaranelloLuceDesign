@@ -8,15 +8,27 @@
  * @fires mn-change - {detail: {value, label?}}
  * @method getValue() - Current value (index or boolean)
  * @method setValue(v) - Set value programmatically
- * @version 1.4.0
+ * @version 1.5.0
  */
+
+let _engine = null;
+
+async function resolveEngine() {
+  if (_engine) return _engine;
+  if (globalThis.Maranello) { _engine = globalThis.Maranello; return _engine; }
+  console.warn('[mn-ferrari-control] No engine found');
+  return null;
+}
+
 const _base = new URL('.', import.meta.url).href;
+
 function cssLink(path) {
   const link = document.createElement('link');
   link.rel = 'stylesheet';
   link.href = new URL(path, _base).href;
   return link;
 }
+
 class MnFerrariControl extends HTMLElement {
   static get observedAttributes() {
     return ['type', 'options'];
@@ -26,13 +38,10 @@ class MnFerrariControl extends HTMLElement {
     super();
     this.attachShadow({ mode: 'open' });
     this._ctrl = null;
-    this._initAttempts = 0;
 
-    const tokens = cssLink("../css/tokens.css");
-
-    const link1 = cssLink("../css/controls-rotary-slider.css");
-
-    const link2 = cssLink("../css/controls-buttons-switches.css");
+    const tokens = cssLink('../css/tokens.css');
+    const link1 = cssLink('../css/controls-rotary-slider.css');
+    const link2 = cssLink('../css/controls-buttons-switches.css');
 
     const style = document.createElement('style');
     style.textContent = `
@@ -47,8 +56,8 @@ class MnFerrariControl extends HTMLElement {
     this.shadowRoot.append(tokens, link1, link2, style, this._container);
   }
 
-  connectedCallback() {
-    this._tryInit();
+  async connectedCallback() {
+    await this._tryInit();
   }
 
   disconnectedCallback() {
@@ -63,34 +72,32 @@ class MnFerrariControl extends HTMLElement {
 
   /* ── Public API ─────────────────────────────────────────── */
 
-  getValue() {
-    return this._ctrl?.getValue?.();
-  }
+  getValue() { return this._ctrl?.getValue?.(); }
 
-  setValue(v) {
-    this._ctrl?.setValue?.(v);
-  }
+  setValue(v) { this._ctrl?.setValue?.(v); }
 
   /* ── Private ────────────────────────────────────────────── */
 
-  _rebuild() {
+  async _rebuild() {
     this._ctrl?.destroy?.();
     this._ctrl = null;
     this._container.innerHTML = '';
-    this._initAttempts = 0;
-    if (this.isConnected) this._tryInit();
+    if (this.isConnected) await this._tryInit();
   }
 
-  _tryInit() {
-    const M = window.Maranello;
+  async _tryInit() {
+    const M = await resolveEngine();
     const type = this.getAttribute('type') || 'rotary';
-    const factory = this._getFactory(M, type);
 
+    if (!M && type !== 'slider') {
+      this._container.innerHTML = '';
+      this._container.className = 'mn-fc mn-fc--empty';
+      this._container.textContent = `Maranello ${type} not available`;
+      return;
+    }
+
+    const factory = this._getFactory(M, type);
     if (!factory) {
-      if (this._initAttempts++ < 30) {
-        requestAnimationFrame(() => this._tryInit());
-        return;
-      }
       this._container.innerHTML = '';
       this._container.className = 'mn-fc mn-fc--empty';
       this._container.textContent = `Maranello ${type} not available`;
@@ -135,7 +142,7 @@ class MnFerrariControl extends HTMLElement {
   }
 
   _initRotary(M, opts, onChange) {
-    if (!M.initRotary) {
+    if (!M?.initRotary) {
       this._container.textContent = 'Rotary not available';
       return;
     }
@@ -218,14 +225,14 @@ class MnFerrariControl extends HTMLElement {
   }
 
   _getFactory(M, type) {
-    if (!M) return null;
+    if (!M) return type === 'slider' ? true : null;
     const map = {
       'rotary': M.initRotary,
       'cruise-lever': M.cruiseLever,
       'manettino': M.manettino,
       'toggle-lever': M.toggleLever,
       'stepped-rotary': M.steppedRotary,
-      'slider': true, // built-in, no Maranello dependency
+      'slider': true,
     };
     return map[type] || null;
   }

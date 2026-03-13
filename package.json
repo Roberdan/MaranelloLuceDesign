@@ -1,6 +1,6 @@
 {
   "name": "maranello-luce-design-business",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "Ferrari Luce-inspired design system for business dashboards. Part of the Convergio project.",
   "type": "module",
   "exports": {
@@ -71,6 +71,7 @@
     "esbuild": "^0.24.0",
     "eslint": "^9.0.0",
     "happy-dom": "^20.8.4",
+    "lightningcss": "^1.32.0",
     "serve": "^14.0.0",
     "typescript": "^5.7.0",
     "vitest": "^3.0.0"

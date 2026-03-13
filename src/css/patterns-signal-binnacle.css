@@ -1,3 +1,4 @@
+@layer patterns {
 /* patterns — Signal Binnacle | Maranello Design System v1.4.0 */
 
 /* ── SIGNAL PANEL ── */
@@ -90,3 +91,4 @@
   gap: clamp(12px, 3vw, 40px);
   flex-wrap: wrap;
 }
+} /* end @layer patterns */

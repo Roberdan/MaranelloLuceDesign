@@ -5,7 +5,22 @@ How to use Maranello Luce Design System with Svelte (4+) and SvelteKit.
 ## Install
 
 ```bash
-npm install github:Roberdan/MaranelloLuceDesign#v2.0.0
+npm install github:Roberdan/MaranelloLuceDesign#v3.0.0
+```
+
+## CSS @layer Import
+
+v3.0.0 wraps all CSS in `@layer` blocks. Svelte component styles (scoped) win automatically.
+
+```svelte
+<script>
+  // Full bundle
+  import 'maranello-luce-design-business/css';
+
+  // Or selective layers
+  import 'maranello-luce-design-business/css/tokens.css';
+  import 'maranello-luce-design-business/css/components.css';
+</script>
 ```
 
 ## Layer 1: CSS-Only
@@ -53,6 +68,24 @@ Selective imports:
 ## Layer 2: Web Components
 
 Svelte has native support for custom elements. Web Components work without any wrapper.
+
+### Per-component ESM import (v3)
+
+```svelte
+<script>
+  // Import only the WCs you use
+  import 'maranello-luce-design-business/wc/mn-gauge';
+  import 'maranello-luce-design-business/wc/mn-chart';
+</script>
+```
+
+### Standalone WC without IIFE (CDN mode)
+
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v3.0.0/dist/css/index.css">
+<script src="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v3.0.0/dist/iife/maranello.min.js"></script>
+<mn-gauge value="72" label="CPU" theme="nero"></mn-gauge>
+```
 
 ```svelte
 <script>

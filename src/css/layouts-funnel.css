@@ -1,3 +1,4 @@
+@layer layouts {
 /* layouts — Funnel / SVG Sankey Pipeline | Maranello Design System v2.0.0 */
 
 .mn-funnel {
@@ -40,3 +41,4 @@
 .mn-okr-host { width: 100%; }
 .mn-okr__kr--urgent .mn-okr__kr-bar-fill { animation: mn-okr-pulse 1.5s infinite; }
 @keyframes mn-okr-pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.6; } }
+} /* end @layer layouts */

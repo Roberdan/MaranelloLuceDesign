@@ -1,3 +1,4 @@
+@layer utilities {
 /* ============================================================
    MARANELLO DESIGN SYSTEM — Utilities
    Text color helpers, spacing, layout, animations, demo styles
@@ -163,3 +164,4 @@ body.mn-avorio .mn-section-dark .mn-text-dim { color: var(--grigio-medio); }
   color: var(--grigio-chiaro);
   font-size: 0.85rem;
 }
+} /* end @layer utilities */

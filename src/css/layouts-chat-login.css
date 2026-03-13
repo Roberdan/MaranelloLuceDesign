@@ -1,3 +1,4 @@
+@layer layouts {
 /* layouts — Chat Login | Maranello Design System v1.4.0 */
 
 /* ── Chat header avatar + left group ── */
@@ -191,3 +192,4 @@ body.mn-avorio .mn-login__btn { background: rgba(0,0,0,0.04); border-color: var(
 body.mn-avorio .mn-login__btn:hover { background: rgba(0,0,0,0.08); }
 body.mn-avorio .mn-login__status { border-top-color: var(--grigio-chiaro); }
 body.mn-avorio .mn-login__service-name { color: var(--grigio-medio); }
+} /* end @layer layouts */

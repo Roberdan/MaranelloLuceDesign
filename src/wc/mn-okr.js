@@ -5,8 +5,21 @@
  * @attr {string} objectives - JSON array of objective objects
  * @attr {string} options    - JSON options: {title, period}
  * @fires mn-okr-ready - Dispatched when panel is rendered
- * @version 1.4.0
+ * @version 2.0.0
  */
+
+// Dual-mode: ESM import or CDN fallback
+let _engine = null;
+
+function getEngine() {
+  if (_engine) return _engine;
+  if (globalThis.Maranello) {
+    _engine = globalThis.Maranello;
+    return _engine;
+  }
+  return null;
+}
+
 const _base = new URL('.', import.meta.url).href;
 function cssLink(path) {
   const link = document.createElement('link');
@@ -14,6 +27,7 @@ function cssLink(path) {
   link.href = new URL(path, _base).href;
   return link;
 }
+
 class MnOkr extends HTMLElement {
   static get observedAttributes() {
     return ['objectives', 'options'];
@@ -23,24 +37,22 @@ class MnOkr extends HTMLElement {
     super();
     this.attachShadow({ mode: 'open' });
     this._ctrl = null;
-    this._initAttempts = 0;
-
-    const link1 = cssLink("../css/tokens.css");
-
-    const link2 = cssLink("../css/charts.css");
-
-    const link3 = cssLink("../css/charts-base.css");
+    this._mo = null;
 
     const style = document.createElement('style');
-    style.textContent = `
-      :host { display: block; width: 100%; }
-      .mn-okr__root { width: 100%; }
-    `;
+    style.textContent = ':host{display:block;width:100%}.mn-okr__root{width:100%}';
 
     this._container = document.createElement('div');
     this._container.className = 'mn-okr__root';
+    this._container.setAttribute('role', 'img');
 
-    this.shadowRoot.append(link1, link2, link3, style, this._container);
+    this.shadowRoot.append(
+      cssLink('../css/tokens.css'),
+      cssLink('../css/charts.css'),
+      cssLink('../css/charts-base.css'),
+      style,
+      this._container,
+    );
   }
 
   connectedCallback() {
@@ -52,31 +64,28 @@ class MnOkr extends HTMLElement {
   }
 
   disconnectedCallback() {
+    this._teardownObserver();
     this._ctrl?.destroy?.();
     this._ctrl = null;
   }
 
   attributeChangedCallback(name, oldVal, newVal) {
     if (oldVal === newVal || !this._ctrl) return;
-    switch (name) {
-      case 'objectives': {
-        const parsed = this._parseJSON('objectives', null);
-        if (Array.isArray(parsed)) this._ctrl.update(parsed);
-        break;
-      }
-      case 'options':
-        this._rebuild();
-        break;
+    if (name === 'objectives') {
+      const parsed = this._parseJSON('objectives', null);
+      if (Array.isArray(parsed)) this._ctrl.update(parsed);
+    } else {
+      this._rebuild();
     }
   }
 
-  /* ── Public API ─────────────────────────────────────────── */
+  /* ── Public API ───────────────────────────────────────────── */
 
   update(objectives) {
     this._ctrl?.update?.(objectives);
   }
 
-  /* ── Internals ──────────────────────────────────────────── */
+  /* ── Internals ────────────────────────────────────────────── */
 
   _parseJSON(attr, fallback) {
     try { return JSON.parse(this.getAttribute(attr) || ''); }
@@ -84,21 +93,17 @@ class MnOkr extends HTMLElement {
   }
 
   _init() {
-    const M = window.Maranello;
+    const M = getEngine();
     if (!M?.okrPanel) {
-      if (++this._initAttempts < 60) {
-        requestAnimationFrame(() => this._init());
-      }
+      this._waitForEngine(() => this._init());
       return;
     }
+    this._teardownObserver();
 
     const objectives = this._parseJSON('objectives', []);
     const opts = this._parseJSON('options', {});
 
-    this._ctrl = M.okrPanel(this._container, {
-      objectives,
-      ...opts,
-    });
+    this._ctrl = M.okrPanel(this._container, { objectives, ...opts });
 
     this.dispatchEvent(new CustomEvent('mn-okr-ready', {
       bubbles: true, composed: true,
@@ -109,8 +114,23 @@ class MnOkr extends HTMLElement {
     this._ctrl?.destroy?.();
     this._ctrl = null;
     this._container.innerHTML = '';
-    this._initAttempts = 0;
     this._init();
+  }
+
+  _waitForEngine(cb) {
+    requestAnimationFrame(() => {
+      if (getEngine()) { cb(); return; }
+      if (this._mo) return;
+      this._mo = new MutationObserver(() => {
+        if (getEngine()) { this._teardownObserver(); cb(); }
+      });
+      this._mo.observe(document.head, { childList: true });
+    });
+  }
+
+  _teardownObserver() {
+    this._mo?.disconnect();
+    this._mo = null;
   }
 }
 

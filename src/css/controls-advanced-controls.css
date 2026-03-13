@@ -1,3 +1,4 @@
+@layer controls {
 /* controls — Advanced Controls | Maranello Design System v1.4.0 */
 
 /* ── Cruise Control Lever ── */
@@ -170,3 +171,4 @@ body.mn-avorio .mn-ctrl-manettino__pos--active { color: var(--rosso-corsa); }
 body.mn-avorio .mn-ctrl-lever--on .mn-ctrl-lever__track { border-color: var(--rosso-corsa); }
 body.mn-avorio .mn-ctrl-stepped__housing { background: radial-gradient(circle at 40% 35%, var(--avorio-medio) 0%, var(--avorio-scuro) 100%); border-color: var(--avorio-scuro); }
 body.mn-avorio .mn-ctrl-stepped__mark--active { color: var(--nero-assoluto); }
+} /* end @layer controls */

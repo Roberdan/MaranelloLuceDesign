@@ -1,3 +1,4 @@
+@layer layouts {
 /* layouts — Detail Controls 1 | Maranello Design System v1.4.0 */
 
 /* ── Header actions ── */
@@ -240,3 +241,4 @@
   border: 1px solid rgba(255, 199, 44, 0.2);
   color: var(--mn-accent);
 }
+} /* end @layer layouts */

@@ -1,3 +1,4 @@
+@layer charts {
 /* charts — Live Donut Bar | Maranello Design System v1.4.0 */
 
 /* ── LIVE DATA PANEL (Ferrari speedometer style) ── */
@@ -171,3 +172,4 @@
 }
 
 
+} /* end @layer charts */

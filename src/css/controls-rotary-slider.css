@@ -1,3 +1,4 @@
+@layer controls {
 /* controls — Rotary Slider | Maranello Design System v1.4.0 */
 
 /* ── ROTARY KNOB (Manettino-style mode selector) ── */
@@ -148,3 +149,4 @@
   color: var(--grigio-medio);
 }
 .mn-slider__label--active { color: var(--mn-accent); }
+} /* end @layer controls */

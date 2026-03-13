@@ -7,13 +7,25 @@
  * @attr {string} subtitle   - Subtitle / version string
  * @fires mn-login - Dispatched when the user clicks the sign-in button
  */
+
+let _engine = null;
+
+async function resolveEngine() {
+  if (_engine) return _engine;
+  if (globalThis.Maranello) { _engine = globalThis.Maranello; return _engine; }
+  console.warn('[mn-login] No engine found');
+  return null;
+}
+
 const _base = new URL('.', import.meta.url).href;
+
 function cssLink(path) {
   const link = document.createElement('link');
   link.rel = 'stylesheet';
   link.href = new URL(path, _base).href;
   return link;
 }
+
 class MnLogin extends HTMLElement {
   static get observedAttributes() {
     return ['health-url', 'title', 'subtitle'];
@@ -23,21 +35,20 @@ class MnLogin extends HTMLElement {
     super();
     this.attachShadow({ mode: 'open' });
     this._ctrl = null;
-    this._initAttempts = 0;
 
-    const link1 = cssLink("../css/tokens.css");
-
-    const link2 = cssLink("../css/layouts-chat-login.css");
-
-    const link3 = cssLink("../css/gauge.css");
+    const link1 = cssLink('../css/tokens.css');
+    const link2 = cssLink('../css/layouts-chat-login.css');
+    const link3 = cssLink('../css/gauge.css');
 
     this._container = document.createElement('div');
     this._container.className = 'mn-wc-root';
+    this._container.setAttribute('role', 'main');
+    this._container.setAttribute('aria-label', 'Sign in');
     this.shadowRoot.append(link1, link2, link3, this._container);
   }
 
-  connectedCallback() {
-    this._init();
+  async connectedCallback() {
+    await this._init();
   }
 
   disconnectedCallback() {
@@ -47,33 +58,25 @@ class MnLogin extends HTMLElement {
 
   attributeChangedCallback(name, oldVal, newVal) {
     if (oldVal === newVal) return;
-    if (this._ctrl) this._handleAttr(name, newVal);
+    if (this._ctrl) this._rebuild();
   }
 
   /* ── Public API ─────────────────────────────────────────── */
 
-  updateStatus(data) {
-    this._ctrl?.updateStatus?.(data);
-  }
+  updateStatus(data) { this._ctrl?.updateStatus?.(data); }
 
-  setError(msg) {
-    this._ctrl?.setError?.(msg);
-  }
+  setError(msg) { this._ctrl?.setError?.(msg); }
 
   /* ── Internals ──────────────────────────────────────────── */
 
-  _init() {
-    const M = window.Maranello;
-    if (!M?.loginScreen) {
-      if (++this._initAttempts < 60) {
-        requestAnimationFrame(() => this._init());
-      }
-      return;
-    }
+  async _init() {
+    const M = await resolveEngine();
+    if (!M?.loginScreen) return;
 
     const healthUrl = this.getAttribute('health-url') || undefined;
 
     this._ctrl = M.loginScreen(this._container, {
+      buttonLabel: 'Sign in with SSO',
       subtitle: this.getAttribute('subtitle') || undefined,
       version: undefined,
       healthUrl,
@@ -87,24 +90,11 @@ class MnLogin extends HTMLElement {
     });
   }
 
-  _handleAttr(name, value) {
-    switch (name) {
-      case 'title':
-      case 'subtitle':
-      case 'health-url':
-        // These require a full rebuild since loginScreen
-        // doesn't expose individual property setters
-        this._rebuild();
-        break;
-    }
-  }
-
-  _rebuild() {
+  async _rebuild() {
     this._ctrl?.destroy?.();
     this._ctrl = null;
     this._container.innerHTML = '';
-    this._initAttempts = 0;
-    this._init();
+    await this._init();
   }
 }
 

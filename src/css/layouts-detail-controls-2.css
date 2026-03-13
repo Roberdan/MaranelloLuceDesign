@@ -1,3 +1,4 @@
+@layer layouts {
 /* layouts — Detail Controls 2 | Maranello Design System v1.4.0 */
 
 /* ── Skeleton loading ── */
@@ -204,3 +205,4 @@ body.mn-nero .mn-detail-panel__action-btn:hover { background: var(--nero-soft); 
   opacity: 1;
   pointer-events: auto;
 }
+} /* end @layer layouts */

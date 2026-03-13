@@ -1,3 +1,4 @@
+@layer layouts {
 /* layouts-animations.css — View transitions + micro-interactions (Maranello)
    Uses CSS transitions only — no JS animation libraries needed.           */
 
@@ -81,3 +82,4 @@
     animation-duration: 0.01ms !important;
   }
 }
+} /* end @layer layouts */

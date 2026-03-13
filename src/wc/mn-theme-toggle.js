@@ -5,7 +5,7 @@
  *
  * @attr {string} mode - Current theme: nero | avorio | colorblind | editorial
  * @fires mn-theme-change - {detail: {theme}}
- * @version 1.4.0
+ * @version 1.5.0
  */
 const _base = new URL('.', import.meta.url).href;
 function cssLink(path) {
@@ -14,6 +14,11 @@ function cssLink(path) {
   link.href = new URL(path, _base).href;
   return link;
 }
+
+// Dual-mode resolver: ESM import or globalThis fallback
+const resolve = (path, fallback = null) => {
+  try { return globalThis.Maranello?.[path] ?? fallback; } catch { return fallback; }
+};
 class MnThemeToggle extends HTMLElement {
   static get observedAttributes() {
     return ['mode'];
@@ -96,10 +101,11 @@ class MnThemeToggle extends HTMLElement {
       }));
     }
 
-    // Notify Maranello subsystems
+    // Notify Maranello subsystems if available
     requestAnimationFrame(() => {
-      if (window.Maranello?.autoContrast) {
-        window.Maranello.autoContrast('.mn-treemap__cell');
+      const autoContrast = resolve('autoContrast');
+      if (typeof autoContrast === 'function') {
+        autoContrast('.mn-treemap__cell');
       }
     });
   }

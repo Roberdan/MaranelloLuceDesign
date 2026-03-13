@@ -1,3 +1,4 @@
+@layer layouts {
 /* layouts — Column Grid | Maranello Design System
    3-column flex: funnel sidebar (25%) | center views (flex) | detail panel (25%)
    Strip: full-width row under header (toggleable)
@@ -133,3 +134,4 @@ body.mn-avorio .mn-layout__simulator.mn-sim-active {
     max-height: none;
   }
 }
+} /* end @layer layouts */

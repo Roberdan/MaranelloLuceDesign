@@ -1,13 +1,109 @@
 /**
  * Maranello Luce Design - CSS aggregator
- * Import all component stylesheets here.
- * Consumers import this single file to get the full design system CSS.
+ * Import this single file to get the full design system CSS.
+ * Layer order controls cascade precedence.
  */
 
-/* Core tokens (to be added in W2) */
-/* @import './tokens.css'; */
+@layer tokens, base, components, controls, forms, charts, layouts, extended, patterns, themes, utilities;
 
-/* Accessibility: focus, skip link, reduced motion, high contrast */
+/* ── Layer: tokens ── */
+@import './tokens.css';
+
+/* ── Layer: base ── */
+@import './base.css';
 @import './accessibility.css';
 
-/* Component styles (to be added as components are migrated) */
+/* ── Layer: components ── */
+@import './components-buttons-stats.css';
+@import './components-dividers-tags-cards.css';
+@import './components-footer-inputs.css';
+@import './components-tables-status.css';
+
+/* ── Layer: controls ── */
+@import './controls-advanced-controls.css';
+@import './controls-buttons-switches.css';
+@import './controls-climate-overrides.css';
+@import './controls-cluster-picker.css';
+@import './controls-rotary-slider.css';
+@import './controls-segmented-led.css';
+
+/* ── Layer: forms ── */
+@import './forms-action-buttons.css';
+@import './forms-base.css';
+@import './forms-checkboxes-radios.css';
+@import './forms-file-date-range.css';
+@import './forms-inputs.css';
+@import './forms-special-inputs.css';
+@import './forms-themes-avorio.css';
+@import './forms-themes-misc.css';
+
+/* ── Layer: charts ── */
+@import './charts-base.css';
+@import './charts-gantt-timeline.css';
+@import './charts-gauge-temp-progress.css';
+@import './charts-heatmap-funnel-flip.css';
+@import './charts-live-donut-bar.css';
+@import './charts-themes.css';
+@import './charts-treemap-radar-gantt.css';
+
+/* ── Layer: gauge ── */
+@import './gauge.css';
+
+/* ── Layer: layouts ── */
+@import './layouts-animations.css';
+@import './layouts-capacity-heatmap.css';
+@import './layouts-chat-login.css';
+@import './layouts-column.css';
+@import './layouts-command-palette.css';
+@import './layouts-data-table-1.css';
+@import './layouts-data-table-2.css';
+@import './layouts-data-table-compact-1.css';
+@import './layouts-data-table-compact-2.css';
+@import './layouts-data-table-compact-3.css';
+@import './layouts-data-table-panel.css';
+@import './layouts-detail-controls-1.css';
+@import './layouts-detail-controls-2.css';
+@import './layouts-detail-panel-base.css';
+@import './layouts-detail-panel-comments.css';
+@import './layouts-detail-panel-gantt.css';
+@import './layouts-detail-panel.css';
+@import './layouts-filter-chips.css';
+@import './layouts-funnel.css';
+@import './layouts-heatmap.css';
+@import './layouts-horizontal-bar-1.css';
+@import './layouts-horizontal-bar-2.css';
+@import './layouts-horizontal-bar-3.css';
+@import './layouts-nav-controls.css';
+@import './layouts-network.css';
+@import './layouts-notification.css';
+@import './layouts-org-tree.css';
+@import './layouts-page-header.css';
+@import './layouts-sidebar.css';
+@import './layouts-sim-panel.css';
+@import './layouts-toolbar-drawer.css';
+
+/* ── Layer: extended ── */
+@import './extended-avatar-spinner.css';
+@import './extended-tabs-breadcrumb.css';
+@import './extended-toast-dropdown.css';
+@import './extended-tooltip-modal.css';
+
+/* ── Layer: patterns ── */
+@import './patterns-signal-binnacle.css';
+@import './patterns-strip-pod.css';
+
+/* ── Standalone (no layer group) ── */
+@import './icons.css';
+@import './composition.css';
+@import './animations.css';
+
+/* ── Layer: themes ── */
+@import './themes-avorio-components.css';
+@import './themes-avorio-layouts.css';
+@import './themes-avorio-sections.css';
+@import './themes-base.css';
+@import './themes-nero-components.css';
+@import './themes-nero-layouts.css';
+
+/* ── Layer: utilities ── */
+@import './utilities.css';

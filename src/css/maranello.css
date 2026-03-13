@@ -4,6 +4,8 @@
    Version: 1.4.0
    ============================================================ */
 
+@layer tokens, base, components, controls, forms, charts, layouts, extended, patterns, themes, utilities;
+
 @import url('tokens.css');
 @import url('base.css');
 @import url('components.css');

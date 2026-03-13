@@ -1,3 +1,4 @@
+@layer controls {
 /* controls — Segmented Led | Maranello Design System v1.4.0 */
 
 /* ── SEGMENTED CONTROL (button group) ── */
@@ -85,3 +86,4 @@
 }
 
 
+} /* end @layer controls */

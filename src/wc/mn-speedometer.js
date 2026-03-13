@@ -8,8 +8,21 @@
  * @attr {string} label - Sub-label text beneath the value
  * @attr {string} unit  - Unit label (default "km/h")
  * @fires mn-speedometer-ready - Dispatched when speedometer is initialized
- * @version 1.4.0
+ * @version 2.0.0
  */
+
+// Dual-mode: ESM import or CDN fallback
+let _engine = null;
+
+function getEngine() {
+  if (_engine) return _engine;
+  if (globalThis.Maranello) {
+    _engine = globalThis.Maranello;
+    return _engine;
+  }
+  return null;
+}
+
 const _base = new URL('.', import.meta.url).href;
 function cssLink(path) {
   const link = document.createElement('link');
@@ -17,6 +30,7 @@ function cssLink(path) {
   link.href = new URL(path, _base).href;
   return link;
 }
+
 class MnSpeedometer extends HTMLElement {
   static get observedAttributes() {
     return ['value', 'max', 'size', 'label', 'unit'];
@@ -26,22 +40,21 @@ class MnSpeedometer extends HTMLElement {
     super();
     this.attachShadow({ mode: 'open' });
     this._ctrl = null;
-    this._initAttempts = 0;
-
-    const link1 = cssLink("../css/tokens.css");
-
-    const link2 = cssLink("../css/gauge.css");
+    this._mo = null;
 
     const style = document.createElement('style');
-    style.textContent = `
-      :host { display: inline-block; }
-      canvas { display: block; }
-    `;
+    style.textContent = ':host{display:inline-block}canvas{display:block}';
 
     this._canvas = document.createElement('canvas');
     this._canvas.className = 'mn-speedometer__canvas';
+    this._canvas.setAttribute('role', 'img');
 
-    this.shadowRoot.append(link1, link2, style, this._canvas);
+    this.shadowRoot.append(
+      cssLink('../css/tokens.css'),
+      cssLink('../css/gauge.css'),
+      style,
+      this._canvas,
+    );
   }
 
   connectedCallback() {
@@ -50,13 +63,13 @@ class MnSpeedometer extends HTMLElement {
     this.setAttribute('aria-valuemax', this.getAttribute('max') || '320');
     this.setAttribute('aria-valuenow', this.getAttribute('value') || '0');
     if (!this.hasAttribute('aria-label')) {
-      this.setAttribute('aria-label',
-        this.getAttribute('label') || 'Speedometer');
+      this.setAttribute('aria-label', this.getAttribute('label') || 'Speedometer');
     }
     this._init();
   }
 
   disconnectedCallback() {
+    this._teardownObserver();
     this._ctrl?.destroy?.();
     this._ctrl = null;
   }
@@ -67,61 +80,48 @@ class MnSpeedometer extends HTMLElement {
     if (name === 'max') this.setAttribute('aria-valuemax', newVal || '320');
     if (name === 'label') this.setAttribute('aria-label', newVal || 'Speedometer');
     if (!this._ctrl) return;
-    switch (name) {
-      case 'value':
-        this._ctrl.setValue(Number(newVal));
-        break;
-      case 'max':
-      case 'size':
-      case 'label':
-      case 'unit':
-        this._rebuild();
-        break;
+    if (name === 'value') {
+      this._ctrl.setValue(Number(newVal));
+    } else {
+      this._rebuild();
     }
   }
 
-  /* ── Public API ─────────────────────────────────────────── */
+  /* ── Public API ───────────────────────────────────────────── */
 
-  setValue(n) {
-    this._ctrl?.setValue?.(Number(n));
-  }
+  setValue(n) { this._ctrl?.setValue?.(Number(n)); }
+  setBar(n)   { this._ctrl?.setBar?.(Number(n)); }
 
-  setBar(n) {
-    this._ctrl?.setBar?.(Number(n));
-  }
-
-  /* ── Internals ──────────────────────────────────────────── */
+  /* ── Internals ────────────────────────────────────────────── */
 
   _sizeValue() {
-    const s = this.getAttribute('size') || 'md';
     const map = { sm: 120, md: 220, lg: 320 };
-    return map[s] || map.md;
+    return map[this.getAttribute('size') || 'md'] || 220;
   }
 
   _buildOpts() {
     return {
       value: Number(this.getAttribute('value') || 0),
-      max: Number(this.getAttribute('max') || 320),
-      unit: this.getAttribute('unit') || 'km/h',
-      size: this.getAttribute('size') || 'md',
+      max:   Number(this.getAttribute('max') || 320),
+      unit:  this.getAttribute('unit') || 'km/h',
+      size:  this.getAttribute('size') || 'md',
       subLabel: this.getAttribute('label') || undefined,
       animate: true,
     };
   }
 
   _init() {
-    const M = window.Maranello;
+    const M = getEngine();
     if (!M?.speedometer) {
-      if (++this._initAttempts < 60) {
-        requestAnimationFrame(() => this._init());
-      }
+      this._waitForEngine(() => this._init());
       return;
     }
+    this._teardownObserver();
 
     const px = this._sizeValue();
-    this._canvas.width = px;
+    this._canvas.width  = px;
     this._canvas.height = px;
-    this._canvas.style.width = px + 'px';
+    this._canvas.style.width  = px + 'px';
     this._canvas.style.height = px + 'px';
 
     this._ctrl = M.speedometer(this._canvas, this._buildOpts());
@@ -134,8 +134,23 @@ class MnSpeedometer extends HTMLElement {
   _rebuild() {
     this._ctrl?.destroy?.();
     this._ctrl = null;
-    this._initAttempts = 0;
     this._init();
+  }
+
+  _waitForEngine(cb) {
+    requestAnimationFrame(() => {
+      if (getEngine()) { cb(); return; }
+      if (this._mo) return;
+      this._mo = new MutationObserver(() => {
+        if (getEngine()) { this._teardownObserver(); cb(); }
+      });
+      this._mo.observe(document.head, { childList: true });
+    });
+  }
+
+  _teardownObserver() {
+    this._mo?.disconnect();
+    this._mo = null;
   }
 }
 

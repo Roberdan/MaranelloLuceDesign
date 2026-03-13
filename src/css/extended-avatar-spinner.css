@@ -1,3 +1,4 @@
+@layer extended {
 /* extended — Avatar Spinner | Maranello Design System v1.4.0 */
 
 /* ── AVATAR ── */
@@ -193,3 +194,4 @@ body.mn-nero .mn-avatar {
   color: var(--grigio-chiaro);
 }
 body.mn-nero .mn-avatar__status { border-color: var(--nero-profondo); }
+} /* end @layer extended */

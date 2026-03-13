@@ -9,13 +9,25 @@
  * @fires mn-send         - {detail: {message}} when user sends a message
  * @fires mn-quick-action - {detail: {action, context}} on quick-action click
  */
+
+let _engine = null;
+
+async function resolveEngine() {
+  if (_engine) return _engine;
+  if (globalThis.Maranello) { _engine = globalThis.Maranello; return _engine; }
+  console.warn('[mn-chat] No engine found');
+  return null;
+}
+
 const _base = new URL('.', import.meta.url).href;
+
 function cssLink(path) {
   const link = document.createElement('link');
   link.rel = 'stylesheet';
   link.href = new URL(path, _base).href;
   return link;
 }
+
 class MnChat extends HTMLElement {
   static get observedAttributes() {
     return ['title', 'welcome-message', 'avatar', 'quick-actions'];
@@ -25,21 +37,18 @@ class MnChat extends HTMLElement {
     super();
     this.attachShadow({ mode: 'open' });
     this._ctrl = null;
-    this._initAttempts = 0;
 
-    const link1 = cssLink("../css/tokens.css");
-
-    const link2 = cssLink("../css/layouts-chat-login.css");
-
-    const link3 = cssLink("../css/extended-toast-dropdown.css");
+    const link1 = cssLink('../css/tokens.css');
+    const link2 = cssLink('../css/layouts-chat-login.css');
+    const link3 = cssLink('../css/extended-toast-dropdown.css');
 
     this._container = document.createElement('div');
     this._container.className = 'mn-wc-root';
     this.shadowRoot.append(link1, link2, link3, this._container);
   }
 
-  connectedCallback() {
-    this._init();
+  async connectedCallback() {
+    await this._init();
   }
 
   disconnectedCallback() {
@@ -49,26 +58,18 @@ class MnChat extends HTMLElement {
 
   attributeChangedCallback(name, oldVal, newVal) {
     if (oldVal === newVal) return;
-    if (this._ctrl) this._handleAttr(name, newVal);
+    if (this._ctrl) this._rebuild();
   }
 
   /* ── Public API ─────────────────────────────────────────── */
 
-  open() {
-    this._ctrl?.open?.();
-  }
+  open() { this._ctrl?.open?.(); }
 
-  close() {
-    this._ctrl?.close?.();
-  }
+  close() { this._ctrl?.close?.(); }
 
-  addMessage(role, text) {
-    this._ctrl?.addMessage?.(role, text);
-  }
+  addMessage(role, text) { this._ctrl?.addMessage?.(role, text); }
 
-  setTyping(on) {
-    this._ctrl?.setTyping?.(!!on);
-  }
+  setTyping(on) { this._ctrl?.setTyping?.(!!on); }
 
   /* ── Internals ──────────────────────────────────────────── */
 
@@ -77,31 +78,23 @@ class MnChat extends HTMLElement {
     catch { return fallback; }
   }
 
-  _init() {
-    const M = window.Maranello;
-    if (!M?.aiChat) {
-      if (++this._initAttempts < 60) {
-        requestAnimationFrame(() => this._init());
-      }
-      return;
-    }
+  async _init() {
+    const M = await resolveEngine();
+    if (!M?.aiChat) return;
 
     this._ctrl = M.aiChat(this._container, {
       title: this.getAttribute('title') || 'Chat',
       welcomeMessage: this.getAttribute('welcome-message') || undefined,
       avatar: this.getAttribute('avatar') || undefined,
       quickActions: this._parseJSON('quick-actions', []),
-
       onSend: (msg) => {
         this.dispatchEvent(new CustomEvent('mn-send', {
           detail: { message: msg },
           bubbles: true,
           composed: true,
         }));
-        // Return a resolved promise so the chat UI doesn't block
         return Promise.resolve();
       },
-
       onQuickAction: (action, ctx) => {
         this.dispatchEvent(new CustomEvent('mn-quick-action', {
           detail: { action, context: ctx },
@@ -112,18 +105,11 @@ class MnChat extends HTMLElement {
     });
   }
 
-  _handleAttr(name) {
-    // Most chat attrs require rebuild since the controller
-    // doesn't expose individual setters for title/avatar/etc.
-    this._rebuild();
-  }
-
-  _rebuild() {
+  async _rebuild() {
     this._ctrl?.destroy?.();
     this._ctrl = null;
     this._container.innerHTML = '';
-    this._initAttempts = 0;
-    this._init();
+    await this._init();
   }
 }
 

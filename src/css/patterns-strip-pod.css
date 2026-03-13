@@ -1,3 +1,4 @@
+@layer patterns {
 /* patterns — Strip Pod | Maranello Design System v1.4.0 */
 
 /* ============================================================
@@ -246,3 +247,4 @@
   gap: var(--space-lg);
   align-items: center;
 }
+} /* end @layer patterns */

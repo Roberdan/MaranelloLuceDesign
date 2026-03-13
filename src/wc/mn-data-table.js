@@ -1,24 +1,42 @@
 /**
  * <mn-data-table> — Web Component wrapper for Maranello.dataTable
  * Sortable, filterable, groupable data table with row selection.
+ * Dual-mode: ESM dynamic import OR window.Maranello fallback for CDN users.
  *
- * @attr {string} columns  - JSON array of column definitions
- * @attr {string} data     - JSON array of row objects
- * @attr {number} page-size - Rows per page (0 = no pagination)
- * @attr {string} groupBy  - Column key to group rows by
+ * @attr {string} columns    - JSON array of column definitions
+ * @attr {string} data       - JSON array of row objects
+ * @attr {number} page-size  - Rows per page (0 = no pagination)
+ * @attr {string} group-by   - Column key to group rows by
  * @attr {boolean} selectable - Enable row checkboxes
- * @attr {boolean} compact  - Compact row height
+ * @attr {boolean} compact   - Compact row height
  * @fires mn-row-click  - {detail: {row, index}}
  * @fires mn-sort       - {detail: {key, direction}}
  * @fires mn-filter     - {detail: {key, value}}
+ * @version 2.0.0
  */
+
+// Dual-mode: ESM import or CDN fallback
+let _engine = null;
+
+function getEngine() {
+  if (_engine) return _engine;
+  if (globalThis.Maranello) {
+    _engine = globalThis.Maranello;
+    return _engine;
+  }
+  return null;
+}
+
 const _base = new URL('.', import.meta.url).href;
+
+/** @param {string} path */
 function cssLink(path) {
   const link = document.createElement('link');
   link.rel = 'stylesheet';
   link.href = new URL(path, _base).href;
   return link;
 }
+
 class MnDataTable extends HTMLElement {
   static get observedAttributes() {
     return ['columns', 'data', 'page-size', 'group-by', 'selectable', 'compact'];
@@ -28,18 +46,16 @@ class MnDataTable extends HTMLElement {
     super();
     this.attachShadow({ mode: 'open' });
     this._ctrl = null;
-    this._initAttempts = 0;
+    this._mo = null;
 
-    const link1 = cssLink("../css/tokens.css");
-
-    const link2 = cssLink("../css/layouts-data-table-1.css");
-
-    const link3 = cssLink("../css/layouts-data-table-2.css");
-
-    const link4 = cssLink("../css/components-tables-status.css");
+    const link1 = cssLink('../css/tokens.css');
+    const link2 = cssLink('../css/layouts-data-table-1.css');
+    const link3 = cssLink('../css/layouts-data-table-2.css');
+    const link4 = cssLink('../css/components-tables-status.css');
 
     this._container = document.createElement('div');
     this._container.className = 'mn-wc-root';
+    this._container.setAttribute('role', 'grid');
     this.shadowRoot.append(link1, link2, link3, link4, this._container);
   }
 
@@ -52,6 +68,7 @@ class MnDataTable extends HTMLElement {
   }
 
   disconnectedCallback() {
+    this._teardownObserver();
     this._ctrl?.destroy?.();
     this._ctrl = null;
   }
@@ -91,13 +108,12 @@ class MnDataTable extends HTMLElement {
   }
 
   _init() {
-    const M = window.Maranello;
+    const M = getEngine();
     if (!M?.dataTable) {
-      if (++this._initAttempts < 60) {
-        requestAnimationFrame(() => this._init());
-      }
+      this._waitForEngine(() => this._init());
       return;
     }
+    this._teardownObserver();
 
     const columns = this._parseJSON('columns', []);
     const data = this._parseJSON('data', []);
@@ -161,8 +177,23 @@ class MnDataTable extends HTMLElement {
     this._ctrl?.destroy?.();
     this._ctrl = null;
     this._container.innerHTML = '';
-    this._initAttempts = 0;
     this._init();
+  }
+
+  _waitForEngine(cb) {
+    requestAnimationFrame(() => {
+      if (getEngine()) { cb(); return; }
+      if (this._mo) return;
+      this._mo = new MutationObserver(() => {
+        if (getEngine()) { this._teardownObserver(); cb(); }
+      });
+      this._mo.observe(document.head, { childList: true });
+    });
+  }
+
+  _teardownObserver() {
+    this._mo?.disconnect();
+    this._mo = null;
   }
 }
 

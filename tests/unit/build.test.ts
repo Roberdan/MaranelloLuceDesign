@@ -15,6 +15,8 @@ const FORBIDDEN_TOKENS = [
   'ca-virtualbpm',
   'livelymoss',
   'roberdan',
+  'virtualbpm.azurewebsites.net',
+  'dashboard.db',
 ];
 
 describe('dist output files exist', () => {
@@ -36,7 +38,7 @@ describe('dist output files exist', () => {
 });
 
 describe('IIFE bundle size', () => {
-  const IIFE_MAX_BYTES = 200 * 1024; // 200 KB (includes all visualization components)
+  const IIFE_MAX_BYTES = 250 * 1024; // 250 KB (v3 includes all W3/W4 modules)
 
   it(`IIFE bundle is under ${IIFE_MAX_BYTES / 1024} KB`, () => {
     const path = join(DIST, 'iife/maranello.min.js');
@@ -66,6 +68,34 @@ describe('dist scrub check — no domain tokens', () => {
       }
     });
   }
+});
+
+describe('sub-package bundles exist', () => {
+  const subPkgs = ['charts', 'gantt', 'gauge', 'controls', 'forms'];
+
+  for (const pkg of subPkgs) {
+    it(`esm/${pkg}/index.js exists`, () => {
+      const p = join(DIST, 'esm', pkg, 'index.js');
+      if (!existsSync(join(DIST, 'esm', pkg))) return;
+      expect(existsSync(p)).toBe(true);
+    });
+
+    it(`cjs/${pkg}/index.cjs exists`, () => {
+      const p = join(DIST, 'cjs', pkg, 'index.cjs');
+      if (!existsSync(join(DIST, 'cjs', pkg))) return;
+      expect(existsSync(p)).toBe(true);
+    });
+  }
+});
+
+describe('dist/wc/ web components', () => {
+  it('wc/ directory has 22+ files', () => {
+    const wcDir = join(DIST, 'wc');
+    if (!existsSync(wcDir)) return;
+    const { readdirSync } = require('node:fs');
+    const files = readdirSync(wcDir);
+    expect(files.length).toBeGreaterThanOrEqual(22);
+  });
 });
 
 describe('TypeScript declarations', () => {

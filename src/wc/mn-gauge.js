@@ -2,22 +2,41 @@
  * Maranello Design System — <mn-gauge> Web Component
  * Ferrari gauge instrument with canvas rendering and glass overlay.
  *
+ * Dual-mode: ESM import (bundlers) or window.Maranello CDN fallback.
+ *
  * @attr {number}  value  - Current gauge value
  * @attr {number}  max    - Maximum scale value (default 100)
  * @attr {string}  unit   - Unit label (e.g. "km/h", "%")
  * @attr {string}  label  - Bottom label text
  * @attr {string}  size   - Gauge size: sm | md | lg (default md)
  * @attr {string}  config - JSON string for full complication config
- * @fires mn-gauge-ready - Dispatched when gauge engine is initialized
- * @version 1.4.0
+ * @fires mn-gauge-ready  - Dispatched when gauge engine is initialized
+ * @version 1.5.0
  */
+
 const _base = new URL('.', import.meta.url).href;
+
+/** Resolve FerrariGauge: ESM-first, CDN fallback. */
+async function resolveEngine() {
+  try {
+    const mod = await import(new URL('../ts/gauge-engine.js', _base).href);
+    if (mod?.FerrariGauge) return mod.FerrariGauge;
+  } catch {
+    // ESM module not available — fall through to CDN path
+  }
+  return window.Maranello?.FerrariGauge ?? null;
+}
+
 function cssLink(path) {
   const link = document.createElement('link');
   link.rel = 'stylesheet';
   link.href = new URL(path, _base).href;
   return link;
 }
+
+/** Size in pixels for a given size key. */
+const SIZE_MAP = { sm: 120, md: 220, lg: 320 };
+
 class MnGauge extends HTMLElement {
   static get observedAttributes() {
     return ['value', 'max', 'unit', 'label', 'size', 'config'];
@@ -26,12 +45,9 @@ class MnGauge extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
+    /** @type {InstanceType<import('../ts/gauge-engine').FerrariGauge> | null} */
     this._gauge = null;
-    this._initAttempts = 0;
-
-    const link1 = cssLink("../css/tokens.css");
-
-    const link2 = cssLink("../css/gauge.css");
+    this._ready = false;
 
     const style = document.createElement('style');
     style.textContent = `
@@ -60,7 +76,12 @@ class MnGauge extends HTMLElement {
     this._glass.className = 'mn-gauge__glass';
 
     this._wrap.append(this._canvas, this._glass);
-    this.shadowRoot.append(link1, link2, style, this._wrap);
+    this.shadowRoot.append(
+      cssLink('../css/tokens.css'),
+      cssLink('../css/gauge.css'),
+      style,
+      this._wrap
+    );
   }
 
   connectedCallback() {
@@ -76,12 +97,13 @@ class MnGauge extends HTMLElement {
 
   disconnectedCallback() {
     this._gauge = null;
+    this._ready = false;
   }
 
   attributeChangedCallback(name, oldVal, newVal) {
     if (oldVal === newVal) return;
     if (name === 'value') this.setAttribute('aria-valuenow', newVal || '0');
-    if (name === 'max') this.setAttribute('aria-valuemax', newVal || '100');
+    if (name === 'max')   this.setAttribute('aria-valuemax', newVal || '100');
     if (name === 'label') this.setAttribute('aria-label', newVal || '');
     if (!this._gauge) return;
     this._applyConfig();
@@ -108,57 +130,47 @@ class MnGauge extends HTMLElement {
   }
 
   _sizeValue() {
-    const s = this.getAttribute('size') || 'md';
-    const map = { sm: 120, md: 220, lg: 320 };
-    return map[s] || map.md;
+    return SIZE_MAP[this.getAttribute('size') || 'md'] ?? SIZE_MAP.md;
   }
 
   _applyConfig() {
     if (!this._gauge) return;
     const cfg = this._gauge.config;
     const custom = this._parseJSON('config', null);
-
-    if (custom && typeof custom === 'object') {
-      Object.assign(cfg, custom);
-    }
-
+    if (custom && typeof custom === 'object') Object.assign(cfg, custom);
     if (this.hasAttribute('value')) cfg.value = Number(this.getAttribute('value'));
-    if (this.hasAttribute('max')) cfg.max = Number(this.getAttribute('max'));
-    if (this.hasAttribute('unit')) cfg.unit = this.getAttribute('unit');
+    if (this.hasAttribute('max'))   cfg.max   = Number(this.getAttribute('max'));
+    if (this.hasAttribute('unit'))  cfg.unit  = this.getAttribute('unit');
     if (this.hasAttribute('label')) cfg.label = this.getAttribute('label');
   }
 
-  _init() {
-    const M = window.Maranello;
-    if (!M?.FerrariGauge) {
-      if (++this._initAttempts < 60) {
-        requestAnimationFrame(() => this._init());
-      }
+  async _init() {
+    const FerrariGauge = await resolveEngine();
+    if (!FerrariGauge) {
+      console.warn('[mn-gauge] FerrariGauge engine not available (ESM or window.Maranello)');
       return;
     }
 
     const px = this._sizeValue();
-    this._canvas.width = px;
+    this._canvas.width  = px;
     this._canvas.height = px;
-    this._canvas.style.width = px + 'px';
+    this._canvas.style.width  = px + 'px';
     this._canvas.style.height = px + 'px';
-    this._glass.style.width = px + 'px';
-    this._glass.style.height = px + 'px';
+    this._glass.style.width   = px + 'px';
+    this._glass.style.height  = px + 'px';
 
-    this._gauge = new M.FerrariGauge(this._canvas);
+    this._gauge = new FerrariGauge(this._canvas);
 
     const cfg = this._gauge.config;
-    cfg.max = Number(this.getAttribute('max') || 100);
+    cfg.max   = Number(this.getAttribute('max') || 100);
     cfg.value = 0;
-    cfg.unit = this.getAttribute('unit') || '';
+    cfg.unit  = this.getAttribute('unit')  || '';
     cfg.label = this.getAttribute('label') || '';
 
     const custom = this._parseJSON('config', null);
-    if (custom && typeof custom === 'object') {
-      Object.assign(cfg, custom);
-    }
+    if (custom && typeof custom === 'object') Object.assign(cfg, custom);
 
-    this._gauge.init();
+    this._ready = true;
 
     const targetValue = Number(this.getAttribute('value') || 0);
     if (targetValue) {

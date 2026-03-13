@@ -1,3 +1,4 @@
+@layer components {
 /* components — Buttons Stats | Maranello Design System v1.4.0 */
 
 /* ── BUTTONS ── */
@@ -178,3 +179,4 @@
   letter-spacing: 0.1em;
   color: var(--bianco-caldo);
 }
+} /* end @layer components */

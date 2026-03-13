@@ -1,6 +1,7 @@
 /**
  * Maranello Design System — <mn-gantt> Web Component
  * Interactive Gantt timeline with zoom, expand/collapse, and task selection.
+ * Dual-mode: ESM dynamic import OR window.Maranello fallback for CDN users.
  *
  * @attr {string} tasks       - JSON array of task objects
  * @attr {number} zoom        - Zoom level (px per day)
@@ -8,15 +9,31 @@
  * @fires mn-gantt-ready     - Dispatched when gantt is initialized
  * @fires mn-gantt-select    - {detail: {task, type, id}} when a task bar is selected
  * @fires mn-gantt-click     - {detail: {task, type, id}} when a task bar is clicked
- * @version 1.5.0
+ * @version 2.0.0
  */
+
+// Dual-mode: ESM import or CDN fallback
+let _engine = null;
+
+function getEngine() {
+  if (_engine) return _engine;
+  if (globalThis.Maranello) {
+    _engine = globalThis.Maranello;
+    return _engine;
+  }
+  return null;
+}
+
 const _base = new URL('.', import.meta.url).href;
+
+/** @param {string} path */
 function cssLink(path) {
   const link = document.createElement('link');
   link.rel = 'stylesheet';
   link.href = new URL(path, _base).href;
   return link;
 }
+
 class MnGantt extends HTMLElement {
   static get observedAttributes() {
     return ['tasks', 'zoom', 'label-width'];
@@ -26,13 +43,11 @@ class MnGantt extends HTMLElement {
     super();
     this.attachShadow({ mode: 'open' });
     this._ctrl = null;
-    this._initAttempts = 0;
+    this._mo = null;
 
-    const link1 = cssLink("../css/tokens.css");
-
-    const link2 = cssLink("../css/charts-gantt-timeline.css");
-
-    const link3 = cssLink("../css/charts-treemap-radar-gantt.css");
+    const link1 = cssLink('../css/tokens.css');
+    const link2 = cssLink('../css/charts-gantt-timeline.css');
+    const link3 = cssLink('../css/charts-treemap-radar-gantt.css');
 
     const style = document.createElement('style');
     style.textContent = `
@@ -55,6 +70,7 @@ class MnGantt extends HTMLElement {
   }
 
   disconnectedCallback() {
+    this._teardownObserver();
     this._ctrl?.destroy?.();
     this._ctrl = null;
   }
@@ -110,13 +126,12 @@ class MnGantt extends HTMLElement {
   }
 
   _init() {
-    const M = window.Maranello;
+    const M = getEngine();
     if (!M?.gantt) {
-      if (++this._initAttempts < 60) {
-        requestAnimationFrame(() => this._init());
-      }
+      this._waitForEngine(() => this._init());
       return;
     }
+    this._teardownObserver();
 
     const tasks = this._parseJSON('tasks', []);
     const zoom = Number(this.getAttribute('zoom') || 0) || undefined;
@@ -151,8 +166,23 @@ class MnGantt extends HTMLElement {
     this._ctrl?.destroy?.();
     this._ctrl = null;
     this._container.innerHTML = '';
-    this._initAttempts = 0;
     this._init();
+  }
+
+  _waitForEngine(cb) {
+    requestAnimationFrame(() => {
+      if (getEngine()) { cb(); return; }
+      if (this._mo) return;
+      this._mo = new MutationObserver(() => {
+        if (getEngine()) { this._teardownObserver(); cb(); }
+      });
+      this._mo.observe(document.head, { childList: true });
+    });
+  }
+
+  _teardownObserver() {
+    this._mo?.disconnect();
+    this._mo = null;
   }
 }
 

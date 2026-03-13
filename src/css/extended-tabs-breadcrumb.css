@@ -1,3 +1,4 @@
+@layer extended {
 /* extended — Tabs Breadcrumb | Maranello Design System v1.4.0 */
 
 /* ── TABS (panel content) ── */
@@ -65,3 +66,4 @@ body.mn-avorio .mn-tabs__tab--active { color: var(--nero-assoluto); }
 }
 
 body.mn-avorio .mn-breadcrumb__item--active { color: var(--nero-assoluto); }
+} /* end @layer extended */

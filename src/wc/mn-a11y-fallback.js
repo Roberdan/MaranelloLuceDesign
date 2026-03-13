@@ -1,0 +1,133 @@
+/**
+ * mn-a11y-fallback.js — standalone built-in accessibility panel
+ * Used by <mn-a11y> when Maranello engine is unavailable.
+ * @internal
+ */
+
+const STORAGE = 'mn-a11y';
+const DEFAULTS = { fontSize: 'md', reducedMotion: false, highContrast: false, focusVisible: true };
+const SIZES = { sm: 0.875, md: 1.0, lg: 1.125, xl: 1.25 };
+
+function loadSettings() {
+  try { return { ...DEFAULTS, ...JSON.parse(localStorage.getItem(STORAGE)) }; }
+  catch { return { ...DEFAULTS }; }
+}
+
+function applySettings(s) {
+  const root = document.documentElement;
+  root.style.fontSize = ((SIZES[s.fontSize] || 1) * 16) + 'px';
+  root.classList.toggle('mn-reduced-motion', s.reducedMotion);
+  root.classList.toggle('mn-high-contrast', s.highContrast);
+  root.classList.toggle('mn-no-focus-ring', !s.focusVisible);
+  try { localStorage.setItem(STORAGE, JSON.stringify(s)); } catch { /* noop */ }
+}
+
+function mkDiv(cls) {
+  const d = document.createElement('div');
+  d.className = cls;
+  return d;
+}
+
+function buildToggle(label, key, s, onApply) {
+  const r = mkDiv('mn-a11y-panel__row');
+  const l = document.createElement('span');
+  l.className = 'mn-a11y-panel__row-label';
+  l.textContent = label;
+  const t = document.createElement('button');
+  t.className = 'mn-a11y-toggle' + (s[key] ? ' mn-a11y-toggle--on' : '');
+  t.setAttribute('role', 'switch');
+  t.setAttribute('aria-checked', String(!!s[key]));
+  const thumb = document.createElement('span');
+  thumb.className = 'mn-a11y-toggle__thumb';
+  t.appendChild(thumb);
+  t.addEventListener('click', () => {
+    s[key] = !s[key];
+    t.classList.toggle('mn-a11y-toggle--on', s[key]);
+    t.setAttribute('aria-checked', String(s[key]));
+    onApply();
+  });
+  r.append(l, t);
+  return r;
+}
+
+/**
+ * Build and mount the fallback a11y panel into shadowRoot.
+ * @param {ShadowRoot} shadowRoot
+ * @returns {{ getSettings: () => object, reset: () => void, destroy: () => void }}
+ */
+export function buildA11yFallback(shadowRoot) {
+  const s = loadSettings();
+  const apply = () => applySettings(s);
+
+  const fab = document.createElement('button');
+  fab.className = 'mn-a11y-fab';
+  fab.innerHTML = '\u2699';
+  fab.setAttribute('aria-label', 'Display settings');
+  fab.setAttribute('aria-expanded', 'false');
+  fab.setAttribute('aria-controls', 'mn-a11y-panel');
+
+  const panel = document.createElement('div');
+  panel.id = 'mn-a11y-panel';
+  panel.className = 'mn-a11y-panel';
+  panel.setAttribute('role', 'dialog');
+  panel.setAttribute('aria-label', 'Accessibility settings');
+  panel.setAttribute('aria-modal', 'true');
+
+  const title = mkDiv('mn-a11y-panel__title');
+  title.textContent = '\u2699 Display';
+  panel.appendChild(title);
+
+  // Font size buttons
+  const fsGroup = mkDiv('mn-a11y-panel__group');
+  const fsLabel = mkDiv('mn-a11y-panel__label');
+  fsLabel.textContent = 'Text Size';
+  const fsBtns = mkDiv('mn-a11y-panel__size-btns');
+  ['sm', 'md', 'lg', 'xl'].forEach((k) => {
+    const b = document.createElement('button');
+    b.className = 'mn-a11y-panel__size-btn' + (s.fontSize === k ? ' mn-a11y-panel__size-btn--active' : '');
+    b.textContent = k.toUpperCase();
+    b.addEventListener('click', () => {
+      s.fontSize = k;
+      fsBtns.querySelectorAll('.mn-a11y-panel__size-btn').forEach((x) =>
+        x.classList.toggle('mn-a11y-panel__size-btn--active', x === b));
+      apply();
+    });
+    fsBtns.appendChild(b);
+  });
+  fsGroup.append(fsLabel, fsBtns);
+  panel.appendChild(fsGroup);
+
+  const divider = () => { const d = mkDiv('mn-a11y-panel__divider'); return d; };
+  panel.appendChild(divider());
+  panel.appendChild(buildToggle('Reduced Motion', 'reducedMotion', s, apply));
+  panel.appendChild(buildToggle('High Contrast', 'highContrast', s, apply));
+  panel.appendChild(buildToggle('Focus Indicators', 'focusVisible', s, apply));
+  panel.appendChild(divider());
+
+  const resetBtn = document.createElement('button');
+  resetBtn.className = 'mn-a11y-panel__reset';
+  resetBtn.textContent = 'Reset to Defaults';
+  resetBtn.addEventListener('click', () => {
+    Object.assign(s, DEFAULTS);
+    apply();
+    panel.querySelectorAll('.mn-a11y-panel__size-btn').forEach((b) =>
+      b.classList.toggle('mn-a11y-panel__size-btn--active', b.textContent === 'MD'));
+  });
+  panel.appendChild(resetBtn);
+
+  let isOpen = false;
+  fab.addEventListener('click', () => {
+    isOpen = !isOpen;
+    panel.classList.toggle('mn-a11y-panel--open', isOpen);
+    fab.setAttribute('aria-expanded', String(isOpen));
+  });
+
+  shadowRoot.append(fab, panel);
+  apply();
+
+  return {
+    getSettings: () => ({ ...s }),
+    reset: () => resetBtn.click(),
+    destroy: () => { fab.remove(); panel.remove(); },
+  };
+}

@@ -1,8 +1,23 @@
 /**
  * <mn-a11y> — Accessibility settings panel WC (FAB + panel).
  * Wraps Maranello.a11yPanel. Font size, motion, contrast, focus.
- * @method getSettings() @method reset() @version 1.4.0
+ * Dual-mode: ESM import OR window.Maranello fallback for CDN users.
+ * @method getSettings() @method reset() @version 2.0.0
  */
+import { buildA11yFallback } from './mn-a11y-fallback.js';
+
+// Dual-mode: ESM import or CDN fallback
+let _engine = null;
+
+function getEngine() {
+  if (_engine) return _engine;
+  if (globalThis.Maranello) {
+    _engine = globalThis.Maranello;
+    return _engine;
+  }
+  return null;
+}
+
 const _base = new URL('.', import.meta.url).href;
 function cssLink(path) {
   const link = document.createElement('link');
@@ -10,17 +25,16 @@ function cssLink(path) {
   link.href = new URL(path, _base).href;
   return link;
 }
+
 class MnA11y extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
     this._ctrl = null;
-    this._initAttempts = 0;
+    this._mo = null;
 
-    const tokens = cssLink("../css/tokens.css");
-
-    const link = cssLink("../css/accessibility.css");
-
+    const tokens = cssLink('../css/tokens.css');
+    const link = cssLink('../css/accessibility.css');
     const style = document.createElement('style');
     style.textContent = `
       :host { display: contents }
@@ -49,16 +63,14 @@ class MnA11y extends HTMLElement {
         display: flex; align-items: center; gap: 6px }
       .mn-a11y-panel__group { margin-bottom: 12px }
       .mn-a11y-panel__label { font-size: .75rem; text-transform: uppercase;
-        letter-spacing: .06em; color: var(--grigio-medio, #777);
-        margin-bottom: 6px }
+        letter-spacing: .06em; color: var(--grigio-medio, #777); margin-bottom: 6px }
       .mn-a11y-panel__size-btns { display: flex; gap: 4px }
       .mn-a11y-panel__size-btn { padding: 6px 12px; border-radius: 6px;
         border: 1px solid var(--grigio-scuro, #444); background: transparent;
         color: var(--grigio-chiaro, #ccc); cursor: pointer; font-size: .8rem;
         transition: all .15s }
       .mn-a11y-panel__size-btn--active { background: var(--rosso-corsa, #DC0000);
-        border-color: var(--rosso-corsa, #DC0000);
-        color: var(--bianco-puro, #fff) }
+        border-color: var(--rosso-corsa, #DC0000); color: var(--bianco-puro, #fff) }
       .mn-a11y-panel__row { display: flex; align-items: center;
         justify-content: space-between; padding: 6px 0 }
       .mn-a11y-panel__row-label { font-size: .85rem }
@@ -78,7 +90,6 @@ class MnA11y extends HTMLElement {
         margin-top: 8px; transition: background .15s }
       .mn-a11y-panel__reset:hover { background: var(--grigio-scuro, #333) }
     `;
-
     this.shadowRoot.append(tokens, link, style);
   }
 
@@ -87,6 +98,7 @@ class MnA11y extends HTMLElement {
   }
 
   disconnectedCallback() {
+    this._teardownObserver();
     this._ctrl?.destroy?.();
     this._ctrl = null;
   }
@@ -104,143 +116,45 @@ class MnA11y extends HTMLElement {
   /* ── Private ────────────────────────────────────────────── */
 
   _tryInit() {
-    const M = window.Maranello;
+    const M = getEngine();
     if (M?.a11yPanel && M._a11yDom) {
       this._ctrl = M.a11yPanel();
       return;
     }
-    if (this._initAttempts++ < 30) {
-      requestAnimationFrame(() => this._tryInit());
-      return;
-    }
-    this._buildFallback();
+    this._waitForEngine(() => {
+      const M2 = getEngine();
+      if (M2?.a11yPanel && M2._a11yDom) {
+        this._ctrl = M2.a11yPanel();
+      } else {
+        this._useFallback();
+      }
+    });
+    // After one rAF with no engine, go straight to fallback
+    requestAnimationFrame(() => {
+      if (!this._ctrl) this._useFallback();
+    });
   }
 
-  _buildFallback() {
-    const STORAGE = 'mn-a11y';
-    const DEFAULTS = { fontSize: 'md', reducedMotion: false,
-      highContrast: false, focusVisible: true, lineSpacing: 'normal' };
-    const SIZES = { sm: 0.875, md: 1.0, lg: 1.125, xl: 1.25 };
+  _useFallback() {
+    if (this._ctrl) return;
+    this._teardownObserver();
+    this._ctrl = buildA11yFallback(this.shadowRoot);
+  }
 
-    let settings;
-    try { settings = { ...DEFAULTS, ...JSON.parse(localStorage.getItem(STORAGE)) }; }
-    catch { settings = { ...DEFAULTS }; }
-
-    const apply = () => {
-      const root = document.documentElement;
-      root.style.fontSize = ((SIZES[settings.fontSize] || 1) * 16) + 'px';
-      root.classList.toggle('mn-reduced-motion', settings.reducedMotion);
-      root.classList.toggle('mn-high-contrast', settings.highContrast);
-      root.classList.toggle('mn-no-focus-ring', !settings.focusVisible);
-      try { localStorage.setItem(STORAGE, JSON.stringify(settings)); } catch { /* noop */ }
-    };
-
-    const fab = document.createElement('button');
-    fab.className = 'mn-a11y-fab';
-    fab.innerHTML = '\u2699';
-    fab.setAttribute('aria-label', 'Display settings');
-
-    const panel = document.createElement('div');
-    panel.className = 'mn-a11y-panel';
-    panel.setAttribute('role', 'dialog');
-    panel.setAttribute('aria-label', 'Accessibility settings');
-
-    const title = document.createElement('div');
-    title.className = 'mn-a11y-panel__title';
-    title.textContent = '\u2699 Display';
-    panel.appendChild(title);
-
-    const mkSizeRow = (label, key, opts) => {
-      const g = document.createElement('div');
-      g.className = 'mn-a11y-panel__group';
-      const l = document.createElement('div');
-      l.className = 'mn-a11y-panel__label';
-      l.textContent = label;
-      g.appendChild(l);
-      const row = document.createElement('div');
-      row.className = 'mn-a11y-panel__size-btns';
-      const btns = {};
-      Object.keys(opts).forEach((k) => {
-        const b = document.createElement('button');
-        b.className = 'mn-a11y-panel__size-btn';
-        if (settings[key] === k) b.classList.add('mn-a11y-panel__size-btn--active');
-        b.textContent = opts[k];
-        b.addEventListener('click', () => {
-          settings[key] = k;
-          Object.values(btns).forEach((x) => x.classList.remove('mn-a11y-panel__size-btn--active'));
-          b.classList.add('mn-a11y-panel__size-btn--active');
-          apply();
-        });
-        btns[k] = b;
-        row.appendChild(b);
+  _waitForEngine(cb) {
+    requestAnimationFrame(() => {
+      if (getEngine()) { cb(); return; }
+      if (this._mo) return;
+      this._mo = new MutationObserver(() => {
+        if (getEngine()) { this._teardownObserver(); cb(); }
       });
-      g.appendChild(row);
-      return { el: g, btns };
-    };
-
-    const fs = mkSizeRow('Text Size', 'fontSize', { sm: 'S', md: 'M', lg: 'L', xl: 'XL' });
-    panel.appendChild(fs.el);
-
-    const mkToggle = (label, key) => {
-      const r = document.createElement('div');
-      r.className = 'mn-a11y-panel__row';
-      const l = document.createElement('span');
-      l.className = 'mn-a11y-panel__row-label';
-      l.textContent = label;
-      const t = document.createElement('button');
-      t.className = 'mn-a11y-toggle' + (settings[key] ? ' mn-a11y-toggle--on' : '');
-      t.setAttribute('role', 'switch');
-      t.setAttribute('aria-checked', String(!!settings[key]));
-      const thumb = document.createElement('span');
-      thumb.className = 'mn-a11y-toggle__thumb';
-      t.appendChild(thumb);
-      t.addEventListener('click', () => {
-        settings[key] = !settings[key];
-        t.classList.toggle('mn-a11y-toggle--on', settings[key]);
-        t.setAttribute('aria-checked', String(settings[key]));
-        apply();
-      });
-      r.append(l, t);
-      return r;
-    };
-
-    const div1 = document.createElement('div');
-    div1.className = 'mn-a11y-panel__divider';
-    panel.appendChild(div1);
-    panel.appendChild(mkToggle('Reduced Motion', 'reducedMotion'));
-    panel.appendChild(mkToggle('High Contrast', 'highContrast'));
-    panel.appendChild(mkToggle('Focus Indicators', 'focusVisible'));
-
-    const div2 = document.createElement('div');
-    div2.className = 'mn-a11y-panel__divider';
-    panel.appendChild(div2);
-
-    const resetBtn = document.createElement('button');
-    resetBtn.className = 'mn-a11y-panel__reset';
-    resetBtn.textContent = 'Reset to Defaults';
-    resetBtn.addEventListener('click', () => {
-      Object.assign(settings, DEFAULTS);
-      apply();
-      this.shadowRoot.querySelectorAll('.mn-a11y-panel__size-btn').forEach((b) => {
-        b.classList.toggle('mn-a11y-panel__size-btn--active', b.textContent === 'M');
-      });
+      this._mo.observe(document.head, { childList: true });
     });
-    panel.appendChild(resetBtn);
+  }
 
-    let isOpen = false;
-    fab.addEventListener('click', () => {
-      isOpen = !isOpen;
-      panel.classList.toggle('mn-a11y-panel--open', isOpen);
-    });
-
-    this.shadowRoot.append(fab, panel);
-    apply();
-
-    this._ctrl = {
-      getSettings: () => ({ ...settings }),
-      reset: () => resetBtn.click(),
-      destroy: () => { fab.remove(); panel.remove(); },
-    };
+  _teardownObserver() {
+    this._mo?.disconnect();
+    this._mo = null;
   }
 }
 

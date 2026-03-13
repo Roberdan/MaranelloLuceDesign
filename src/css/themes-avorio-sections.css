@@ -1,3 +1,4 @@
+@layer themes {
 /* themes — Avorio Sections | Maranello Design System v1.4.0 */
 
 /* ── Section-level color flip ── */
@@ -191,3 +192,4 @@ body.mn-avorio .mn-section-dark .mn-progress { background: var(--grigio-ghost); 
 
 /* Status dots keep semantic colors in all themes */
 body.mn-avorio .mn-section-dark .mn-status { color: inherit; }
+} /* end @layer themes */

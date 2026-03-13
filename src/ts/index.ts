@@ -3,7 +3,7 @@
  * Re-exports the public API surface for library consumers.
  */
 
-export const VERSION = '2.0.0';
+export const VERSION = '3.0.0';
 
 // Core types (all shared interfaces)
 export * from './core/types';
@@ -118,11 +118,11 @@ export {
 export { cruiseLever, toggleLever } from './controls-ferrari';
 export { manettino, steppedRotary } from './controls-ferrari-dials';
 
-// Data binding
-export {
-  emit, on, updateGauge, bindChart,
-  autoBindSliders, bindControl, bind, autoBind, onDrillDown,
-} from './data-binding';
+// Data binding (core)
+export { emit, on, bind, autoBind, onDrillDown } from './data-binding';
+
+// Data binding (UI: sliders, controls, gauges, charts)
+export { autoBindSliders, bindControl, updateGauge, bindChart } from './data-binding-ui';
 
 // Data table
 export { dataTable } from './data-table';
@@ -160,6 +160,63 @@ export { hBarChart } from './charts-hbar';
 // OKR panel
 export { okrPanel } from './okr-panel';
 export type { OkrPanelOptions, OkrPanelController } from './okr-panel';
+
+// Observers (initGauges, scroll reveal, nav tracking, contrast helpers)
+export {
+  initGauges, initScrollReveal, initNavTracking,
+  relativeLuminance, autoContrast,
+} from './observers';
+export type {
+  GaugeInitOptions, ScrollRevealOptions, NavTrackingOptions, ContrastResult,
+} from './observers';
+
+// Gauge factory / lifecycle utilities
+export {
+  createGauge, createGaugesInContainer, redrawAll, reinitAll, GAUGE_SIZES,
+} from './gauge-engine-class';
+export type { GaugeFactoryOptions, GaugeEntry } from './gauge-engine-class';
+
+// Speedometer internals (palette + draw primitives)
+export * from './speedometer-palette';
+export { drawSpeedometer } from './speedometer-draw';
+
+// Horizontal bar chart draw primitives
+export * from './h-bar-chart-draw';
+
+// Data binding events (off + event types not in data-binding)
+export { off } from './data-binding-events';
+export type {
+  DrillDownContext, DrillDownHandler, ElementBindOptions,
+} from './data-binding-events';
+
+// Icons A-Z
+export { azIcons } from './icons-az';
+export type { AzIconName } from './icons-az';
+
+// Detail panel (create + sub-modules)
+export { createDetailPanel } from './detail-panel';
+export { registerDatePicker, editors } from './detail-panel-editors';
+export {
+  updateStatusSelectColor, renderPersonResults,
+  renderers, getInitials, formatDateSimple,
+} from './detail-panel-renderers';
+export * from './detail-panel-ui';
+
+// A11y panel
+export { a11yPanel } from './a11y-panel';
+export * from './a11y-panel-dom';
+
+// Controls extras (dialogs + drag)
+export { initDropdown, initTabs } from './controls-dialogs';
+export type { DropdownController, TabsController } from './controls-dialogs';
+export { initRotary, initSlider } from './controls-drag';
+
+// Map view internals (events + helpers)
+export { attachEvents } from './map-view-events';
+export type {
+  TipElements, MapEventState, MapEventCallbacks, EventCleanup,
+} from './map-view-events';
+export * from './map-view-helpers';
 
 // Maranello facade (auto-init)
 export { Maranello } from './maranello';

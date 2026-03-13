@@ -1,3 +1,4 @@
+@layer layouts {
 /* ══════════════════════════════════════════════════════════════
    layouts-sim-panel.css — What-If Simulator v2.0
    Full-width bottom row, horizontal scenario cards, clean forms.
@@ -174,3 +175,4 @@ body.mn-avorio .mn-sim-banner { background:rgba(220,0,0,0.06); }
   .mn-sim-form__row--inline { flex-wrap:wrap; }
   .mn-sim-detail-row { grid-template-columns:1fr 1fr; }
 }
+} /* end @layer layouts */

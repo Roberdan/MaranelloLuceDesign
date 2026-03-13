@@ -1,3 +1,4 @@
+@layer layouts {
 /* layouts — Horizontal Bar 2 | Maranello Design System v1.4.0 */
   font-family: var(--font-mono);
   font-size: var(--text-caption);
@@ -220,3 +221,4 @@
 .mn-okr__kr-bar {
   height: 100%;
   width: 0%;
+} /* end @layer layouts */

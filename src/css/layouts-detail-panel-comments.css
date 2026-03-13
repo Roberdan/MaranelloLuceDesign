@@ -1,3 +1,4 @@
+@layer layouts {
 /* layouts — Detail Panel Comments + Autocomplete | Maranello Design System v1.4.0 */
 
 /* ── Quick Comment ───────────────────────────────────────── */
@@ -208,3 +209,4 @@
 .mn-layout__right .mn-detail-panel--open {
   transform: none;
 }
+} /* end @layer layouts */

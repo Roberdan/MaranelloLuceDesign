@@ -1,0 +1,339 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "name": "maranello-luce-design-business — Full API Catalog",
+  "version": "2.0.0",
+  "description": "Complete API surface for AI agent discoverability. See components.json for summary.",
+  "tsModuleDetails": {
+    "observers": {
+      "file": "src/ts/observers.ts",
+      "description": "IntersectionObserver-based lazy gauge init, scroll-reveal, nav tracking, and WCAG auto-contrast",
+      "exports": {
+        "initGauges": { "sig": "(opts?: GaugeInitOptions) => FerrariGauge[]", "desc": "Lazily initialize FerrariGauge when canvas scrolls into view" },
+        "initScrollReveal": { "sig": "(opts?: ScrollRevealOptions) => void", "desc": "Add visible class to .mn-reveal elements on intersection" },
+        "initNavTracking": { "sig": "(opts?: NavTrackingOptions) => void", "desc": "Highlight nav link matching current scroll section" },
+        "relativeLuminance": { "sig": "(bgColor: string) => number | null", "desc": "Compute WCAG relative luminance from rgb() color string" },
+        "autoContrast": { "sig": "(selector: string, threshold?: number) => void", "desc": "Apply dark/light text based on background luminance" }
+      },
+      "types": {
+        "GaugeInitOptions": { "selector": "string", "threshold": "number" },
+        "ScrollRevealOptions": { "selector": "string", "threshold": "number", "rootMargin": "string", "visibleClass": "string" },
+        "NavTrackingOptions": { "sectionSelector": "string", "linkSelector": "string", "offsetPx": "number", "activeClass": "string" },
+        "ContrastResult": { "luminance": "number", "isLight": "boolean" }
+      }
+    },
+    "gauge-engine-class": {
+      "file": "src/ts/gauge-engine-class.ts",
+      "description": "Factory and lifecycle utilities for FerrariGauge; re-exports core class",
+      "exports": {
+        "createGauge": { "sig": "(opts: GaugeFactoryOptions) => FerrariGauge | null", "desc": "Create single gauge from canvas element or CSS selector" },
+        "createGaugesInContainer": { "sig": "(container?: HTMLElement | string, selector?: string) => GaugeEntry[]", "desc": "Create all gauges within a container" },
+        "redrawAll": { "sig": "(entries: GaugeEntry[]) => void", "desc": "Redraw all gauge instances (after theme change)" },
+        "reinitAll": { "sig": "(entries: GaugeEntry[]) => void", "desc": "Re-init all gauges (after layout resize)" },
+        "GAUGE_SIZES": { "sig": "Record<GaugeSize, number>", "desc": "Size presets: sm=120, md=220, lg=320" }
+      },
+      "reExports": ["FerrariGauge", "buildGaugePalette", "GaugeConfig", "GaugeSize", "GaugeRenderPalette", "GaugeDrawState"],
+      "types": {
+        "GaugeFactoryOptions": { "target": "HTMLCanvasElement | string", "config": "GaugeConfig", "size": "GaugeSize", "animate": "boolean" },
+        "GaugeEntry": { "gauge": "FerrariGauge", "canvas": "HTMLCanvasElement" }
+      }
+    },
+    "speedometer-palette": {
+      "file": "src/ts/speedometer-palette.ts",
+      "description": "Constants, palette, and types shared by speedometer.ts and speedometer-draw.ts",
+      "exports": {
+        "SPEEDO_FONT": "string",
+        "SPEEDO_SIZES": "Record<string, number> — sm:120, md:220, lg:320",
+        "SWEEP": "Math.PI * 1.5",
+        "START": "Math.PI * 0.75",
+        "easeOutCubic": { "sig": "(t: number) => number" },
+        "valueToAngle": { "sig": "(v: number, max: number) => number" },
+        "speedoPalette": { "sig": "() => SpeedoPalette", "desc": "Theme-aware palette (reads body class: mn-colorblind, mn-nero)" }
+      },
+      "types": {
+        "SpeedoPalette": { "needle": "string|null", "arc": "string|null", "barStops": "string[]|null", "bg": "string[]", "border": "string", "value": "string", "unit": "string" },
+        "SpeedoBarDrawOptions": { "value": "number", "colorStops": "string[]", "label": "string", "labelLeft": "string", "labelRight": "string" },
+        "SpeedoDrawOptions": { "max": "number", "unit": "string", "ticks": "number[]", "minorTicks": "number", "needleColor": "string", "arcColor": "string", "arcStart": "number", "arcEnd": "number|null", "bar": "SpeedoBarDrawOptions|null", "subLabel": "string|null" }
+      }
+    },
+    "speedometer-draw": {
+      "file": "src/ts/speedometer-draw.ts",
+      "description": "Canvas drawing functions for speedometer — extracted from speedometer.ts",
+      "exports": {
+        "drawSpeedometer": { "sig": "(ctx, dim, s, cx, cy, R, curAngle, curVal, barVal, opts: SpeedoDrawOptions) => void", "desc": "Full-frame speedometer render: background, arc, ticks, needle, cap, text, optional bar" }
+      },
+      "reExports": ["SPEEDO_SIZES", "SWEEP", "START", "easeOutCubic", "valueToAngle", "SpeedoPalette", "SpeedoDrawOptions", "SpeedoBarDrawOptions"]
+    },
+    "h-bar-chart-draw": {
+      "file": "src/ts/h-bar-chart-draw.ts",
+      "description": "DOM drawing primitives and render engine for HBarChart — extracted from charts-hbar.ts",
+      "exports": {
+        "hexLum": { "sig": "(hex: string) => number", "desc": "WCAG relative luminance from hex color" },
+        "createEl": { "sig": "(tag: string, cls?: string, text?: string) => HTMLElement" },
+        "clampVal": { "sig": "(v: number, min: number, max: number) => number" },
+        "normalizeHex": { "sig": "(color: string|null|undefined) => string" },
+        "buildTicks": { "sig": "(maxValue: number) => number[]" },
+        "cleanupTimers": { "sig": "(state: HBarRenderState) => void" },
+        "addListener": { "sig": "(state, el, evt, handler) => void" },
+        "showTip": { "sig": "(tooltip, frame, text, evt: MouseEvent) => void" },
+        "hideTip": { "sig": "(tooltip: HTMLElement) => void" },
+        "normalizeBars": { "sig": "(bars, sortDescending: boolean) => NormalizedBar[]" },
+        "renderHBar": { "sig": "(ctx: HBarRenderContext) => void", "desc": "Full render of horizontal bar chart into DOM context" }
+      },
+      "types": {
+        "NormalizedBar": { "label": "string", "value": "number", "color": "string" },
+        "HBarRenderState": { "disposed": "boolean", "timers": "number[]", "listeners": "ListenerRecord[]", "activeIndex": "number", "opts": "HBarChartOptions" },
+        "HBarRenderContext": { "state": "HBarRenderState", "root": "HTMLElement", "frame": "HTMLElement", "titleEl": "HTMLElement", "gridLayer": "HTMLElement", "rowsLayer": "HTMLElement", "axisLabels": "HTMLElement", "tooltip": "HTMLElement" }
+      }
+    },
+    "data-binding-events": {
+      "file": "src/ts/data-binding-events.ts",
+      "description": "ESM event bus facade — emit/on/off + re-exports bind/autoBind/onDrillDown from data-binding",
+      "exports": {
+        "emit": { "sig": "(name: string, detail: unknown) => void" },
+        "on": { "sig": "(name: string, handler: EventCallback) => void" },
+        "off": { "sig": "(name: string, handler: EventCallback) => void" },
+        "eventBus": "shared EventBus instance",
+        "bind": "from data-binding — bind element to URL/fetch with optional interval",
+        "autoBind": "from data-binding — auto-bind all [data-mn-bind] elements",
+        "onDrillDown": "from data-binding — register drill-down click handler"
+      },
+      "types": {
+        "DrillDownContext": { "text": "string|null", "[key]": "string|null" },
+        "DrillDownHandler": "(element: Element, context: DrillDownContext) => void",
+        "ElementBindOptions": { "url": "string", "fetch": "() => Promise<unknown>", "map": "(data, el?) => unknown", "property": "string", "interval": "number", "onUpdate": "(el, value) => void", "onError": "(el, err) => void" }
+      }
+    },
+    "data-binding-ui": {
+      "file": "src/ts/data-binding-ui.ts",
+      "description": "Higher-level data binding: live gauge update, chart polling, slider/control REST binding",
+      "exports": {
+        "updateGauge": { "sig": "(canvas: HTMLCanvasElement, newConfig: Partial<GaugeConfig>, gaugeMap?: Map) => void", "desc": "Patch gauge config and re-animate" },
+        "bindChart": { "sig": "(canvas, chartType, options: ChartBindOptions, chartRegistry?) => number|undefined", "desc": "Fetch data and render chart; optional polling interval" },
+        "autoBindSliders": { "sig": "(initSlider?) => void", "desc": "Parse [data-mn-slider] attributes and init sliders" },
+        "bindControl": { "sig": "(el, options: ControlBindOptions) => void", "desc": "Bind a control to REST endpoint for read/write" }
+      }
+    },
+    "icons-az": {
+      "file": "src/ts/icons-az.ts",
+      "description": "Extended icon set (supplemental A-Z icons with generic names)",
+      "exports": {
+        "azIcons": "Record<string, () => string> — SVG string factories: project, workspace, + additional domain-neutral icons"
+      }
+    },
+    "detail-panel": {
+      "file": "src/ts/detail-panel.ts",
+      "description": "Detail panel controller — creates panel with edit/save/close lifecycle",
+      "exports": {
+        "createDetailPanel": { "sig": "(container: HTMLElement, opts?: DetailPanelOptions) => DetailPanelController" }
+      }
+    },
+    "detail-panel-ui": {
+      "file": "src/ts/detail-panel-ui.ts",
+      "description": "Panel DOM construction — skeleton, tabs, footer, field rendering",
+      "exports": {
+        "buildDOM": "Build full panel DOM structure",
+        "renderBody": "Render fields for current tab (read or edit mode)",
+        "showToast": "Show inline panel toast notification",
+        "renderSkeleton": "Show loading skeleton"
+      },
+      "types": {
+        "DetailPanelDOM": { "backdrop": "HTMLElement", "titleEl": "HTMLElement", "editBtn": "HTMLButtonElement", "saveBtn": "HTMLButtonElement", "cancelBtn": "HTMLButtonElement", "closeBtn": "HTMLButtonElement" }
+      }
+    },
+    "detail-panel-editors": {
+      "file": "src/ts/detail-panel-editors.ts",
+      "description": "Edit-mode field editors for DetailPanel (text, select, date, person-search, tags)",
+      "exports": {
+        "registerDatePicker": { "sig": "(fn: DatePickerFn) => void", "desc": "Register external date picker for calendar button support" },
+        "editors": "Record<FieldType, EditorFactory>"
+      }
+    },
+    "detail-panel-renderers": {
+      "file": "src/ts/detail-panel-renderers.ts",
+      "description": "Read-only field renderers for DetailPanel (text, badge, date, person, tags, url, score)",
+      "exports": {
+        "renderers": "Record<FieldType, RendererFactory>",
+        "updateStatusSelectColor": "Update select element color based on status value",
+        "renderPersonResults": "Render person search autocomplete results"
+      }
+    },
+    "a11y-panel": {
+      "file": "src/ts/a11y-panel.ts",
+      "description": "Accessibility panel controller — FAB trigger, settings panel, keyboard nav, outside-click",
+      "exports": {
+        "a11yPanel": { "sig": "() => A11yPanelController", "desc": "Mount a11y FAB + slide-out settings panel. Returns controller with getSettings, reset, destroy." }
+      },
+      "settings": {
+        "fontSize": "sm | md | lg | xl",
+        "reducedMotion": "boolean",
+        "highContrast": "boolean",
+        "focusVisible": "boolean",
+        "lineSpacing": "normal | relaxed | loose"
+      }
+    },
+    "a11y-panel-dom": {
+      "file": "src/ts/a11y-panel-dom.ts",
+      "description": "A11y panel DOM builder — builds panel UI, handles localStorage persistence and CSS application",
+      "exports": {
+        "DEFAULTS": "Readonly<A11ySettings>",
+        "loadSettings": "() => A11ySettings — reads from localStorage (key: mn-a11y)",
+        "saveSettings": "(s: A11ySettings) => void",
+        "applySettings": "(s: A11ySettings) => void — applies CSS vars / body classes",
+        "buildPanel": "(s: A11ySettings) => PanelRefs"
+      }
+    },
+    "controls-dialogs": {
+      "file": "src/ts/controls-dialogs.ts",
+      "description": "Dropdown and tabs init with full keyboard navigation and ARIA roles",
+      "exports": {
+        "initDropdown": { "sig": "(el: HTMLElement) => DropdownController", "desc": "Needs .mn-dropdown__trigger, .mn-dropdown__menu, .mn-dropdown__item children" },
+        "initTabs": { "sig": "(el: HTMLElement) => void", "desc": "Wire tab buttons to content panels with keyboard support" }
+      },
+      "types": {
+        "DropdownController": { "open": "() => void", "close": "() => void" }
+      }
+    },
+    "controls-drag": {
+      "file": "src/ts/controls-drag.ts",
+      "description": "Rotary knob and linear slider drag controls with eventBus integration",
+      "exports": {
+        "initRotary": { "sig": "(el: HTMLElement, options?: RotaryOptions) => RotaryController", "desc": "Needs .mn-rotary__housing, .mn-rotary__pointer children. Emits slider-change on eventBus." },
+        "initSlider": { "sig": "(el: HTMLElement, options?: SliderOptions) => SliderController", "desc": "Needs .mn-slider__track, .mn-slider__thumb children. Emits slider-change on eventBus." }
+      },
+      "types": {
+        "RotaryOptions": { "steps": "string[]", "initial": "number", "snap": "boolean", "onChange": "(step: string, index: number) => void" },
+        "RotaryController": { "getValue": "() => string", "getIndex": "() => number", "setValue": "(v: unknown) => void" },
+        "SliderOptions": { "min": "number", "max": "number", "step": "number", "initial": "number", "onChange": "(value: number) => void" },
+        "SliderController": { "getValue": "() => number", "setValue": "(v: unknown) => void" }
+      }
+    },
+    "map-view": {
+      "file": "src/ts/map-view.ts",
+      "description": "Canvas world map factory — clustered markers, tooltips, zoom/pan, theme awareness",
+      "exports": {
+        "mapView": { "sig": "(container: HTMLElement | null, opts?: MapViewOptions) => MapViewController | null" }
+      },
+      "types": {
+        "MapViewOptions": { "markers": "MapMarker[]", "padding": "number", "zoom": "number" },
+        "MapMarker": { "lat": "number", "lng": "number", "label": "string", "detail": "string", "color": "MarkerColor", "size": "MarkerSize" },
+        "MapViewController": { "update": "(markers: MapMarker[]) => void", "destroy": "() => void" }
+      }
+    },
+    "map-view-events": {
+      "file": "src/ts/map-view-events.ts",
+      "description": "Map event handling — pan, zoom, pinch-to-zoom, drag, hit-testing, tooltip management",
+      "exports": {
+        "attachMapEvents": "Attach pointer/touch/wheel events to canvas with shared event state"
+      },
+      "types": {
+        "TipElements": { "wrap": "HTMLElement", "tip": "HTMLElement", "tipLabel": "HTMLElement", "tipDetail": "HTMLElement" },
+        "MapEventState": { "renderedMarkers": "RenderedMarker[]", "viewState": "ViewState", "padding": "number" }
+      }
+    },
+    "map-view-helpers": {
+      "file": "src/ts/map-view-helpers.ts",
+      "description": "Map projection, clustering, marker drawing, legend, hit-testing utilities",
+      "exports": {
+        "project": "Equirectangular lat/lng → canvas x/y",
+        "clusterMarkers": "Cluster nearby markers by pixel distance",
+        "drawMarker": "Draw single or cluster marker on canvas",
+        "renderLegend": "Render color legend in corner",
+        "hitTest": "Test pointer position against rendered markers",
+        "detectTheme": "Read body class and return ThemePalette",
+        "getMarkerColors": "Return fill/stroke colors by MarkerColor and theme",
+        "DPR": "window.devicePixelRatio helper"
+      },
+      "types": {
+        "MarkerColor": "active | warning | danger",
+        "MarkerSize": "sm | md | lg",
+        "ProjectedMarker": "MapMarker + _x, _y",
+        "ClusterMarker": "ProjectedMarker + isCluster, clusterCount, mixedColor, _members",
+        "RenderedMarker": "ProjectedMarker | ClusterMarker with screen bounds",
+        "ViewState": { "zoom": "number", "panX": "number", "panY": "number" }
+      }
+    }
+  },
+  "webComponentDetails": {
+    "mn-chart": {
+      "file": "src/wc/mn-chart.js",
+      "description": "Wraps all canvas-only chart types: sparkline, donut, barChart, areaChart, radar, bubble, liveGraph, halfGauge",
+      "attributes": ["data-type", "data-options", "data-theme"],
+      "events": ["mn-chart-ready", "mn-chart-error"]
+    },
+    "mn-hbar": {
+      "file": "src/wc/mn-hbar.js",
+      "description": "DOM-based horizontal bar chart Web Component",
+      "attributes": ["data-options"],
+      "events": ["mn-hbar-click"]
+    },
+    "mn-gauge": {
+      "file": "src/wc/mn-gauge.js",
+      "description": "Ferrari radial gauge Web Component",
+      "attributes": ["data-gauge", "data-size"],
+      "events": ["mn-gauge-ready"]
+    },
+    "mn-speedometer": {
+      "file": "src/wc/mn-speedometer.js",
+      "description": "Animated speedometer Web Component",
+      "attributes": ["data-options"],
+      "events": ["mn-speedometer-ready"]
+    },
+    "mn-gantt": {
+      "file": "src/wc/mn-gantt.js",
+      "description": "Interactive Gantt timeline Web Component",
+      "attributes": ["data-options"],
+      "events": ["mn-gantt-task-click", "mn-gantt-ready"]
+    },
+    "mn-funnel": {
+      "file": "src/wc/mn-funnel.js",
+      "description": "SVG Sankey funnel Web Component",
+      "attributes": ["data-options"],
+      "events": ["mn-funnel-stage-click"]
+    },
+    "mn-data-table": {
+      "file": "src/wc/mn-data-table.js",
+      "description": "Full-featured data table Web Component with sort, filter, group, paginate",
+      "attributes": ["data-options"],
+      "events": ["mn-table-row-click", "mn-table-sort", "mn-table-page"]
+    },
+    "mn-detail-panel": {
+      "file": "src/wc/mn-detail-panel.js",
+      "description": "Slide-out detail panel Web Component",
+      "attributes": ["data-options"],
+      "events": ["mn-panel-save", "mn-panel-close", "mn-panel-edit"]
+    },
+    "mn-ferrari-control": {
+      "file": "src/wc/mn-ferrari-control.js",
+      "description": "Wraps manettino, steppedRotary, cruiseLever, toggleLever",
+      "attributes": ["data-type", "data-options"],
+      "events": ["mn-control-change"]
+    },
+    "mn-date-picker": { "file": "src/wc/mn-date-picker.js", "attributes": ["data-value", "data-min", "data-max"], "events": ["mn-date-select"] },
+    "mn-modal": { "file": "src/wc/mn-modal.js", "attributes": ["data-backdrop-id"], "events": ["mn-modal-open", "mn-modal-close"] },
+    "mn-toast": { "file": "src/wc/mn-toast.js", "attributes": ["data-options"], "events": ["mn-toast-dismiss"] },
+    "mn-command-palette": { "file": "src/wc/mn-command-palette.js", "attributes": ["data-palette-id"], "events": ["mn-command-select"] },
+    "mn-login": { "file": "src/wc/mn-login.js", "attributes": ["data-options"], "events": ["mn-login-submit"] },
+    "mn-chat": { "file": "src/wc/mn-chat.js", "attributes": ["data-options"], "events": ["mn-chat-send", "mn-chat-close"] },
+    "mn-system-status": { "file": "src/wc/mn-system-status.js", "attributes": ["data-options"], "events": ["mn-status-update"] },
+    "mn-profile": { "file": "src/wc/mn-profile.js", "attributes": ["data-options"], "events": ["mn-profile-action"] },
+    "mn-map": { "file": "src/wc/mn-map.js", "attributes": ["data-options"], "events": ["mn-map-marker-click"] },
+    "mn-theme-toggle": { "file": "src/wc/mn-theme-toggle.js", "attributes": ["data-toggle-id"], "events": ["mn-theme-change"] },
+    "mn-tabs": { "file": "src/wc/mn-tabs.js", "attributes": [], "events": ["mn-tab-change"] },
+    "mn-okr": { "file": "src/wc/mn-okr.js", "attributes": ["data-options"], "events": ["mn-okr-ready"] },
+    "mn-a11y": { "file": "src/wc/mn-a11y.js", "attributes": [], "events": ["mn-a11y-change"] }
+  },
+  "iconModules": {
+    "icons": { "file": "src/ts/icons.ts", "desc": "Core icon registry — merge of all sub-modules", "export": "icons: Record<string, () => string>" },
+    "icons-actions": { "file": "src/ts/icons-actions.ts", "desc": "Action icons: edit, delete, add, search, filter, share, download, upload..." },
+    "icons-data": { "file": "src/ts/icons-data.ts", "desc": "Data icons: chart, table, database, analytics, report..." },
+    "icons-nav": { "file": "src/ts/icons-nav.ts", "desc": "Navigation icons: home, menu, chevron, arrow, close, back..." },
+    "icons-objects": { "file": "src/ts/icons-objects.ts", "desc": "Object icons: calendar, clock, user, team, location, document, layers..." },
+    "icons-status": { "file": "src/ts/icons-status.ts", "desc": "Status icons: check, warning, error, info, spinner, lock, unlock..." },
+    "icons-az": { "file": "src/ts/icons-az.ts", "desc": "Extended supplemental icons: project (was engagement), workspace (was studio)" }
+  },
+  "coreModules": {
+    "core/types": { "file": "src/ts/core/types.ts", "desc": "All shared TypeScript interfaces and types for the design system" },
+    "core/utils": { "file": "src/ts/core/utils.ts", "desc": "Shared utilities: createElement, cssVar, clamp, debounce, throttle" },
+    "core/events": { "file": "src/ts/core/events.ts", "desc": "EventBus class with typed on/off/emit and eventBus singleton export" }
+  }
+}

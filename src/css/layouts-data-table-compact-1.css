@@ -1,3 +1,4 @@
+@layer layouts {
 /* layouts — Data Table Compact 1 | Maranello Design System v1.4.0 */
 
 /* ── Compact variant ── */
@@ -221,3 +222,4 @@
   gap: var(--space-md);
 }
 .mn-profile-dropdown__avatar-lg {
+} /* end @layer layouts */

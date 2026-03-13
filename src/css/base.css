@@ -4,6 +4,8 @@
    ============================================================    Version: 1.4.0 (11-March-2026)
    */
 
+@layer base {
+
 /* ─── RESET ─── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
@@ -166,3 +168,5 @@ a { color: inherit; text-decoration: none; }
 .mn-section-dark .mn-watermark { color: var(--grigio-scuro); }
 .mn-section-accent .mn-watermark { color: rgba(255,255,255,0.2); }
 .mn-section-ivory .mn-watermark { color: var(--avorio-medio); }
+
+} /* end @layer base */

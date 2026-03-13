@@ -5,19 +5,31 @@ How to configure Vite for optimal use of Maranello Luce Design System.
 ## Install
 
 ```bash
-npm install github:Roberdan/MaranelloLuceDesign#v2.0.0
+npm install github:Roberdan/MaranelloLuceDesign#v3.0.0
 ```
 
 ## Basic Setup
 
-### CSS import
+### CSS @layer import
+
+v3.0.0 uses CSS `@layer` — all 70 CSS source files are wrapped in cascade layers. Vite handles the import natively.
 
 ```ts
-// main.ts
+// main.ts — full bundle (all 11 layers)
 import 'maranello-luce-design-business/css';
+
+// Or selective layers for smaller bundles
+import 'maranello-luce-design-business/css/tokens.css';
+import 'maranello-luce-design-business/css/base.css';
+import 'maranello-luce-design-business/css/components.css';
+import 'maranello-luce-design-business/css/charts.css';
+import 'maranello-luce-design-business/css/forms.css';
+import 'maranello-luce-design-business/css/themes.css';
 ```
 
-Vite handles CSS imports natively. The full `index.css` bundle (~80KB) is automatically included in your build.
+Consumer styles without `@layer` automatically take precedence over system layers — no `!important` needed.
+
+Vite handles CSS imports natively. The full `index.css` bundle is automatically included in your build.
 
 ### ESM imports (tree-shakeable)
 
@@ -104,19 +116,26 @@ import 'maranello-luce-design-business/css/utilities.css';
 
 ## Web Components Registration
 
-Import Web Components at your entry point. Vite bundles the registration side-effect.
+### Per-component ESM import (v3, recommended)
+
+Import only the WCs your app uses — no full WC bundle required. v3 uses `async resolveEngine()` internally, so no `window.Maranello` polling.
 
 ```ts
-// main.ts -- registers all mn-* custom elements
-import 'maranello-luce-design-business/wc';
-```
-
-Or import individual components:
-
-```ts
+// Individual WC imports (best tree-shaking)
 import 'maranello-luce-design-business/wc/mn-gauge';
 import 'maranello-luce-design-business/wc/mn-chart';
 import 'maranello-luce-design-business/wc/mn-data-table';
+
+// Or all WCs in one import
+import 'maranello-luce-design-business/wc';
+```
+
+### Standalone WC via CDN (no Vite build needed)
+
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v3.0.0/dist/css/index.css">
+<script src="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v3.0.0/dist/iife/maranello.min.js"></script>
+<mn-gauge value="72" label="CPU" theme="nero"></mn-gauge>
 ```
 
 ## Fonts

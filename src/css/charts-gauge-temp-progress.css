@@ -1,3 +1,4 @@
+@layer charts {
 /* charts — Gauge Temp Progress | Maranello Design System v1.4.0 */
 
 /* ── HALF GAUGE (semicircular arc) ── */
@@ -116,3 +117,4 @@
 .mn-bubble-chart canvas { display: block; }
 
 
+} /* end @layer charts */

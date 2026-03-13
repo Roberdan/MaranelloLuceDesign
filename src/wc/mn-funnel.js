@@ -7,8 +7,21 @@
  * @attr {boolean} animate         - Enable entrance animation
  * @fires mn-funnel-ready  - Dispatched when funnel is rendered
  * @fires mn-funnel-click  - {detail: {stage, index}} on stage click
- * @version 1.4.0
+ * @version 2.0.0
  */
+
+// Dual-mode: ESM import or CDN fallback
+let _engine = null;
+
+function getEngine() {
+  if (_engine) return _engine;
+  if (globalThis.Maranello) {
+    _engine = globalThis.Maranello;
+    return _engine;
+  }
+  return null;
+}
+
 const _base = new URL('.', import.meta.url).href;
 function cssLink(path) {
   const link = document.createElement('link');
@@ -16,6 +29,7 @@ function cssLink(path) {
   link.href = new URL(path, _base).href;
   return link;
 }
+
 class MnFunnel extends HTMLElement {
   static get observedAttributes() {
     return ['stages', 'show-conversion', 'animate'];
@@ -25,24 +39,22 @@ class MnFunnel extends HTMLElement {
     super();
     this.attachShadow({ mode: 'open' });
     this._ctrl = null;
-    this._initAttempts = 0;
-
-    const link1 = cssLink("../css/tokens.css");
-
-    const link2 = cssLink("../css/layouts-funnel.css");
-
-    const link3 = cssLink("../css/charts-heatmap-funnel-flip.css");
+    this._mo = null;
 
     const style = document.createElement('style');
-    style.textContent = `
-      :host { display: block; width: 100%; }
-      .mn-funnel__root { width: 100%; }
-    `;
+    style.textContent = ':host{display:block;width:100%}.mn-funnel__root{width:100%}';
 
     this._container = document.createElement('div');
     this._container.className = 'mn-funnel__root';
+    this._container.setAttribute('role', 'img');
 
-    this.shadowRoot.append(link1, link2, link3, style, this._container);
+    this.shadowRoot.append(
+      cssLink('../css/tokens.css'),
+      cssLink('../css/layouts-funnel.css'),
+      cssLink('../css/charts-heatmap-funnel-flip.css'),
+      style,
+      this._container,
+    );
   }
 
   connectedCallback() {
@@ -54,32 +66,28 @@ class MnFunnel extends HTMLElement {
   }
 
   disconnectedCallback() {
+    this._teardownObserver();
     this._ctrl?.destroy?.();
     this._ctrl = null;
   }
 
   attributeChangedCallback(name, oldVal, newVal) {
     if (oldVal === newVal || !this._ctrl) return;
-    switch (name) {
-      case 'stages': {
-        const parsed = this._parseJSON('stages', null);
-        if (Array.isArray(parsed)) this._ctrl.update(parsed);
-        break;
-      }
-      case 'show-conversion':
-      case 'animate':
-        this._rebuild();
-        break;
+    if (name === 'stages') {
+      const parsed = this._parseJSON('stages', null);
+      if (Array.isArray(parsed)) this._ctrl.update(parsed);
+    } else {
+      this._rebuild();
     }
   }
 
-  /* ── Public API ─────────────────────────────────────────── */
+  /* ── Public API ───────────────────────────────────────────── */
 
   update(stages) {
     this._ctrl?.update?.(stages);
   }
 
-  /* ── Internals ──────────────────────────────────────────── */
+  /* ── Internals ────────────────────────────────────────────── */
 
   _parseJSON(attr, fallback) {
     try { return JSON.parse(this.getAttribute(attr) || ''); }
@@ -87,13 +95,12 @@ class MnFunnel extends HTMLElement {
   }
 
   _init() {
-    const M = window.Maranello;
+    const M = getEngine();
     if (!M?.funnel) {
-      if (++this._initAttempts < 60) {
-        requestAnimationFrame(() => this._init());
-      }
+      this._waitForEngine(() => this._init());
       return;
     }
+    this._teardownObserver();
 
     const stages = this._parseJSON('stages', []);
     const showConversion = this.hasAttribute('show-conversion');
@@ -106,9 +113,7 @@ class MnFunnel extends HTMLElement {
       animate,
       onClick: (stage, index) => {
         this.dispatchEvent(new CustomEvent('mn-funnel-click', {
-          detail: { stage, index },
-          bubbles: true,
-          composed: true,
+          detail: { stage, index }, bubbles: true, composed: true,
         }));
       },
     });
@@ -122,8 +127,23 @@ class MnFunnel extends HTMLElement {
     this._ctrl?.destroy?.();
     this._ctrl = null;
     this._container.innerHTML = '';
-    this._initAttempts = 0;
     this._init();
+  }
+
+  _waitForEngine(cb) {
+    requestAnimationFrame(() => {
+      if (getEngine()) { cb(); return; }
+      if (this._mo) return;
+      this._mo = new MutationObserver(() => {
+        if (getEngine()) { this._teardownObserver(); cb(); }
+      });
+      this._mo.observe(document.head, { childList: true });
+    });
+  }
+
+  _teardownObserver() {
+    this._mo?.disconnect();
+    this._mo = null;
   }
 }
 

@@ -1,3 +1,4 @@
+@layer layouts {
 /* ══════════════════════════════════════════════════════════════
    layouts-capacity-heatmap.css — Capacity Heatmap Grid
    Maranello Design System · Maranello Luce
@@ -114,3 +115,4 @@ body.mn-avorio .mn-cap-heatmap__filter { border-bottom-color:var(--grigio-2); }
 body.mn-avorio .mn-chip { border-color:var(--grigio-3); color:var(--nero-2); }
 body.mn-avorio .mn-chip--active { background:var(--rosso-corsa); color:#fff; border-color:var(--rosso-corsa); }
 body.mn-avorio .mn-cap-heatmap__filter-input { background:var(--bianco-2); border-color:var(--grigio-3); color:var(--nero-1); }
+} /* end @layer layouts */

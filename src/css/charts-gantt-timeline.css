@@ -1,3 +1,4 @@
+@layer charts {
 /* charts — Gantt Timeline | Maranello Design System v1.4.0 */
 
 /* ── GANTT TIMELINE (canvas-based interactive) ── */
@@ -113,3 +114,4 @@ body.mn-nero .mn-gantt-timeline__controls {
   border-color: rgba(255,255,255,0.03);
 }
 
+} /* end @layer charts */

@@ -1,20 +1,38 @@
 /**
  * <mn-detail-panel> — Web Component wrapper for Maranello.detailPanel
  * Slide-over detail panel with edit mode, tabs, and async save.
+ * Dual-mode: ESM dynamic import OR window.Maranello fallback for CDN users.
  *
  * @attr {string}  title    - Panel header title
  * @attr {string}  sections - JSON section data (schema/tabs/data)
  * @attr {boolean} open     - Whether the panel is visible
  * @fires mn-save  - {detail: {payload, original}}
  * @fires mn-close
+ * @version 2.0.0
  */
+
+// Dual-mode: ESM import or CDN fallback
+let _engine = null;
+
+function getEngine() {
+  if (_engine) return _engine;
+  if (globalThis.Maranello) {
+    _engine = globalThis.Maranello;
+    return _engine;
+  }
+  return null;
+}
+
 const _base = new URL('.', import.meta.url).href;
+
+/** @param {string} path */
 function cssLink(path) {
   const link = document.createElement('link');
   link.rel = 'stylesheet';
   link.href = new URL(path, _base).href;
   return link;
 }
+
 class MnDetailPanel extends HTMLElement {
   static get observedAttributes() {
     return ['title', 'sections', 'open'];
@@ -24,15 +42,13 @@ class MnDetailPanel extends HTMLElement {
     super();
     this.attachShadow({ mode: 'open' });
     this._ctrl = null;
-    this._initAttempts = 0;
+    this._mo = null;
+    this._subComponents = {};
 
-    const link1 = cssLink("../css/tokens.css");
-
-    const link2 = cssLink("../css/layouts-detail-panel.css");
-
-    const link3 = cssLink("../css/layouts-detail-controls-1.css");
-
-    const link4 = cssLink("../css/layouts-detail-controls-2.css");
+    const link1 = cssLink('../css/tokens.css');
+    const link2 = cssLink('../css/layouts-detail-panel.css');
+    const link3 = cssLink('../css/layouts-detail-controls-1.css');
+    const link4 = cssLink('../css/layouts-detail-controls-2.css');
 
     this._container = document.createElement('div');
     this._container.className = 'mn-wc-root';
@@ -49,6 +65,7 @@ class MnDetailPanel extends HTMLElement {
   }
 
   disconnectedCallback() {
+    this._teardownObserver();
     this._ctrl?.destroy?.();
     this._ctrl = null;
   }
@@ -83,7 +100,6 @@ class MnDetailPanel extends HTMLElement {
   }
 
   setSubComponent(tabName, renderFn) {
-    this._subComponents = this._subComponents || {};
     this._subComponents[tabName] = renderFn;
   }
 
@@ -95,13 +111,12 @@ class MnDetailPanel extends HTMLElement {
   }
 
   _init() {
-    const M = window.Maranello;
+    const M = getEngine();
     if (!M?.detailPanel) {
-      if (++this._initAttempts < 60) {
-        requestAnimationFrame(() => this._init());
-      }
+      this._waitForEngine(() => this._init());
       return;
     }
+    this._teardownObserver();
 
     const sections = this._parseJSON('sections', {});
 
@@ -111,7 +126,7 @@ class MnDetailPanel extends HTMLElement {
       schema: sections.schema || undefined,
       tabs: sections.tabs || undefined,
       editable: true,
-      subComponents: this._subComponents || {},
+      subComponents: this._subComponents,
       onSave: (payload, original) => {
         this.dispatchEvent(new CustomEvent('mn-save', {
           detail: { payload, original },
@@ -149,6 +164,22 @@ class MnDetailPanel extends HTMLElement {
         else this._ctrl.close?.();
         break;
     }
+  }
+
+  _waitForEngine(cb) {
+    requestAnimationFrame(() => {
+      if (getEngine()) { cb(); return; }
+      if (this._mo) return;
+      this._mo = new MutationObserver(() => {
+        if (getEngine()) { this._teardownObserver(); cb(); }
+      });
+      this._mo.observe(document.head, { childList: true });
+    });
+  }
+
+  _teardownObserver() {
+    this._mo?.disconnect();
+    this._mo = null;
   }
 }
 

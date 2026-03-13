@@ -1,5 +1,6 @@
 /* MARANELLO DESIGN SYSTEM — Design Tokens v1.4.0 */
 
+@layer tokens {
 :root {
   /* ─── Color: Nero ─── */
   --nero-assoluto:    #000000;
@@ -248,3 +249,4 @@
   --mn-pair-11-bg: #10B981; --mn-pair-11-text: #111;
   --mn-pair-12-bg: #4F46E5; --mn-pair-12-text: #fff;
 }
+} /* end @layer tokens */

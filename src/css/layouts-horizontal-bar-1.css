@@ -1,3 +1,4 @@
+@layer layouts {
 /* layouts — Horizontal Bar 1 | Maranello Design System v1.4.0 */
 /* ── Horizontal bar chart ─────────────────────────────────── */
 .mn-hbar {
@@ -215,3 +216,4 @@
   background: #DC0000;
 }
 .mn-okr__summary-label {
+} /* end @layer layouts */

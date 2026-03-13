@@ -1,3 +1,4 @@
+@layer charts {
 /* ============================================================
    MARANELLO DESIGN SYSTEM — Gauge Styles
    Ferrari instrument cluster: bezel, dial, glass, canvas, labels
@@ -217,3 +218,4 @@
   50% { box-shadow: inset 0 4px 12px rgba(0,0,0,0.9), inset 0 -2px 8px rgba(0,0,0,0.6), inset 0 0 30px rgba(220,0,0,0.15); }
 }
 .mn-gauge__dial--warning { animation: gaugeGlow 2s ease-in-out infinite; }
+} /* end @layer charts */

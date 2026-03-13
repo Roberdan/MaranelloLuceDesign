@@ -1,4 +1,5 @@
 /* layouts — Data Table Compact 2 | Maranello Design System v1.5.0 */
+@layer layouts {
   width: 48px;
   height: 48px;
   border-radius: 50%;
@@ -247,3 +248,4 @@
   padding: var(--space-xs);
   display: flex; flex-direction: column; align-items: center;
   justify-content: center; gap: 4px; text-align: center;
+} /* end @layer layouts */

@@ -1,3 +1,4 @@
+@layer layouts {
 /* Maranello Nav Controls — segmented icon toggles, pills, tooltips */
 
 /* Group container */
@@ -152,3 +153,4 @@ body.mn-avorio .mn-nav-pill[data-tooltip]::after {
   border-color: var(--grigio-alluminio);
   color: var(--nero-assoluto);
 }
+} /* end @layer layouts */

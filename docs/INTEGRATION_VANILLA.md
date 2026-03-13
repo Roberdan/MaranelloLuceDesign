@@ -10,13 +10,13 @@ The simplest approach. The IIFE bundle attaches everything to `window.M`.
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v2.0.0/dist/css/index.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v3.0.0/dist/css/index.css">
 </head>
 <body class="mn-nero">
   <canvas id="gauge" width="200" height="200"></canvas>
   <div id="chart"></div>
 
-  <script src="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v2.0.0/dist/iife/maranello.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v3.0.0/dist/iife/maranello.min.js"></script>
   <script>
     // IIFE exposes window.M
     M.gauge.create(document.getElementById('gauge'), {
@@ -121,6 +121,41 @@ No JavaScript needed for layout primitives, typography, forms, and static compon
     </table>
   </div>
 </body>
+```
+
+## CSS @layer Import
+
+v3.0.0 uses CSS `@layer` for predictable cascade ordering. Import the full bundle or individual layers:
+
+```html
+<!-- Full bundle (all 11 layers) -->
+<link rel="stylesheet" href="dist/css/index.css">
+
+<!-- Or selective layers -->
+<link rel="stylesheet" href="dist/css/tokens.css">
+<link rel="stylesheet" href="dist/css/base.css">
+<link rel="stylesheet" href="dist/css/components.css">
+<link rel="stylesheet" href="dist/css/charts.css">
+<link rel="stylesheet" href="dist/css/forms.css">
+<link rel="stylesheet" href="dist/css/themes.css">
+```
+
+Consumer styles added without `@layer` automatically win over all system layers — no `!important` needed.
+
+## Standalone Web Components (ESM, no IIFE)
+
+Import only the WCs you need — no IIFE bundle required:
+
+```html
+<link rel="stylesheet" href="dist/css/index.css">
+
+<script type="module">
+  import 'maranello-luce-design-business/wc/mn-gauge';
+  import 'maranello-luce-design-business/wc/mn-chart';
+</script>
+
+<mn-gauge value="72" label="CPU Load" theme="nero"></mn-gauge>
+<mn-chart type="donut" data='[{"label":"A","value":30},{"label":"B","value":70}]'></mn-chart>
 ```
 
 ## Selective CSS Imports

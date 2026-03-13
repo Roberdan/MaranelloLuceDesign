@@ -1,20 +1,38 @@
 /**
  * <mn-map> — Web Component wrapper for Maranello.mapView
  * Interactive canvas-based map with markers, clustering, and zoom/pan.
+ * Dual-mode: ESM dynamic import OR window.Maranello fallback for CDN users.
  *
  * @attr {string} markers - JSON array of marker objects {id, lat, lon, label, size, color, status}
  * @attr {number} zoom    - Initial zoom level
  * @attr {string} center  - JSON [longitude, latitude] for initial center
  * @attr {string} theme   - Map theme name (optional)
  * @fires mn-marker-click - {detail: {marker}}
+ * @version 2.0.0
  */
+
+// Dual-mode: ESM import or CDN fallback
+let _engine = null;
+
+function getEngine() {
+  if (_engine) return _engine;
+  if (globalThis.Maranello) {
+    _engine = globalThis.Maranello;
+    return _engine;
+  }
+  return null;
+}
+
 const _base = new URL('.', import.meta.url).href;
+
+/** @param {string} path */
 function cssLink(path) {
   const link = document.createElement('link');
   link.rel = 'stylesheet';
   link.href = new URL(path, _base).href;
   return link;
 }
+
 class MnMap extends HTMLElement {
   static get observedAttributes() {
     return ['markers', 'zoom', 'center', 'theme'];
@@ -24,13 +42,11 @@ class MnMap extends HTMLElement {
     super();
     this.attachShadow({ mode: 'open' });
     this._ctrl = null;
-    this._initAttempts = 0;
+    this._mo = null;
 
-    const link1 = cssLink("../css/tokens.css");
+    const link1 = cssLink('../css/tokens.css');
+    const link2 = cssLink('../css/layouts.css');
 
-    const link2 = cssLink("../css/layouts.css");
-
-    // Ensure the canvas fills the host element
     const style = document.createElement('style');
     style.textContent = `
       :host { display: block; position: relative; min-height: 300px; }
@@ -39,14 +55,20 @@ class MnMap extends HTMLElement {
 
     this._container = document.createElement('div');
     this._container.className = 'mn-wc-root';
+    this._container.setAttribute('aria-hidden', 'true');
     this.shadowRoot.append(link1, link2, style, this._container);
   }
 
   connectedCallback() {
+    this.setAttribute('role', 'img');
+    if (!this.hasAttribute('aria-label')) {
+      this.setAttribute('aria-label', 'Interactive map');
+    }
     this._init();
   }
 
   disconnectedCallback() {
+    this._teardownObserver();
     this._ctrl?.destroy?.();
     this._ctrl = null;
   }
@@ -83,13 +105,12 @@ class MnMap extends HTMLElement {
   }
 
   _init() {
-    const M = window.Maranello;
+    const M = getEngine();
     if (!M?.mapView) {
-      if (++this._initAttempts < 60) {
-        requestAnimationFrame(() => this._init());
-      }
+      this._waitForEngine(() => this._init());
       return;
     }
+    this._teardownObserver();
 
     const markers = this._parseJSON('markers', []);
     const center = this._parseJSON('center', undefined);
@@ -140,8 +161,23 @@ class MnMap extends HTMLElement {
     this._ctrl?.destroy?.();
     this._ctrl = null;
     this._container.innerHTML = '';
-    this._initAttempts = 0;
     this._init();
+  }
+
+  _waitForEngine(cb) {
+    requestAnimationFrame(() => {
+      if (getEngine()) { cb(); return; }
+      if (this._mo) return;
+      this._mo = new MutationObserver(() => {
+        if (getEngine()) { this._teardownObserver(); cb(); }
+      });
+      this._mo.observe(document.head, { childList: true });
+    });
+  }
+
+  _teardownObserver() {
+    this._mo?.disconnect();
+    this._mo = null;
   }
 }
 

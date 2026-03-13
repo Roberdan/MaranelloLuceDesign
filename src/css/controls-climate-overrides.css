@@ -1,3 +1,4 @@
+@layer controls {
 /* controls — Climate Overrides | Maranello Design System v1.4.0 */
 
 /* ── CLIMATE CONTROL PANEL ── */
@@ -109,3 +110,4 @@ body.mn-nero .mn-btn-cluster__item {
    FERRARI CONTROLS v2 — Manettino, Cruise Lever, Toggle Lever, Stepped Rotary
    ══════════════════════════════════════════════════════════════ */
 
+} /* end @layer controls */

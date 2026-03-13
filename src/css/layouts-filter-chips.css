@@ -1,3 +1,4 @@
+@layer layouts {
 /* layouts — Filter Chips | Maranello Design System v1.0.0 */
 
 /* ── Filter chips container ─────────────────────────────── */
@@ -97,3 +98,4 @@ body.mn-avorio .mn-filter-chip__remove:hover {
   background: var(--rosso, #e74c3c);
   color: var(--bianco-puro, #fff);
 }
+} /* end @layer layouts */

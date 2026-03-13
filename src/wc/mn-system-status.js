@@ -8,15 +8,18 @@
  * @attr {string} environment   - Environment label
  * @fires mn-service-click - {detail: {service, result}}
  * @method refresh() - Force an immediate refresh
- * @version 1.4.0
+ * @version 1.5.0
  */
+
 const _base = new URL('.', import.meta.url).href;
+
 function cssLink(path) {
   const link = document.createElement('link');
   link.rel = 'stylesheet';
   link.href = new URL(path, _base).href;
   return link;
 }
+
 class MnSystemStatus extends HTMLElement {
   static get observedAttributes() {
     return ['services', 'poll-interval', 'version', 'environment'];
@@ -25,16 +28,13 @@ class MnSystemStatus extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
-    this._ctrl = null;
-    this._initAttempts = 0;
     this._services = [];
     this._results = [];
     this._pollTimer = null;
     this._isOpen = false;
 
-    const tokens = cssLink("../css/tokens.css");
-
-    const link = cssLink("../css/components-tables-status.css");
+    const tokens = cssLink('../css/tokens.css');
+    const link = cssLink('../css/components-tables-status.css');
 
     const style = document.createElement('style');
     style.textContent = `
@@ -49,17 +49,16 @@ class MnSystemStatus extends HTMLElement {
       .mn-ss__pill:hover { border-color: var(--grigio-medio, #777) }
       .mn-ss__dot { width: 8px; height: 8px; border-radius: 50%;
         flex-shrink: 0; transition: background .3s }
-      .mn-ss__dot--active { background: var(--verde-racing, #00C853) }
+      .mn-ss__dot--active  { background: var(--verde-racing, #00C853) }
       .mn-ss__dot--warning { background: var(--giallo-ferrari, #FFC72C) }
-      .mn-ss__dot--danger { background: var(--rosso-corsa, #DC0000) }
+      .mn-ss__dot--danger  { background: var(--rosso-corsa, #DC0000) }
       .mn-ss__panel { position: absolute; top: 100%; right: 0;
         margin-top: 8px; width: 300px; background: var(--nero-soft, #1a1a1a);
         border: 1px solid var(--grigio-scuro, #444); border-radius: 10px;
         padding: 12px; box-shadow: 0 12px 32px rgba(0,0,0,.5);
         opacity: 0; transform: translateY(-4px); pointer-events: none;
         transition: opacity .2s, transform .2s; z-index: 9000 }
-      .mn-ss__panel--open { opacity: 1; transform: translateY(0);
-        pointer-events: auto }
+      .mn-ss__panel--open { opacity: 1; transform: translateY(0); pointer-events: auto }
       .mn-ss__header { display: flex; align-items: center; gap: 8px;
         margin-bottom: 10px; font-weight: 600; font-size: .85rem;
         color: var(--bianco-caldo, #f5f0e8) }
@@ -68,8 +67,7 @@ class MnSystemStatus extends HTMLElement {
         transition: background .1s; font-size: .85rem }
       .mn-ss__row:hover { background: var(--grigio-scuro, #222) }
       .mn-ss__row-name { flex: 1 }
-      .mn-ss__row-ms { font-size: .75rem; color: var(--grigio-medio, #777);
-        font-family: monospace }
+      .mn-ss__row-ms { font-size: .75rem; color: var(--grigio-medio, #777); font-family: monospace }
       .mn-ss__row-ms--down { color: var(--rosso-corsa, #DC0000); font-weight: 600 }
     `;
 
@@ -78,8 +76,12 @@ class MnSystemStatus extends HTMLElement {
 
     this._pill = document.createElement('button');
     this._pill.className = 'mn-ss__pill';
+    this._pill.setAttribute('aria-haspopup', 'true');
+    this._pill.setAttribute('aria-expanded', 'false');
+    this._pill.setAttribute('aria-label', 'System status');
     this._dot = document.createElement('span');
     this._dot.className = 'mn-ss__dot mn-ss__dot--active';
+    this._dot.setAttribute('aria-hidden', 'true');
     this._verEl = document.createElement('span');
     this._envEl = document.createElement('span');
     this._pill.append(this._dot, this._verEl, this._envEl);
@@ -88,8 +90,10 @@ class MnSystemStatus extends HTMLElement {
     this._panel = document.createElement('div');
     this._panel.className = 'mn-ss__panel';
     this._panel.setAttribute('role', 'status');
+    this._panel.setAttribute('aria-live', 'polite');
     this._headerDot = document.createElement('span');
     this._headerDot.className = 'mn-ss__dot mn-ss__dot--active';
+    this._headerDot.setAttribute('aria-hidden', 'true');
     this._headerLabel = document.createElement('span');
     this._headerLabel.textContent = 'Checking…';
     const hdr = document.createElement('div');
@@ -111,7 +115,6 @@ class MnSystemStatus extends HTMLElement {
 
   connectedCallback() {
     this._readAttrs();
-    this._render();
     document.addEventListener('click', this._onDocClick);
     document.addEventListener('keydown', this._onDocKey);
     this._startPolling();
@@ -129,7 +132,6 @@ class MnSystemStatus extends HTMLElement {
     this._readAttrs();
     if (name === 'poll-interval') { this._stopPolling(); this._startPolling(); }
     if (name === 'services') this.refresh();
-    this._render();
   }
 
   /* ── Public API ─────────────────────────────────────────── */
@@ -140,7 +142,7 @@ class MnSystemStatus extends HTMLElement {
       const start = performance.now();
       try {
         if (svc.url) {
-          const r = await fetch(svc.url, { mode: 'no-cors', cache: 'no-store' });
+          await fetch(svc.url, { mode: 'no-cors', cache: 'no-store' });
           return { name: svc.name, ok: true, ms: Math.round(performance.now() - start) };
         }
         await new Promise((r) => setTimeout(r, 50 + Math.random() * 200));
@@ -162,8 +164,6 @@ class MnSystemStatus extends HTMLElement {
     this._envEl.textContent = env ? ` · ${env}` : '';
   }
 
-  _render() { /* attrs already applied in _readAttrs */ }
-
   _renderResults() {
     this._serviceList.innerHTML = '';
     const hasDown = this._results.some((r) => !r.ok);
@@ -181,6 +181,7 @@ class MnSystemStatus extends HTMLElement {
       if (this._services[i]) row.style.cursor = 'pointer';
       const d = document.createElement('span');
       d.className = `mn-ss__dot mn-ss__dot--${!r.ok ? 'danger' : r.ms > 1000 ? 'warning' : 'active'}`;
+      d.setAttribute('aria-hidden', 'true');
       const n = document.createElement('span');
       n.className = 'mn-ss__row-name';
       n.textContent = r.name;
@@ -198,9 +199,7 @@ class MnSystemStatus extends HTMLElement {
     });
   }
 
-  _togglePanel() {
-    this._isOpen ? this._closePanel() : this._openPanel();
-  }
+  _togglePanel() { this._isOpen ? this._closePanel() : this._openPanel(); }
 
   _openPanel() {
     this._isOpen = true;

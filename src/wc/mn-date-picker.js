@@ -7,8 +7,21 @@
  * @attr {string}  max            - Maximum selectable date
  * @attr {string}  disabled-dates - JSON array of disabled ISO dates
  * @fires mn-change - {detail: {date}}
- * @version 1.4.0
+ * @version 2.0.0
  */
+
+// Dual-mode: ESM import or CDN fallback
+let _engine = null;
+
+function getEngine() {
+  if (_engine) return _engine;
+  if (globalThis.Maranello) {
+    _engine = globalThis.Maranello;
+    return _engine;
+  }
+  return null;
+}
+
 const _base = new URL('.', import.meta.url).href;
 function cssLink(path) {
   const link = document.createElement('link');
@@ -16,6 +29,7 @@ function cssLink(path) {
   link.href = new URL(path, _base).href;
   return link;
 }
+
 class MnDatePicker extends HTMLElement {
   static get observedAttributes() {
     return ['value', 'min', 'max', 'disabled-dates'];
@@ -25,44 +39,49 @@ class MnDatePicker extends HTMLElement {
     super();
     this.attachShadow({ mode: 'open' });
     this._ctrl = null;
-    this._initAttempts = 0;
-
-    const tokens = cssLink("../css/tokens.css");
-
-    const link = cssLink("../css/forms-file-date-range.css");
+    this._mo = null;
 
     const style = document.createElement('style');
     style.textContent = `
-      :host { display: inline-block; position: relative }
-      .mn-wc-trigger { display: flex; align-items: center; gap: 8px;
-        padding: 8px 12px; border-radius: 8px; cursor: pointer;
-        background: var(--nero-soft, #1a1a1a);
-        border: 1px solid var(--grigio-scuro, #444);
-        color: var(--grigio-chiaro, #ccc);
-        font-family: var(--font-body, sans-serif); font-size: .9rem;
-        transition: border-color var(--duration-sm, .15s) }
-      .mn-wc-trigger:hover { border-color: var(--grigio-medio, #777) }
-      .mn-wc-trigger:focus { outline: 2px solid var(--rosso-corsa, #DC0000);
-        outline-offset: 2px }
-      .mn-wc-icon { font-size: 1rem }
+      :host{display:inline-block;position:relative}
+      .mn-wc-trigger{display:flex;align-items:center;gap:8px;
+        padding:8px 12px;border-radius:8px;cursor:pointer;
+        background:var(--nero-soft,#1a1a1a);
+        border:1px solid var(--grigio-scuro,#444);
+        color:var(--grigio-chiaro,#ccc);
+        font-family:var(--font-body,sans-serif);font-size:.9rem;
+        transition:border-color var(--duration-sm,.15s)}
+      .mn-wc-trigger:hover{border-color:var(--grigio-medio,#777)}
+      .mn-wc-trigger:focus{outline:2px solid var(--rosso-corsa,#DC0000);outline-offset:2px}
+      .mn-wc-icon{font-size:1rem}
     `;
 
     this._trigger = document.createElement('button');
     this._trigger.className = 'mn-wc-trigger';
     this._trigger.setAttribute('aria-label', 'Pick a date');
+    this._trigger.setAttribute('aria-haspopup', 'dialog');
+
     const icon = document.createElement('span');
     icon.className = 'mn-wc-icon';
     icon.textContent = '\uD83D\uDCC5';
+    icon.setAttribute('aria-hidden', 'true');
+
     this._label = document.createElement('span');
     this._label.textContent = 'Select date';
+
     this._trigger.append(icon, this._label);
+    this._trigger.addEventListener('click', () => this._toggle());
 
     this._anchor = document.createElement('div');
     this._anchor.style.position = 'relative';
 
-    this._trigger.addEventListener('click', () => this._toggle());
-
-    this.shadowRoot.append(tokens, link, style, this._trigger, this._anchor);
+    this.shadowRoot.append(
+      cssLink('../css/tokens.css'),
+      cssLink('../css/forms-file-date-range.css'),
+      style,
+      this._trigger,
+      this._anchor,
+    );
   }
 
   connectedCallback() {
@@ -70,6 +89,7 @@ class MnDatePicker extends HTMLElement {
   }
 
   disconnectedCallback() {
+    this._teardownObserver();
     this.close();
   }
 
@@ -78,7 +98,7 @@ class MnDatePicker extends HTMLElement {
     if (name === 'value') this._updateLabel();
   }
 
-  /* ── Public API ─────────────────────────────────────────── */
+  /* ── Public API ───────────────────────────────────────────── */
 
   getValue() {
     return this.getAttribute('value') || '';
@@ -89,7 +109,7 @@ class MnDatePicker extends HTMLElement {
     this._ctrl = null;
   }
 
-  /* ── Private ────────────────────────────────────────────── */
+  /* ── Private ──────────────────────────────────────────────── */
 
   _toggle() {
     if (this._ctrl) { this.close(); return; }
@@ -97,37 +117,50 @@ class MnDatePicker extends HTMLElement {
   }
 
   _tryInit() {
-    const M = window.Maranello;
+    const M = getEngine();
     if (!M?.datePicker) {
-      if (this._initAttempts++ < 20) {
-        requestAnimationFrame(() => this._tryInit());
-      }
+      this._waitForEngine(() => this._tryInit());
       return;
     }
+    this._teardownObserver();
 
-    const disabledRaw = this.getAttribute('disabled-dates');
     let disabledSet = new Set();
-    try { disabledSet = new Set(JSON.parse(disabledRaw)); } catch { /* ignore */ }
+    try { disabledSet = new Set(JSON.parse(this.getAttribute('disabled-dates'))); }
+    catch { /* ignore invalid JSON */ }
 
     this._ctrl = M.datePicker(this._anchor, {
       value: this.getAttribute('value') || undefined,
-      min: this.getAttribute('min') || undefined,
-      max: this.getAttribute('max') || undefined,
+      min:   this.getAttribute('min') || undefined,
+      max:   this.getAttribute('max') || undefined,
       onSelect: (dateStr) => {
         if (disabledSet.has(dateStr)) return;
         this.setAttribute('value', dateStr);
         this._updateLabel();
         this.dispatchEvent(new CustomEvent('mn-change', {
-          detail: { date: dateStr },
-          bubbles: true, composed: true,
+          detail: { date: dateStr }, bubbles: true, composed: true,
         }));
       },
     });
   }
 
   _updateLabel() {
-    const v = this.getAttribute('value');
-    this._label.textContent = v || 'Select date';
+    this._label.textContent = this.getAttribute('value') || 'Select date';
+  }
+
+  _waitForEngine(cb) {
+    requestAnimationFrame(() => {
+      if (getEngine()) { cb(); return; }
+      if (this._mo) return;
+      this._mo = new MutationObserver(() => {
+        if (getEngine()) { this._teardownObserver(); cb(); }
+      });
+      this._mo.observe(document.head, { childList: true });
+    });
+  }
+
+  _teardownObserver() {
+    this._mo?.disconnect();
+    this._mo = null;
   }
 }
 

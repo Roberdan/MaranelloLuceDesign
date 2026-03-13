@@ -1,3 +1,4 @@
+@layer layouts {
 /* ══════════════════════════════════════════════════════════════
    layouts-network.css — Social Network Graph
    Maranello Design System · Maranello Luce
@@ -84,3 +85,4 @@ body.mn-avorio .mn-detail-resource__fte-bar { background:var(--grigio-1,#eee); }
 body.mn-avorio .mn-detail-resource__eng { background:var(--bianco-2,#f5f0e8); border-left-color:var(--rosso-corsa); }
 body.mn-avorio .mn-detail-resource__eng:hover { background:var(--grigio-1); }
 body.mn-avorio .mn-detail-resource__mate { border-bottom-color:var(--grigio-2); }
+} /* end @layer layouts */

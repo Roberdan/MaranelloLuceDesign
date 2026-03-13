@@ -1,3 +1,4 @@
+@layer extended {
 /* extended — Tooltip Modal | Maranello Design System v1.4.0 */
 
 /* ============================================================
@@ -167,3 +168,4 @@ body.mn-avorio .mn-modal__close { background: rgba(0,0,0,0.04); color: var(--gri
 body.mn-avorio .mn-modal-backdrop { background: rgba(0,0,0,0.3); }
 
 
+} /* end @layer extended */

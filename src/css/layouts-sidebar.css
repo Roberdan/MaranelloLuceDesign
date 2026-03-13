@@ -1,3 +1,4 @@
+@layer layouts {
 /* layouts — Sidebar | Maranello Design System v1.4.0 */
 
 /* ── Sidebar Navigation ──────────────────────────────────── */
@@ -97,3 +98,4 @@
   border-top: 1px solid var(--grigio-4);
 }
 
+} /* end @layer layouts */

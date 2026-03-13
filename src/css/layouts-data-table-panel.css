@@ -1,3 +1,4 @@
+@layer layouts {
 /* layouts — Data Table Panel | Maranello Design System v1.4.0 */
 
 /* ── Panel ── */
@@ -76,3 +77,4 @@
   .mn-a11y-panel { width: calc(100vw - 2 * var(--space-lg)); right: var(--space-md); }
 }
 
+} /* end @layer layouts */

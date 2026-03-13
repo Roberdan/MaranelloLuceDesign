@@ -5,8 +5,24 @@ How to use Maranello Luce Design System with React (18+).
 ## Install
 
 ```bash
-npm install github:Roberdan/MaranelloLuceDesign#v2.0.0
+npm install github:Roberdan/MaranelloLuceDesign#v3.0.0
 ```
+
+## CSS @layer Import
+
+v3.0.0 wraps all CSS in `@layer` blocks. Import order is safe regardless of bundler.
+
+```tsx
+// Full bundle
+import 'maranello-luce-design-business/css';
+
+// Or selective layers
+import 'maranello-luce-design-business/css/tokens.css';
+import 'maranello-luce-design-business/css/base.css';
+import 'maranello-luce-design-business/css/components.css';
+```
+
+Consumer styles without `@layer` automatically win — no specificity fights.
 
 ## Layer 1: CSS-Only
 
@@ -65,6 +81,16 @@ declare namespace JSX {
     };
   }
 }
+```
+
+### Per-component ESM import (v3)
+
+```tsx
+// Import only the WC you need (no full WC bundle)
+import 'maranello-luce-design-business/wc/mn-gauge';
+import 'maranello-luce-design-business/wc/mn-chart';
+// or all at once:
+import 'maranello-luce-design-business/wc';
 ```
 
 ### Wrapper component pattern

@@ -1,3 +1,4 @@
+@layer charts {
 /* charts — Heatmap Funnel Flip | Maranello Design System v1.4.0 */
 
 /* ── HEATMAP ── */
@@ -171,3 +172,4 @@
 }
 
 
+} /* end @layer charts */

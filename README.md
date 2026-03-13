@@ -9,9 +9,11 @@ Part of the [Convergio](https://github.com/Roberdan/MyConvergio) project ecosyst
 ## Features
 
 - **3-layer architecture**: CSS-only primitives, Web Components, Headless JS (Canvas/SVG)
+- **CSS @layer architecture**: 11 cascade layers (`tokens` through `utilities`) for predictable specificity
 - **4 themes**: Nero (dark), Avorio (warm light), Editorial (mixed default), Colorblind (WCAG high-contrast)
+- **Dual-mode Web Components**: ESM import or CDN IIFE fallback — zero `window.Maranello` polling
 - **WCAG 2.2 AA**: keyboard navigation, contrast ratios, `prefers-color-scheme` auto-switching
-- **AI-discoverable**: semantic class names, consistent token naming, structured component catalog
+- **AI-discoverable**: `components.json` + `components-detail.json` catalogs, semantic class names
 - **Zero runtime dependencies**: pure CSS + vanilla TypeScript (optional peer dep: `mapbox-gl` for maps)
 - **Multiple output formats**: ESM, CJS, IIFE, standalone CSS
 
@@ -20,24 +22,31 @@ Part of the [Convergio](https://github.com/Roberdan/MyConvergio) project ecosyst
 ### Git dependency (primary)
 
 ```bash
-npm install github:Roberdan/MaranelloLuceDesign#v2.0.0
+npm install github:Roberdan/MaranelloLuceDesign#v3.0.0
 ```
 
 ### CDN (no build step)
 
 ```html
 <!-- CSS -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v2.0.0/dist/css/index.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v3.0.0/dist/css/index.css">
 
 <!-- JS (IIFE -- attaches to window.M) -->
-<script src="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v2.0.0/dist/iife/maranello.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v3.0.0/dist/iife/maranello.min.js"></script>
 ```
 
-### ESM import
+### ESM import (per-component, tree-shakeable)
 
 ```js
+// Full bundle
 import { charts, gantt, gauge } from 'maranello-luce-design-business';
 import 'maranello-luce-design-business/css';
+
+// Per-component sub-package imports
+import { charts } from 'maranello-luce-design-business/charts';
+import { gauge } from 'maranello-luce-design-business/gauge';
+import { gantt } from 'maranello-luce-design-business/gantt';
+import { controls } from 'maranello-luce-design-business/controls';
 ```
 
 ## Themes
@@ -78,6 +87,26 @@ All visual properties are CSS custom properties (tokens) defined in `tokens.css`
 
 Key token categories: colors (nero, grigio, avorio, accento, semantic), typography (display, body, mono), spacing (4px base scale), borders, shadows, transitions, z-index layers.
 
+## CSS @layer Architecture
+
+v3.0.0 wraps all 70 CSS source files in explicit `@layer` blocks. The 11 layers, in cascade order:
+
+| Layer | Contents |
+|-------|----------|
+| `tokens` | CSS custom properties — colors, spacing, typography |
+| `base` | Reset, root, font-face |
+| `themes` | Nero, Avorio, Colorblind overrides |
+| `typography` | Heading, body, mono styles |
+| `layouts` | Grid, flex, section containers |
+| `components` | Buttons, cards, tags, tables, nav |
+| `forms` | Inputs, selects, checkboxes |
+| `controls` | Ferrari dials, sliders, rotary |
+| `charts` | Chart containers and legends |
+| `animations` | Transitions, keyframes |
+| `utilities` | Helpers, overrides |
+
+Consumer styles added without `@layer` automatically win over all system layers.
+
 ## Architecture
 
 ```
@@ -101,13 +130,27 @@ Import just the CSS for layout primitives, typography, forms, and component styl
 </div>
 ```
 
-### Layer 2 -- Web Components
+### Layer 2 -- Web Components (Dual-mode)
 
-Custom elements with `mn-` prefix. Work in any framework or plain HTML.
+Custom elements with `mn-` prefix. Work in any framework or plain HTML. v3 uses `async resolveEngine()` — no `window.Maranello` polling required.
+
+**ESM mode** (recommended — per-component import):
 
 ```html
+<script type="module">
+  import 'maranello-luce-design-business/wc/mn-gauge';
+  import 'maranello-luce-design-business/wc/mn-chart';
+</script>
 <mn-gauge value="72" label="CPU" theme="nero"></mn-gauge>
 <mn-chart type="donut" data='[{"label":"A","value":30},{"label":"B","value":70}]'></mn-chart>
+```
+
+**CDN mode** (all WCs via IIFE, no build step):
+
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v3.0.0/dist/css/index.css">
+<script src="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v3.0.0/dist/iife/maranello.min.js"></script>
+<mn-gauge value="72" label="CPU" theme="nero"></mn-gauge>
 <mn-data-table src="/api/data" sortable paginate></mn-data-table>
 <mn-toast message="Saved" type="success" duration="3000"></mn-toast>
 ```

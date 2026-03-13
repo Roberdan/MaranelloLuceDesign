@@ -1,8 +1,23 @@
-import { mkdirSync, readdirSync, copyFileSync, readFileSync, writeFileSync, existsSync } from 'fs';
-import { join } from 'path';
+/**
+ * CSS Build Script — LightningCSS bundler
+ * Bundles maranello.css (full + minified), index.css, and copies individual files.
+ */
+import { mkdirSync, readdirSync, copyFileSync, writeFileSync, existsSync } from 'fs';
+import { join, resolve } from 'path';
 
 const srcDir = 'src/css';
 const outDir = 'dist/css';
+
+// Graceful check for lightningcss
+let lightningcss;
+try {
+  lightningcss = await import('lightningcss');
+} catch {
+  console.error('CSS: lightningcss not installed. Run: npm install lightningcss');
+  process.exit(1);
+}
+
+const { bundle } = lightningcss;
 
 mkdirSync(outDir, { recursive: true });
 
@@ -11,39 +26,50 @@ if (!existsSync(srcDir)) {
   process.exit(0);
 }
 
-const files = readdirSync(srcDir).filter((f) => f.endsWith('.css'));
+// Browser targets for autoprefixing (last 2 major versions)
+const targets = { chrome: (110 << 16), firefox: (110 << 16), safari: (15 << 16) };
 
-// Copy individual CSS files for selective import
+/**
+ * Bundle a CSS entry file with LightningCSS, resolving all @import directives.
+ * @param {string} entry - source file path relative to cwd
+ * @param {string} output - output file path relative to cwd
+ * @param {object} opts - { minify?: boolean }
+ */
+function bundleCSS(entry, output, opts = {}) {
+  const result = bundle({
+    filename: resolve(entry),
+    minify: opts.minify ?? false,
+    sourceMap: false,
+    errorRecovery: true,
+    targets,
+  });
+  writeFileSync(output, result.code);
+  const kb = (result.code.length / 1024).toFixed(1);
+  console.log(`CSS: created ${output} (${kb} KB${opts.minify ? ', minified' : ''})`);
+}
+
+// 1. Bundle maranello.css (readable)
+const maranelloSrc = join(srcDir, 'maranello.css');
+if (existsSync(maranelloSrc)) {
+  bundleCSS(maranelloSrc, join(outDir, 'maranello.css'));
+  bundleCSS(maranelloSrc, join(outDir, 'maranello.min.css'), { minify: true });
+} else {
+  console.warn('CSS: maranello.css not found — skipping bundle');
+}
+
+// 2. Bundle index.css (readable, imports inlined)
+const indexSrc = join(srcDir, 'index.css');
+if (existsSync(indexSrc)) {
+  bundleCSS(indexSrc, join(outDir, 'index.css'));
+} else {
+  console.warn('CSS: index.css not found — skipping bundle');
+}
+
+// 3. Copy individual CSS files for per-component imports
+// Skip entry files already bundled above to avoid overwriting bundled output
+const bundled = new Set(['maranello.css', 'index.css']);
+const files = readdirSync(srcDir).filter((f) => f.endsWith('.css') && !bundled.has(f));
 for (const file of files) {
   copyFileSync(join(srcDir, file), join(outDir, file));
 }
 console.log(`CSS: copied ${files.length} individual file(s) to ${outDir}`);
-
-// Concatenate into single maranello.css
-// index.css first (if exists) as it contains @import order, then all others
-const ordered = [];
-if (files.includes('index.css')) ordered.push('index.css');
-for (const f of files) {
-  if (f !== 'index.css') ordered.push(f);
-}
-
-const concat = ordered
-  .map((f) => {
-    const content = readFileSync(join(srcDir, f), 'utf8');
-    return `/* === ${f} === */\n${content}`;
-  })
-  .join('\n\n');
-
-writeFileSync(join(outDir, 'maranello.css'), concat, 'utf8');
-console.log(`CSS: created maranello.css (${(Buffer.byteLength(concat) / 1024).toFixed(1)} KB)`);
-
-// Minify: strip comments, collapse whitespace, trim
-const minified = concat
-  .replace(/\/\*[\s\S]*?\*\//g, '')  // remove comments
-  .replace(/\s+/g, ' ')             // collapse whitespace
-  .replace(/\s*([{};:,>~+])\s*/g, '$1') // remove space around punctuation
-  .replace(/;}/g, '}')              // remove trailing semicolons
-  .trim();
-
-writeFileSync(join(outDir, 'maranello.min.css'), minified, 'utf8');
-console.log(`CSS: created maranello.min.css (${(Buffer.byteLength(minified) / 1024).toFixed(1)} KB)`);

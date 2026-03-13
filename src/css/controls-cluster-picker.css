@@ -1,3 +1,4 @@
+@layer controls {
 /* controls — Cluster Picker | Maranello Design System v1.4.0 */
 
 /* ── BUTTON CLUSTER (steering wheel style) ── */
@@ -119,3 +120,4 @@
   background: var(--mn-accent);
   box-shadow: 0 0 8px var(--mn-accent);
 }
+} /* end @layer controls */

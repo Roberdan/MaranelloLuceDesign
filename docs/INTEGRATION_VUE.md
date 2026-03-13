@@ -5,35 +5,34 @@ How to use Maranello Luce Design System with Vue 3.
 ## Install
 
 ```bash
-npm install github:Roberdan/MaranelloLuceDesign#v2.0.0
+npm install github:Roberdan/MaranelloLuceDesign#v3.0.0
+```
+
+## CSS @layer Import
+
+v3.0.0 wraps all CSS in `@layer` blocks. Consumer styles added without `@layer` win automatically.
+
+```ts
+// main.ts — full bundle
+import 'maranello-luce-design-business/css';
+
+// Or selective layers
+import 'maranello-luce-design-business/css/tokens.css';
+import 'maranello-luce-design-business/css/base.css';
+import 'maranello-luce-design-business/css/components.css';
 ```
 
 ## Layer 1: CSS-Only
-
-Import CSS in your entry point or root component.
 
 ```ts
 // main.ts
 import { createApp } from 'vue';
 import 'maranello-luce-design-business/css';
 import App from './App.vue';
-
 createApp(App).mount('#app');
 ```
 
-Use CSS classes directly in templates:
-
-```vue
-<template>
-  <section class="mn-section-dark">
-    <h2 class="mn-title-section">Dashboard</h2>
-    <div class="mn-stat-card">
-      <span class="mn-stat-value">{{ count }}</span>
-      <span class="mn-stat-label">Active projects</span>
-    </div>
-  </section>
-</template>
-```
+Use `mn-*` CSS classes directly in `<template>` — no wrappers needed.
 
 ## Layer 2: Web Components
 
@@ -71,6 +70,24 @@ export default defineConfig({
     })
   ]
 });
+```
+
+### Per-component ESM import (v3)
+
+```ts
+// Import individual WCs instead of the full bundle
+import 'maranello-luce-design-business/wc/mn-gauge';
+import 'maranello-luce-design-business/wc/mn-chart';
+// or all WCs
+import 'maranello-luce-design-business/wc';
+```
+
+### Standalone WC without IIFE (CDN mode)
+
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v3.0.0/dist/css/index.css">
+<script src="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v3.0.0/dist/iife/maranello.min.js"></script>
+<mn-gauge value="72" label="CPU" theme="nero"></mn-gauge>
 ```
 
 ### Usage in templates
@@ -152,59 +169,18 @@ watch(data, (newData) => {
 </template>
 ```
 
-### Gantt timeline
+### Gantt / Gauge
 
-```vue
-<script setup lang="ts">
-import { ref, onMounted } from 'vue';
+```ts
+// Gantt: use onMounted + div ref
 import { gantt } from 'maranello-luce-design-business/gantt';
+onMounted(() => gantt.render(containerRef.value!, props.tasks, { palette: 'nero' }));
 
-const containerRef = ref<HTMLDivElement>();
-
-const props = defineProps<{
-  tasks: Array<{ id: string; name: string; start: string; end: string }>;
-}>();
-
-onMounted(() => {
-  if (containerRef.value) {
-    gantt.render(containerRef.value, props.tasks, { palette: 'nero' });
-  }
-});
-</script>
-
-<template>
-  <div ref="containerRef" style="width: 100%; height: 400px"></div>
-</template>
-```
-
-### Gauge
-
-```vue
-<script setup lang="ts">
-import { ref, onMounted, watch } from 'vue';
+// Gauge: use onMounted + canvas ref; reactive via watch
 import { gauge } from 'maranello-luce-design-business/gauge';
-
-const canvasRef = ref<HTMLCanvasElement>();
-const props = defineProps<{ value: number; label: string }>();
 let instance: ReturnType<typeof gauge.create>;
-
-onMounted(() => {
-  if (canvasRef.value) {
-    instance = gauge.create(canvasRef.value, {
-      value: props.value,
-      label: props.label
-    });
-  }
-});
-
-watch(() => props.value, (val) => {
-  instance?.update(val);
-});
-</script>
-
-<template>
-  <canvas ref="canvasRef" width="200" height="200"></canvas>
-</template>
+onMounted(() => { instance = gauge.create(canvasRef.value!, { value: props.value, label: props.label }); });
+watch(() => props.value, (val) => instance?.update(val));
 ```
 
 ## Theme Switching
