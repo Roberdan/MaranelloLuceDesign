@@ -73,6 +73,7 @@ export function createChartsSection() {
         ${ringWrap('ring-3',100,'92%','Therapy')}
       </div>
 
+
       <h3 class="mn-title-sub" style="margin-bottom:var(--space-md)">Flip Counters</h3>
       <div style="display:flex;gap:var(--space-2xl);flex-wrap:wrap;align-items:flex-end;margin-bottom:var(--space-lg)">
         <div style="text-align:center"><div id="flip-1"></div><span class="mn-micro" style="color:var(--grigio-chiaro)">Children Helped</span></div>
@@ -116,7 +117,7 @@ function liveWrap(id, label) {
 }
 function ringWrap(id, sz, pct, label) {
   return `<div style="text-align:center">
-    <canvas id="${id}" width="${sz}" height="${sz}"></canvas>
+    <div id="${id}" style="width:${sz}px;height:${sz}px;display:inline-block"></div>
     <div class="mn-micro" style="color:var(--grigio-chiaro);margin-top:4px">${pct} ${label}</div>
   </div>`;
 }
@@ -179,9 +180,9 @@ function initCharts(section) {
 
   const M = window.Maranello;
   if (M.progressRing) {
-    M.progressRing(g('ring-1'), { value: 72, max: 100, width: 60, height: 60 });
-    M.progressRing(g('ring-2'), { value: 45, max: 100, width: 80, height: 80 });
-    M.progressRing(g('ring-3'), { value: 92, max: 100, width: 100, height: 100, color: '#00A651' });
+    M.progressRing(g('ring-1'), { value: 72, max: 100, size: 60 });
+    M.progressRing(g('ring-2'), { value: 45, max: 100, size: 80 });
+    M.progressRing(g('ring-3'), { value: 92, max: 100, size: 100, color: '#00A651' });
   }
 
   const f1 = M.flipCounter?.(section.querySelector('#flip-1'), { value: 847 });
