@@ -1624,7 +1624,7 @@ function profileMenu(trigger, options) {
     if (isOpen) positionDropdown();
   }
   window.addEventListener("resize", onResize);
-  const setUser = (uOrName, email, avatarUrl) => {
+  const setUser = ((uOrName, email, avatarUrl) => {
     if (typeof uOrName === "string") {
       opts.name = uOrName;
       opts.email = email ?? "";
@@ -1638,7 +1638,7 @@ function profileMenu(trigger, options) {
       close();
       open();
     }
-  };
+  });
   return {
     open,
     close,
