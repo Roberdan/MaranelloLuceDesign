@@ -75,6 +75,19 @@ export function hexFillGradient(
   return grad;
 }
 
+/** Apply accessibility attributes to a canvas chart element. */
+export function applyChartA11y(canvas: HTMLCanvasElement, label: string): void {
+  canvas.setAttribute('role', 'img');
+  canvas.setAttribute('aria-label', label);
+  canvas.textContent = label;
+  const srSpan = document.createElement('span');
+  srSpan.className = 'mn-sr-only';
+  srSpan.textContent = label;
+  if (canvas.parentElement) {
+    canvas.parentElement.insertBefore(srSpan, canvas.nextSibling);
+  }
+}
+
 /** Draw a smooth bezier curve through data points. */
 export function drawSmoothLine(
   ctx: CanvasRenderingContext2D,

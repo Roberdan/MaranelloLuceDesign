@@ -2,7 +2,7 @@
  * Maranello Luce Design - Donut chart (Canvas 2D)
  */
 import type { DonutSegment, DonutOptions } from './core/types';
-import { chartHiDpi, getCanvasSize, SERIES } from './charts-helpers';
+import { chartHiDpi, getCanvasSize, SERIES, applyChartA11y } from './charts-helpers';
 
 /** Render a donut chart on a canvas element. */
 export function donut(
@@ -48,6 +48,12 @@ export function donut(
     ctx.stroke();
     angle += sweep + o.gap;
   });
+
+  const segDesc = segments.map((s, i) => {
+    const pct = total > 0 ? Math.round((s.value / total) * 100) : 0;
+    return `segment ${i + 1} ${pct}%`;
+  }).join(', ');
+  applyChartA11y(canvas, `Donut chart: ${segDesc}`);
 
   return canvas;
 }

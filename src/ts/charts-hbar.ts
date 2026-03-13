@@ -146,8 +146,17 @@ export function hBarChart(
     const ticks = buildTicks(maxValue);
     titleEl.style.display = state.opts.title ? '' : 'none';
     titleEl.textContent = state.opts.title || '';
+    const highest = bars.length > 0
+      ? bars.reduce((a, b) => (b.value > a.value ? b : a), bars[0]) : null;
+    const hbarLabel = highest
+      ? `Bar chart: ${bars.length} categories, highest ${highest.label} at ${highest.value}`
+      : (state.opts.title || 'Horizontal bar chart');
     host.setAttribute('role', 'img');
-    host.setAttribute('aria-label', state.opts.title || 'Horizontal bar chart');
+    host.setAttribute('aria-label', hbarLabel);
+    const prevSr = host.querySelector('.mn-sr-only');
+    if (prevSr) prevSr.remove();
+    const srSpan = createEl('span', 'mn-sr-only', hbarLabel);
+    frame.appendChild(srSpan);
     (frame as HTMLElement).style.setProperty(
       '--mn-hbar-bar-height', (state.opts.barHeight || 28) + 'px',
     );

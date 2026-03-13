@@ -3,7 +3,7 @@
  */
 import type { LiveGraphOptions } from './core/types';
 import { cssVar } from './core/utils';
-import { chartHiDpi, getCanvasSize, drawSmoothLine } from './charts-helpers';
+import { chartHiDpi, getCanvasSize, drawSmoothLine, applyChartA11y } from './charts-helpers';
 
 /** Render a live/real-time line graph with glow effect. */
 export function liveGraph(
@@ -75,6 +75,8 @@ export function liveGraph(
   ctx.shadowBlur = 6;
   ctx.stroke();
   ctx.shadowBlur = 0;
+
+  applyChartA11y(canvas, `Live chart: ${o.unitLabel || 'real-time data'}`);
 
   return canvas;
 }

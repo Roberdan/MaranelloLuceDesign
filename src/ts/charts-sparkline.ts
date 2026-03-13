@@ -3,7 +3,7 @@
  */
 import type { SparklineOptions } from './core/types';
 import { cssVar } from './core/utils';
-import { chartHiDpi, getCanvasSize, hexFillGradient, drawSmoothLine } from './charts-helpers';
+import { chartHiDpi, getCanvasSize, hexFillGradient, drawSmoothLine, applyChartA11y } from './charts-helpers';
 
 /** Render a sparkline chart on a canvas element. */
 export function sparkline(
@@ -66,6 +66,9 @@ export function sparkline(
     ctx.lineWidth = 1;
     ctx.stroke();
   }
+
+  const last = data[data.length - 1];
+  applyChartA11y(canvas, `Sparkline: values from ${mn} to ${mx}, latest ${last}`);
 
   return canvas;
 }

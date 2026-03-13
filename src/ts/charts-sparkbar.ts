@@ -3,7 +3,7 @@
  * Vertical bar chart with rounded tops, grid lines, and labels.
  */
 import type { BarDataItem, BarChartOptions } from './core/types';
-import { chartHiDpi, getCanvasSize, SERIES } from './charts-helpers';
+import { chartHiDpi, getCanvasSize, SERIES, applyChartA11y } from './charts-helpers';
 
 /** Render a vertical bar chart on a canvas element. */
 export function barChart(
@@ -72,6 +72,10 @@ export function barChart(
       ctx.fillText(d.label, x + barW / 2, h - 4);
     }
   });
+
+  const highest = data.reduce((a, b) => (b.value > a.value ? b : a), data[0]);
+  applyChartA11y(canvas,
+    `Bar chart: ${data.length} categories, highest ${highest.label || 'item'} at ${highest.value}`);
 
   return canvas;
 }
