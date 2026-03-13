@@ -154,5 +154,12 @@ export { progressRing } from './progress-ring';
 export { funnel } from './funnel';
 export { hexLum, autoTextColor, resolveContainer } from './funnel-helpers';
 
+// Horizontal bar chart
+export { hBarChart } from './charts-hbar';
+
+// OKR panel
+export { okrPanel } from './okr-panel';
+export type { OkrPanelOptions, OkrPanelController } from './okr-panel';
+
 // Maranello facade (auto-init)
 export { Maranello } from './maranello';

@@ -29,6 +29,9 @@ import { openDetailPanel, closeDetailPanel } from './controls';
 import { buildUI as aiChat } from './ai-chat-dom';
 import { flipCounter } from './flip-counter';
 import { progressRing } from './progress-ring';
+import { cruiseLever, toggleLever } from './controls-ferrari';
+import { manettino, steppedRotary } from './controls-ferrari-dials';
+import { okrPanel } from './okr-panel';
 
 declare global {
   interface Window {
@@ -92,6 +95,15 @@ M.progressRing = progressRing;
 M.openDetailPanel = openDetailPanel;
 M.closeDetailPanel = closeDetailPanel;
 M.detailPanel = openDetailPanel;
+M.hBarChart = hBarChart;
+M.okrPanel = okrPanel;
+
+// Ferrari controls (used by mn-ferrari-control WC)
+M.cruiseLever = cruiseLever;
+M.toggleLever = toggleLever;
+M.manettino = manettino;
+M.steppedRotary = steppedRotary;
+M.initRotary = manettino; // alias: mn-ferrari-control uses M.initRotary for rotary type
 
 // Charts namespace (mn-chart WC looks up M.charts[type])
 M.charts = {
