@@ -24,7 +24,10 @@ export function okrPanel(
 ): OkrPanelController | null {
   const host = typeof container === 'string'
     ? document.querySelector<HTMLElement>(container) : container as HTMLElement;
-  if (!host) return null;
+  if (!host) {
+    console.warn('[Maranello] okrPanel: container not found:', container);
+    return null;
+  }
   const el_host = host; // non-null binding for closures
 
   const title = opts?.title ?? 'OKR Dashboard';
