@@ -47,7 +47,7 @@ export function createGaugesSection() {
 
           <!-- RIGHT: Portfolio Map -->
           <div class="mn-gauge">
-            <div class="mn-gauge__instrument mn-gauge__instrument--sm">
+            <div class="mn-gauge__instrument" style="width:220px;height:220px">
               <div class="mn-gauge__dial">
                 <canvas class="mn-gauge__canvas" data-gauge='${portfolioGauge()}'></canvas>
                 <div class="mn-gauge__glass"></div>
@@ -93,7 +93,7 @@ export function createGaugesSection() {
         </div>
 
         <div class="mn-gauge">
-          <div class="mn-gauge__instrument mn-gauge__instrument--sm" style="width:160px;height:160px">
+          <div class="mn-gauge__instrument" style="width:220px;height:220px">
             <div class="mn-gauge__dial">
               <canvas class="mn-gauge__canvas" data-gauge='${trendGauge()}'></canvas>
               <div class="mn-gauge__glass"></div>
@@ -154,17 +154,17 @@ function portfolioGauge() {
     startAngle: 0, endAngle: 0, showNeedle: false,
     complications: {
       crosshair: {
-        x: 0.35, y: -0.25, dotColor: '#FFC72C', gridColor: '#D4A826',
+        x: 0.35, y: -0.25, dotColor: '#FFC72C', gridColor: '#5a4a20',
         labelTop: 'ACTIVE', labelBottom: 'CLOSED', labelLeft: 'LOW', labelRight: 'HIGH',
         title: 'IMPACT',
         scatterDots: [
-          { x: 0.55, y: -0.40, color: '#00A651', r: 5 },
-          { x: 0.70, y: -0.55, color: '#00A651', r: 4 },
-          { x: 0.30, y: -0.10, color: '#FFC72C', r: 4 },
-          { x: 0.15, y: -0.50, color: '#448AFF', r: 3 },
-          { x: -0.20, y: -0.30, color: '#448AFF', r: 3 },
-          { x: 0.60, y: -0.20, color: '#00A651', r: 4 },
-          { x: 0.40, y: -0.65, color: '#00A651', r: 5 }
+          { x: 0.55, y: -0.40, color: '#00E676', r: 7 },
+          { x: 0.70, y: -0.55, color: '#00E676', r: 6 },
+          { x: 0.30, y: -0.10, color: '#FFD54F', r: 6 },
+          { x: 0.15, y: -0.50, color: '#64B5F6', r: 5 },
+          { x: -0.20, y: -0.30, color: '#64B5F6', r: 5 },
+          { x: 0.60, y: -0.20, color: '#00E676', r: 6 },
+          { x: 0.40, y: -0.65, color: '#00E676', r: 7 }
         ]
       },
       quadrantCounts: { tl: 3, tr: 18, bl: 2, br: 5 },

@@ -15,16 +15,16 @@ export function createAnimationsSection() {
 
       <div class="demo-section-label mn-mt-2xl">Entrance Animations</div>
       <div class="mn-flex-wrap mn-gap-md mn-mb-2xl" style="align-items:stretch" id="anim-entrance-row">
-        <div class="mn-panel mn-anim-fadeIn" style="min-width:120px;text-align:center;padding:var(--space-md)">
+        <div class="mn-panel" data-anim="mn-anim-fadeIn" style="min-width:120px;text-align:center;padding:var(--space-md);opacity:0">
           <span class="mn-micro mn-text-muted">fadeIn</span>
         </div>
-        <div class="mn-panel mn-anim-fadeInUp" style="min-width:120px;text-align:center;padding:var(--space-md);animation-delay:100ms">
+        <div class="mn-panel" data-anim="mn-anim-fadeInUp" style="min-width:120px;text-align:center;padding:var(--space-md);opacity:0">
           <span class="mn-micro mn-text-muted">fadeInUp</span>
         </div>
-        <div class="mn-panel mn-anim-fadeInLeft" style="min-width:120px;text-align:center;padding:var(--space-md);animation-delay:200ms">
+        <div class="mn-panel" data-anim="mn-anim-fadeInLeft" style="min-width:120px;text-align:center;padding:var(--space-md);opacity:0">
           <span class="mn-micro mn-text-muted">fadeInLeft</span>
         </div>
-        <div class="mn-panel mn-anim-scaleIn" style="min-width:120px;text-align:center;padding:var(--space-md);animation-delay:300ms">
+        <div class="mn-panel" data-anim="mn-anim-scaleIn" style="min-width:120px;text-align:center;padding:var(--space-md);opacity:0">
           <span class="mn-micro mn-text-muted">scaleIn</span>
         </div>
       </div>
@@ -154,25 +154,25 @@ function initAnimations(section) {
   const entranceRow = section.querySelector('#anim-entrance-row');
   if (!replayBtn || !entranceRow) return;
 
-  const CLASSES = ['mn-anim-fadeIn', 'mn-anim-fadeInUp', 'mn-anim-fadeInLeft', 'mn-anim-scaleIn'];
-
-  replayBtn.addEventListener('click', () => {
-    entranceRow.querySelectorAll('.mn-panel').forEach(panel => {
-      CLASSES.forEach(cls => panel.classList.remove(cls));
+  function playEntrance() {
+    const panels = entranceRow.querySelectorAll('.mn-panel[data-anim]');
+    panels.forEach((panel, i) => {
+      const cls = panel.dataset.anim;
+      panel.classList.remove(cls);
+      panel.style.opacity = '0';
       void panel.offsetWidth;
+      setTimeout(() => {
+        panel.style.opacity = '';
+        panel.classList.add(cls);
+      }, i * 120);
     });
-    requestAnimationFrame(() => {
-      const panels = entranceRow.querySelectorAll('.mn-panel');
-      [
-        'mn-anim-fadeIn',
-        'mn-anim-fadeInUp',
-        'mn-anim-fadeInLeft',
-        'mn-anim-scaleIn',
-      ].forEach((cls, i) => panels[i]?.classList.add(cls));
-    });
-  });
+  }
 
-  // Activate scroll-triggered entrance animations globally
+  // Play on first render
+  setTimeout(playEntrance, 200);
+
+  replayBtn.addEventListener('click', playEntrance);
+
   if (window.Maranello?.initScrollReveal) {
     window.Maranello.initScrollReveal();
   }

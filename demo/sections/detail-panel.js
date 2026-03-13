@@ -204,13 +204,32 @@ function initEditors(section) {
     label.className = 'mn-detail-panel__field-label';
     label.textContent = f.label;
 
-    const editorFn = eds[f.type] || eds.text;
-    const input = editorFn(f.val, f, (val) => {
-      log.textContent = `✎ ${f.label}: "${val}"`;
-    });
-
-    row.append(label, input);
-    host.appendChild(row);
+    if (f.type === 'select') {
+      // Use themed mn-dropdown instead of native select
+      const dd = document.createElement('div');
+      dd.className = 'mn-dropdown';
+      dd.innerHTML = `<button class="mn-dropdown__trigger" style="width:100%;text-align:left;padding:8px 12px;background:var(--nero-carbon,#111);border:1.5px solid var(--grigio-scuro,#333);border-radius:4px;color:var(--grigio-alluminio,#ccc);font-size:0.85rem;cursor:pointer">${f.val} ▾</button>
+        <div class="mn-dropdown__menu" style="min-width:100%">
+          ${f.options.map(o => `<button class="mn-dropdown__item${o === f.val ? ' mn-dropdown__item--active' : ''}">${o}</button>`).join('')}
+        </div>`;
+      row.append(label, dd);
+      host.appendChild(row);
+      const M2 = window.Maranello;
+      if (M2?.initDropdown) {
+        requestAnimationFrame(() => M2.initDropdown(dd));
+      }
+      dd.addEventListener('click', (e) => {
+        const item = e.target.closest('.mn-dropdown__item');
+        if (item) { log.textContent = `✎ ${f.label}: "${item.textContent}"`; }
+      });
+    } else {
+      const editorFn = eds[f.type] || eds.text;
+      const input = editorFn(f.val, f, (val) => {
+        log.textContent = `✎ ${f.label}: "${val}"`;
+      });
+      row.append(label, input);
+      host.appendChild(row);
+    }
   });
 
   host.appendChild(log);

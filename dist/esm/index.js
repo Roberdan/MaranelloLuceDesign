@@ -1385,8 +1385,8 @@ var DPR = window.devicePixelRatio || 1;
 var TAU = Math.PI * 2;
 var SIZE_PX = { sm: 6, md: 10, lg: 14 };
 var THEMES = {
-  editorial: { land: "#1a1a1a", water: "#0a0a0a", border: "#2a2a2a", grid: "rgba(200,200,200,0.04)", text: "#c8c8c8", muted: "#616161" },
-  nero: { land: "#1a1a1a", water: "#050505", border: "#2a2a2a", grid: "rgba(200,200,200,0.03)", text: "#c8c8c8", muted: "#555" },
+  editorial: { land: "#2a2a28", water: "#0a0a0a", border: "#3a3a38", grid: "rgba(200,200,200,0.04)", text: "#c8c8c8", muted: "#616161" },
+  nero: { land: "#252520", water: "#050505", border: "#3a3a38", grid: "rgba(200,200,200,0.03)", text: "#c8c8c8", muted: "#555" },
   avorio: { land: "#e8d5b0", water: "#faf3e6", border: "#d7c39a", grid: "rgba(0,0,0,0.05)", text: "#1a1a1a", muted: "#888" },
   colorblind: { land: "#1a1a1a", water: "#0a0a0a", border: "#2a2a2a", grid: "rgba(200,200,200,0.04)", text: "#c8c8c8", muted: "#616161" }
 };
@@ -3858,7 +3858,7 @@ var editors = {
     wrap.appendChild(input);
     const calBtn = createElement("button", "mn-detail-panel__cal-btn");
     calBtn.type = "button";
-    calBtn.innerHTML = "\u{1F4C5}";
+    calBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>';
     calBtn.title = "Open calendar";
     wrap.appendChild(calBtn);
     input.addEventListener("input", () => onChange(input.value));

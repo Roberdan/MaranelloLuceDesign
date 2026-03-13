@@ -97,17 +97,30 @@ export function createLayoutsSection() {
 
   section.addEventListener('mn-ready', () => tryRenderCharts(section));
   setTimeout(() => tryRenderCharts(section), 200);
+
+  // Wire notification close buttons
+  setTimeout(() => {
+    section.querySelectorAll('.mn-notif-close').forEach(btn => {
+      btn.addEventListener('mouseenter', () => { btn.style.color = 'var(--mn-accent)'; btn.style.background = 'rgba(255,199,44,0.1)'; });
+      btn.addEventListener('mouseleave', () => { btn.style.color = ''; btn.style.background = ''; });
+      btn.addEventListener('click', () => {
+        const item = btn.closest('.mn-notif-item');
+        if (item) { item.style.opacity = '0'; item.style.maxHeight = '0'; item.style.padding = '0'; setTimeout(() => item.remove(), 300); }
+      });
+    });
+  }, 100);
   return section;
 }
 
 function notifItem(title, time, unread, accentColor) {
   const bg = unread ? 'background:rgba(255,199,44,0.04)' : '';
-  return `<div style="padding:var(--space-md) var(--space-lg);border-bottom:1px solid var(--grigio-scuro);display:flex;gap:var(--space-md);align-items:flex-start;${bg}">
+  return `<div class="mn-notif-item" style="padding:var(--space-md) var(--space-lg);border-bottom:1px solid var(--grigio-scuro);display:flex;gap:var(--space-md);align-items:flex-start;${bg};transition:opacity 0.3s,max-height 0.3s;overflow:hidden">
     <div style="width:8px;height:8px;border-radius:50%;background:${accentColor};margin-top:5px;flex-shrink:0"></div>
-    <div>
+    <div style="flex:1">
       <div class="mn-body" style="font-size:0.85rem">${title}</div>
       <div class="mn-micro" style="color:var(--grigio-medio);margin-top:2px">${time}</div>
     </div>
+    <button class="mn-notif-close" style="background:none;border:none;color:var(--grigio-medio);cursor:pointer;font-size:0.8rem;padding:2px 6px;border-radius:4px;transition:color 0.15s,background 0.15s" aria-label="Dismiss">✕</button>
   </div>`;
 }
 
@@ -162,7 +175,7 @@ function tryRenderCharts(section) {
     hbarEl.dataset.rendered = '1';
     try {
       hbarEl.innerHTML = '';
-      M.hBarChart(hbarEl, TEAMS.map(t => ({ label: t.name, value: t.pct, color: t.color })), { title: 'Team Health Ranking', unit: '%' });
+      M.hBarChart(hbarEl, { bars: TEAMS.map(t => ({ label: t.name, value: t.pct, color: t.color })), title: 'Team Health Ranking', unit: '%', showGrid: true, showValues: true });
     } catch (_) { /* CSS fallback already rendered */ }
   }
 

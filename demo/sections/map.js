@@ -16,7 +16,7 @@ export function createMapSection() {
 
       <div class="mn-card-dark" style="padding:var(--space-lg);margin-bottom:var(--space-2xl)">
         <h4 class="mn-label" style="margin-bottom:var(--space-md)">Therapy Center Network</h4>
-        <div id="map-canvas-container" style="width:100%;min-height:400px;border-radius:6px;overflow:hidden;background:var(--nero-profondo)">
+        <div id="map-canvas-container" style="width:100%;height:400px;border-radius:6px;overflow:hidden;background:var(--nero-profondo)">
           <p class="mn-micro" style="color:var(--grigio-medio);padding:var(--space-lg)">Loading map…</p>
         </div>
 

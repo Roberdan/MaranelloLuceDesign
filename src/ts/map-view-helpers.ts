@@ -34,8 +34,8 @@ export const TAU = Math.PI * 2;
 const SIZE_PX: Record<string, number> = { sm: 6, md: 10, lg: 14 };
 
 const THEMES: Record<string, ThemePalette> = {
-  editorial: { land: '#1a1a1a', water: '#0a0a0a', border: '#2a2a2a', grid: 'rgba(200,200,200,0.04)', text: '#c8c8c8', muted: '#616161' },
-  nero: { land: '#1a1a1a', water: '#050505', border: '#2a2a2a', grid: 'rgba(200,200,200,0.03)', text: '#c8c8c8', muted: '#555' },
+  editorial: { land: '#2a2a28', water: '#0a0a0a', border: '#3a3a38', grid: 'rgba(200,200,200,0.04)', text: '#c8c8c8', muted: '#616161' },
+  nero: { land: '#252520', water: '#050505', border: '#3a3a38', grid: 'rgba(200,200,200,0.03)', text: '#c8c8c8', muted: '#555' },
   avorio: { land: '#e8d5b0', water: '#faf3e6', border: '#d7c39a', grid: 'rgba(0,0,0,0.05)', text: '#1a1a1a', muted: '#888' },
   colorblind: { land: '#1a1a1a', water: '#0a0a0a', border: '#2a2a2a', grid: 'rgba(200,200,200,0.04)', text: '#c8c8c8', muted: '#616161' },
 };
