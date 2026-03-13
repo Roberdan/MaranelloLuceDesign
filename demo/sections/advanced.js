@@ -153,6 +153,17 @@ export function createAdvancedSection() {
         <button class="mn-machined-btn" id="adv-toast-danger">Error Toast</button>
         <button class="mn-machined-btn mn-machined-btn--off" id="adv-toast-info">Info Toast</button>
       </div>
+
+      <div class="demo-section-label">Command Palette (⌘K)</div>
+      <div class="mn-mb-2xl">
+        <button class="mn-machined-btn" id="adv-cmd-palette"><span class="mn-machined-btn__indicator"></span>Open Palette</button>
+        <span class="mn-micro mn-text-muted" style="margin-left:var(--space-md)">or press ⌘K / Ctrl+K</span>
+      </div>
+
+      <div class="demo-section-label">Drawer Panel</div>
+      <div class="mn-mb-2xl">
+        <button class="mn-machined-btn" id="adv-drawer-open"><span class="mn-machined-btn__indicator"></span>Open Drawer</button>
+      </div>
     </div>
   `;
 
@@ -194,4 +205,24 @@ function initAdvanced(section) {
       section.querySelector('#' + id)?.addEventListener('click', () => M.toast(opts));
     });
   }
+
+  // Command Palette
+  if (M?.commandPalette) {
+    M.commandPalette({
+      commands: [
+        { id: 'theme-nero', label: 'Switch to Nero theme', action: () => M.setTheme?.('nero') },
+        { id: 'theme-avorio', label: 'Switch to Avorio theme', action: () => M.setTheme?.('avorio') },
+        { id: 'go-charts', label: 'Go to Charts', action: () => document.querySelector('#charts')?.scrollIntoView({ behavior: 'smooth' }) },
+        { id: 'go-gauges', label: 'Go to Gauges', action: () => document.querySelector('#gauges')?.scrollIntoView({ behavior: 'smooth' }) },
+      ],
+    });
+    section.querySelector('#adv-cmd-palette')?.addEventListener('click', () => {
+      document.querySelector('.mn-command-palette')?.classList.add('mn-command-palette--open');
+    });
+  }
+
+  // Drawer
+  section.querySelector('#adv-drawer-open')?.addEventListener('click', () => {
+    if (M?.openDrawer) M.openDrawer({ title: 'Detail Drawer', content: '<p class="mn-body">Drawer panel for side content. Close with × or click outside.</p>' });
+  });
 }

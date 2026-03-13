@@ -1,9 +1,9 @@
 /**
- * Tokens section — colors, typography, spacing showcase
+ * Tokens section — complete design token showcase
  */
 
 function swatch(name, varName) {
-  return `<div class="demo-swatch" style="display:flex;align-items:center;gap:var(--space-sm);margin-bottom:var(--space-xs)">
+  return `<div style="display:flex;align-items:center;gap:var(--space-sm);margin-bottom:var(--space-xs)">
     <div style="width:36px;height:36px;border-radius:var(--radius-sm);background:var(${varName});border:1px solid var(--grigio-scuro)"></div>
     <div>
       <div class="mn-micro" style="font-weight:600">${name}</div>
@@ -28,47 +28,125 @@ export function createTokensSection() {
       <p class="mn-section-number">01 — Design Tokens</p>
       <h2 class="mn-title-section" style="margin-bottom:var(--space-2xl)">Colors & Typography</h2>
 
-      <div class="mn-grid-3" style="margin-bottom:var(--space-3xl)">
+      <!-- Nero Scale -->
+      <h3 class="mn-title-sub" style="margin-bottom:var(--space-md)">Nero Scale (Dark)</h3>
+      <div class="mn-grid-4" style="margin-bottom:var(--space-2xl)">
         <div>
-          <h3 class="mn-label" style="margin-bottom:var(--space-md);color:var(--mn-accent)">Nero Scale</h3>
           ${swatch('Assoluto', '--nero-assoluto')}
           ${swatch('Profondo', '--nero-profondo')}
           ${swatch('Carbon', '--nero-carbon')}
           ${swatch('Soft', '--nero-soft')}
         </div>
         <div>
-          <h3 class="mn-label" style="margin-bottom:var(--space-md);color:var(--mn-accent)">Accent</h3>
-          ${swatch('Giallo Ferrari', '--giallo-ferrari')}
-          ${swatch('Rosso Corsa', '--rosso-corsa')}
-          ${swatch('Verde Racing', '--verde-racing')}
-          ${swatch('Arancio Warm', '--arancio-warm')}
+          ${swatch('Nero 1', '--nero-1')}
+          ${swatch('Nero 2', '--nero-2')}
+          ${swatch('Nero 3', '--nero-3')}
         </div>
         <div>
-          <h3 class="mn-label" style="margin-bottom:var(--space-md);color:var(--mn-accent)">Semantic</h3>
-          ${swatch('Active', '--status-active')}
-          ${swatch('Warning', '--status-warning')}
-          ${swatch('Danger', '--status-danger')}
-          ${swatch('Info', '--status-info')}
+          <h4 class="mn-label" style="margin-bottom:var(--space-sm);color:var(--mn-accent)">Grigio Scale</h4>
+          ${swatch('Grigio Scuro', '--grigio-scuro')}
+          ${swatch('Grigio Medio', '--grigio-medio')}
+          ${swatch('Grigio Chiaro', '--grigio-chiaro')}
+          ${swatch('Grigio 4', '--grigio-4')}
+        </div>
+        <div>
+          <h4 class="mn-label" style="margin-bottom:var(--space-sm);color:var(--mn-accent)">Avorio Scale</h4>
+          ${swatch('Bianco Caldo', '--bianco-caldo')}
+          ${swatch('Avorio', '--avorio')}
+          ${swatch('Avorio Scuro', '--avorio-scuro')}
         </div>
       </div>
 
-      <h3 class="mn-title-sub" style="text-align:center;margin-bottom:var(--space-xl)">Typography</h3>
-      <div style="max-width:700px;margin:0 auto">
+      <!-- Accent Colors -->
+      <h3 class="mn-title-sub" style="margin-bottom:var(--space-md)">Accent Colors</h3>
+      <div class="mn-grid-4" style="margin-bottom:var(--space-2xl)">
+        <div>
+          ${swatch('Giallo Ferrari', '--giallo-ferrari')}
+          ${swatch('MN Accent', '--mn-accent')}
+        </div>
+        <div>
+          ${swatch('Rosso Corsa', '--rosso-corsa')}
+          ${swatch('Arancio Warm', '--arancio-warm')}
+        </div>
+        <div>
+          ${swatch('Verde Racing', '--verde-racing')}
+          ${swatch('Verde', '--verde')}
+        </div>
+        <div>
+          ${swatch('Blu Info', '--blu-info')}
+        </div>
+      </div>
+
+      <!-- Signal / Semantic Colors -->
+      <h3 class="mn-title-sub" style="margin-bottom:var(--space-md)">Signal & Semantic</h3>
+      <div class="mn-grid-4" style="margin-bottom:var(--space-2xl)">
+        <div>
+          ${swatch('Active', '--status-active')}
+          ${swatch('Signal Success', '--signal-success')}
+        </div>
+        <div>
+          ${swatch('Warning', '--status-warning')}
+          ${swatch('Signal Warning', '--signal-warning')}
+        </div>
+        <div>
+          ${swatch('Danger', '--status-danger')}
+          ${swatch('Signal Danger', '--signal-danger')}
+        </div>
+        <div>
+          ${swatch('Info', '--status-info')}
+          ${swatch('Signal Info', '--signal-info')}
+        </div>
+      </div>
+
+      <!-- Surface / Border Tokens -->
+      <h3 class="mn-title-sub" style="margin-bottom:var(--space-md)">Surfaces & Borders</h3>
+      <div class="mn-grid-3" style="margin-bottom:var(--space-2xl)">
+        <div>
+          ${swatch('Superficie 1', '--superficie-1')}
+          ${swatch('Superficie 2', '--superficie-2')}
+          ${swatch('Superficie 3', '--superficie-3')}
+        </div>
+        <div>
+          ${swatch('Bordo', '--bordo')}
+          ${swatch('Bordo Light', '--bordo-light')}
+        </div>
+        <div>
+          ${swatch('Chart Default', '--chart-default')}
+          ${swatch('Chart Alt', '--chart-alt')}
+        </div>
+      </div>
+
+      <!-- Typography Scale -->
+      <h3 class="mn-title-sub" style="text-align:center;margin-bottom:var(--space-xl)">Typography Scale</h3>
+      <div style="max-width:700px;margin:0 auto;margin-bottom:var(--space-2xl)">
         ${typeSample('mn-watermark', 'Watermark')}
         ${typeSample('mn-title-hero', 'Hero Title')}
         ${typeSample('mn-title-section', 'Section Title')}
         ${typeSample('mn-title-sub', 'Sub Title')}
+        ${typeSample('mn-body', 'Body text for paragraphs and content')}
         ${typeSample('mn-label', 'Label Text')}
         ${typeSample('mn-caption', 'Caption text for supporting context')}
         ${typeSample('mn-micro', 'Micro — smallest text size')}
       </div>
 
-      <h3 class="mn-title-sub" style="text-align:center;margin:var(--space-2xl) 0 var(--space-xl)">Spacing</h3>
-      <div style="display:flex;gap:var(--space-md);flex-wrap:wrap;justify-content:center">
-        ${['xs','sm','md','lg','xl','2xl','3xl'].map(s =>
+      <!-- Spacing Scale -->
+      <h3 class="mn-title-sub" style="text-align:center;margin-bottom:var(--space-xl)">Spacing Scale</h3>
+      <div style="display:flex;gap:var(--space-md);flex-wrap:wrap;justify-content:center;margin-bottom:var(--space-2xl)">
+        ${['2xs','xs','sm','md','lg','xl','2xl','3xl'].map(s =>
           `<div style="text-align:center">
             <div style="width:var(--space-${s});height:var(--space-${s});background:var(--mn-accent);border-radius:var(--radius-sm);margin:0 auto var(--space-xs)"></div>
             <span class="mn-micro">${s}</span>
+          </div>`
+        ).join('')}
+      </div>
+
+      <!-- Radius Scale -->
+      <h3 class="mn-title-sub" style="text-align:center;margin-bottom:var(--space-xl)">Border Radius</h3>
+      <div style="display:flex;gap:var(--space-lg);flex-wrap:wrap;justify-content:center">
+        ${['sm','md','lg','xl','full'].map(r =>
+          `<div style="text-align:center">
+            <div style="width:48px;height:48px;background:var(--mn-accent);border-radius:var(--radius-${r});margin:0 auto var(--space-xs)"></div>
+            <span class="mn-micro">${r}</span>
           </div>`
         ).join('')}
       </div>

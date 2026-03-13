@@ -286,9 +286,47 @@ dist/
 
 See the [live demo](https://roberdan.github.io/MaranelloLuceDesign/) for a full component gallery.
 
-## Screenshots
+## Preview
 
-See the demo page (`npm run dev`) or [GitHub Pages](https://roberdan.github.io/MaranelloLuceDesign/) for all themes.
+> **[▶ Live Demo](https://roberdan.github.io/MaranelloLuceDesign/demo/)** — full interactive component catalog
+
+### Nero Theme (Dark)
+
+<p align="center">
+  <img src="docs/screenshots/hero-nero.png" alt="Hero — Nero theme" width="720">
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/gauges-nero.png" alt="Ferrari Gauge Binnacle — Nero" width="720">
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/charts-nero.png" alt="Charts & Data Visualization — Nero" width="720">
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/controls-nero.png" alt="Ferrari Controls — Nero" width="720">
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/cockpit-nero.png" alt="Cockpit Speedometers — Nero" width="720">
+</p>
+
+### Avorio Theme (Light)
+
+<p align="center">
+  <img src="docs/screenshots/hero-avorio.png" alt="Hero — Avorio theme" width="720">
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/charts-avorio.png" alt="Charts — Avorio theme" width="720">
+</p>
+
+## Sponsor
+
+This project is built with data inspired by [Fightthestroke Foundation](https://www.fightthestroke.org/) — an Italian non-profit supporting children affected by stroke through technology and therapy.
+
+**[❤️ Donate to Fightthestroke](https://www.fightthestroke.org/donorbox)**
 
 ## Copyright
 

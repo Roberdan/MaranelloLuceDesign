@@ -1,61 +1,53 @@
-# Contributing to Maranello Luce Design
+<!-- v3.1.0 | 2025-07-21 -->
+# Contributing
 
-## Dev Environment Setup
+## Setup
 
 ```bash
-git clone https://github.com/Roberdan/MaranelloLuceDesign.git
-cd MaranelloLuceDesign
-npm install
-npm run build    # full build: JS + CSS + WC + fonts + types
-npm run dev      # demo server at localhost:3000
+git clone https://github.com/Roberdan/MaranelloLuceDesign.git && cd MaranelloLuceDesign
+npm install && npm run build && npm run dev  # localhost:3000
 ```
 
 Requirements: Node 20+, npm 10+.
 
-## Running Tests
+## Commands
 
-```bash
-npm run test:unit   # Vitest unit tests
-npm run test:e2e    # Playwright E2E tests (requires npm run build first)
-npx vitest run      # single-run without watch
-```
+| Command | Purpose |
+|---|---|
+| `npm run build` | Full build (JS+CSS+WC+fonts+types) |
+| `npm run test:unit` | Vitest |
+| `npm run test:e2e` | Playwright (build first) |
+| `npx tsc --noEmit` | Type-check |
 
-## Code Style
+## Code Rules
 
-- **TypeScript**: strict mode, no `any`, max 250 lines/file — split by responsibility
-- **CSS**: all rules must be inside an `@layer` block (one of the 11 system layers)
-- **File naming**: kebab-case, match the module it exports
-- **Exports**: named exports only — no default exports except for framework-specific patterns
-- **Comments**: explain *why*, not *what* — keep under 5% comment density
+| Rule | Detail |
+|---|---|
+| Max file size | 250 lines — split if exceeds |
+| Language | English only (code + comments) |
+| TypeScript | `strict`, no `any`, named exports only |
+| CSS | All rules inside `@layer` block |
+| File naming | `kebab-case`, match exported module |
+| Comments | WHY not WHAT, <5% density |
 
-## Project Structure
+## New Component Checklist
 
-```
-src/
-  css/      CSS source — one file per concern, each wrapped in @layer
-  ts/       Headless JS/TS engines
-  wc/       Web Components (mn-* custom elements)
-esbuild.config.mjs    JS bundle config
-scripts/build-css.mjs CSS bundle config
-```
-
-## Adding a New Component
-
-1. CSS: create `src/css/<name>.css`, wrap all rules in the appropriate `@layer`
-2. TS: create `src/ts/<name>.ts`, export from `src/ts/index.ts`
-3. WC (optional): create `src/wc/mn-<name>.ts`, register in `src/wc/index.ts`
-4. Tests: add `src/ts/<name>.test.ts` for any logic
-5. Run `npm run build` and verify no errors
+- [ ] CSS: `src/css/<name>.css` wrapped in `@layer`
+- [ ] TS: `src/ts/<name>.ts`, export from `src/ts/index.ts`
+- [ ] WC (optional): `src/wc/mn-<name>.ts`, register in `src/wc/index.ts`
+- [ ] Test: `tests/<name>.test.ts`
+- [ ] `npm run build` passes
+- [ ] `npx tsc --noEmit` passes
 
 ## PR Process
 
-1. Fork → feature branch → PR against `main`
-2. All CI checks must pass (build, unit tests, E2E, type check)
-3. Keep PRs focused — one feature or fix per PR
-4. Update CHANGELOG.md under `[Unreleased]` with a one-line entry
-5. PRs are squash-merged
+- [ ] Fork → feature branch → PR against `main`
+- [ ] All CI green (build, unit, E2E, typecheck)
+- [ ] One feature/fix per PR
+- [ ] Update `CHANGELOG.md` under `[Unreleased]`
+- [ ] Squash-merge
 
-## Commit Convention
+## Commits
 
 ```
 feat: add mn-badge web component
@@ -65,4 +57,4 @@ chore: bump esbuild to 0.25
 
 ## License
 
-MIT — by contributing you agree your changes are licensed under MIT.
+MIT — contributions licensed under MIT.

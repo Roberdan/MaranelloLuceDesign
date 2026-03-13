@@ -171,4 +171,9 @@ function initAnimations(section) {
       ].forEach((cls, i) => panels[i]?.classList.add(cls));
     });
   });
+
+  // Activate scroll-triggered entrance animations globally
+  if (window.Maranello?.initScrollReveal) {
+    window.Maranello.initScrollReveal();
+  }
 }

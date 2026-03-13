@@ -197,4 +197,24 @@ function initCharts(section) {
     f2?.set?.(Math.floor(Math.random() * 6000));
     f3?.set?.(Math.floor(Math.random() * 100));
   });
+
+  // Wire chart interactivity (hover tooltips + click)
+  if (M.chartInteract) {
+    ['bar-chart-demo', 'area-chart-demo', 'radar-demo', 'bubble-demo'].forEach(id => {
+      const el = g(id);
+      if (el) M.chartInteract(el, { showTooltip: true });
+    });
+  }
+  if (M.sparklineInteract) {
+    const sparkPairs = [
+      ['spark-1', sparkData],
+      ['spark-2', [30,35,28,40,38,45]],
+      ['spark-3', [80,75,90,85,95,88,100,92]],
+      ['spark-4', [200,220,215,240,260,255,280,300]],
+    ];
+    sparkPairs.forEach(([id, data]) => {
+      const el = g(id);
+      if (el) M.sparklineInteract(el, data, { color: '#FFC72C' });
+    });
+  }
 }

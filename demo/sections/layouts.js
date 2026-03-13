@@ -88,6 +88,10 @@ export function createLayoutsSection() {
       <div class="mn-card-dark" style="padding:var(--space-xl)" id="layouts-funnel">
         ${funnelRows()}
       </div>
+
+      <!-- Org Tree -->
+      <p class="mn-label" style="color:var(--mn-accent);margin-top:var(--space-2xl);margin-bottom:var(--space-md)">Organization Tree</p>
+      <div class="mn-card-dark" style="padding:var(--space-xl)" id="layouts-org-tree"></div>
     </div>
   `;
 
@@ -169,5 +173,42 @@ function tryRenderCharts(section) {
       funnelEl.innerHTML = '';
       M.funnel(funnelEl, FUNNEL_STAGES.map(s => ({ label: s.label, value: s.count, color: s.color })), {});
     } catch (_) { /* CSS fallback already rendered */ }
+  }
+
+  if (M.initOrgTree) {
+    const treeEl = section.querySelector('#layouts-org-tree');
+    if (treeEl && !treeEl.dataset.rendered) {
+      treeEl.dataset.rendered = '1';
+      M.initOrgTree(treeEl, {
+        data: {
+          name: 'Board of Directors', role: 'Governance',
+          children: [
+            { name: 'Francesca Fedeli', role: 'CEO',
+              children: [
+                { name: 'Therapy Division', role: 'Director',
+                  children: [
+                    { name: 'Milano Center', role: 'Lead' },
+                    { name: 'Roma Center', role: 'Lead' },
+                    { name: 'Torino Center', role: 'Lead' },
+                  ]
+                },
+                { name: 'Research', role: 'Director',
+                  children: [
+                    { name: 'Clinical Trials', role: 'PI' },
+                    { name: 'Data Science', role: 'Lead' },
+                  ]
+                },
+                { name: 'Operations', role: 'COO',
+                  children: [
+                    { name: 'Fundraising', role: 'Manager' },
+                    { name: 'Volunteers', role: 'Coordinator' },
+                  ]
+                },
+              ]
+            }
+          ]
+        }
+      });
+    }
   }
 }

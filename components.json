@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "name": "maranello-luce-design-business",
-  "version": "2.0.0",
+  "version": "3.1.0",
   "description": "Ferrari Luce-inspired design system for business dashboards",
   "detailCatalog": "./components-detail.json",
   "layers": {
@@ -10,12 +10,22 @@
     "web-component": "Custom elements (mn-* tags) wrapping headless-js layer"
   },
   "themes": ["editorial", "nero", "avorio", "colorblind"],
+  "subpackages": {
+    ".": { "types": "./dist/types/ts/index.d.ts", "import": "./dist/esm/index.js" },
+    "./css": { "import": "./dist/css/index.css" },
+    "./wc": { "import": "./dist/esm/wc/index.js" },
+    "./charts": { "import": "./dist/esm/charts/index.js" },
+    "./gantt": { "import": "./dist/esm/gantt/index.js" },
+    "./gauge": { "import": "./dist/esm/gauge/index.js" },
+    "./controls": { "import": "./dist/esm/controls/index.js" },
+    "./forms": { "import": "./dist/esm/forms/index.js" }
+  },
   "webComponents": [
     "mn-chart", "mn-hbar", "mn-gauge", "mn-speedometer", "mn-gantt",
     "mn-funnel", "mn-data-table", "mn-detail-panel", "mn-okr",
     "mn-ferrari-control", "mn-date-picker", "mn-modal", "mn-toast",
     "mn-command-palette", "mn-login", "mn-chat", "mn-system-status",
-    "mn-profile", "mn-map", "mn-theme-toggle", "mn-tabs", "mn-a11y"
+    "mn-profile", "mn-map", "mn-theme-toggle", "mn-tabs", "mn-tab", "mn-a11y"
   ],
   "cssModules": [
     "base.css", "tokens.css", "themes.css", "themes-base.css",

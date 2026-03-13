@@ -11,8 +11,8 @@ import { test, expect, ConsoleMessage } from '@playwright/test';
 const NAV_ANCHORS = [
   '#hero', '#tokens', '#cards', '#dashboard', '#charts', '#controls',
   '#forms', '#tables', '#gauges', '#cockpit', '#gantt', '#icons',
-  '#animations', '#layouts', '#detail-panel',
-  '#okr', '#map', '#advanced', '#web-components', '#accessibility',
+  '#animations', '#heatmap', '#layouts', '#detail-panel', '#interactive',
+  '#okr', '#map', '#advanced', '#web-components', '#accessibility', '#api-reference',
 ];
 
 test.describe('Demo page', () => {

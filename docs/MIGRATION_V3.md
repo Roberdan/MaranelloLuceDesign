@@ -1,96 +1,52 @@
-# Migration Guide: v2 → v3
-
-## Overview
-
-v3.0.0 introduces CSS `@layer` architecture, dual-mode Web Components, and new module paths. Most changes are additive. The IIFE CDN path is unchanged.
+<!-- v3.1.0 | 2025-07-21 -->
+# Migration v2 → v3
 
 ## Breaking Changes
 
-### 1. CSS @layer
+| Change | Impact | Fix |
+|---|---|---|
+| CSS `@layer` on all 70 files | Cascade precedence changed | Remove `@layer` from consumer overrides — unlayered rules win |
+| WC uses `async resolveEngine()` | No more `window.Maranello` polling needed | Remove polling guards; WCs are self-contained |
+| `VERSION` → `'3.0.0'` | Version string updated | Update checks |
 
-All 70 CSS source files are now wrapped in `@layer` blocks. This changes cascade precedence.
-
-**Impact**: If you used high-specificity selectors to override system styles, those overrides may behave differently.
-
-**Fix**: Remove `@layer` from consumer overrides (if any) — unlayered rules already win. Or increase specificity with `:where()` or `:is()`.
+## CSS @layer Migration
 
 ```css
-/* v2: needed high specificity */
+/* v2: high specificity needed */
 body.mn-nero .mn-btn { color: red; }
-
 /* v3: unlayered rules win automatically */
 .mn-btn { color: red; }
 ```
 
-### 2. Web Components: no `window.Maranello` polling
-
-All 22 WCs now use `async resolveEngine()` internally. The `window.Maranello` global is still set by the IIFE for backward compatibility, but WCs no longer depend on polling for it.
-
-**Impact**: If you had code that waited for `window.Maranello` to be set before using WCs, that code is now unnecessary.
-
-**Fix**: Remove any `window.Maranello` polling guards. WCs are self-contained.
+## WC Migration
 
 ```js
-// v2: polling guard (remove this)
-const interval = setInterval(() => {
-  if (window.Maranello) { clearInterval(interval); init(); }
-}, 50);
-
-// v3: WCs are ready when registered — just use them
+// v2: polling guard (remove)
+const interval = setInterval(() => { if (window.Maranello) { clearInterval(interval); init(); } }, 50);
+// v3: just use WCs directly
 import 'maranello-luce-design-business/wc/mn-gauge';
 ```
 
-### 3. Version string
+## New in v3
 
-`VERSION` exported from the main ESM entry point is now `'3.0.0'`.
+| Feature | Example |
+|---|---|
+| Per-component WC imports | `import '…/wc/mn-gauge'` (better tree-shaking) |
+| 19 new named exports | `FerrariGauge`, `createGauge`, `drawSpeedometer`, `a11yPanel`, etc. |
+| Sub-package paths | `./charts`, `./gantt`, `./gauge`, `./controls`, `./forms` |
 
-## ESM Migration
-
-### Per-component WC imports (new in v3)
-
-```ts
-// v2: only full bundle
-import 'maranello-luce-design-business/wc';
-
-// v3: per-component (preferred — better tree-shaking)
-import 'maranello-luce-design-business/wc/mn-gauge';
-import 'maranello-luce-design-business/wc/mn-chart';
-```
-
-Full bundle import still works unchanged.
-
-### New sub-package paths
-
-19 new modules are available as named exports from the main entry or sub-packages:
-
-```ts
-import { FerrariGauge, createGauge } from 'maranello-luce-design-business';
-import { drawSpeedometer } from 'maranello-luce-design-business';
-import { a11yPanel } from 'maranello-luce-design-business';
-```
-
-## CDN Migration
-
-The IIFE path and `window.M` API are unchanged. Only the version tag changes:
+## CDN Update
 
 ```html
-<!-- v2 -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v2.0.0/dist/css/index.css">
-<script src="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v2.0.0/dist/iife/maranello.min.js"></script>
-
-<!-- v3 -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v3.0.0/dist/css/index.css">
-<script src="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v3.0.0/dist/iife/maranello.min.js"></script>
+<!-- v2 → v3: change version tag only -->
+<link href="…@v3.0.0/dist/css/index.css">
+<script src="…@v3.0.0/dist/iife/maranello.min.js"></script>
 ```
 
-The IIFE bundle size threshold increased from 48 KB to 250 KB to accommodate the new modules.
+IIFE bundle size: 48 KB → 250 KB (new modules).
 
-## npm / Git Dependency
+## npm Update
 
 ```bash
-# v2
-npm install github:Roberdan/MaranelloLuceDesign#v2.0.0
-
-# v3
 npm install github:Roberdan/MaranelloLuceDesign#v3.0.0
 ```

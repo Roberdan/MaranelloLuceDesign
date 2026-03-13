@@ -115,6 +115,11 @@ export function createControlsSection() {
           <button class="mn-segmented__item" role="tab">Quarter</button>
         </div>
       </div>
+
+      <div class="demo-section-label">Drag Rotary</div>
+      <div class="mn-flex-center mn-gap-2xl mn-mb-2xl">
+        <div id="ctrl-drag-rotary"></div>
+      </div>
     </div>
   `;
 
@@ -170,6 +175,13 @@ function initControls(section) {
   if (M.steppedRotary) {
     M.steppedRotary(section.querySelector('#ctrl-stepped'), {
       positions: ['S', 'M', 'L', 'XL'], label: 'Effort', initial: 1,
+    });
+  }
+
+  if (M.initDragRotary) {
+    M.initDragRotary(section.querySelector('#ctrl-drag-rotary'), {
+      positions: ['Off', 'Eco', 'Normal', 'Sport', 'Race'],
+      label: 'Drive Mode', initial: 2,
     });
   }
 

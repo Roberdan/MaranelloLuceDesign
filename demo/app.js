@@ -15,13 +15,16 @@ import { createCockpitSection } from './sections/cockpit.js';
 import { createGanttSection } from './sections/gantt.js';
 import { createIconsSection } from './sections/icons.js';
 import { createAnimationsSection } from './sections/animations.js';
+import { createHeatmapSection } from './sections/heatmap.js';
 import { createLayoutsSection } from './sections/layouts.js';
 import { createDetailPanelSection } from './sections/detail-panel.js';
+import { createInteractiveSection } from './sections/interactive.js';
 import { createOkrSection } from './sections/okr-panel.js';
 import { createMapSection } from './sections/map.js';
 import { createAdvancedSection } from './sections/advanced.js';
 import { createWebComponentsSection } from './sections/web-components.js';
 import { createAccessibilitySection } from './sections/accessibility.js';
+import { createApiReferenceSection } from './sections/api-reference.js';
 
 const root = document.getElementById('demo-root');
 if (!root) throw new Error('Missing #demo-root');
@@ -40,13 +43,16 @@ const sections = [
   createGanttSection(),
   createIconsSection(),
   createAnimationsSection(),
+  createHeatmapSection(),
   createLayoutsSection(),
   createDetailPanelSection(),
+  createInteractiveSection(),
   createOkrSection(),
   createMapSection(),
   createAdvancedSection(),
   createWebComponentsSection(),
   createAccessibilitySection(),
+  createApiReferenceSection(),
   createFooter(),
 ];
 
@@ -54,7 +60,6 @@ const fragment = document.createDocumentFragment();
 sections.forEach(s => fragment.appendChild(s));
 root.appendChild(fragment);
 
-/* Smooth scroll for nav links */
 document.querySelectorAll('.demo-nav__links a').forEach(link => {
   link.addEventListener('click', (e) => {
     e.preventDefault();
@@ -63,7 +68,6 @@ document.querySelectorAll('.demo-nav__links a').forEach(link => {
   });
 });
 
-/* Listen for theme changes to update nav styling */
 document.addEventListener('mn-theme-change', (e) => {
   const nav = document.querySelector('.demo-nav');
   if (!nav) return;
@@ -91,8 +95,11 @@ function createFooter() {
         Demo built with fictional data inspired by Fightthestroke Foundation.
         All data is illustrative and does not represent real information.
       </p>
+      <p class="mn-micro" style="color:var(--grigio-medio);margin-top:var(--space-xs)">
+        <a href="https://www.fightthestroke.org/donorbox" style="color:var(--mn-accent)">Donate to Fightthestroke</a>
+      </p>
       <p class="mn-micro" style="color:var(--grigio-scuro);margin-top:var(--space-sm)">
-        Version 3.0.0 — 4 themes: Nero, Avorio, Editorial, Colorblind
+        v3.1.0 — 4 themes · 87 APIs · 23 Web Components
       </p>
     </div>
   `;
