@@ -1,0 +1,169 @@
+@layer themes {
+/* themes — Avorio Components | Maranello Design System v1.4.0 */
+
+
+
+/* ============================================================
+   AVORIO — Profile Menu, AI Chat, Map
+   ============================================================ */
+body.mn-avorio .mn-profile-trigger__avatar { background: var(--mn-accent); color: var(--mn-accent-text); }
+body.mn-avorio .mn-profile-dropdown { background: var(--avorio-chiaro); border-color: var(--avorio-scuro); }
+body.mn-avorio .mn-profile-dropdown__header { border-bottom-color: var(--avorio-scuro); }
+body.mn-avorio .mn-profile-dropdown__name { color: var(--nero-assoluto); }
+body.mn-avorio .mn-profile-dropdown__email { color: var(--grigio-medio); }
+body.mn-avorio .mn-profile-dropdown__section-title { color: var(--grigio-alluminio); }
+body.mn-avorio .mn-profile-dropdown__item { color: var(--nero-assoluto); }
+body.mn-avorio .mn-profile-dropdown__item:hover { background: var(--avorio-medio); }
+body.mn-avorio .mn-profile-dropdown__item-icon { color: var(--grigio-alluminio); }
+body.mn-avorio .mn-profile-dropdown__divider { background: var(--avorio-scuro); }
+
+body.mn-avorio .mn-chat-fab { background: var(--avorio-chiaro); border-color: var(--avorio-scuro); color: var(--rosso-corsa); }
+body.mn-avorio .mn-chat-panel { background: var(--avorio-chiaro); border-color: var(--avorio-scuro); }
+body.mn-avorio .mn-chat-panel__accent { background: var(--rosso-corsa); }
+body.mn-avorio .mn-chat-panel__header { background: rgba(250,243,230,0.85); border-bottom-color: var(--avorio-scuro); }
+body.mn-avorio .mn-chat-panel__title { color: var(--rosso-corsa); }
+body.mn-avorio .mn-chat-panel__close { color: var(--grigio-alluminio); }
+body.mn-avorio .mn-chat-msg--user { background: var(--avorio-medio); color: var(--nero-assoluto); }
+body.mn-avorio .mn-chat-msg--ai { background: var(--bianco-puro); color: var(--nero-assoluto); }
+body.mn-avorio .mn-chat-msg__icon { color: var(--rosso-corsa); }
+body.mn-avorio .mn-chat-msg__code { background: var(--avorio-medio); }
+body.mn-avorio .mn-chat-panel__quick-btn { border-color: var(--avorio-scuro); color: var(--grigio-medio); }
+body.mn-avorio .mn-chat-panel__quick-btn:hover { border-color: var(--rosso-corsa); color: var(--rosso-corsa); }
+body.mn-avorio .mn-chat-panel__input { background: var(--bianco-puro); border-color: var(--avorio-scuro); color: var(--nero-assoluto); }
+body.mn-avorio .mn-chat-panel__input:focus { border-color: var(--rosso-corsa); }
+body.mn-avorio .mn-chat-panel__send { background: var(--rosso-corsa); color: var(--bianco-puro); }
+body.mn-avorio .mn-chat-panel__input-area { border-top-color: var(--avorio-scuro); }
+body.mn-avorio .mn-chat-typing__dot { background: var(--grigio-alluminio); }
+
+body.mn-avorio .mn-map { background: var(--avorio-chiaro); border-color: var(--avorio-scuro); }
+body.mn-avorio .mn-map__tooltip { background: var(--bianco-puro); border-color: var(--avorio-scuro); color: var(--nero-assoluto); }
+body.mn-avorio .mn-map__legend { background: rgba(250,243,230,0.9); border-color: var(--avorio-scuro); }
+
+
+/* ============================================================
+   NERO — Profile Menu, AI Chat (inherits base dark)
+   ============================================================ */
+body.mn-nero .mn-profile-dropdown { background: var(--nero-profondo); border-color: var(--grigio-scuro); }
+body.mn-nero .mn-chat-panel__header { background: rgba(10,10,10,0.85); }
+
+
+/* ============================================================
+   COLORBLIND — Chat, Profile accents
+   ============================================================ */
+body.mn-colorblind .mn-chat-panel__accent { background: #FFB000; }
+body.mn-colorblind .mn-chat-panel__title { color: #FFB000; }
+body.mn-colorblind .mn-chat-msg__icon { color: #FFB000; }
+body.mn-colorblind .mn-chat-fab { color: #FFB000; }
+body.mn-colorblind .mn-chat-fab__pulse { border-color: #FFB000; }
+body.mn-colorblind .mn-chat-panel__send { background: #FFB000; }
+body.mn-colorblind .mn-chat-panel__quick-btn:hover { border-color: #FFB000; color: #FFB000; }
+body.mn-colorblind .mn-sys-status__dot--active { background: #0072B2; box-shadow: 0 0 6px #0072B2; }
+body.mn-colorblind .mn-sys-status__dot--warning { background: #E69F00; box-shadow: 0 0 6px #E69F00; }
+body.mn-colorblind .mn-sys-status__dot--danger { background: #D55E00; box-shadow: 0 0 6px #D55E00; }
+body.mn-colorblind .mn-sys-status__env { color: #0072B2; }
+
+
+/* ============================================================
+   NERO — System Status
+   ============================================================ */
+body.mn-nero .mn-sys-status { background: var(--nero-profondo); border-color: var(--grigio-scuro); }
+body.mn-nero .mn-sys-status__label { color: var(--grigio-chiaro); }
+body.mn-nero .mn-sys-status__panel { background: var(--nero-profondo); border-color: var(--grigio-scuro); }
+body.mn-nero .mn-sys-status__item { border-color: var(--grigio-scuro); }
+body.mn-nero .mn-sys-status__item-label { color: var(--grigio-chiaro); }
+
+/* ============================================================
+   NERO — Map View
+   ============================================================ */
+body.mn-nero .mn-map { background: var(--nero-profondo); border-color: var(--grigio-scuro); }
+body.mn-nero .mn-map__tooltip { background: var(--nero-carbon); border-color: var(--grigio-scuro); color: var(--bianco-caldo); }
+body.mn-nero .mn-map__legend { background: rgba(10,10,10,0.9); border-color: var(--grigio-scuro); }
+
+/* ============================================================
+   NERO — Ferrari Controls v2
+   ============================================================ */
+body.mn-nero .mn-ctrl-cruise__mark { color: var(--grigio-chiaro); }
+body.mn-nero .mn-ctrl-cruise__mark--active { color: var(--bianco-caldo); }
+body.mn-nero .mn-ctrl-cruise__label { color: var(--grigio-chiaro); }
+body.mn-nero .mn-ctrl-manettino__pos { color: var(--grigio-chiaro); }
+body.mn-nero .mn-ctrl-manettino__pos--active { color: var(--bianco-caldo); }
+body.mn-nero .mn-ctrl-lever__label { color: var(--grigio-chiaro); }
+body.mn-nero .mn-ctrl-stepped__mark { color: var(--grigio-chiaro); }
+body.mn-nero .mn-ctrl-stepped__mark--active { color: var(--bianco-caldo); }
+
+/* ============================================================
+   COLORBLIND — Ferrari Controls v2
+   ============================================================ */
+body.mn-colorblind .mn-ctrl-cruise__mark--active { color: #0072B2; }
+body.mn-colorblind .mn-ctrl-manettino__pos--active { color: #D55E00; }
+body.mn-colorblind .mn-ctrl-lever--on .mn-ctrl-lever__track { border-color: #0072B2; background: linear-gradient(180deg, var(--nero-carbon) 0%, rgba(0,114,178,0.3) 100%); }
+body.mn-colorblind .mn-ctrl-stepped__mark--active { color: #E69F00; }
+
+/* ============================================================
+   COLORBLIND — Map View
+   ============================================================ */
+body.mn-colorblind .mn-map__marker { background: #0072B2; }
+body.mn-colorblind .mn-map__marker--active { background: #D55E00; }
+
+/* ============================================================
+   COLORBLIND — Profile Menu
+   ============================================================ */
+body.mn-colorblind .mn-profile-dropdown__item:hover { background: rgba(0,114,178,0.15); }
+body.mn-colorblind .mn-profile-dropdown__badge { background: #D55E00; }
+
+/* ============================================================
+   NERO — Accessibility Panel (full)
+   ============================================================ */
+body.mn-nero .mn-a11y-panel { background: var(--nero-profondo); border-color: var(--grigio-scuro); color: var(--bianco-caldo); }
+body.mn-nero .mn-a11y-panel__title { color: var(--bianco-caldo); }
+body.mn-nero .mn-a11y-panel__option label { color: var(--grigio-chiaro); }
+body.mn-nero .mn-a11y-panel__slider { background: var(--grigio-scuro); }
+body.mn-nero .mn-a11y-panel__slider::-webkit-slider-thumb { background: var(--bianco-caldo); }
+body.mn-nero .mn-a11y-toggle { background: var(--nero-carbon, #111); }
+body.mn-nero .mn-a11y-toggle--on { background: var(--mn-accent); }
+
+
+/* ============================================================
+   AVORIO — Funnel, Horizontal Bar, OKR
+   ============================================================ */
+body.mn-avorio .mn-funnel__stage { background: var(--avorio-chiaro); }
+body.mn-avorio .mn-funnel__conversion { color: var(--nero-assoluto); }
+body.mn-avorio .mn-funnel__conversion-text { color: var(--grigio-scuro); }
+body.mn-avorio .mn-hbar__title { color: var(--nero-assoluto); }
+body.mn-avorio .mn-hbar__label { color: var(--nero-assoluto); }
+body.mn-avorio .mn-hbar__axis-label { color: var(--grigio-scuro); }
+body.mn-avorio .mn-hbar__grid-line { border-color: var(--avorio-scuro); }
+body.mn-avorio .mn-okr { background: var(--avorio-chiaro); }
+body.mn-avorio .mn-okr__summary-card { background: var(--bianco-puro); border-color: var(--avorio-scuro); }
+body.mn-avorio .mn-okr__summary-label { color: var(--grigio-scuro); }
+body.mn-avorio .mn-okr__summary-count { color: var(--nero-assoluto); }
+body.mn-avorio .mn-okr__overall-pct { color: var(--nero-assoluto); }
+body.mn-avorio .mn-okr__obj-card { background: var(--bianco-puro); border-color: var(--avorio-scuro); }
+body.mn-avorio .mn-okr__obj-title { color: var(--nero-assoluto); }
+body.mn-avorio .mn-okr__kr-title { color: var(--grigio-scuro); }
+body.mn-avorio .mn-okr__kr-bar { background: var(--avorio-scuro); }
+
+/* ============================================================
+   NERO — Funnel, Horizontal Bar, OKR
+   ============================================================ */
+body.mn-nero .mn-funnel__stage { background: var(--nero-profondo); }
+body.mn-nero .mn-funnel__conversion { color: var(--grigio-chiaro); }
+body.mn-nero .mn-hbar__title { color: var(--bianco-caldo); }
+body.mn-nero .mn-hbar__label { color: var(--grigio-chiaro); }
+body.mn-nero .mn-hbar__axis-label { color: var(--grigio-medio); }
+body.mn-nero .mn-okr__summary-card { background: var(--nero-profondo); border-color: var(--grigio-scuro); }
+body.mn-nero .mn-okr__summary-count { color: var(--bianco-caldo); }
+body.mn-nero .mn-okr__obj-card { background: var(--nero-profondo); border-color: var(--grigio-scuro); }
+body.mn-nero .mn-okr__obj-title { color: var(--bianco-caldo); }
+body.mn-nero .mn-okr__kr-title { color: var(--grigio-chiaro); }
+
+/* ============================================================
+   COLORBLIND — Funnel, Horizontal Bar, OKR
+   ============================================================ */
+body.mn-colorblind .mn-okr__status--on-track { color: #009E73; }
+body.mn-colorblind .mn-okr__status--at-risk { color: #E69F00; }
+body.mn-colorblind .mn-okr__status--behind { color: #D55E00; }
+body.mn-colorblind .mn-okr__scope--studio { background: #0072B2; }
+body.mn-colorblind .mn-okr__scope--org { background: #CC79A7; }
+body.mn-colorblind .mn-okr__scope--global { background: #E69F00; }
+} /* end @layer themes */

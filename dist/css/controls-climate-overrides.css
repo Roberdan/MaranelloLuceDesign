@@ -1,0 +1,113 @@
+@layer controls {
+/* controls — Climate Overrides | Maranello Design System v1.4.0 */
+
+/* ── CLIMATE CONTROL PANEL ── */
+.mn-climate {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xl);
+  padding: var(--space-lg) var(--space-xl);
+  background: linear-gradient(180deg, #1a1a1a, #111);
+  border-radius: var(--radius-lg);
+  box-shadow:
+    inset 0 2px 6px rgba(0,0,0,0.5),
+    0 1px 0 rgba(255,255,255,0.04);
+}
+.mn-climate__display {
+  text-align: center;
+  min-width: 80px;
+}
+.mn-climate__temp {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--bianco-caldo);
+  line-height: 1;
+}
+.mn-climate__unit {
+  font-family: var(--font-body);
+  font-size: var(--text-micro);
+  color: var(--grigio-medio);
+}
+.mn-climate__controls {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  flex: 1;
+}
+
+
+/* ── Avorio theme overrides for controls ── */
+body.mn-avorio .mn-machined-btn {
+  background: linear-gradient(180deg, #d8d4cc 0%, #cec9c0 40%, #c4bfb6 100%);
+  color: var(--nero-assoluto);
+  box-shadow:
+    0 4px 12px rgba(0,0,0,0.12),
+    0 1px 3px rgba(0,0,0,0.08),
+    inset 0 1px 0 rgba(255,255,255,0.5),
+    inset 0 -1px 0 rgba(0,0,0,0.08);
+}
+body.mn-avorio .mn-toggle__track {
+  background: linear-gradient(180deg, #d8d4cc, #ccc7be);
+}
+body.mn-avorio .mn-segmented {
+  background: linear-gradient(180deg, #e8e3da, #ddd8cf);
+}
+body.mn-avorio .mn-segmented__item { color: var(--grigio-medio); }
+body.mn-avorio .mn-segmented__item--active {
+  background: var(--bianco-puro);
+  color: var(--nero-assoluto);
+}
+body.mn-avorio .mn-climate {
+  background: linear-gradient(180deg, #e8e3da, #ddd8cf);
+}
+body.mn-avorio .mn-climate__temp { color: var(--nero-assoluto); }
+body.mn-avorio .mn-btn-cluster {
+  background: linear-gradient(180deg, #e8e3da, #ddd8cf);
+}
+body.mn-avorio .mn-btn-cluster__item {
+  background: linear-gradient(180deg, #d8d4cc, #ccc7be);
+  color: var(--grigio-medio);
+}
+
+
+/* ══════════════════════════════════════════════════════════════
+   NERO THEME — Controls Overrides
+   ══════════════════════════════════════════════════════════════ */
+
+body.mn-nero .mn-machined-btn {
+  background: linear-gradient(180deg, #1a1a1a 0%, #111 40%, #0a0a0a 100%);
+  color: var(--grigio-chiaro);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06);
+}
+body.mn-nero .mn-toggle__track {
+  background: linear-gradient(180deg, #111, #0a0a0a);
+  border-color: var(--grigio-scuro);
+}
+body.mn-nero .mn-segmented {
+  background: linear-gradient(180deg, #111, #0a0a0a);
+  border-color: var(--grigio-scuro);
+}
+body.mn-nero .mn-segmented__item { color: var(--grigio-chiaro); }
+body.mn-nero .mn-segmented__item--active {
+  background: var(--nero-soft);
+  color: var(--bianco-puro);
+}
+body.mn-nero .mn-climate {
+  background: linear-gradient(180deg, #111, #0a0a0a);
+  border-color: var(--grigio-scuro);
+}
+body.mn-nero .mn-climate__temp { color: var(--bianco-caldo); }
+body.mn-nero .mn-btn-cluster {
+  background: linear-gradient(180deg, #111, #0a0a0a);
+}
+body.mn-nero .mn-btn-cluster__item {
+  background: linear-gradient(180deg, #1a1a1a, #111);
+  color: var(--grigio-chiaro);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   FERRARI CONTROLS v2 — Manettino, Cruise Lever, Toggle Lever, Stepped Rotary
+   ══════════════════════════════════════════════════════════════ */
+
+} /* end @layer controls */

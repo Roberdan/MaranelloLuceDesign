@@ -1,0 +1,7 @@
+@layer layouts {
+/* layouts — Detail Panel Base (aggregator) | Maranello Design System v1.4.0 */
+/* Split into smaller files for maintainability. Import via layouts.css. */
+@import url('layouts-detail-panel.css');
+@import url('layouts-detail-panel-gantt.css');
+@import url('layouts-detail-panel-comments.css');
+} /* end @layer layouts */

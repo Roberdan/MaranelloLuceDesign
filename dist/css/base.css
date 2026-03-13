@@ -1,0 +1,172 @@
+/* ============================================================
+   MARANELLO DESIGN SYSTEM — Base Styles
+   Reset, section containers, typography, content wrappers
+   ============================================================    Version: 1.4.0 (11-March-2026)
+   */
+
+@layer base {
+
+/* ─── RESET ─── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+body {
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: 1.6;
+  color: var(--nero-assoluto);
+  background: var(--bianco-caldo);
+}
+img { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; }
+
+
+/* ============================================================
+   SECTION CONTAINERS
+   ============================================================ */
+
+.mn-section-dark {
+  background: var(--nero-assoluto);
+  color: var(--bianco-caldo);
+  padding: var(--space-5xl) var(--space-xl);
+  position: relative;
+  overflow: hidden;
+}
+
+.mn-section-light {
+  background: var(--bianco-caldo);
+  color: var(--nero-assoluto);
+  padding: var(--space-5xl) var(--space-xl);
+  position: relative;
+}
+
+.mn-section-accent {
+  background: var(--arancio-warm);
+  color: var(--bianco-puro);
+  padding: var(--space-5xl) var(--space-xl);
+  position: relative;
+}
+
+.mn-section-ivory {
+  background: var(--avorio-chiaro);
+  color: var(--nero-assoluto);
+  padding: var(--space-5xl) var(--space-xl);
+  position: relative;
+}
+
+.mn-container {
+  max-width: var(--content-width);
+  margin: 0 auto;
+}
+
+.mn-container--narrow {
+  max-width: var(--content-narrow);
+  margin: 0 auto;
+}
+
+
+/* ============================================================
+   TYPOGRAPHY
+   ============================================================ */
+
+.mn-title-hero {
+  font-family: var(--font-display);
+  font-size: var(--text-hero);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  line-height: 1.1;
+  text-align: center;
+}
+
+.mn-title-section {
+  font-family: var(--font-display);
+  font-size: var(--text-h1);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.mn-title-sub {
+  font-family: var(--font-display);
+  font-size: var(--text-h2);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  line-height: 1.3;
+}
+
+.mn-label {
+  font-family: var(--font-display);
+  font-size: var(--text-caption);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  line-height: 1.4;
+}
+
+.mn-body {
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  font-weight: 400;
+  line-height: 1.7;
+  text-align: center;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.mn-section-dark .mn-body { color: var(--grigio-alluminio); }
+.mn-section-light .mn-body { color: var(--grigio-medio); }
+.mn-section-ivory .mn-body { color: var(--grigio-medio); }
+
+.mn-caption {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  color: var(--grigio-medio);
+  line-height: 1.6;
+  text-align: center;
+}
+
+.mn-micro {
+  font-family: var(--font-body);
+  font-size: var(--text-micro);
+  color: var(--grigio-chiaro);
+  letter-spacing: 0.02em;
+}
+
+.mn-section-number {
+  font-family: var(--font-body);
+  font-size: var(--text-micro);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--grigio-chiaro);
+  margin-bottom: var(--space-sm);
+}
+
+.mn-section-dark .mn-section-number { color: var(--grigio-medio); }
+.mn-section-ivory .mn-section-number { color: var(--avorio-scuro); }
+
+
+/* ============================================================
+   WATERMARK TITLE
+   ============================================================ */
+.mn-watermark {
+  font-family: var(--font-display);
+  font-size: var(--text-watermark);
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--grigio-alluminio);
+  line-height: 0.95;
+  text-align: center;
+  letter-spacing: -0.02em;
+  padding: var(--space-2xl) 0 var(--space-lg);
+  user-select: none;
+}
+
+.mn-section-dark .mn-watermark { color: var(--grigio-scuro); }
+.mn-section-accent .mn-watermark { color: rgba(255,255,255,0.2); }
+.mn-section-ivory .mn-watermark { color: var(--avorio-medio); }
+
+} /* end @layer base */

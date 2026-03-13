@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="bezel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#666"/>
+      <stop offset="30%" stop-color="#444"/>
+      <stop offset="100%" stop-color="#1a1a1a"/>
+    </linearGradient>
+    <linearGradient id="face" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1a1a1a"/>
+      <stop offset="100%" stop-color="#0d0d0d"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FFD85C"/>
+      <stop offset="50%" stop-color="#FFC72C"/>
+      <stop offset="100%" stop-color="#E8A838"/>
+    </linearGradient>
+    <linearGradient id="needle-n" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FF4444"/>
+      <stop offset="100%" stop-color="#CC0000"/>
+    </linearGradient>
+    <linearGradient id="needle-s" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#e0e0e0"/>
+      <stop offset="100%" stop-color="#999"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="1.2" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Outer bezel with metallic gradient -->
+  <circle cx="32" cy="32" r="31" fill="url(#bezel)" stroke="#555" stroke-width="0.5"/>
+  <!-- Inner bezel ring -->
+  <circle cx="32" cy="32" r="28.5" fill="none" stroke="#3a3a3a" stroke-width="1"/>
+  <!-- Face -->
+  <circle cx="32" cy="32" r="27" fill="url(#face)"/>
+
+  <!-- Degree ticks (every 10°) -->
+  <g stroke="rgba(255,255,255,0.2)" stroke-width="0.5" stroke-linecap="round">
+    <line x1="32" y1="6" x2="32" y2="9" transform="rotate(10,32,32)"/>
+    <line x1="32" y1="6" x2="32" y2="9" transform="rotate(20,32,32)"/>
+    <line x1="32" y1="6" x2="32" y2="9" transform="rotate(40,32,32)"/>
+    <line x1="32" y1="6" x2="32" y2="9" transform="rotate(50,32,32)"/>
+    <line x1="32" y1="6" x2="32" y2="9" transform="rotate(70,32,32)"/>
+    <line x1="32" y1="6" x2="32" y2="9" transform="rotate(80,32,32)"/>
+    <line x1="32" y1="6" x2="32" y2="9" transform="rotate(100,32,32)"/>
+    <line x1="32" y1="6" x2="32" y2="9" transform="rotate(110,32,32)"/>
+    <line x1="32" y1="6" x2="32" y2="9" transform="rotate(130,32,32)"/>
+    <line x1="32" y1="6" x2="32" y2="9" transform="rotate(140,32,32)"/>
+    <line x1="32" y1="6" x2="32" y2="9" transform="rotate(160,32,32)"/>
+    <line x1="32" y1="6" x2="32" y2="9" transform="rotate(170,32,32)"/>
+    <line x1="32" y1="6" x2="32" y2="9" transform="rotate(190,32,32)"/>
+    <line x1="32" y1="6" x2="32" y2="9" transform="rotate(200,32,32)"/>
+    <line x1="32" y1="6" x2="32" y2="9" transform="rotate(220,32,32)"/>
+    <line x1="32" y1="6" x2="32" y2="9" transform="rotate(230,32,32)"/>
+    <line x1="32" y1="6" x2="32" y2="9" transform="rotate(250,32,32)"/>
+    <line x1="32" y1="6" x2="32" y2="9" transform="rotate(260,32,32)"/>
+    <line x1="32" y1="6" x2="32" y2="9" transform="rotate(280,32,32)"/>
+    <line x1="32" y1="6" x2="32" y2="9" transform="rotate(290,32,32)"/>
+    <line x1="32" y1="6" x2="32" y2="9" transform="rotate(310,32,32)"/>
+    <line x1="32" y1="6" x2="32" y2="9" transform="rotate(320,32,32)"/>
+    <line x1="32" y1="6" x2="32" y2="9" transform="rotate(340,32,32)"/>
+    <line x1="32" y1="6" x2="32" y2="9" transform="rotate(350,32,32)"/>
+  </g>
+
+  <!-- Major ticks (N/E/S/W + 45° marks) — gold -->
+  <g stroke="url(#gold)" stroke-width="1.5" stroke-linecap="round" filter="url(#glow)">
+    <line x1="32" y1="6" x2="32" y2="11"/>
+    <line x1="32" y1="6" x2="32" y2="11" transform="rotate(90,32,32)"/>
+    <line x1="32" y1="6" x2="32" y2="11" transform="rotate(180,32,32)"/>
+    <line x1="32" y1="6" x2="32" y2="11" transform="rotate(270,32,32)"/>
+  </g>
+  <g stroke="rgba(255,255,255,0.4)" stroke-width="1" stroke-linecap="round">
+    <line x1="32" y1="6" x2="32" y2="10" transform="rotate(45,32,32)"/>
+    <line x1="32" y1="6" x2="32" y2="10" transform="rotate(135,32,32)"/>
+    <line x1="32" y1="6" x2="32" y2="10" transform="rotate(225,32,32)"/>
+    <line x1="32" y1="6" x2="32" y2="10" transform="rotate(315,32,32)"/>
+  </g>
+
+  <!-- Cardinal labels -->
+  <g font-family="'Barlow Condensed', sans-serif" font-weight="700" text-anchor="middle" dominant-baseline="middle">
+    <text x="32" y="16" fill="#FFC72C" font-size="7" filter="url(#glow)">N</text>
+    <text x="48" y="33" fill="rgba(255,255,255,0.6)" font-size="6">E</text>
+    <text x="32" y="50" fill="rgba(255,255,255,0.6)" font-size="6">S</text>
+    <text x="16" y="33" fill="rgba(255,255,255,0.6)" font-size="6">W</text>
+  </g>
+
+  <!-- Compass needle — North (red) -->
+  <polygon points="32,10 29,32 32,30 35,32" fill="url(#needle-n)" filter="url(#glow)"/>
+  <!-- Compass needle — South (silver) -->
+  <polygon points="32,54 29,32 32,34 35,32" fill="url(#needle-s)"/>
+
+  <!-- Center hub -->
+  <circle cx="32" cy="32" r="4" fill="url(#gold)" filter="url(#glow)"/>
+  <circle cx="32" cy="32" r="2" fill="#1a1a1a"/>
+
+  <!-- Subtle glass reflection -->
+  <ellipse cx="26" cy="22" rx="10" ry="7" fill="rgba(255,255,255,0.03)"/>
+</svg>

@@ -1,0 +1,167 @@
+@layer utilities {
+/* ============================================================
+   MARANELLO DESIGN SYSTEM — Utilities
+   Text color helpers, spacing, layout, animations, demo styles
+   ============================================================    Version: 1.4.0 (11-March-2026)
+   */
+
+
+/* ── Text Alignment ── */
+.mn-text-center { text-align: center; }
+.mn-text-left   { text-align: left; }
+.mn-text-right  { text-align: right; }
+
+
+/* ── Text Color Utilities (replaces all inline color styles) ── */
+.mn-text-muted   { color: var(--grigio-chiaro); }
+.mn-text-subtle  { color: var(--grigio-medio); }
+.mn-text-dim     { color: #666; }
+.mn-text-giallo  { color: var(--giallo-ferrari); }
+.mn-text-verde   { color: var(--verde-racing); }
+.mn-text-rosso   { color: var(--rosso-corsa); }
+.mn-text-bianco  { color: var(--bianco-caldo); }
+.mn-text-avorio  { color: var(--avorio-scuro); }
+
+/* Avorio overrides for text utilities */
+body.mn-avorio .mn-section-dark .mn-text-muted { color: var(--grigio-medio); }
+body.mn-avorio .mn-section-dark .mn-text-bianco { color: var(--nero-assoluto); }
+body.mn-avorio .mn-section-dark .mn-text-dim { color: var(--grigio-medio); }
+
+
+/* ── Spacing: Margin Top ── */
+.mn-mt-xs  { margin-top: var(--space-xs); }
+.mn-mt-sm  { margin-top: var(--space-sm); }
+.mn-mt-md  { margin-top: var(--space-md); }
+.mn-mt-lg  { margin-top: var(--space-lg); }
+.mn-mt-xl  { margin-top: var(--space-xl); }
+.mn-mt-2xl { margin-top: var(--space-2xl); }
+.mn-mt-3xl { margin-top: var(--space-3xl); }
+
+/* ── Spacing: Margin Bottom ── */
+.mn-mb-xs  { margin-bottom: var(--space-xs); }
+.mn-mb-sm  { margin-bottom: var(--space-sm); }
+.mn-mb-md  { margin-bottom: var(--space-md); }
+.mn-mb-lg  { margin-bottom: var(--space-lg); }
+
+
+/* ── Flex Utilities ── */
+.mn-flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.mn-flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.mn-flex-col {
+  display: flex;
+  flex-direction: column;
+}
+.mn-flex-wrap {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.mn-gap-xs  { gap: var(--space-xs); }
+.mn-gap-sm  { gap: var(--space-sm); }
+.mn-gap-md  { gap: var(--space-md); }
+.mn-gap-lg  { gap: var(--space-lg); }
+.mn-gap-xl  { gap: var(--space-xl); }
+.mn-gap-2xl { gap: var(--space-2xl); }
+
+
+/* ── Legacy color utilities (backward compat) ── */
+.mn-color-gold    { color: var(--giallo-ferrari); }
+.mn-color-red     { color: var(--rosso-corsa); }
+.mn-color-green   { color: var(--verde-racing); }
+.mn-color-muted   { color: var(--grigio-medio); }
+
+
+/* ── Screen Reader Only ── */
+.mn-sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  border: 0;
+}
+
+
+/* ── Display Utilities ── */
+.mn-block { display: block; }
+.mn-inline { display: inline; }
+.mn-inline-flex { display: inline-flex; }
+
+
+/* ============================================================
+   ANIMATIONS
+   ============================================================ */
+
+/* Scroll reveal */
+.mn-reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity var(--duration-lg) var(--ease-out),
+              transform var(--duration-lg) var(--ease-out);
+}
+.mn-reveal--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Needle sweep */
+@keyframes needleSweep {
+  from { transform: rotate(var(--needle-start, -135deg)); }
+  to   { transform: rotate(var(--needle-end, 0deg)); }
+}
+
+
+/* ============================================================
+   DEMO PAGE STYLES
+   ============================================================ */
+.demo-swatch-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: var(--space-md);
+}
+.demo-swatch {
+  aspect-ratio: 1;
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding: var(--space-sm);
+  font-size: var(--text-nano);
+  font-family: var(--font-display);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border: 1px solid var(--grigio-ghost);
+}
+.demo-swatch--dark { color: var(--bianco-caldo); border-color: transparent; }
+
+.demo-spacer { height: 56px; }
+
+.demo-section-label {
+  font-family: var(--font-display);
+  font-size: var(--text-micro);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--giallo-ferrari);
+  margin-bottom: var(--space-sm);
+}
+
+/* Theme toggle button in nav */
+.mn-theme-toggle {
+  width: 32px;
+  height: 32px;
+  border-color: rgba(255,255,255,0.15);
+  color: var(--grigio-chiaro);
+  font-size: 0.85rem;
+}
+} /* end @layer utilities */

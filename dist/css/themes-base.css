@@ -1,0 +1,223 @@
+@layer themes {
+/* themes — Base | Maranello Design System v1.4.0 */
+
+/* ============================================================
+   MARANELLO DESIGN SYSTEM — Themes
+   Editorial (default), Nero (full dark), Avorio (full light)
+   NO !important — clean cascade only
+   ============================================================    Version: 1.4.0 (11-March-2026)
+   */
+
+
+/* ── Theme transition (smooth mode switching) ── */
+.mn-section-dark,
+.mn-section-light,
+.mn-section-ivory,
+.mn-section-accent,
+.mn-nav,
+.mn-footer {
+  transition: background var(--duration-lg) var(--ease-out),
+              color var(--duration-md) var(--ease-out);
+}
+
+
+/* ============================================================
+   NERO MODE — light/ivory sections → dark
+   ============================================================ */
+/* Nero accent: giallo Ferrari (default) */
+body.mn-nero { --mn-accent: var(--giallo-ferrari); --mn-accent-hover: var(--giallo-hover); --mn-accent-text: #111; }
+
+/* Avorio accent: rosso Corsa */
+body.mn-avorio { --mn-accent: var(--rosso-corsa); --mn-accent-hover: #b30000; --mn-accent-text: #fff; }
+
+/* Colorblind accent: high-contrast blue */
+body.mn-colorblind { --mn-accent: #0072B2; --mn-accent-hover: #005f94; --mn-accent-text: #fff; }
+body.mn-nero .mn-section-light,
+body.mn-nero .mn-section-ivory {
+  background: var(--nero-profondo);
+  color: var(--bianco-caldo);
+}
+body.mn-nero .mn-section-light .mn-watermark,
+body.mn-nero .mn-section-ivory .mn-watermark { color: var(--grigio-scuro); }
+body.mn-nero .mn-section-light .mn-body,
+body.mn-nero .mn-section-ivory .mn-body,
+body.mn-nero .mn-section-light .mn-caption,
+body.mn-nero .mn-section-ivory .mn-caption { color: var(--grigio-chiaro); }
+body.mn-nero .mn-section-light .mn-title-section,
+body.mn-nero .mn-section-ivory .mn-title-section,
+body.mn-nero .mn-section-light .mn-title-sub,
+body.mn-nero .mn-section-ivory .mn-title-sub { color: var(--bianco-caldo); }
+
+/* Table */
+body.mn-nero .mn-table-wrap { border-color: var(--grigio-scuro); }
+body.mn-nero .mn-section-light .mn-table thead { background: var(--grigio-scuro); }
+body.mn-nero .mn-section-light .mn-table td { border-color: var(--grigio-scuro); color: var(--grigio-chiaro); }
+body.mn-nero .mn-section-light .mn-table tbody tr:hover { background: var(--nero-carbon); }
+
+/* Tags */
+body.mn-nero .mn-tag { border-color: var(--grigio-scuro); color: var(--grigio-chiaro); }
+body.mn-nero .mn-tag:hover,
+body.mn-nero .mn-tag--active { background: var(--bianco-caldo); color: var(--nero-assoluto); border-color: var(--bianco-caldo); }
+
+/* Buttons */
+body.mn-nero .mn-btn { background: var(--bianco-caldo); color: var(--nero-assoluto); border-color: var(--bianco-caldo); }
+body.mn-nero .mn-btn:hover { background: var(--grigio-chiaro); }
+body.mn-nero .mn-btn--ghost { background: transparent; border-color: rgba(255,255,255,0.3); color: var(--bianco-caldo); }
+body.mn-nero .mn-btn--ghost:hover { background: var(--bianco-puro); color: var(--nero-assoluto); }
+
+/* Input */
+body.mn-nero .mn-input { background: var(--nero-carbon); border-color: var(--grigio-scuro); color: var(--bianco-caldo); }
+
+/* Accordion */
+body.mn-nero .mn-accordion, body.mn-nero .mn-accordion__item { border-color: var(--grigio-scuro); }
+body.mn-nero .mn-accordion__header { color: var(--bianco-caldo); }
+body.mn-nero .mn-accordion__body { color: var(--grigio-chiaro); }
+
+/* Forms */
+body.mn-nero .mn-label { color: var(--grigio-chiaro); }
+body.mn-nero .mn-fieldset { border-color: var(--grigio-scuro); }
+body.mn-nero .mn-select { background: var(--nero-carbon); border-color: var(--grigio-scuro); color: var(--bianco-caldo); }
+body.mn-nero .mn-textarea { background: var(--nero-carbon); border-color: var(--grigio-scuro); color: var(--bianco-caldo); }
+body.mn-nero .mn-checkbox__box { border-color: var(--grigio-scuro); background: var(--nero-carbon); }
+body.mn-nero .mn-radio__dot { border-color: var(--grigio-scuro); background: var(--nero-carbon); }
+body.mn-nero .mn-form__section-title { color: var(--bianco-caldo); }
+body.mn-nero .mn-form__actions { border-color: var(--grigio-scuro); }
+
+/* Signal panel */
+body.mn-nero .mn-signal-panel { border-color: var(--grigio-scuro); background: rgba(255,255,255,0.02); }
+body.mn-nero .mn-signal-panel__title { color: var(--bianco-caldo); }
+body.mn-nero .mn-signal-panel__eyebrow { color: var(--avorio-scuro); }
+
+/* Cards */
+body.mn-nero .mn-card { background: var(--nero-soft); color: var(--bianco-caldo); box-shadow: 0 4px 16px rgba(0,0,0,0.3); }
+body.mn-nero .mn-card__text { color: var(--grigio-chiaro); }
+body.mn-nero .mn-card__title { color: var(--bianco-caldo); }
+
+/* Misc */
+body.mn-nero .demo-swatch { border-color: var(--grigio-scuro); }
+body.mn-nero .demo-section-label { color: var(--giallo-ferrari); }
+body.mn-nero .mn-dot { background: var(--grigio-scuro); }
+body.mn-nero .mn-dot--active { background: var(--bianco-caldo); }
+body.mn-nero .mn-progress { background: var(--grigio-scuro); }
+body.mn-nero .mn-status { color: var(--grigio-chiaro); }
+body.mn-nero .mn-divider-gold { background: var(--grigio-scuro); }
+body.mn-nero .mn-section-light .mn-section-number,
+body.mn-nero .mn-section-ivory .mn-section-number { color: var(--grigio-medio); }
+
+
+/* ============================================================
+   AVORIO MODE — dark sections → warm ivory/bianco
+   Clean cascade: no !important, no attribute selectors.
+   Works because inline color styles have been removed from HTML.
+   ============================================================ */
+
+/* All semantic tokens for light backgrounds (deeper for contrast on ivory/white) */
+body.mn-avorio {
+  /* Stage */
+  --stage-1:       #d4a000;
+  --stage-2:       #d4a000;
+  --stage-3:       #2b7eb5;
+  --stage-4:       #067a93;
+  --stage-5:       #4b5563;
+  --stage-6:       #b5501e;
+  --stage-7:       #1f2937;
+
+  /* Activity */
+  --state-active:   #008844;
+  --state-planned:  #d48b00;
+  --state-closed:   #4b5563;
+
+  /* Signal */
+  --signal-ok:         #008844;
+  --signal-warning:    #d4a000;
+  --signal-danger:     #c00000;
+
+  /* Today */
+  --today-line:        #2b7eb5;
+
+  /* Chart */
+  --chart-default:     #d4a000;
+  --chart-axis:        #555555;
+  --chart-label:       #666666;
+  --chart-muted:       #555555;
+  --chart-bar:         #2b7eb5;
+
+  /* Severity */
+  --severity-critical-fg: #dc2626;
+  --severity-critical-bg: #fef2f2;
+  --severity-high-fg:     #ea580c;
+  --severity-high-bg:     #fff7ed;
+  --severity-warning-fg:  #ca8a04;
+  --severity-warning-bg:  #fefce8;
+  --severity-resourcing-fg: #2563eb;
+  --severity-resourcing-bg: #eff6ff;
+
+  /* Scope */
+  --scope-local:     #2b7eb5;
+  --scope-team:      #6d28d9;
+  --scope-global:    #d4a000;
+
+  /* Surface (light backgrounds) */
+  --superficie-1:  var(--bianco-puro);
+  --superficie-2:  var(--avorio-chiaro);
+  --superficie-3:  var(--avorio-medio);
+  --bordo:         var(--avorio-scuro);
+  --bianco:        var(--nero-assoluto);
+  --mn-accent:     var(--rosso-corsa);
+  --mn-accent-text: var(--bianco-puro);
+}
+
+
+/* ============================================================
+   COLORBLIND MODE — high-contrast, colorblind-safe palette
+   Uses Okabe-Ito palette for signal colors.
+   ============================================================ */
+body.mn-colorblind {
+  --stage-1:       #E69F00;
+  --stage-2:       #E69F00;
+  --stage-3:       #56B4E9;
+  --stage-4:       #009E73;
+  --stage-5:       #999999;
+  --stage-6:       #D55E00;
+  --stage-7:       #444444;
+
+  --state-active:    #009E73;
+  --state-planned:   #E69F00;
+  --state-closed:    #999999;
+
+  --signal-ok:       #009E73;
+  --signal-warning:  #E69F00;
+  --signal-danger:   #D55E00;
+
+  --today-line:      #56B4E9;
+  --chart-default:   #E69F00;
+  --chart-bar:       #56B4E9;
+
+  --scope-local:     #56B4E9;
+  --scope-team:      #CC79A7;
+  --scope-global:    #E69F00;
+}
+
+
+/* ============================================================
+   AUTO DARK MODE — prefers-color-scheme
+   Applies Nero theme tokens when no explicit theme class is set.
+   ============================================================ */
+@media (prefers-color-scheme: dark) {
+  body:not(.mn-avorio):not(.mn-nero):not(.mn-colorblind) {
+    --mn-accent:       var(--giallo-ferrari);
+    --mn-accent-hover: var(--giallo-hover);
+    --mn-accent-text:  #111;
+    --superficie-1:    var(--nero-soft);
+    --superficie-2:    #252525;
+    --superficie-3:    var(--grigio-scuro);
+    --bordo:           #333333;
+    --bianco:          var(--bianco-puro);
+  }
+  body:not(.mn-avorio):not(.mn-nero):not(.mn-colorblind) .mn-section-light,
+  body:not(.mn-avorio):not(.mn-nero):not(.mn-colorblind) .mn-section-ivory {
+    background: var(--nero-profondo);
+    color: var(--bianco-caldo);
+  }
+}
+} /* end @layer themes */

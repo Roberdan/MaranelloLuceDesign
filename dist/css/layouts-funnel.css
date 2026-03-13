@@ -1,0 +1,44 @@
+@layer layouts {
+/* layouts — Funnel / SVG Sankey Pipeline | Maranello Design System v2.0.0 */
+
+.mn-funnel {
+  width: 100%;
+  padding: var(--space-sm, 0.5rem);
+  background: transparent;
+}
+
+.mn-funnel svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.mn-funnel__bar {
+  transition: opacity 0.35s ease, transform 0.35s ease;
+  cursor: default;
+}
+.mn-funnel__bar:hover {
+  filter: brightness(1.12);
+}
+
+.mn-funnel__bar--active {
+  stroke: var(--mn-accent, #FFC72C);
+  stroke-width: 2;
+}
+
+.mn-funnel__empty {
+  text-align: center;
+  padding: var(--space-xl, 2rem);
+  font-family: var(--font-body, sans-serif);
+  color: var(--grigio-medio, #616161);
+}
+
+@media (max-width: 640px) {
+  .mn-funnel { padding: var(--space-xs, 0.25rem); }
+}
+
+.mn-hbar-host { width: 100%; }
+.mn-okr-host { width: 100%; }
+.mn-okr__kr--urgent .mn-okr__kr-bar-fill { animation: mn-okr-pulse 1.5s infinite; }
+@keyframes mn-okr-pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.6; } }
+} /* end @layer layouts */

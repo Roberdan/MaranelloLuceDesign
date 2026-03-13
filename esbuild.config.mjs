@@ -2,7 +2,7 @@ import { build } from 'esbuild';
 import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 
-const banner = `/* Maranello Luce Design v2.0.0 | MIT | github.com/Roberdan/MaranelloLuceDesign */`;
+const banner = `/* Maranello Luce Design v3.0.0 | MIT | github.com/Roberdan/MaranelloLuceDesign */`;
 
 const shared = {
   bundle: true,
@@ -84,7 +84,6 @@ function buildIife() {
     entryPoints: ['src/ts/maranello.ts'],
     format: 'iife',
     outfile: 'dist/iife/maranello.min.js',
-    globalName: 'Maranello',
     minify: true,
   });
 }

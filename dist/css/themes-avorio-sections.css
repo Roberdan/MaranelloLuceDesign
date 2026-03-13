@@ -1,0 +1,195 @@
+@layer themes {
+/* themes — Avorio Sections | Maranello Design System v1.4.0 */
+
+/* ── Section-level color flip ── */
+body.mn-avorio .mn-section-dark {
+  background: var(--avorio-chiaro);
+  color: var(--nero-assoluto);
+}
+body.mn-avorio .mn-section-dark .mn-watermark { color: var(--avorio-medio); }
+body.mn-avorio .mn-section-dark .mn-body { color: var(--grigio-medio); }
+body.mn-avorio .mn-section-dark .mn-caption { color: var(--grigio-medio); }
+body.mn-avorio .mn-section-dark .mn-title-hero,
+body.mn-avorio .mn-section-dark .mn-title-section,
+body.mn-avorio .mn-section-dark .mn-title-sub,
+body.mn-avorio .mn-section-dark h3 { color: var(--nero-assoluto); }
+body.mn-avorio .mn-section-dark .mn-label { color: var(--giallo-ferrari); }
+body.mn-avorio .mn-section-dark .mn-micro { color: var(--grigio-medio); }
+body.mn-avorio .mn-section-dark .mn-section-number { color: var(--avorio-scuro); }
+
+/* Stats */
+body.mn-avorio .mn-stat__value { color: var(--nero-assoluto); }
+body.mn-avorio .mn-stat__unit { color: var(--grigio-medio); }
+body.mn-avorio .mn-stat__label { color: var(--grigio-chiaro); }
+
+/* Accent stat values keep their semantic color */
+body.mn-avorio .mn-text-giallo { color: var(--giallo-ferrari); }
+body.mn-avorio .mn-text-verde { color: var(--verde-racing); }
+body.mn-avorio .mn-text-rosso { color: var(--rosso-corsa); }
+
+/* Gauges on light background — deeper bezel shadow */
+body.mn-avorio .mn-gauge__instrument {
+  box-shadow:
+    0 16px 60px rgba(0,0,0,0.3),
+    0 6px 24px rgba(0,0,0,0.2),
+    0 2px 6px rgba(0,0,0,0.15),
+    inset 3px 4px 2px rgba(255,255,255,0.18),
+    inset -2px -3px 4px rgba(0,0,0,0.3),
+    0 0 0 1px rgba(0,0,0,0.2);
+}
+body.mn-avorio .mn-gauge__label { color: var(--grigio-medio); }
+
+/* ── Binnacle → machined aluminum housing ── */
+body.mn-avorio .mn-binnacle {
+  background: linear-gradient(
+    180deg,
+    #e8e3da 0%, #ddd8cf 5%, #d2cdc4 15%,
+    #ccc7be 50%,
+    #d2cdc4 85%, #ddd8cf 95%, #e8e3da 100%
+  );
+  border-color: rgba(0,0,0,0.08);
+  color: var(--nero-assoluto);
+  box-shadow:
+    0 20px 60px rgba(0,0,0,0.10),
+    0 8px 24px rgba(0,0,0,0.06),
+    inset 0 1px 0 rgba(255,255,255,0.6),
+    inset 0 -1px 0 rgba(0,0,0,0.05),
+    inset 0 4px 20px rgba(0,0,0,0.03);
+}
+body.mn-avorio .mn-binnacle__title { color: var(--grigio-medio); }
+body.mn-avorio .mn-binnacle__badge {
+  color: var(--grigio-medio);
+  border-color: var(--grigio-alluminio);
+}
+
+/* Signal panels inside binnacle (on light aluminum bg) */
+body.mn-avorio .mn-binnacle .mn-signal-panel {
+  border-color: var(--grigio-alluminio);
+  background: rgba(0,0,0,0.04);
+}
+body.mn-avorio .mn-binnacle .mn-signal-panel__title { color: var(--nero-assoluto); }
+body.mn-avorio .mn-binnacle .mn-signal-panel__eyebrow { color: var(--grigio-medio); }
+body.mn-avorio .mn-binnacle .mn-gauge__label { color: var(--grigio-medio); }
+
+/* ── Card-dark → light card ── */
+body.mn-avorio .mn-card-dark {
+  background: var(--bianco-puro);
+  color: var(--nero-assoluto);
+  border: 1px solid var(--grigio-ghost);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04);
+}
+body.mn-avorio .mn-card-dark:hover {
+  box-shadow: 0 16px 48px rgba(0,0,0,0.12), 0 6px 16px rgba(0,0,0,0.06);
+}
+body.mn-avorio .mn-card-dark .mn-card__title { color: var(--nero-assoluto); }
+body.mn-avorio .mn-card-dark .mn-card__text { color: var(--grigio-medio); }
+body.mn-avorio .mn-card-dark .mn-card__image { background: var(--avorio-chiaro); }
+body.mn-avorio .mn-card-dark .mn-gauge__label { color: var(--grigio-medio); }
+body.mn-avorio .mn-card-dark .mn-stat__value { color: var(--nero-assoluto); }
+
+/* ── Strip inner → warm ivory display ── */
+body.mn-avorio .mn-strip__inner {
+  background: var(--avorio-chiaro);
+  color: var(--nero-assoluto);
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.06), inset 0 -1px 4px rgba(0,0,0,0.03);
+}
+body.mn-avorio .mn-strip__inner::before { display: none; }
+body.mn-avorio .mn-strip__inner .mn-micro { color: var(--grigio-medio); }
+body.mn-avorio .mn-strip__inner .mn-label { color: var(--grigio-medio); }
+body.mn-avorio .mn-strip__label { color: var(--grigio-medio); }
+body.mn-avorio .mn-strip__value { color: var(--nero-assoluto); }
+body.mn-avorio .mn-strip__dim { color: var(--grigio-medio); }
+body.mn-avorio .mn-bar-track { background: rgba(0,0,0,0.08); }
+body.mn-avorio .mn-bar-metric { color: var(--grigio-medio); }
+body.mn-avorio .mn-strip__board-cell {
+  border-color: var(--grigio-alluminio);
+}
+body.mn-avorio .mn-strip__divider {
+  background: linear-gradient(180deg, transparent, var(--grigio-alluminio), transparent);
+}
+
+/* ── Video card → light ── */
+body.mn-avorio .mn-video-card {
+  background: var(--avorio-chiaro);
+  border-color: var(--grigio-alluminio);
+}
+body.mn-avorio .mn-video-card__label { color: var(--nero-assoluto); }
+body.mn-avorio .mn-video-card__play { background: rgba(0,0,0,0.08); }
+body.mn-avorio .mn-video-card__play::after { border-left-color: var(--nero-assoluto); }
+
+/* ── Tags in dark sections ── */
+body.mn-avorio .mn-section-dark .mn-tag--light {
+  border-color: rgba(0,0,0,0.2);
+  color: var(--nero-assoluto);
+}
+body.mn-avorio .mn-section-dark .mn-tag--light:hover,
+body.mn-avorio .mn-section-dark .mn-tag--light.mn-tag--active {
+  background: var(--nero-assoluto);
+  color: var(--bianco-puro);
+  border-color: var(--nero-assoluto);
+}
+
+/* ── Buttons on light ── */
+body.mn-avorio .mn-section-dark .mn-btn--ghost-light {
+  border-color: rgba(0,0,0,0.2);
+  color: var(--nero-assoluto);
+}
+body.mn-avorio .mn-section-dark .mn-btn--ghost-light:hover {
+  background: var(--nero-assoluto);
+  color: var(--bianco-puro);
+}
+
+/* ── Table ── */
+body.mn-avorio .mn-section-dark .mn-table-wrap { border-color: var(--grigio-alluminio); }
+body.mn-avorio .mn-section-dark .mn-table td { border-color: var(--grigio-ghost); color: var(--nero-assoluto); }
+body.mn-avorio .mn-section-dark .mn-table th { color: var(--grigio-medio); }
+body.mn-avorio .mn-section-dark .mn-table tbody tr:hover { background: var(--avorio-chiaro); }
+
+/* Table cell classes in avorio */
+body.mn-avorio .mn-table__cell-primary { color: var(--nero-assoluto); }
+body.mn-avorio .mn-table__cell-secondary { color: var(--grigio-medio); }
+body.mn-avorio .mn-table__cell-id { color: var(--grigio-medio); }
+body.mn-avorio .mn-table__cell-value { color: var(--nero-assoluto); }
+
+/* ── Signal panels on light (section-level) ── */
+body.mn-avorio .mn-section-dark .mn-signal-panel {
+  border-color: var(--grigio-alluminio);
+  background: rgba(0,0,0,0.03);
+}
+body.mn-avorio .mn-section-dark .mn-signal-panel__title { color: var(--nero-assoluto); }
+body.mn-avorio .mn-section-dark .mn-signal-panel__eyebrow { color: var(--grigio-medio); }
+
+/* ── Nav ── */
+body.mn-avorio .mn-nav {
+  background: rgba(255,255,255,0.85);
+  border-bottom-color: rgba(0,0,0,0.06);
+}
+body.mn-avorio .mn-nav__brand { color: var(--nero-assoluto); }
+body.mn-avorio .mn-nav__link { color: var(--grigio-medio); }
+body.mn-avorio .mn-nav__link:hover,
+body.mn-avorio .mn-nav__link--active { color: var(--nero-assoluto); }
+
+/* ── Gold dividers → avorio ── */
+body.mn-avorio .mn-divider-gold { background: var(--avorio-medio); }
+
+/* ── Accent section → warmer ── */
+body.mn-avorio .mn-section-accent {
+  background: var(--giallo-ferrari);
+  color: var(--nero-assoluto);
+}
+body.mn-avorio .mn-section-accent .mn-watermark { color: rgba(0,0,0,0.08); }
+body.mn-avorio .mn-section-accent .mn-body { color: rgba(0,0,0,0.7); }
+
+/* ── Input on light dark sections ── */
+body.mn-avorio .mn-section-dark .mn-input {
+  background: var(--bianco-puro);
+  border-color: var(--grigio-alluminio);
+  color: var(--nero-assoluto);
+}
+
+/* ── Progress bars on light ── */
+body.mn-avorio .mn-section-dark .mn-progress { background: var(--grigio-ghost); }
+
+/* Status dots keep semantic colors in all themes */
+body.mn-avorio .mn-section-dark .mn-status { color: inherit; }
+} /* end @layer themes */

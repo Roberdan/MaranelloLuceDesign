@@ -1,0 +1,124 @@
+/* ============================================================
+   MARANELLO DESIGN SYSTEM — Sizing & Composition System
+   Custom property scaling, dashboard composition, responsive
+   ============================================================    Version: 1.4.0 (11-March-2026)
+   */
+
+
+/* ── SCALE MULTIPLIER ── */
+:root {
+  --mn-scale: 1;
+}
+.mn-scale-xs  { --mn-scale: 0.75; }
+.mn-scale-sm  { --mn-scale: 0.875; }
+.mn-scale-md  { --mn-scale: 1; }
+.mn-scale-lg  { --mn-scale: 1.25; }
+.mn-scale-xl  { --mn-scale: 1.5; }
+.mn-scale-2xl { --mn-scale: 2; }
+
+/* Scaled gauge sizes */
+.mn-gauge--scaled .mn-gauge__instrument {
+  width: calc(220px * var(--mn-scale));
+  height: calc(220px * var(--mn-scale));
+  padding: calc(12px * var(--mn-scale));
+}
+.mn-gauge--scaled .mn-gauge__instrument--sm {
+  width: calc(180px * var(--mn-scale));
+  height: calc(180px * var(--mn-scale));
+  padding: calc(10px * var(--mn-scale));
+}
+
+/* Scaled pod sizes */
+.mn-pod--scaled {
+  width: calc(80px * var(--mn-scale));
+  height: calc(80px * var(--mn-scale));
+}
+
+/* Scaled typography */
+.mn-text-scaled {
+  font-size: calc(1em * var(--mn-scale));
+}
+
+
+/* ── DASHBOARD COMPOSITION GRID ── */
+.mn-dashboard {
+  display: grid;
+  gap: var(--space-lg);
+  grid-template-columns: repeat(12, 1fr);
+}
+
+.mn-dashboard__cell { min-width: 0; }
+.mn-cell-1  { grid-column: span 1; }
+.mn-cell-2  { grid-column: span 2; }
+.mn-cell-3  { grid-column: span 3; }
+.mn-cell-4  { grid-column: span 4; }
+.mn-cell-5  { grid-column: span 5; }
+.mn-cell-6  { grid-column: span 6; }
+.mn-cell-7  { grid-column: span 7; }
+.mn-cell-8  { grid-column: span 8; }
+.mn-cell-9  { grid-column: span 9; }
+.mn-cell-10 { grid-column: span 10; }
+.mn-cell-11 { grid-column: span 11; }
+.mn-cell-12 { grid-column: span 12; }
+
+/* Row spanning */
+.mn-row-2 { grid-row: span 2; }
+.mn-row-3 { grid-row: span 3; }
+
+@media (max-width: 768px) {
+  .mn-dashboard { grid-template-columns: repeat(4, 1fr); }
+  .mn-cell-3, .mn-cell-4, .mn-cell-5, .mn-cell-6 { grid-column: span 4; }
+  .mn-cell-7, .mn-cell-8, .mn-cell-9, .mn-cell-10,
+  .mn-cell-11, .mn-cell-12 { grid-column: span 4; }
+}
+@media (min-width: 769px) and (max-width: 1024px) {
+  .mn-dashboard { grid-template-columns: repeat(8, 1fr); }
+}
+
+
+/* ── PANEL (composable card container) ── */
+.mn-panel {
+  background: var(--nero-soft);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  box-shadow: var(--shadow-card);
+  color: var(--bianco-caldo);
+  overflow: hidden;
+}
+.mn-panel--glass {
+  background: rgba(26,26,26,0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+.mn-panel--flush { padding: 0; }
+.mn-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: var(--space-md);
+  border-bottom: 1px solid var(--grigio-scuro);
+  margin-bottom: var(--space-md);
+}
+.mn-panel__title {
+  font-family: var(--font-display);
+  font-size: var(--text-micro);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--grigio-chiaro);
+}
+
+body.mn-avorio .mn-panel {
+  background: var(--bianco-puro);
+  color: var(--nero-assoluto);
+  border: 1px solid var(--grigio-ghost);
+}
+body.mn-avorio .mn-panel__header { border-color: var(--grigio-ghost); }
+body.mn-avorio .mn-panel__title { color: var(--grigio-medio); }
+
+
+/* ── ASPECT RATIO HELPERS ── */
+.mn-aspect-1    { aspect-ratio: 1; }
+.mn-aspect-4-3  { aspect-ratio: 4/3; }
+.mn-aspect-16-9 { aspect-ratio: 16/9; }
+.mn-aspect-21-9 { aspect-ratio: 21/9; }

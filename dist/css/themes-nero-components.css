@@ -1,0 +1,127 @@
+@layer themes {
+/* themes — Nero Components | Maranello Design System v1.4.0 */
+
+body.mn-colorblind .mn-tag--success,
+body.mn-colorblind .mn-status--success .mn-status__dot,
+body.mn-colorblind .mn-led--green .mn-led__bulb { background: #0072B2; }
+body.mn-colorblind .mn-tag--danger,
+body.mn-colorblind .mn-status--danger .mn-status__dot,
+body.mn-colorblind .mn-led--red .mn-led__bulb { background: #D55E00; }
+body.mn-colorblind .mn-tag--warning,
+body.mn-colorblind .mn-led--amber .mn-led__bulb { background: #E69F00; }
+
+/* Navigation */
+body.mn-colorblind .mn-sidebar__item--active {
+  color: #0072B2;
+  border-left-color: #0072B2;
+  background: rgba(0, 114, 178, 0.08);
+}
+body.mn-colorblind .mn-nav__link--active,
+body.mn-colorblind .mn-nav__brand-accent { color: #0072B2; }
+
+/* Data viz */
+body.mn-colorblind .mn-treemap__cell { color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.6); }
+
+
+/* ============================================================
+   NERO — Data Table Overrides
+   ============================================================ */
+body.mn-nero .mn-dt { background: var(--nero-profondo); border-color: var(--grigio-scuro); }
+body.mn-nero .mn-dt__header-row { background: var(--nero-carbon); }
+body.mn-nero .mn-dt__th { color: var(--grigio-alluminio); border-bottom-color: var(--grigio-scuro); }
+body.mn-nero .mn-dt__filter-row { background: var(--nero-soft); }
+body.mn-nero .mn-dt__filter-input { background: var(--nero-carbon); border-color: var(--grigio-scuro); color: var(--bianco-caldo); }
+body.mn-nero .mn-dt__filter-input:focus { border-color: var(--giallo-ferrari); }
+body.mn-nero .mn-dt__td { color: var(--grigio-chiaro); }
+body.mn-nero .mn-dt__cell-text { color: var(--bianco-caldo); }
+body.mn-nero .mn-dt__cell-number { color: var(--bianco-caldo); }
+body.mn-nero .mn-dt__cell-date { color: var(--grigio-chiaro); }
+body.mn-nero .mn-dt__row { border-bottom-color: rgba(255,255,255,0.04); }
+body.mn-nero .mn-dt__group-row { background: var(--nero-carbon); border-bottom-color: var(--grigio-scuro); }
+body.mn-nero .mn-dt__group-row:hover { background: var(--nero-soft); }
+body.mn-nero .mn-dt__group-label { color: var(--bianco-caldo); }
+body.mn-nero .mn-dt__group-count { background: var(--grigio-scuro); color: var(--grigio-chiaro); }
+body.mn-nero .mn-dt__avatar { background: var(--grigio-scuro); color: var(--grigio-alluminio); }
+body.mn-nero .mn-dt__pagination { background: var(--nero-carbon); border-top-color: var(--grigio-scuro); }
+body.mn-nero .mn-dt__page-btn { border-color: var(--grigio-scuro); color: var(--grigio-chiaro); }
+body.mn-nero .mn-dt__empty-cell { color: var(--grigio-medio); }
+
+
+/* ============================================================
+   AVORIO — Data Table Overrides
+   ============================================================ */
+body.mn-avorio .mn-dt { background: var(--bianco-puro); border-color: var(--avorio-scuro); color: var(--nero-assoluto); }
+body.mn-avorio .mn-dt__header-row { background: var(--avorio-chiaro); }
+body.mn-avorio .mn-dt__th { color: var(--grigio-medio); border-bottom-color: var(--avorio-scuro); }
+body.mn-avorio .mn-dt__th--sortable:hover { color: var(--rosso-corsa); }
+body.mn-avorio .mn-dt__th--sorted { color: var(--rosso-corsa); }
+body.mn-avorio .mn-dt__filter-row { background: var(--bianco-ghiaccio); }
+body.mn-avorio .mn-dt__filter-cell { border-bottom-color: var(--avorio-scuro); }
+body.mn-avorio .mn-dt__filter-input { background: var(--bianco-puro); border-color: var(--avorio-scuro); color: var(--nero-assoluto); }
+body.mn-avorio .mn-dt__filter-input::placeholder { color: var(--grigio-alluminio); }
+body.mn-avorio .mn-dt__filter-input:focus { border-color: var(--rosso-corsa); box-shadow: 0 0 0 2px rgba(220,0,0,0.12); }
+body.mn-avorio .mn-dt__td { color: var(--nero-assoluto); }
+body.mn-avorio .mn-dt__cell-text { color: var(--nero-assoluto); }
+body.mn-avorio .mn-dt__cell-number { color: var(--nero-assoluto); }
+body.mn-avorio .mn-dt__cell-date { color: var(--grigio-medio); }
+body.mn-avorio .mn-dt__cell-pct { color: var(--grigio-medio); }
+body.mn-avorio .mn-dt__row { border-bottom-color: var(--avorio-scuro); }
+body.mn-avorio .mn-dt--crosshair .mn-dt__row--hovered { background: rgba(220,0,0,0.04); }
+body.mn-avorio .mn-dt__row--selected { background: rgba(220,0,0,0.06); }
+body.mn-avorio .mn-dt__col-highlight { background: rgba(220,0,0,0.03); }
+body.mn-avorio .mn-dt__group-row { background: var(--avorio-chiaro); border-bottom-color: var(--avorio-scuro); }
+body.mn-avorio .mn-dt__group-row:hover { background: var(--avorio-medio); }
+body.mn-avorio .mn-dt__group-label { color: var(--nero-assoluto); }
+body.mn-avorio .mn-dt__group-count { background: var(--avorio-medio); color: var(--grigio-medio); }
+body.mn-avorio .mn-dt__group-chevron { color: var(--grigio-medio); }
+body.mn-avorio .mn-dt__avatar { background: var(--avorio-medio); color: var(--grigio-medio); }
+body.mn-avorio .mn-dt__pagination { background: var(--avorio-chiaro); border-top-color: var(--avorio-scuro); }
+body.mn-avorio .mn-dt__page-info { color: var(--grigio-medio); }
+body.mn-avorio .mn-dt__page-btn { border-color: var(--avorio-scuro); color: var(--grigio-medio); }
+body.mn-avorio .mn-dt__page-btn:hover:not(:disabled) { border-color: var(--rosso-corsa); color: var(--rosso-corsa); }
+body.mn-avorio .mn-dt__empty-cell { color: var(--grigio-alluminio); }
+
+/* Avorio — Accessibility panel */
+body.mn-avorio .mn-a11y-fab { background: var(--rosso-corsa); color: var(--bianco-puro); }
+body.mn-avorio .mn-a11y-panel { background: var(--avorio-chiaro); border-color: var(--avorio-scuro); color: var(--nero-assoluto); }
+body.mn-avorio .mn-a11y-panel__label { color: var(--grigio-medio); }
+body.mn-avorio .mn-a11y-panel__row-label { color: var(--nero-assoluto); }
+body.mn-avorio .mn-a11y-panel__size-btn { border-color: var(--avorio-scuro); color: var(--grigio-medio); }
+body.mn-avorio .mn-a11y-panel__size-btn:hover { border-color: var(--rosso-corsa); color: var(--rosso-corsa); }
+body.mn-avorio .mn-a11y-panel__size-btn--active { background: var(--rosso-corsa); color: var(--bianco-puro); border-color: var(--rosso-corsa); }
+body.mn-avorio .mn-a11y-toggle { background: var(--avorio-scuro, #c4b99a); }
+body.mn-avorio .mn-a11y-toggle--on { background: var(--rosso-corsa); }
+body.mn-avorio .mn-a11y-panel__divider { background: var(--avorio-scuro); }
+body.mn-avorio .mn-a11y-panel__reset { border-color: var(--avorio-scuro); color: var(--grigio-medio); }
+body.mn-avorio .mn-a11y-panel__reset:hover { background: var(--avorio-medio); color: var(--nero-assoluto); }
+
+
+/* ============================================================
+   COLORBLIND — Data Table Overrides
+   ============================================================ */
+body.mn-colorblind .mn-dt__th--sortable:hover { color: #FFB000; }
+body.mn-colorblind .mn-dt__th--sorted { color: #FFB000; }
+body.mn-colorblind .mn-dt__filter-input:focus { border-color: #FFB000; box-shadow: 0 0 0 2px rgba(255,176,0,0.15); }
+body.mn-colorblind .mn-dt--crosshair .mn-dt__row--hovered { background: rgba(255,176,0,0.06); }
+body.mn-colorblind .mn-dt__row--selected { background: rgba(255,176,0,0.10); }
+body.mn-colorblind .mn-dt__col-highlight { background: rgba(255,176,0,0.04); }
+body.mn-colorblind .mn-dt__badge--green { background: #0072B2; }
+body.mn-colorblind .mn-dt__badge--red { background: #D55E00; }
+body.mn-colorblind .mn-dt__badge--yellow { background: #E69F00; }
+body.mn-colorblind .mn-a11y-fab { background: #FFB000; }
+body.mn-colorblind .mn-a11y-toggle--on { background: #FFB000; }
+
+
+/* ============================================================
+   AVORIO — System Status
+   ============================================================ */
+body.mn-avorio .mn-sys-status__pill { background: var(--avorio-chiaro); border-color: var(--avorio-scuro); color: var(--grigio-medio); }
+body.mn-avorio .mn-sys-status__pill:hover { background: var(--avorio-medio); }
+body.mn-avorio .mn-sys-status__version { color: var(--nero-assoluto); }
+body.mn-avorio .mn-sys-status__panel { background: var(--avorio-chiaro); border-color: var(--avorio-scuro); }
+body.mn-avorio .mn-sys-status__header { border-bottom-color: var(--avorio-scuro); }
+body.mn-avorio .mn-sys-status__header-label { color: var(--nero-assoluto); }
+body.mn-avorio .mn-sys-status__service:hover { background: var(--avorio-medio); }
+body.mn-avorio .mn-sys-status__service-name { color: var(--nero-assoluto); }
+body.mn-avorio .mn-sys-status__service-ms { color: var(--grigio-medio); }
+} /* end @layer themes */

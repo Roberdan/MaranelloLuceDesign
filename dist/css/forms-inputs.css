@@ -1,0 +1,233 @@
+@layer forms {
+/* forms — Inputs | Maranello Design System v1.4.0 */
+
+/* ══════════════════════════════════════════════════════════════
+   TEXT INPUT
+   ══════════════════════════════════════════════════════════════ */
+
+.mn-form-input {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  padding: 10px 14px;
+  border: 1.5px solid var(--mn-form-border);
+  border-radius: var(--mn-form-radius);
+  background: var(--mn-form-bg);
+  color: var(--mn-form-text);
+  width: 100%;
+  outline: none;
+  transition: border-color var(--mn-form-transition),
+              box-shadow var(--mn-form-transition),
+              background var(--mn-form-transition);
+  line-height: 1.5;
+}
+.mn-form-input::placeholder {
+  color: var(--mn-form-placeholder);
+}
+.mn-form-input:hover {
+  border-color: var(--grigio-medio);
+}
+.mn-form-input:focus {
+  border-color: var(--mn-form-focus);
+  box-shadow: 0 0 0 3px var(--mn-form-focus-ring);
+}
+.mn-form-input:disabled,
+.mn-form-input[readonly] {
+  background: var(--mn-form-disabled-bg);
+  color: var(--mn-form-disabled-text);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Size variants */
+.mn-form-input--sm {
+  padding: 6px 10px;
+  font-size: var(--text-micro);
+}
+.mn-form-input--lg {
+  padding: 14px 18px;
+  font-size: var(--text-body);
+}
+
+/* With icon prefix/suffix */
+.mn-field__input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.mn-field__input-wrap .mn-form-input {
+  padding-left: 38px;
+}
+.mn-field__input-wrap--suffix .mn-form-input {
+  padding-left: 14px;
+  padding-right: 38px;
+}
+.mn-field__input-icon {
+  position: absolute;
+  left: 12px;
+  width: 18px;
+  height: 18px;
+  color: var(--grigio-medio);
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.mn-field__input-wrap--suffix .mn-field__input-icon {
+  left: auto;
+  right: 12px;
+}
+
+/* Clearable input */
+.mn-field__clear {
+  position: absolute;
+  right: 10px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--grigio-scuro);
+  border: none;
+  color: var(--grigio-chiaro);
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  transition: background 0.15s;
+}
+.mn-field__clear:hover {
+  background: var(--grigio-medio);
+  color: var(--bianco-caldo);
+}
+.mn-form-input:not(:placeholder-shown) ~ .mn-field__clear {
+  display: flex;
+}
+
+
+/* ══════════════════════════════════════════════════════════════
+   VALIDATION STATES
+   ══════════════════════════════════════════════════════════════ */
+
+/* Error state */
+.mn-field--error .mn-form-input,
+.mn-field--error .mn-form-select,
+.mn-field--error .mn-form-textarea {
+  border-color: var(--mn-form-error);
+  background: var(--mn-form-error-bg);
+}
+.mn-field--error .mn-form-input:focus,
+.mn-field--error .mn-form-select:focus,
+.mn-field--error .mn-form-textarea:focus {
+  box-shadow: 0 0 0 3px rgba(220, 0, 0, 0.2);
+}
+.mn-field--error .mn-field__label {
+  color: var(--mn-form-error);
+}
+
+/* Success state */
+.mn-field--success .mn-form-input,
+.mn-field--success .mn-form-select,
+.mn-field--success .mn-form-textarea {
+  border-color: var(--mn-form-success);
+  background: var(--mn-form-success-bg);
+}
+.mn-field--success .mn-form-input:focus,
+.mn-field--success .mn-form-select:focus,
+.mn-field--success .mn-form-textarea:focus {
+  box-shadow: 0 0 0 3px rgba(0, 166, 81, 0.2);
+}
+
+/* Warning state */
+.mn-field--warning .mn-form-input,
+.mn-field--warning .mn-form-select,
+.mn-field--warning .mn-form-textarea {
+  border-color: var(--mn-form-warning);
+  background: var(--mn-form-warning-bg);
+}
+
+
+/* ══════════════════════════════════════════════════════════════
+   TEXTAREA
+   ══════════════════════════════════════════════════════════════ */
+
+.mn-form-textarea {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  padding: 10px 14px;
+  border: 1.5px solid var(--mn-form-border);
+  border-radius: var(--mn-form-radius);
+  background: var(--mn-form-bg);
+  color: var(--mn-form-text);
+  width: 100%;
+  min-height: 100px;
+  resize: vertical;
+  outline: none;
+  transition: border-color var(--mn-form-transition),
+              box-shadow var(--mn-form-transition);
+  line-height: 1.6;
+}
+.mn-form-textarea::placeholder { color: var(--mn-form-placeholder); }
+.mn-form-textarea:hover { border-color: var(--grigio-medio); }
+.mn-form-textarea:focus {
+  border-color: var(--mn-form-focus);
+  box-shadow: 0 0 0 3px var(--mn-form-focus-ring);
+}
+.mn-form-textarea:disabled {
+  background: var(--mn-form-disabled-bg);
+  color: var(--mn-form-disabled-text);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+.mn-form-textarea--auto {
+  resize: none;
+  overflow: hidden;
+}
+
+
+/* ══════════════════════════════════════════════════════════════
+   SELECT DROPDOWN
+   ══════════════════════════════════════════════════════════════ */
+
+.mn-form-select {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  padding: 10px 38px 10px 14px;
+  border: 1.5px solid var(--mn-form-border);
+  border-radius: var(--mn-form-radius);
+  background: var(--mn-form-bg);
+  color: var(--mn-form-text);
+  width: 100%;
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239e9e9e' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  transition: border-color var(--mn-form-transition),
+              box-shadow var(--mn-form-transition);
+}
+.mn-form-select:hover { border-color: var(--grigio-medio); }
+.mn-form-select:focus {
+  border-color: var(--mn-form-focus);
+  box-shadow: 0 0 0 3px var(--mn-form-focus-ring);
+}
+.mn-form-select:disabled {
+  background: var(--mn-form-disabled-bg);
+  color: var(--mn-form-disabled-text);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+.mn-form-select option {
+  background: var(--nero-soft);
+  color: var(--bianco-caldo);
+}
+
+/* Multi-select */
+.mn-form-select[multiple] {
+  padding: var(--space-sm);
+  min-height: 100px;
+  background-image: none;
+}
+
+
+} /* end @layer forms */

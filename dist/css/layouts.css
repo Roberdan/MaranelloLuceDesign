@@ -1,0 +1,21 @@
+/* layouts.css — Maranello Design System v1.4.0 (aggregator) */
+@import "./layouts-chat-login.css";
+@import "./layouts-command-palette.css";
+@import "./layouts-data-table-1.css";
+@import "./layouts-data-table-2.css";
+@import "./layouts-data-table-compact-1.css";
+@import "./layouts-data-table-compact-2.css";
+@import "./layouts-data-table-compact-3.css";
+@import "./layouts-data-table-panel.css";
+@import "./layouts-detail-controls-1.css";
+@import "./layouts-detail-controls-2.css";
+@import "./layouts-detail-panel-base.css";
+@import "./layouts-funnel.css";
+@import "./layouts-horizontal-bar-1.css";
+@import "./layouts-horizontal-bar-2.css";
+@import "./layouts-horizontal-bar-3.css";
+@import "./layouts-notification.css";
+@import "./layouts-org-tree.css";
+@import "./layouts-page-header.css";
+@import "./layouts-sidebar.css";
+@import "./layouts-toolbar-drawer.css";

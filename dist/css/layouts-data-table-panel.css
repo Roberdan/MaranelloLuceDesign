@@ -1,0 +1,80 @@
+@layer layouts {
+/* layouts — Data Table Panel | Maranello Design System v1.4.0 */
+
+/* ── Panel ── */
+.mn-sys-status__panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  min-width: 240px;
+  background: var(--nero-profondo);
+  border: 1px solid var(--grigio-scuro);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-deep);
+  z-index: 9000;
+  display: none;
+  overflow: hidden;
+}
+.mn-sys-status__panel--open {
+  display: block;
+  animation: mn-fade-up 0.2s var(--ease-out);
+}
+
+.mn-sys-status__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  border-bottom: 1px solid var(--grigio-scuro);
+}
+.mn-sys-status__header-label {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-caption);
+  color: var(--bianco-caldo);
+}
+
+.mn-sys-status__services {
+  padding: var(--space-xs) 0;
+}
+.mn-sys-status__service {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-xs) var(--space-md);
+  transition: background 0.15s;
+}
+.mn-sys-status__service:hover {
+  background: var(--nero-soft);
+}
+.mn-sys-status__service-name {
+  flex: 1;
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  color: var(--grigio-chiaro);
+}
+.mn-sys-status__service-ms {
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  color: var(--grigio-medio);
+  min-width: 48px;
+  text-align: right;
+}
+.mn-sys-status__service-ms--down {
+  color: var(--status-danger);
+  font-weight: 600;
+}
+
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .mn-sidebar { width: 0; position: fixed; z-index: 250; }
+  .mn-sidebar--mobile-open { width: 260px; }
+  .mn-detail-panel { width: 100%; }
+  .mn-command-palette { width: 95vw; }
+  .mn-dt__th { font-size: var(--text-nano); padding: 4px var(--space-sm); }
+  .mn-dt__td { padding: 4px var(--space-sm); font-size: var(--text-micro); }
+  .mn-a11y-panel { width: calc(100vw - 2 * var(--space-lg)); right: var(--space-md); }
+}
+
+} /* end @layer layouts */

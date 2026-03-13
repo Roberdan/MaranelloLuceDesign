@@ -1,0 +1,111 @@
+@layer layouts {
+/* layouts — Toolbar Drawer | Maranello Design System v1.4.0 */
+
+/* ── Sticky Toolbar ──────────────────────────────────────── */
+.mn-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-xs) var(--space-md);
+  background: var(--nero-2);
+  border-bottom: 1px solid var(--grigio-4);
+  position: sticky;
+  top: 56px;
+  z-index: 99;
+}
+.mn-toolbar__group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.mn-toolbar__separator {
+  width: 1px;
+  height: 20px;
+  background: var(--grigio-4);
+  margin: 0 var(--space-xs);
+}
+.mn-toolbar__btn {
+  background: none;
+  border: 1px solid transparent;
+  color: var(--grigio-1);
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-body);
+}
+.mn-toolbar__btn:hover {
+  background: var(--nero-3);
+  color: var(--bianco-1);
+}
+.mn-toolbar__btn--active {
+  background: rgba(255, 199, 44, 0.1);
+  color: var(--giallo);
+  border-color: var(--giallo);
+}
+.mn-toolbar__search {
+  flex: 1;
+  max-width: 280px;
+  background: var(--nero-1);
+  border: 1px solid var(--grigio-4);
+  border-radius: 4px;
+  padding: 5px 10px;
+  color: var(--bianco-1);
+  font-size: 0.75rem;
+  font-family: var(--font-body);
+}
+.mn-toolbar__search::placeholder { color: var(--grigio-2); }
+.mn-toolbar__search:focus {
+  border-color: var(--giallo);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(255, 199, 44, 0.2);
+}
+
+/* ── Drawer (mobile sidebar overlay) ─────────────────────── */
+.mn-drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 280px;
+  max-width: 85vw;
+  background: var(--nero-1);
+  z-index: 300;
+  transform: translateX(-100%);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.5);
+}
+.mn-drawer--open { transform: translateX(0); }
+.mn-drawer__backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 299;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+.mn-drawer__backdrop--visible { opacity: 1; pointer-events: auto; }
+.mn-drawer__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-md);
+  border-bottom: 1px solid var(--grigio-4);
+}
+.mn-drawer__close {
+  background: none;
+  border: none;
+  color: var(--grigio-1);
+  cursor: pointer;
+  padding: 6px;
+}
+.mn-drawer__body { flex: 1; overflow-y: auto; padding: var(--space-sm) 0; }
+
+} /* end @layer layouts */

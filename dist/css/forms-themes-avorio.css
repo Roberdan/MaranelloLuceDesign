@@ -1,0 +1,176 @@
+@layer forms {
+/* forms — Themes Avorio | Maranello Design System v1.4.0 */
+
+/* ══════════════════════════════════════════════════════════════
+   PROGRESS INDICATOR (form step / wizard)
+   ══════════════════════════════════════════════════════════════ */
+
+.mn-form-steps {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: var(--space-xl);
+}
+.mn-form-step {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  flex: 1;
+  position: relative;
+}
+.mn-form-step__number {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--grigio-scuro);
+  color: var(--grigio-chiaro);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: var(--text-micro);
+  font-weight: 600;
+  flex-shrink: 0;
+  transition: all 0.3s;
+}
+.mn-form-step__label {
+  font-family: var(--font-body);
+  font-size: var(--text-micro);
+  color: var(--grigio-medio);
+  white-space: nowrap;
+}
+.mn-form-step__line {
+  flex: 1;
+  height: 2px;
+  background: var(--grigio-scuro);
+  margin: 0 var(--space-sm);
+  transition: background 0.3s;
+}
+.mn-form-step--active .mn-form-step__number {
+  background: var(--giallo-ferrari);
+  color: var(--nero-assoluto);
+  box-shadow: 0 0 12px rgba(255, 199, 44, 0.3);
+}
+.mn-form-step--active .mn-form-step__label {
+  color: var(--giallo-ferrari);
+}
+.mn-form-step--complete .mn-form-step__number {
+  background: var(--verde-racing);
+  color: var(--bianco-puro);
+}
+.mn-form-step--complete .mn-form-step__line {
+  background: var(--verde-racing);
+}
+.mn-form-step--complete .mn-form-step__label {
+  color: var(--verde-racing);
+}
+
+
+/* ══════════════════════════════════════════════════════════════
+   AVORIO THEME OVERRIDES
+   ══════════════════════════════════════════════════════════════ */
+
+body.mn-avorio {
+  --mn-form-bg: var(--bianco-puro);
+  --mn-form-border: var(--grigio-alluminio);
+  --mn-form-text: var(--nero-assoluto);
+  --mn-form-placeholder: var(--grigio-chiaro);
+  --mn-form-label: var(--grigio-medio);
+  --mn-form-focus: var(--rosso-corsa);
+  --mn-form-focus-ring: rgba(220, 0, 0, 0.15);
+  --mn-form-disabled-bg: var(--bianco-ghiaccio);
+  --mn-form-disabled-text: var(--grigio-alluminio);
+}
+
+body.mn-avorio .mn-form__section-title {
+  color: var(--rosso-corsa);
+  border-bottom-color: var(--grigio-alluminio);
+}
+body.mn-avorio .mn-form__actions {
+  border-top-color: var(--grigio-alluminio);
+}
+body.mn-avorio .mn-form-btn--secondary {
+  color: var(--nero-assoluto);
+  border-color: var(--grigio-alluminio);
+}
+body.mn-avorio .mn-form-btn--secondary:hover {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: var(--grigio-medio);
+}
+body.mn-avorio .mn-form-btn--ghost {
+  color: var(--grigio-medio);
+}
+body.mn-avorio .mn-form-btn--ghost:hover {
+  background: rgba(0, 0, 0, 0.04);
+  color: var(--nero-assoluto);
+}
+body.mn-avorio .mn-checkbox input:checked + .mn-checkbox__box {
+  background: var(--rosso-corsa);
+  border-color: var(--rosso-corsa);
+}
+body.mn-avorio .mn-radio input:checked + .mn-radio__circle {
+  border-color: var(--rosso-corsa);
+}
+body.mn-avorio .mn-radio__dot {
+  background: var(--rosso-corsa);
+}
+body.mn-avorio .mn-form-toggle input:checked + .mn-form-toggle__track {
+  background: var(--rosso-corsa);
+}
+body.mn-avorio .mn-form-toggle input:checked + .mn-form-toggle__track .mn-form-toggle__thumb {
+  background: var(--bianco-puro);
+}
+body.mn-avorio .mn-tag-input__chip {
+  background: rgba(220, 0, 0, 0.08);
+  border-color: rgba(220, 0, 0, 0.2);
+  color: var(--rosso-corsa);
+}
+body.mn-avorio .mn-file-upload:hover,
+body.mn-avorio .mn-file-upload--dragover {
+  border-color: var(--rosso-corsa);
+  background: rgba(220, 0, 0, 0.03);
+}
+body.mn-avorio .mn-file-upload__text strong {
+  color: var(--rosso-corsa);
+}
+body.mn-avorio .mn-form-range::-webkit-slider-thumb {
+  background: var(--rosso-corsa);
+}
+body.mn-avorio .mn-form-range::-moz-range-thumb {
+  background: var(--rosso-corsa);
+}
+body.mn-avorio .mn-form-input[type="date"],
+body.mn-avorio .mn-form-input[type="datetime-local"],
+body.mn-avorio .mn-form-input[type="time"] {
+  color-scheme: light;
+}
+body.mn-avorio .mn-form-input[type="date"]::-webkit-calendar-picker-indicator,
+body.mn-avorio .mn-form-input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  filter: none;
+}
+body.mn-avorio .mn-form-card {
+  border-color: var(--grigio-alluminio);
+  background: rgba(0, 0, 0, 0.02);
+}
+body.mn-avorio .mn-form-card__title {
+  color: var(--nero-assoluto);
+}
+body.mn-avorio .mn-form-step__number {
+  background: var(--grigio-alluminio);
+  color: var(--grigio-medio);
+}
+body.mn-avorio .mn-form-step--active .mn-form-step__number {
+  background: var(--rosso-corsa);
+  color: var(--bianco-puro);
+  box-shadow: 0 0 12px rgba(220, 0, 0, 0.2);
+}
+body.mn-avorio .mn-form-step--active .mn-form-step__label {
+  color: var(--rosso-corsa);
+}
+body.mn-avorio .mn-inline-edit:hover {
+  background: rgba(0, 0, 0, 0.03);
+  border-color: var(--grigio-alluminio);
+}
+
+
+} /* end @layer forms */

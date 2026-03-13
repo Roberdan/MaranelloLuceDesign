@@ -158,7 +158,7 @@ class MnChart extends HTMLElement {
 
     const data = this._parseJSON('data', []);
     const opts = this._parseJSON('options', {});
-    this._ctrl = factory(this._canvas, { ...opts, data, width: w, height: h });
+    this._ctrl = factory(this._canvas, data, { ...opts, width: w, height: h });
 
     this.dispatchEvent(new CustomEvent('mn-chart-ready', { bubbles: true, composed: true }));
   }

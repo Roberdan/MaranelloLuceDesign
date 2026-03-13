@@ -1,0 +1,16 @@
+/** Build the default chart color series from CSS custom properties. */
+export declare function buildSeries(): string[];
+export declare const SERIES: string[];
+/** Set up a hi-DPI canvas and return its 2D context. */
+export declare function chartHiDpi(canvas: HTMLCanvasElement, w: number, h: number): CanvasRenderingContext2D;
+/** Get usable dimensions from canvas parent or data attributes. */
+export declare function getCanvasSize(canvas: HTMLCanvasElement, defaultW?: number, defaultH?: number): {
+    width: number;
+    height: number;
+};
+/** Parse a hex color to rgba string with given alpha. */
+export declare function hexToRgba(hex: string, alpha: number): string;
+/** Create a vertical gradient from a hex color (top alpha to bottom 0). */
+export declare function hexFillGradient(ctx: CanvasRenderingContext2D, hex: string, h: number, opacity: number): CanvasGradient;
+/** Draw a smooth bezier curve through data points. */
+export declare function drawSmoothLine(ctx: CanvasRenderingContext2D, data: number[], getX: (i: number) => number, getY: (v: number) => number, smooth: boolean): void;

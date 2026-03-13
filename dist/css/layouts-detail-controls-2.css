@@ -1,0 +1,208 @@
+@layer layouts {
+/* layouts — Detail Controls 2 | Maranello Design System v1.4.0 */
+
+/* ── Skeleton loading ── */
+.mn-detail-panel__skeleton {
+  background: linear-gradient(90deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 100%);
+  background-size: 200% 100%;
+  animation: mn-skeleton-shimmer 1.5s ease-in-out infinite;
+  border-radius: 3px;
+}
+.mn-detail-panel__skeleton--title { height: 12px; width: 100px; margin-bottom: 8px; }
+.mn-detail-panel__skeleton--label { height: 12px; width: 80px; }
+.mn-detail-panel__skeleton--value { height: 12px; width: 120px; }
+@keyframes mn-skeleton-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── Date Picker ── */
+.mn-date-picker {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 400;
+  background: var(--nero-1, #111);
+  border: 1px solid var(--grigio-4, #333);
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+  width: 260px;
+  font-family: var(--font-body);
+}
+.mn-date-picker__nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.mn-date-picker__nav-btn {
+  background: none;
+  border: none;
+  color: var(--grigio-1);
+  cursor: pointer;
+  font-size: 0.65rem;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.1s;
+}
+.mn-date-picker__nav-btn:hover {
+  background: rgba(255,255,255,0.06);
+  color: var(--bianco-1);
+}
+.mn-date-picker__month-title {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--bianco-1);
+}
+.mn-date-picker__days-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  margin-bottom: 4px;
+}
+.mn-date-picker__day-name {
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  font-weight: 600;
+  color: var(--grigio-2);
+  text-transform: uppercase;
+  padding: 2px 0;
+}
+.mn-date-picker__grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+.mn-date-picker__day {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: none;
+  color: var(--bianco-1);
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  cursor: pointer;
+  transition: all 0.1s;
+}
+.mn-date-picker__day:hover:not(.mn-date-picker__day--disabled):not(.mn-date-picker__day--empty) {
+  background: rgba(255,199,44,0.12);
+  color: var(--mn-accent);
+}
+.mn-date-picker__day--empty {
+  cursor: default;
+}
+.mn-date-picker__day--today {
+  border: 1.5px solid var(--rosso-corsa, #DC0000);
+  font-weight: 700;
+}
+.mn-date-picker__day--selected {
+  background: var(--mn-accent) !important;
+  color: var(--nero-assoluto) !important;
+  font-weight: 700;
+}
+.mn-date-picker__day--disabled {
+  opacity: 0.25;
+  cursor: not-allowed;
+}
+.mn-date-picker__today-btn {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  padding: 6px;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 4px;
+  background: none;
+  color: var(--grigio-1);
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.mn-date-picker__today-btn:hover {
+  background: rgba(255,199,44,0.08);
+  color: var(--mn-accent);
+  border-color: rgba(255,199,44,0.2);
+}
+
+/* Avorio theme overrides */
+body.mn-avorio .mn-detail-panel__avatar { background: rgba(220,0,0,0.1); color: var(--rosso-corsa); }
+body.mn-avorio .mn-detail-panel__score-btn:hover { background: rgba(220,0,0,0.08); color: var(--rosso-corsa); }
+body.mn-avorio .mn-detail-panel__tab--active { color: var(--rosso-corsa); border-bottom-color: var(--rosso-corsa); }
+body.mn-avorio .mn-date-picker { background: var(--avorio-chiaro, #faf8f2); border-color: var(--avorio-scuro); }
+body.mn-avorio .mn-date-picker__month-title { color: var(--nero-assoluto); }
+body.mn-avorio .mn-date-picker__day { color: var(--nero-assoluto); }
+body.mn-avorio .mn-date-picker__day:hover:not(.mn-date-picker__day--disabled):not(.mn-date-picker__day--empty) { background: rgba(220,0,0,0.08); color: var(--rosso-corsa); }
+body.mn-avorio .mn-date-picker__day--selected { background: var(--rosso-corsa) !important; color: #fff !important; }
+body.mn-avorio .mn-detail-panel__person-results { background: var(--avorio-chiaro); border-color: var(--avorio-scuro); }
+body.mn-avorio .mn-detail-panel__person-result { color: var(--nero-assoluto); }
+body.mn-avorio .mn-detail-panel__person-result:hover { background: rgba(220,0,0,0.06); }
+body.mn-avorio .mn-detail-panel__action-btn { border-color: rgba(0,0,0,0.1); color: var(--grigio-alluminio); }
+body.mn-avorio .mn-detail-panel__action-btn:hover { background: rgba(0,0,0,0.04); color: var(--nero-assoluto); }
+body.mn-avorio .mn-detail-panel__save-btn { background: rgba(0,166,81,0.08); color: var(--verde-racing); }
+body.mn-avorio .mn-detail-panel__toast--info { background: rgba(220,0,0,0.06); border-color: rgba(220,0,0,0.15); color: var(--rosso-corsa); }
+body.mn-avorio .mn-detail-panel__skeleton {
+  background: linear-gradient(90deg, rgba(0,0,0,0.03) 0%, rgba(0,0,0,0.06) 50%, rgba(0,0,0,0.03) 100%);
+  background-size: 200% 100%;
+}
+body.mn-avorio .mn-detail-panel__score-stepper { border-color: var(--grigio-alluminio); }
+body.mn-avorio .mn-detail-panel__score-btn { background: rgba(0,0,0,0.04); color: var(--grigio-alluminio); }
+body.mn-avorio .mn-detail-panel__score-value { color: var(--nero-assoluto); border-color: var(--grigio-alluminio); }
+body.mn-avorio .mn-detail-panel__tab { color: var(--grigio-alluminio); }
+body.mn-avorio .mn-detail-panel__tab:hover { color: var(--nero-assoluto); }
+body.mn-avorio .mn-detail-panel__person-email { color: var(--grigio-medio); }
+body.mn-avorio .mn-date-picker__nav-btn { color: var(--grigio-alluminio); }
+body.mn-avorio .mn-date-picker__nav-btn:hover { background: rgba(0,0,0,0.04); color: var(--nero-assoluto); }
+body.mn-avorio .mn-date-picker__day-name { color: var(--grigio-medio); }
+body.mn-avorio .mn-date-picker__today-btn { border-color: rgba(0,0,0,0.1); color: var(--grigio-alluminio); }
+body.mn-avorio .mn-date-picker__today-btn:hover { background: rgba(220,0,0,0.06); color: var(--rosso-corsa); border-color: rgba(220,0,0,0.2); }
+
+/* Nero theme overrides */
+body.mn-nero .mn-detail-panel__person-results { background: var(--nero-profondo); border-color: var(--grigio-scuro); }
+body.mn-nero .mn-date-picker { background: var(--nero-profondo); border-color: var(--grigio-scuro); }
+body.mn-nero .mn-detail-panel__skeleton {
+  background: linear-gradient(90deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.05) 50%, rgba(255,255,255,0.02) 100%);
+  background-size: 200% 100%;
+}
+body.mn-nero .mn-detail-panel__score-stepper { border-color: var(--grigio-scuro); }
+body.mn-nero .mn-detail-panel__score-btn { background: rgba(255,255,255,0.03); color: var(--grigio-chiaro); }
+body.mn-nero .mn-detail-panel__score-value { color: var(--bianco-caldo); border-color: var(--grigio-scuro); }
+body.mn-nero .mn-detail-panel__tab { color: var(--grigio-chiaro); }
+body.mn-nero .mn-detail-panel__tab:hover { color: var(--bianco-puro); }
+body.mn-nero .mn-detail-panel__tab--active { color: var(--giallo-ferrari); border-bottom-color: var(--giallo-ferrari); }
+body.mn-nero .mn-date-picker__day { color: var(--bianco-caldo); }
+body.mn-nero .mn-date-picker__nav-btn { color: var(--grigio-chiaro); }
+body.mn-nero .mn-date-picker__day-name { color: var(--grigio-medio); }
+body.mn-nero .mn-detail-panel__action-btn { border-color: var(--grigio-scuro); color: var(--grigio-chiaro); }
+body.mn-nero .mn-detail-panel__action-btn:hover { background: var(--nero-soft); color: var(--bianco-puro); }
+.mn-detail-panel__footer {
+  padding: var(--space-md) var(--space-lg);
+  border-top: 1px solid var(--grigio-4);
+  display: flex;
+  gap: var(--space-sm);
+}
+
+/* Backdrop for detail panel */
+.mn-detail-panel__backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1099;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+.mn-detail-panel__backdrop--visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+} /* end @layer layouts */

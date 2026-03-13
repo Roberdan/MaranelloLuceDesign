@@ -1,0 +1,175 @@
+@layer charts {
+/* charts — Heatmap Funnel Flip | Maranello Design System v1.4.0 */
+
+/* ── HEATMAP ── */
+.mn-heatmap {
+  display: grid;
+  gap: 2px;
+  font-size: 0.6rem;
+}
+.mn-heatmap__cell {
+  aspect-ratio: 1;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s;
+  cursor: pointer;
+  color: rgba(255,255,255,0.7);
+  font-weight: 500;
+}
+.mn-heatmap__cell:hover {
+  transform: scale(1.15);
+  z-index: 2;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+/* Intensity levels */
+.mn-heatmap__cell--0 { background: rgba(200,200,200,0.05); color: #555; }
+.mn-heatmap__cell--1 { background: rgba(0,166,81,0.2); }
+.mn-heatmap__cell--2 { background: rgba(0,166,81,0.4); }
+.mn-heatmap__cell--3 { background: rgba(255,199,44,0.4); }
+.mn-heatmap__cell--4 { background: rgba(255,199,44,0.65); }
+.mn-heatmap__cell--5 { background: rgba(220,0,0,0.5); }
+.mn-heatmap__cell--6 { background: rgba(220,0,0,0.75); }
+.mn-heatmap__row-label,
+.mn-heatmap__col-label {
+  font-size: 0.55rem;
+  color: #9e9e9e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+/* ── FUNNEL ── */
+.mn-funnel {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-width: 360px;
+}
+.mn-funnel__stage {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border-radius: 4px;
+  transition: transform 0.2s;
+  cursor: pointer;
+  position: relative;
+}
+.mn-funnel__stage:hover {
+  transform: translateX(4px);
+}
+.mn-funnel__stage-bar {
+  height: 28px;
+  border-radius: 3px;
+  transition: width 0.8s cubic-bezier(0.22,1,0.36,1);
+}
+.mn-funnel__stage-label {
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: #fafafa;
+  min-width: 80px;
+}
+.mn-funnel__stage-value {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--giallo-ferrari);
+}
+.mn-funnel__stage-pct {
+  font-size: 0.6rem;
+  color: #9e9e9e;
+  margin-left: auto;
+}
+
+
+/* ── FLIP COUNTER / ODOMETER ── */
+.mn-flip-counter {
+  display: inline-flex;
+  gap: 3px;
+  align-items: center;
+}
+.mn-flip-counter__digit {
+  position: relative;
+  width: 36px;
+  height: 52px;
+  background: linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 49.5%, #000 50%, #111 100%);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.04),
+    0 2px 8px rgba(0,0,0,0.4);
+}
+.mn-flip-counter__digit::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(0,0,0,0.6);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.03);
+  z-index: 2;
+}
+.mn-flip-counter__digit-inner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.5s cubic-bezier(0.33,1,0.68,1);
+}
+.mn-flip-counter__digit-face {
+  flex-shrink: 0;
+  width: 100%;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #fafafa;
+  letter-spacing: -0.02em;
+}
+/* Separator (colon, dot, comma) */
+.mn-flip-counter__sep {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #616161;
+  margin: 0 2px;
+  line-height: 52px;
+}
+/* Small variant */
+.mn-flip-counter--sm .mn-flip-counter__digit {
+  width: 24px;
+  height: 36px;
+}
+.mn-flip-counter--sm .mn-flip-counter__digit-face {
+  height: 36px;
+  font-size: 1.2rem;
+}
+.mn-flip-counter--sm .mn-flip-counter__sep {
+  font-size: 1rem;
+  line-height: 36px;
+}
+/* Large variant */
+.mn-flip-counter--lg .mn-flip-counter__digit {
+  width: 48px;
+  height: 68px;
+}
+.mn-flip-counter--lg .mn-flip-counter__digit-face {
+  height: 68px;
+  font-size: 2.4rem;
+}
+.mn-flip-counter--lg .mn-flip-counter__sep {
+  font-size: 1.8rem;
+  line-height: 68px;
+}
+
+
+} /* end @layer charts */

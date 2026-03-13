@@ -1,0 +1,121 @@
+/* Maranello Design System — Local Fonts v1.4.0 */
+
+/* Outfit */
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url(QGYvz_MVcBeNP4N5tkFtc4A.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(QGYvz_MVcBeNP4N5tkFtc4A.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(QGYvz_MVcBeNP4N5tkFtc4A.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url(QGYvz_MVcBeNP4N5tkFtc4A.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(QGYvz_MVcBeNP4N5tkFtc4A.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url(QGYvz_MVcBeNP4N5tkFtc4A.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url(QGYvz_MVcBeNP4N5tkFtc4A.woff2) format('woff2');
+}
+
+
+/* Inter */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url(UcC73FwrK3iLTeHuS_nVMrMxCp50SjIq15j8eUY.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(UcC73FwrK3iLTeHuS_nVMrMxCp50SjIq15j8eUY.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(UcC73FwrK3iLTeHuS_nVMrMxCp50SjIq15j8eUY.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url(UcC73FwrK3iLTeHuS_nVMrMxCp50SjIq15j8eUY.woff2) format('woff2');
+}
+
+
+/* Barlow Condensed */
+@font-face {
+  font-family: 'Barlow Condensed';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url(HTxwL3I-JCGChYJ8VI-L6OO_au7B47rx_3TcvqED.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Barlow Condensed';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(HTx3L3I-JCGChYJ8VI-L6OO_au7B2xPZ3Xn2.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Barlow Condensed';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(HTxwL3I-JCGChYJ8VI-L6OO_au7B4-Lw_3TcvqED.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Barlow Condensed';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url(HTxwL3I-JCGChYJ8VI-L6OO_au7B4873_3TcvqED.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Barlow Condensed';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(HTxwL3I-JCGChYJ8VI-L6OO_au7B46r2_3TcvqED.woff2) format('woff2');
+}

@@ -1,0 +1,125 @@
+@layer themes {
+/* themes — Nero Layouts | Maranello Design System v1.4.0 */
+
+/* ============================================================
+   NERO MODE — Layout Component Overrides
+   Detail panel, command palette, sidebar, toolbar, notifications
+   ============================================================ */
+
+/* Page header */
+body.mn-nero .mn-page-header { background: var(--nero-profondo); border-bottom-color: var(--grigio-scuro); }
+body.mn-nero .mn-page-header__title { color: var(--bianco-caldo); }
+body.mn-nero .mn-page-header__subtitle { color: var(--grigio-medio); }
+body.mn-nero .mn-page-header__action { color: var(--grigio-chiaro); }
+body.mn-nero .mn-page-header__action:hover { background: var(--nero-soft); color: var(--bianco-puro); }
+
+/* Sidebar */
+body.mn-nero .mn-sidebar { background: var(--nero-profondo); border-right-color: var(--grigio-scuro); }
+body.mn-nero .mn-sidebar__header { border-bottom-color: var(--grigio-scuro); }
+body.mn-nero .mn-sidebar__brand { color: var(--bianco-caldo); }
+body.mn-nero .mn-sidebar__group-label { color: var(--grigio-medio); }
+body.mn-nero .mn-sidebar__item { color: var(--grigio-chiaro); }
+body.mn-nero .mn-sidebar__item:hover { background: var(--nero-soft); color: var(--bianco-puro); }
+body.mn-nero .mn-sidebar__item--active { color: var(--giallo-ferrari); border-left-color: var(--giallo-ferrari); }
+body.mn-nero .mn-sidebar__footer { border-top-color: var(--grigio-scuro); }
+
+/* Detail panel */
+body.mn-nero .mn-detail-panel { background: var(--nero-profondo); border-left-color: var(--grigio-scuro); }
+body.mn-nero .mn-detail-panel__header { border-bottom-color: var(--grigio-scuro); }
+body.mn-nero .mn-detail-panel__title { color: var(--bianco-caldo); }
+body.mn-nero .mn-detail-panel__close { color: var(--grigio-chiaro); }
+body.mn-nero .mn-detail-panel__close:hover { background: var(--nero-soft); color: var(--bianco-puro); }
+body.mn-nero .mn-detail-panel__section-title { color: var(--grigio-medio); }
+body.mn-nero .mn-detail-panel__field { border-bottom-color: var(--grigio-scuro); }
+body.mn-nero .mn-detail-panel__field-label { color: var(--grigio-chiaro); }
+body.mn-nero .mn-detail-panel__field-value { color: var(--bianco-puro); }
+body.mn-nero .mn-detail-panel__footer { border-top-color: var(--grigio-scuro); }
+
+/* Command palette */
+body.mn-nero .mn-command-palette { background: var(--nero-profondo); border-color: var(--grigio-scuro); }
+body.mn-nero .mn-command-palette__input-wrap { border-bottom-color: var(--grigio-scuro); }
+body.mn-nero .mn-command-palette__icon { color: var(--grigio-medio); }
+body.mn-nero .mn-command-palette__input { color: var(--bianco-puro); }
+body.mn-nero .mn-command-palette__input::placeholder { color: var(--grigio-medio); }
+body.mn-nero .mn-command-palette__item:hover,
+body.mn-nero .mn-command-palette__item--active { background: var(--nero-soft); }
+body.mn-nero .mn-command-palette__item-icon { color: var(--grigio-medio); }
+body.mn-nero .mn-command-palette__item-text { color: var(--bianco-caldo); }
+body.mn-nero .mn-command-palette__item-shortcut { color: var(--grigio-medio); background: var(--nero-carbon); border-color: var(--grigio-scuro); }
+body.mn-nero .mn-command-palette__footer { border-top-color: var(--grigio-scuro); color: var(--grigio-medio); }
+
+/* Toolbar */
+body.mn-nero .mn-toolbar { background: var(--nero-carbon); border-bottom-color: var(--grigio-scuro); }
+body.mn-nero .mn-toolbar__btn { color: var(--grigio-chiaro); }
+body.mn-nero .mn-toolbar__btn:hover { background: var(--nero-soft); color: var(--bianco-puro); }
+body.mn-nero .mn-toolbar__btn--active { color: var(--giallo-ferrari); border-color: var(--giallo-ferrari); }
+body.mn-nero .mn-toolbar__search { background: var(--nero-profondo); border-color: var(--grigio-scuro); color: var(--bianco-puro); }
+body.mn-nero .mn-toolbar__search::placeholder { color: var(--grigio-medio); }
+body.mn-nero .mn-toolbar__search:focus { border-color: var(--giallo-ferrari); }
+
+/* Notification center */
+body.mn-nero .mn-notification-center { background: var(--nero-profondo); border-left-color: var(--grigio-scuro); }
+body.mn-nero .mn-notification-center__header { border-bottom-color: var(--grigio-scuro); }
+body.mn-nero .mn-notification-center__title { color: var(--grigio-chiaro); }
+body.mn-nero .mn-notification-center__item { border-bottom-color: var(--grigio-scuro); }
+body.mn-nero .mn-notification-center__item:hover { background: var(--nero-soft); }
+body.mn-nero .mn-notification-center__item--unread { background: rgba(255, 199, 44, 0.04); }
+body.mn-nero .mn-notification-center__item-title { color: var(--bianco-caldo); }
+body.mn-nero .mn-notification-center__item-icon { color: var(--giallo-ferrari); }
+
+/* Drawer */
+body.mn-nero .mn-drawer { background: var(--nero-profondo); }
+body.mn-nero .mn-drawer__header { border-bottom-color: var(--grigio-scuro); }
+body.mn-nero .mn-drawer__close { color: var(--grigio-chiaro); }
+
+/* Split layout */
+body.mn-nero .mn-split-layout__main { background: var(--nero-carbon); }
+
+/* Org tree */
+body.mn-nero .mn-org-tree { color: var(--bianco-caldo); }
+body.mn-nero .mn-org-tree__node:hover { background: var(--nero-soft); }
+body.mn-nero .mn-org-tree__node--active { color: var(--giallo-ferrari); background: rgba(255, 199, 44, 0.08); }
+body.mn-nero .mn-org-tree__meta { color: var(--grigio-medio); }
+body.mn-nero .mn-org-tree__toggle { color: var(--grigio-medio); }
+
+/* Drill down */
+body.mn-nero .mn-drill-down { color: var(--grigio-chiaro); }
+body.mn-nero .mn-drill-down:hover { background: var(--nero-soft); color: var(--bianco-puro); }
+
+
+/* ============================================================
+   NERO + AVORIO — Form Overrides
+   ============================================================ */
+
+body.mn-nero {
+  --mn-form-bg: var(--nero-profondo);
+  --mn-form-border: var(--grigio-scuro);
+  --mn-form-text: var(--bianco-caldo);
+  --mn-form-placeholder: var(--grigio-medio);
+  --mn-form-label: var(--grigio-alluminio);
+  --mn-form-focus: var(--giallo-ferrari);
+  --mn-form-focus-ring: rgba(255, 199, 44, 0.25);
+  --mn-form-disabled-bg: rgba(255, 255, 255, 0.02);
+  --mn-form-disabled-text: var(--grigio-scuro);
+}
+
+body.mn-avorio {
+  --mn-form-bg: var(--bianco-puro);
+  --mn-form-border: var(--grigio-alluminio);
+  --mn-form-text: var(--nero-assoluto);
+  --mn-form-placeholder: var(--grigio-medio);
+  --mn-form-label: var(--grigio-medio);
+  --mn-form-focus: var(--rosso-corsa);
+  --mn-form-focus-ring: rgba(220, 0, 0, 0.15);
+  --mn-form-disabled-bg: var(--avorio-chiaro);
+  --mn-form-disabled-text: var(--grigio-medio);
+}
+body.mn-avorio .mn-form__section-title {
+  color: var(--rosso-corsa);
+  border-bottom-color: var(--grigio-alluminio);
+}
+body.mn-avorio .mn-form__actions { border-top-color: var(--grigio-alluminio); }
+
+
+/* ============================================================
+} /* end @layer themes */

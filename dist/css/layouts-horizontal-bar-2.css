@@ -1,0 +1,224 @@
+@layer layouts {
+/* layouts — Horizontal Bar 2 | Maranello Design System v1.4.0 */
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--bianco-caldo);
+}
+.mn-okr__summary-threshold {
+  font-size: var(--text-micro);
+  color: var(--grigio-medio);
+}
+.mn-okr__body {
+  display: grid;
+  gap: var(--space-md);
+}
+.mn-okr__hero {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0));
+  border: 1px solid var(--grigio-scuro);
+  border-radius: var(--radius-lg);
+  background-color: var(--nero-soft);
+  padding: var(--space-xl) var(--space-lg);
+  display: grid;
+  grid-template-columns: minmax(200px, 260px) 1fr;
+  align-items: center;
+  gap: clamp(var(--space-md), 3vw, var(--space-xl));
+  position: relative;
+  overflow: hidden;
+}
+.mn-okr__hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 30% 80%, rgba(255,199,44,0.04), transparent 70%);
+  pointer-events: none;
+}
+.mn-okr__gauge-wrap {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  position: relative;
+}
+.mn-okr__gauge {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+.mn-okr__gauge-value {
+  font-family: var(--font-mono);
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  text-shadow: 0 0 30px rgba(255,199,44,0.25);
+  margin-top: -12px;
+}
+.mn-okr__average {
+  display: grid;
+  gap: 8px;
+  align-content: center;
+}
+.mn-okr__average-label {
+  font-size: var(--text-caption);
+  color: var(--grigio-chiaro);
+}
+.mn-okr__average-value {
+  font-family: var(--font-mono);
+  font-size: clamp(2rem, 4.4vw, 3.4rem);
+  line-height: 0.95;
+  letter-spacing: 0.01em;
+  color: var(--bianco-puro);
+  text-shadow: 0 0 24px rgba(255, 255, 255, 0.1);
+}
+.mn-okr__status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-self: start;
+  padding: 5px 14px;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: color-mix(in srgb, var(--badge-color, #00A651) 18%, transparent);
+  border: 1px solid color-mix(in srgb, var(--badge-color, #00A651) 50%, transparent);
+  color: var(--badge-color, #00A651);
+}
+.mn-okr__period-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-self: start;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--grigio-scuro);
+  background: rgba(255, 255, 255, 0.02);
+  padding: 6px 12px;
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--grigio-chiaro);
+}
+.mn-okr__ring {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+.mn-okr__ring-track,
+.mn-okr__ring-track--overall {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.1);
+}
+.mn-okr__ring-progress,
+.mn-okr__ring-progress--overall {
+  fill: none;
+  stroke-linecap: round;
+  transform-origin: center;
+  transform: rotate(-90deg);
+  transition: stroke-dashoffset 900ms cubic-bezier(0.2, 1, 0.2, 1), stroke 300ms ease;
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.15));
+}
+.mn-okr__ring-text {
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  font-weight: 700;
+  fill: var(--bianco-puro);
+}
+.mn-okr__objectives {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: var(--space-md);
+}
+.mn-okr__objective {
+  background: var(--nero-soft);
+  border: 1px solid var(--grigio-scuro);
+  border-left: 3px solid var(--mn-okr-status, #00A651);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  display: grid;
+  gap: var(--space-md);
+  box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.08);
+  transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+  animation: mn-okr-card-rise 360ms var(--ease-out) both;
+}
+.mn-okr__objective:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+.mn-okr__objective-header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--space-sm);
+  align-items: center;
+}
+.mn-okr__objective-main {
+  display: grid;
+  gap: 8px;
+}
+.mn-okr__scope-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-self: start;
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--mn-okr-scope, #4EA8DE) 20%, transparent);
+  border: 1px solid color-mix(in srgb, var(--mn-okr-scope, #4EA8DE) 52%, transparent);
+  color: var(--mn-okr-scope, #4EA8DE);
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+}
+.mn-okr__objective-title {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.4;
+  color: var(--bianco-caldo);
+}
+.mn-okr__objective-ring-wrap {
+  width: 56px;
+  height: 56px;
+}
+.mn-okr__objective-ring-wrap .mn-okr__ring-text {
+  font-size: 0.62rem;
+}
+.mn-okr__kr-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 10px;
+}
+.mn-okr__kr {
+  display: grid;
+  gap: 6px;
+}
+.mn-okr__kr-head {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--space-xs);
+  align-items: baseline;
+}
+.mn-okr__kr-title {
+  font-size: var(--text-caption);
+  color: var(--grigio-chiaro);
+  line-height: 1.4;
+}
+.mn-okr__kr-metric {
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  color: var(--bianco-caldo);
+  white-space: nowrap;
+}
+.mn-okr__kr-track {
+  height: 5px;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+.mn-okr__kr-bar {
+  height: 100%;
+  width: 0%;
+} /* end @layer layouts */

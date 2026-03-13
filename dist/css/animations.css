@@ -1,0 +1,156 @@
+/* ============================================================
+   MARANELLO DESIGN SYSTEM — Animations
+   Entrance, exit, hover, pulse, counter, stagger, shimmer
+   ============================================================    Version: 1.4.0 (11-March-2026)
+   */
+
+
+/* ── ENTRANCE ANIMATIONS ── */
+@keyframes mn-fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes mn-fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes mn-fadeInDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes mn-fadeInLeft {
+  from { opacity: 0; transform: translateX(-20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes mn-fadeInRight {
+  from { opacity: 0; transform: translateX(20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes mn-scaleIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes mn-slideInUp {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+.mn-anim-fadeIn      { animation: mn-fadeIn var(--duration-md) var(--ease-out) both; }
+.mn-anim-fadeInUp    { animation: mn-fadeInUp var(--duration-md) var(--ease-out) both; }
+.mn-anim-fadeInDown  { animation: mn-fadeInDown var(--duration-md) var(--ease-out) both; }
+.mn-anim-fadeInLeft  { animation: mn-fadeInLeft var(--duration-md) var(--ease-out) both; }
+.mn-anim-fadeInRight { animation: mn-fadeInRight var(--duration-md) var(--ease-out) both; }
+.mn-anim-scaleIn    { animation: mn-scaleIn var(--duration-md) var(--ease-out) both; }
+.mn-anim-slideInUp  { animation: mn-slideInUp var(--duration-md) var(--ease-out) both; }
+
+
+/* ── STAGGER DELAYS (apply to children) ── */
+.mn-stagger > :nth-child(1)  { animation-delay: 0ms; }
+.mn-stagger > :nth-child(2)  { animation-delay: 60ms; }
+.mn-stagger > :nth-child(3)  { animation-delay: 120ms; }
+.mn-stagger > :nth-child(4)  { animation-delay: 180ms; }
+.mn-stagger > :nth-child(5)  { animation-delay: 240ms; }
+.mn-stagger > :nth-child(6)  { animation-delay: 300ms; }
+.mn-stagger > :nth-child(7)  { animation-delay: 360ms; }
+.mn-stagger > :nth-child(8)  { animation-delay: 420ms; }
+.mn-stagger > :nth-child(9)  { animation-delay: 480ms; }
+.mn-stagger > :nth-child(10) { animation-delay: 540ms; }
+.mn-stagger > :nth-child(n+11) { animation-delay: 600ms; }
+
+
+/* ── ATTENTION / PULSE ── */
+@keyframes mn-pulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.05); }
+}
+@keyframes mn-pulseDot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.6; transform: scale(1.3); }
+}
+@keyframes mn-ping {
+  0%   { transform: scale(1); opacity: 0.8; }
+  100% { transform: scale(2); opacity: 0; }
+}
+
+.mn-anim-pulse    { animation: mn-pulse 2s var(--ease-out) infinite; }
+.mn-anim-pulseDot { animation: mn-pulseDot 1.5s var(--ease-out) infinite; }
+
+
+/* ── SHIMMER (skeleton loading) ── */
+@keyframes mn-shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.mn-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,0.02) 0%,
+    rgba(255,255,255,0.06) 40%,
+    rgba(255,255,255,0.02) 80%
+  );
+  background-size: 200% 100%;
+  animation: mn-shimmer 1.8s ease infinite;
+  border-radius: var(--radius-sm);
+}
+.mn-shimmer--bar {
+  height: 12px;
+  width: 100%;
+}
+.mn-shimmer--circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+
+/* ── NUMBER COUNTER (for value transitions) ── */
+@keyframes mn-countUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.mn-anim-count { animation: mn-countUp var(--duration-sm) var(--ease-out) both; }
+
+
+/* ── GAUGE SWEEP ── */
+@keyframes mn-gaugeSweep {
+  from { stroke-dashoffset: var(--dash-total, 283); }
+  to   { stroke-dashoffset: var(--dash-offset, 0); }
+}
+
+
+/* ── LED BLINK ── */
+@keyframes mn-blink {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.3; }
+}
+.mn-anim-blink { animation: mn-blink 1s step-start infinite; }
+
+
+/* ── HOVER LIFT ── */
+.mn-hover-lift {
+  transition: transform var(--duration-sm) var(--ease-out),
+              box-shadow var(--duration-sm) var(--ease-out);
+}
+.mn-hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-elevated);
+}
+
+/* ── HOVER GLOW ── */
+.mn-hover-glow {
+  transition: box-shadow var(--duration-sm) var(--ease-out);
+}
+.mn-hover-glow:hover {
+  box-shadow: 0 0 20px rgba(255,199,44,0.15);
+}
+
+
+/* ── REDUCED MOTION ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .mn-reveal { opacity: 1; transform: none; }
+}

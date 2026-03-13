@@ -1,0 +1,140 @@
+@layer forms {
+/* forms — Action Buttons | Maranello Design System v1.4.0 */
+
+/* ══════════════════════════════════════════════════════════════
+   ACTION BUTTONS
+   ══════════════════════════════════════════════════════════════ */
+
+.mn-form-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  padding: 10px 24px;
+  font-family: var(--font-display);
+  font-size: var(--text-micro);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border: 1.5px solid transparent;
+  border-radius: var(--mn-form-radius);
+  cursor: pointer;
+  transition: all var(--mn-form-transition);
+  line-height: 1.5;
+  white-space: nowrap;
+}
+.mn-form-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Primary — Ferrari yellow */
+.mn-form-btn--primary {
+  background: var(--giallo-ferrari);
+  color: var(--nero-assoluto);
+  border-color: var(--giallo-ferrari);
+}
+.mn-form-btn--primary:hover {
+  background: var(--giallo-hover);
+  border-color: var(--giallo-hover);
+  box-shadow: 0 4px 12px rgba(255, 199, 44, 0.3);
+}
+.mn-form-btn--primary:active {
+  transform: translateY(1px);
+  box-shadow: none;
+}
+
+/* Secondary — ghost outline */
+.mn-form-btn--secondary {
+  background: transparent;
+  color: var(--bianco-caldo);
+  border-color: var(--grigio-scuro);
+}
+.mn-form-btn--secondary:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--grigio-medio);
+}
+
+/* Danger — destructive actions */
+.mn-form-btn--danger {
+  background: var(--rosso-corsa);
+  color: var(--bianco-puro);
+  border-color: var(--rosso-corsa);
+}
+.mn-form-btn--danger:hover {
+  background: var(--rosso-hover);
+  box-shadow: 0 4px 12px rgba(220, 0, 0, 0.3);
+}
+
+/* Ghost — minimal */
+.mn-form-btn--ghost {
+  background: transparent;
+  color: var(--grigio-chiaro);
+  border-color: transparent;
+  padding: 10px 16px;
+}
+.mn-form-btn--ghost:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--bianco-caldo);
+}
+
+/* Success — confirm */
+.mn-form-btn--success {
+  background: var(--verde-racing);
+  color: var(--bianco-puro);
+  border-color: var(--verde-racing);
+}
+.mn-form-btn--success:hover {
+  background: var(--verde-hover);
+  box-shadow: 0 4px 12px rgba(0, 166, 81, 0.3);
+}
+
+/* Button sizes */
+.mn-form-btn--sm {
+  padding: 6px 16px;
+  font-size: var(--text-nano);
+}
+.mn-form-btn--lg {
+  padding: 14px 32px;
+  font-size: var(--text-caption);
+}
+
+/* Icon-only button */
+.mn-form-btn--icon {
+  padding: 8px;
+  min-width: 36px;
+  min-height: 36px;
+}
+.mn-form-btn--icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Loading state */
+.mn-form-btn--loading {
+  pointer-events: none;
+  position: relative;
+  color: transparent;
+}
+.mn-form-btn--loading::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: mn-spin 0.6s linear infinite;
+}
+.mn-form-btn--primary.mn-form-btn--loading::after {
+  border-color: rgba(0,0,0,0.2);
+  border-top-color: var(--nero-assoluto);
+}
+
+@keyframes mn-spin {
+  to { transform: rotate(360deg); }
+}
+
+
+} /* end @layer forms */

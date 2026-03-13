@@ -1,0 +1,89 @@
+@layer controls {
+/* controls — Segmented Led | Maranello Design System v1.4.0 */
+
+/* ── SEGMENTED CONTROL (button group) ── */
+.mn-segmented {
+  display: inline-flex;
+  border-radius: var(--radius-md);
+  background: linear-gradient(180deg, #1a1a1a, #111);
+  box-shadow:
+    inset 0 2px 4px rgba(0,0,0,0.5),
+    0 1px 0 rgba(255,255,255,0.04);
+  overflow: hidden;
+  padding: 3px;
+  gap: 2px;
+}
+.mn-segmented__item {
+  padding: 8px 20px;
+  font-family: var(--font-display);
+  font-size: var(--text-micro);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--grigio-medio);
+  background: transparent;
+  border: none;
+  border-radius: calc(var(--radius-md) - 3px);
+  cursor: pointer;
+  transition: all var(--duration-sm) var(--ease-out);
+}
+.mn-segmented__item:hover { color: var(--grigio-chiaro); }
+.mn-segmented__item--active {
+  background: linear-gradient(180deg, #444 0%, #333 100%);
+  color: var(--bianco-caldo);
+  box-shadow:
+    0 2px 6px rgba(0,0,0,0.3),
+    inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
+
+/* ── MACHINED LED INDICATOR (status light in metal housing) ── */
+.mn-led {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+.mn-led__housing {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: conic-gradient(from 200deg, #5a5a58, #3a3a38, #5a5a58);
+  box-shadow:
+    0 2px 6px rgba(0,0,0,0.4),
+    inset 0 1px 0 rgba(255,255,255,0.1),
+    inset 0 -1px 0 rgba(0,0,0,0.2);
+}
+.mn-led__bulb {
+  position: absolute;
+  inset: 4px;
+  border-radius: 50%;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
+}
+.mn-led--green .mn-led__bulb {
+  background: radial-gradient(circle at 40% 35%, #4ADE80, #00A651);
+  box-shadow: 0 0 8px rgba(0,166,81,0.5), inset 0 1px 2px rgba(255,255,255,0.2);
+}
+.mn-led--amber .mn-led__bulb {
+  background: radial-gradient(circle at 40% 35%, #FFE066, #FFC72C);
+  box-shadow: 0 0 8px rgba(255,199,44,0.5), inset 0 1px 2px rgba(255,255,255,0.2);
+}
+.mn-led--red .mn-led__bulb {
+  background: radial-gradient(circle at 40% 35%, #FF6B6B, #DC0000);
+  box-shadow: 0 0 8px rgba(220,0,0,0.5), inset 0 1px 2px rgba(255,255,255,0.2);
+}
+.mn-led--off .mn-led__bulb {
+  background: radial-gradient(circle at 40% 35%, #333, #1a1a1a);
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
+}
+.mn-led__text {
+  font-family: var(--font-display);
+  font-size: var(--text-micro);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--grigio-chiaro);
+}
+
+
+} /* end @layer controls */

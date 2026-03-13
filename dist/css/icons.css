@@ -1,0 +1,94 @@
+/* ============================================================
+   MARANELLO DESIGN SYSTEM — Icon System
+   SVG-based inline icons, sized via --mn-icon-size.
+   All icons use currentColor for automatic theme adaptation.
+
+   HOW TO ADD NEW ICONS:
+   1. Design or source a 24×24 SVG with stroke-based paths
+   2. Use stroke="currentColor" (never hardcoded colors)
+   3. Use stroke-width="1.5" for consistency (1.5 = standard, 2 = bold)
+   4. Remove all fill except fill="none" on the root <svg>
+   5. Add the SVG as a CSS mask-image on a new .mn-icon--name class
+   6. Keep paths simple — avoid complex gradients or filters
+   7. Test in all 3 themes (Editorial, Nero, Avorio)
+
+   NAMING: mn-icon--{category}-{name}
+   Categories: nav, status, action, data, control
+   ============================================================    Version: 1.4.0 (11-March-2026)
+   */
+
+/* ── Base icon container ── */
+.mn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--mn-icon-size, 20px);
+  height: var(--mn-icon-size, 20px);
+  flex-shrink: 0;
+}
+
+/* Inline SVG icons inherit color automatically */
+.mn-icon svg {
+  width: 100%;
+  height: 100%;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+}
+
+/* ── Size variants ── */
+.mn-icon--xs  { --mn-icon-size: 12px; }
+.mn-icon--sm  { --mn-icon-size: 16px; }
+.mn-icon--md  { --mn-icon-size: 20px; }
+.mn-icon--lg  { --mn-icon-size: 24px; }
+.mn-icon--xl  { --mn-icon-size: 32px; }
+.mn-icon--2xl { --mn-icon-size: 48px; }
+
+/* ── Icon + text pairing ── */
+.mn-icon-text {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+/* ── Semantic icon colors ── */
+.mn-icon--success { color: var(--verde-racing); }
+.mn-icon--warning { color: var(--giallo-ferrari); }
+.mn-icon--danger  { color: var(--rosso-corsa); }
+.mn-icon--info    { color: var(--status-info); }
+.mn-icon--muted   { color: var(--grigio-medio); }
+
+/* ── Icon button (circular, for toolbars) ── */
+.mn-icon-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--grigio-scuro);
+  background: transparent;
+  color: var(--grigio-chiaro);
+  cursor: pointer;
+  transition: all var(--duration-sm) var(--ease-out);
+}
+.mn-icon-action:hover {
+  background: rgba(255,255,255,0.06);
+  color: var(--bianco-caldo);
+  border-color: var(--grigio-medio);
+}
+.mn-icon-action:focus-visible {
+  outline: 2px solid var(--giallo-ferrari);
+  outline-offset: 2px;
+}
+
+body.mn-avorio .mn-icon-action {
+  border-color: var(--grigio-alluminio);
+  color: var(--grigio-medio);
+}
+body.mn-avorio .mn-icon-action:hover {
+  background: rgba(0,0,0,0.04);
+  color: var(--nero-assoluto);
+}

@@ -1,0 +1,182 @@
+@layer components {
+/* components — Buttons Stats | Maranello Design System v1.4.0 */
+
+/* ── BUTTONS ── */
+.mn-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-2xl);
+  font-family: var(--font-display);
+  font-size: var(--text-caption);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border: 1.5px solid var(--nero-assoluto);
+  border-radius: 0;
+  background: var(--nero-assoluto);
+  color: var(--bianco-puro);
+  cursor: pointer;
+  transition: all var(--duration-sm) var(--ease-out);
+  text-decoration: none;
+}
+.mn-btn:hover {
+  background: var(--grigio-scuro);
+  border-color: var(--grigio-scuro);
+  transform: translateY(-1px);
+}
+.mn-btn:active {
+  transform: translateY(1px);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+  transition-duration: 80ms;
+}
+.mn-btn:disabled, .mn-btn--disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+.mn-btn--ghost {
+  background: transparent;
+  color: var(--nero-assoluto);
+}
+.mn-btn--ghost:hover {
+  background: var(--nero-assoluto);
+  color: var(--bianco-puro);
+}
+.mn-btn--ghost:active {
+  background: var(--nero-carbon);
+}
+.mn-btn--ghost-light {
+  background: transparent;
+  border-color: rgba(255,255,255,0.4);
+  color: var(--bianco-caldo);
+}
+.mn-btn--ghost-light:hover {
+  background: var(--bianco-puro);
+  color: var(--nero-assoluto);
+  border-color: var(--bianco-puro);
+}
+.mn-btn--ghost-light:active {
+  background: var(--grigio-ghost);
+  transform: translateY(1px);
+}
+.mn-btn--accent {
+  background: var(--mn-accent);
+  border-color: var(--mn-accent);
+  color: var(--nero-assoluto);
+}
+.mn-btn--accent:hover {
+  background: #e6b325;
+  border-color: #e6b325;
+}
+.mn-btn--accent:active {
+  background: #cc9a1d;
+  border-color: #cc9a1d;
+  transform: translateY(1px);
+}
+
+/* White button (on accent backgrounds) */
+.mn-btn--white {
+  background: var(--bianco-puro);
+  border-color: var(--bianco-puro);
+  color: var(--nero-assoluto);
+}
+.mn-btn--white:hover {
+  background: var(--bianco-ghiaccio);
+  border-color: var(--bianco-ghiaccio);
+}
+.mn-btn--white:active {
+  background: var(--grigio-ghost);
+  transform: translateY(1px);
+}
+.mn-btn--sm {
+  padding: var(--space-sm) var(--space-lg);
+  font-size: var(--text-micro);
+}
+
+
+/* ── STAT ROW ── */
+.mn-stat-row {
+  display: flex;
+  gap: var(--space-2xl);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.mn-stat { text-align: center; }
+.mn-stat__value {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+.mn-section-dark .mn-stat__value { color: var(--bianco-caldo); }
+.mn-stat__unit {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  font-weight: 400;
+  color: var(--grigio-chiaro);
+  margin-top: var(--space-xs);
+}
+.mn-stat__label {
+  font-family: var(--font-display);
+  font-size: var(--text-micro);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--grigio-medio);
+  margin-top: var(--space-sm);
+}
+.mn-section-dark .mn-stat__label { color: var(--grigio-chiaro); }
+
+
+/* ── VIDEO CARD ── */
+.mn-video-card {
+  position: relative;
+  background: var(--nero-profondo);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  aspect-ratio: 16/9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 1px solid var(--grigio-scuro);
+}
+.mn-video-card__play {
+  width: 64px;
+  height: 64px;
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(20px);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--duration-md) var(--ease-out);
+}
+.mn-video-card__play::after {
+  content: '';
+  width: 0; height: 0;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-left: 16px solid var(--bianco-puro);
+  margin-left: 3px;
+}
+.mn-video-card:hover .mn-video-card__play {
+  background: rgba(255,255,255,0.2);
+  transform: scale(1.1);
+}
+.mn-video-card__label {
+  position: absolute;
+  bottom: var(--space-lg);
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-display);
+  font-size: var(--text-micro);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--bianco-caldo);
+}
+} /* end @layer components */

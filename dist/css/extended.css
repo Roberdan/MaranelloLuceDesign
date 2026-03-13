@@ -1,0 +1,5 @@
+/* extended.css — Maranello Design System v1.4.0 (aggregator) */
+@import "./extended-avatar-spinner.css";
+@import "./extended-tabs-breadcrumb.css";
+@import "./extended-toast-dropdown.css";
+@import "./extended-tooltip-modal.css";

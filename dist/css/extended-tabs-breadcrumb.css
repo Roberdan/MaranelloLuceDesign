@@ -1,0 +1,69 @@
+@layer extended {
+/* extended — Tabs Breadcrumb | Maranello Design System v1.4.0 */
+
+/* ── TABS (panel content) ── */
+.mn-tabs {
+  display: flex;
+  flex-direction: column;
+}
+.mn-tabs__list {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--grigio-scuro);
+}
+.mn-tabs__tab {
+  padding: var(--space-md) var(--space-xl);
+  font-family: var(--font-display);
+  font-size: var(--text-micro);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--grigio-medio);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: all var(--duration-sm) var(--ease-out);
+  margin-bottom: -1px;
+}
+.mn-tabs__tab:hover { color: var(--grigio-chiaro); }
+.mn-tabs__tab--active {
+  color: var(--bianco-caldo);
+  border-bottom-color: var(--mn-accent);
+}
+.mn-tabs__panel {
+  display: none;
+  padding: var(--space-xl) 0;
+}
+.mn-tabs__panel--active { display: block; }
+
+body.mn-avorio .mn-tabs__list { border-color: var(--grigio-ghost); }
+body.mn-avorio .mn-tabs__tab { color: var(--grigio-medio); }
+body.mn-avorio .mn-tabs__tab--active { color: var(--nero-assoluto); }
+
+
+/* ── BREADCRUMB ── */
+.mn-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-family: var(--font-display);
+  font-size: var(--text-micro);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.mn-breadcrumb__item {
+  color: var(--grigio-medio);
+  transition: color var(--duration-sm) var(--ease-out);
+}
+.mn-breadcrumb__item:hover { color: var(--grigio-chiaro); }
+.mn-breadcrumb__item--active { color: var(--bianco-caldo); }
+.mn-breadcrumb__sep {
+  color: var(--grigio-scuro);
+  font-size: 0.6em;
+  user-select: none;
+}
+
+body.mn-avorio .mn-breadcrumb__item--active { color: var(--nero-assoluto); }
+} /* end @layer extended */

@@ -1,0 +1,120 @@
+@layer charts {
+/* charts — Gauge Temp Progress | Maranello Design System v1.4.0 */
+
+/* ── HALF GAUGE (semicircular arc) ── */
+.mn-half-gauge {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+}
+.mn-half-gauge canvas {
+  display: block;
+}
+.mn-half-gauge__label {
+  position: absolute;
+  bottom: 20%;
+  text-align: center;
+}
+.mn-half-gauge__value {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--bianco);
+  line-height: 1;
+}
+.mn-half-gauge__unit {
+  font-size: 0.65rem;
+  color: #9e9e9e;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.mn-half-gauge--sm { width: 100px; }
+.mn-half-gauge--sm .mn-half-gauge__value { font-size: 1.2rem; }
+.mn-half-gauge--lg { width: 260px; }
+.mn-half-gauge--lg .mn-half-gauge__value { font-size: 3rem; }
+
+
+/* ── TEMPERATURE BADGE ── */
+.mn-temp-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2.5px solid var(--rosso-corsa);
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--bianco);
+  background: rgba(0,0,0,0.6);
+  cursor: pointer;
+  transition: border-color 0.3s, transform 0.15s, box-shadow 0.3s;
+}
+.mn-temp-badge:hover {
+  transform: scale(1.08);
+  box-shadow: 0 0 12px rgba(220,0,0,0.3);
+}
+.mn-temp-badge--cool {
+  border-color: #4EA8DE;
+}
+.mn-temp-badge--cool:hover {
+  box-shadow: 0 0 12px rgba(78,168,222,0.3);
+}
+.mn-temp-badge--warm {
+  border-color: #E8A838;
+}
+.mn-temp-badge--neutral {
+  border-color: #616161;
+}
+.mn-temp-badge--lg {
+  width: 56px;
+  height: 56px;
+  font-size: 1.1rem;
+  border-width: 3px;
+}
+.mn-temp-badge sup {
+  font-size: 0.5em;
+  margin-left: 1px;
+}
+
+
+/* ── PROGRESS RING ── */
+.mn-progress-ring {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.mn-progress-ring svg {
+  transform: rotate(-90deg);
+}
+.mn-progress-ring__track {
+  fill: none;
+  stroke: rgba(200,200,200,0.08);
+}
+.mn-progress-ring__fill {
+  fill: none;
+  stroke: var(--giallo-ferrari);
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.8s cubic-bezier(0.22,1,0.36,1);
+}
+.mn-progress-ring__label {
+  position: absolute;
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--bianco);
+}
+
+
+/* ── BUBBLE CHART ── */
+.mn-bubble-chart {
+  position: relative;
+  width: 100%;
+}
+.mn-bubble-chart canvas { display: block; }
+
+
+} /* end @layer charts */

@@ -1,0 +1,119 @@
+@layer layouts {
+/* ══════════════════════════════════════════════════════════════
+   layouts-heatmap.css — Impact Heatmap (Simulation)
+   Maranello Design System · Maranello Luce
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── Container ── */
+.mn-heatmap { display:flex; flex-direction:column; gap:var(--space-md); font-family:var(--font-body,'Inter',sans-serif); }
+
+/* ── Summary cards ── */
+.mn-heatmap__summary { display:flex; gap:var(--space-sm); flex-wrap:wrap; }
+.mn-heatmap__card {
+  flex:1 1 120px; display:flex; flex-direction:column; align-items:center; gap:var(--space-2xs);
+  padding:var(--space-sm) var(--space-md); border-radius:var(--radius-sm);
+  background:var(--superficie-2); border:1px solid var(--bordo);
+}
+.mn-heatmap__card--idle  { border-color:var(--status-warning); }
+.mn-heatmap__card--over  { border-color:var(--rosso-corsa); }
+.mn-heatmap__card--gap   { border-color:var(--mn-accent); }
+.mn-heatmap__card__number {
+  font-family:var(--font-mono,'Barlow Condensed',sans-serif);
+  font-size:1.75rem; font-weight:700; line-height:1; color:var(--bianco-caldo);
+}
+.mn-heatmap__card--idle  .mn-heatmap__card__number { color:var(--status-warning); }
+.mn-heatmap__card--over  .mn-heatmap__card__number { color:var(--rosso-corsa); }
+.mn-heatmap__card--gap   .mn-heatmap__card__number { color:var(--mn-accent); }
+.mn-heatmap__card__label {
+  font-size:0.7rem; text-transform:uppercase; letter-spacing:0.06em;
+  color:var(--grigio-chiaro);
+}
+
+/* ── Title ── */
+.mn-heatmap__title {
+  font-family:var(--font-mono,'Barlow Condensed',sans-serif);
+  font-size:0.7rem; text-transform:uppercase; letter-spacing:0.1em;
+  color:var(--grigio-medio); padding-bottom:var(--space-2xs);
+  border-bottom:1px solid var(--bordo);
+}
+
+/* ── Row ── */
+.mn-heatmap__row {
+  display:flex; align-items:center; gap:var(--space-sm);
+  height:44px; padding:0 var(--space-sm); border-radius:var(--radius-sm);
+  transition:background .15s ease;
+}
+.mn-heatmap__row:hover { background:var(--superficie-2); }
+.mn-heatmap__row--idle { background:rgba(255,179,0,.06); }
+.mn-heatmap__row--over { background:rgba(220,0,0,.08); }
+
+/* ── Person info ── */
+.mn-heatmap__person { display:flex; flex-direction:column; min-width:140px; }
+.mn-heatmap__name { font-size:0.85rem; font-weight:500; color:var(--bianco-caldo); white-space:nowrap; }
+.mn-heatmap__role {
+  font-family:var(--font-mono,'Barlow Condensed',sans-serif);
+  font-size:0.7rem; color:var(--grigio-chiaro); white-space:nowrap;
+}
+
+/* ── FTE Bars ── */
+.mn-heatmap__bars { flex:1; display:flex; align-items:center; gap:var(--space-2xs); max-width:240px; position:relative; height:20px; }
+.mn-heatmap__bar {
+  position:absolute; top:0; left:0; height:100%; border-radius:var(--radius-sm);
+  transition:width .3s ease, background .2s ease;
+}
+.mn-heatmap__bar--before {
+  background:transparent; border:1.5px dashed var(--grigio-medio); opacity:.5;
+}
+.mn-heatmap__bar--after  { opacity:.9; }
+.mn-heatmap__bar--ok     { background:var(--verde-racing); }
+.mn-heatmap__bar--warn   { background:var(--status-warning); }
+.mn-heatmap__bar--danger { background:var(--rosso-corsa); }
+.mn-heatmap__value {
+  position:absolute; right:6px; top:50%; transform:translateY(-50%);
+  font-family:var(--font-mono,'Barlow Condensed',sans-serif);
+  font-size:0.7rem; font-weight:600; color:var(--bianco-caldo);
+  text-shadow:0 1px 2px rgba(0,0,0,.6); pointer-events:none;
+}
+
+/* ── Delta indicator ── */
+.mn-heatmap__delta {
+  font-family:var(--font-mono,'Barlow Condensed',sans-serif);
+  font-size:0.75rem; font-weight:600; min-width:44px; text-align:right;
+}
+.mn-heatmap__delta--positive { color:var(--verde-racing); }
+.mn-heatmap__delta--negative { color:var(--rosso-corsa); }
+
+/* ── Staffing gap ── */
+.mn-heatmap__gap {
+  display:flex; align-items:center; gap:var(--space-sm); height:44px;
+  padding:0 var(--space-sm); border-left:3px solid var(--mn-accent);
+  background:rgba(255,199,44,.06); border-radius:0 var(--radius-sm) var(--radius-sm) 0;
+}
+.mn-heatmap__gap-role {
+  font-family:var(--font-mono,'Barlow Condensed',sans-serif);
+  font-size:0.8rem; font-weight:600; color:var(--mn-accent);
+}
+.mn-heatmap__gap-suggestion { font-size:0.75rem; color:var(--grigio-chiaro); }
+
+/* ═══ Theme: Avorio ═══ */
+body.mn-avorio .mn-heatmap__card { background:var(--superficie-1); border-color:var(--bordo); }
+body.mn-avorio .mn-heatmap__row:hover { background:var(--superficie-1); }
+body.mn-avorio .mn-heatmap__row--idle { background:rgba(255,179,0,.08); }
+body.mn-avorio .mn-heatmap__row--over { background:rgba(220,0,0,.06); }
+body.mn-avorio .mn-heatmap__name { color:var(--nero-assoluto); }
+body.mn-avorio .mn-heatmap__card__number { color:var(--nero-assoluto); }
+body.mn-avorio .mn-heatmap__card--idle .mn-heatmap__card__number { color:#b45309; }
+body.mn-avorio .mn-heatmap__card--over .mn-heatmap__card__number { color:var(--rosso-corsa); }
+body.mn-avorio .mn-heatmap__value { color:var(--nero-assoluto); text-shadow:0 1px 2px rgba(255,255,255,.5); }
+body.mn-avorio .mn-heatmap__bar--before { border-color:var(--grigio-chiaro); }
+
+/* ═══ Theme: Colorblind ═══ */
+body.mn-colorblind .mn-heatmap__bar--ok { background:var(--verde-racing); background-image:
+  repeating-linear-gradient(45deg,transparent,transparent 3px,rgba(255,255,255,.15) 3px,rgba(255,255,255,.15) 5px); }
+body.mn-colorblind .mn-heatmap__bar--warn { background:var(--status-warning); background-image:
+  repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.12) 3px,rgba(0,0,0,.12) 5px); }
+body.mn-colorblind .mn-heatmap__bar--danger { background:var(--rosso-corsa); background-image:
+  repeating-linear-gradient(-45deg,transparent,transparent 3px,rgba(255,255,255,.2) 3px,rgba(255,255,255,.2) 5px); }
+body.mn-colorblind .mn-heatmap__delta--positive::before { content:"▲ "; }
+body.mn-colorblind .mn-heatmap__delta--negative::before { content:"▼ "; }
+} /* end @layer layouts */
