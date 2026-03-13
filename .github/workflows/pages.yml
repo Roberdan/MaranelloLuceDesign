@@ -30,17 +30,18 @@ jobs:
 
       - name: Prepare Pages site
         run: |
-          mkdir -p _site/demo _site/dist _site/src
-          cp -r demo/* _site/demo/
+          mkdir -p _site/dist _site/src
           cp -r dist/* _site/dist/
           cp -r src/css _site/src/css
           cp -r src/fonts _site/src/fonts
           cp -r src/assets _site/src/assets
           cp -r src/wc _site/src/wc
-          cp _site/demo/index.html _site/index.html
+          cp demo/index.html _site/index.html
+          cp -r demo/sections _site/sections
+          cp demo/app.js _site/app.js
           sed -i 's|href="../|href="|g' _site/index.html
           sed -i 's|src="../|src="|g' _site/index.html
-          sed -i 's|src="app.js"|src="demo/app.js"|g' _site/index.html
+          sed -i 's|src="app.js"|src="app.js"|g' _site/index.html
 
       - uses: actions/configure-pages@v5
 

@@ -1,0 +1,880 @@
+plan:
+  name: "Hardening v3.2.1 — Security, Accessibility, Quality"
+  project: MaranelloLuceDesign
+  human_summary: >
+    Complete hardening of MaranelloLuceDesign: fix all XSS vulnerabilities (escapeHtml already in utils but unused),
+    WCAG 2.2 AA compliance for all components (canvas charts, forms, keyboard nav, live regions, ARIA),
+    code quality enforcement (version sync, file size limits, silent failures, TypeScript any, CSS !important),
+    full test coverage expansion, and documentation alignment.
+  version_target: "3.2.1"
+  mode: max_parallel
+  coordinator_model: opus
+  max_parallel: 5
+
+requirements:
+  - id: F-01
+    title: "XSS: Apply escapeHtml to all innerHTML with user data"
+    scope: security
+  - id: F-02
+    title: "XSS: Sanitize attrs.html pattern in DOM helpers"
+    scope: security
+  - id: F-03
+    title: "XSS: Property whitelist in data-binding"
+    scope: security
+  - id: F-04
+    title: "XSS: SVG sanitization for agent icons"
+    scope: security
+  - id: F-05
+    title: "XSS: Color value validation for inline styles"
+    scope: security
+  - id: F-06
+    title: "A11y: Canvas chart text alternatives"
+    scope: accessibility
+  - id: F-07
+    title: "A11y: Form error linking (aria-describedby, aria-invalid, aria-required)"
+    scope: accessibility
+  - id: F-08
+    title: "A11y: Complete keyboard navigation for all interactive components"
+    scope: accessibility
+  - id: F-09
+    title: "A11y: Live regions for dynamic content"
+    scope: accessibility
+  - id: F-10
+    title: "A11y: ARIA gaps (combobox, grid roles, aria-expanded, etc.)"
+    scope: accessibility
+  - id: F-11
+    title: "Quality: Version sync across all files"
+    scope: quality
+  - id: F-12
+    title: "Quality: Split files exceeding 250-line limit"
+    scope: quality
+  - id: F-13
+    title: "Quality: Replace silent failures with console.warn"
+    scope: quality
+  - id: F-14
+    title: "Quality: Remove TypeScript any from map-mapbox.ts"
+    scope: quality
+  - id: F-15
+    title: "Quality: Replace CSS !important with @layer ordering"
+    scope: quality
+  - id: F-16
+    title: "Quality: Align CLAUDE.md with actual code"
+    scope: documentation
+  - id: F-17
+    title: "Testing: Unit tests for untested modules"
+    scope: testing
+  - id: F-18
+    title: "Testing: E2E accessibility and interaction tests"
+    scope: testing
+
+waves:
+  - id: 1
+    theme: "Security Foundation + Version Sync"
+    merge_mode: sync
+    tasks:
+      - id: T-101
+        title: "Create sanitize utility module (sanitize.ts)"
+        requirements: [F-01, F-02, F-05]
+        executor: task-executor
+        model: opus
+        effort: S
+        tokens_est: 8000
+        files:
+          - src/ts/core/sanitize.ts (NEW)
+          - src/ts/core/utils.ts (move escapeHtml here, re-export from utils)
+        spec: |
+          Create src/ts/core/sanitize.ts with:
+          1. Move escapeHtml from core/utils.ts to sanitize.ts, re-export from utils for backwards compat
+          2. Add sanitizeHtml(str): calls escapeHtml, returns safe string
+          3. Add isValidColor(val): regex for hex (#xxx, #xxxxxx, #xxxxxxxx), rgb(), rgba(), hsl(), hsla(), named CSS colors — reject anything else
+          4. Add sanitizeAttr(key, val): if key === 'html', return escapeHtml(val); else return val
+          5. Add sanitizeSvg(svgString): parse with DOMParser('text/html'), extract only <svg> and safe child elements (path, circle, rect, line, polyline, polygon, g, text, defs, use, clipPath), strip all event handlers (on*), strip <script>, <foreignObject>, return cleaned outerHTML or empty string
+          6. Add ALLOWED_BIND_PROPERTIES: Set<string> whitelist for data-binding (textContent, className, value, checked, disabled, hidden, src, href, alt, title, placeholder, aria-label, aria-hidden, aria-expanded, aria-selected, innerHTML — innerHTML uses escapeHtml)
+          7. Export all functions and the constant
+          8. Max 120 lines, strict types, no any
+        verify:
+          - "grep -c 'escapeHtml' src/ts/core/sanitize.ts"
+          - "grep -c 'isValidColor' src/ts/core/sanitize.ts"
+          - "grep -c 'sanitizeSvg' src/ts/core/sanitize.ts"
+          - "grep -c 'ALLOWED_BIND_PROPERTIES' src/ts/core/sanitize.ts"
+          - "npx tsc --noEmit"
+
+      - id: T-102
+        title: "Version sync: index.ts + esbuild banner to 3.2.1"
+        requirements: [F-11]
+        executor: task-executor
+        model: opus
+        effort: XS
+        tokens_est: 3000
+        files:
+          - src/ts/index.ts
+          - esbuild.config.mjs
+          - package.json
+        spec: |
+          1. Update src/ts/index.ts line 6: VERSION = '3.2.1'
+          2. Update esbuild.config.mjs line 5: banner v3.2.1
+          3. Update package.json version to 3.2.1
+          All three must match exactly.
+        verify:
+          - "grep '3.2.1' src/ts/index.ts"
+          - "grep '3.2.1' esbuild.config.mjs"
+          - "grep '3.2.1' package.json"
+
+      - id: T-103
+        title: "Unit tests for sanitize module"
+        requirements: [F-17]
+        executor: task-executor
+        model: opus
+        effort: S
+        tokens_est: 8000
+        depends_on: [T-101]
+        files:
+          - tests/unit/sanitize.test.ts (NEW)
+        spec: |
+          Create tests/unit/sanitize.test.ts covering:
+          1. escapeHtml: all 5 chars (&, <, >, ", '), empty string, normal string
+          2. isValidColor: valid hex (3,6,8 digits), rgb, rgba, hsl, hsla, named colors (red, blue), CSS keywords (transparent, currentColor). Invalid: javascript:, expression(), url(), arbitrary strings, semicolons
+          3. sanitizeAttr: html key gets escaped, other keys pass through
+          4. sanitizeSvg: clean SVG passes, onload stripped, <script> stripped, <foreignObject> stripped, empty string for invalid SVG
+          5. ALLOWED_BIND_PROPERTIES: contains expected properties, does NOT contain onclick, onload, __proto__
+          Use vitest, AAA pattern.
+        verify:
+          - "npx vitest run tests/unit/sanitize.test.ts"
+
+  - id: 2
+    theme: "Security Hardening — XSS + Injection Fixes"
+    merge_mode: sync
+    tasks:
+      - id: T-201
+        title: "XSS fix: map-mapbox.ts + chart-interact.ts"
+        requirements: [F-01, F-05]
+        executor: task-executor
+        model: opus
+        effort: M
+        tokens_est: 12000
+        depends_on: [T-101]
+        files:
+          - src/ts/map-mapbox.ts
+          - src/ts/chart-interact.ts
+        spec: |
+          Import { escapeHtml, isValidColor } from './core/sanitize'.
+
+          map-mapbox.ts:
+          1. Line ~146: escape m.label and m.detail before setHTML template
+          2. Line ~167: escape s.label, validate s.color with isValidColor (fallback to '#999')
+          3. Line ~137: validate color in marker style.cssText
+          4. Replace `declare const mapboxgl: any` with proper interface (MapboxGL with accessToken, Map, Marker, Popup, LngLatBoundsLike types)
+          5. Type markerInstances as MapboxMarkerInstance[] instead of any[]
+          6. Remove all `any` casts — use proper types or unknown with narrowing
+
+          chart-interact.ts:
+          1. Line ~184: escape label in sparkline tooltip innerHTML
+          2. Lines ~41-48: validate color values in buildTooltipHTML with isValidColor
+
+          Requirements: [F-01], [F-05], [F-14]
+        verify:
+          - "! grep -n 'any' src/ts/map-mapbox.ts | grep -v '// mapbox-gl'"
+          - "grep 'escapeHtml' src/ts/map-mapbox.ts"
+          - "grep 'escapeHtml' src/ts/chart-interact.ts"
+          - "grep 'isValidColor' src/ts/chart-interact.ts"
+          - "npx tsc --noEmit"
+
+      - id: T-202
+        title: "XSS fix: ai-chat-dom.ts + ai-chat-messages.ts"
+        requirements: [F-01, F-02, F-04]
+        executor: task-executor
+        model: opus
+        effort: M
+        tokens_est: 12000
+        depends_on: [T-101]
+        files:
+          - src/ts/ai-chat-dom.ts
+          - src/ts/ai-chat-messages.ts
+        spec: |
+          Import { escapeHtml, sanitizeAttr, sanitizeSvg } from './core/sanitize'.
+
+          ai-chat-dom.ts:
+          1. Line ~79: replace `if (k === 'html') e.innerHTML = v` with sanitizeAttr call
+          2. Lines ~114-118: fix renderContent — escape BEFORE regex replacements, then apply markdown patterns on escaped text. The regex $1 captures are already safe because source was escaped
+          3. Ensure getIcon() calls (line ~103) remain safe (they return hardcoded SVG)
+
+          ai-chat-messages.ts:
+          1. Lines ~140-147: replace raw DOMParser SVG parsing with sanitizeSvg() call
+          2. Only append sanitized SVG to iconEl
+        verify:
+          - "grep 'sanitizeAttr\\|sanitizeSvg\\|escapeHtml' src/ts/ai-chat-dom.ts"
+          - "grep 'sanitizeSvg' src/ts/ai-chat-messages.ts"
+          - "npx tsc --noEmit"
+
+      - id: T-203
+        title: "XSS fix: data-table-render.ts + okr-panel-utils.ts + icons.ts"
+        requirements: [F-01, F-02, F-05]
+        executor: task-executor
+        model: opus
+        effort: M
+        tokens_est: 10000
+        depends_on: [T-101]
+        files:
+          - src/ts/data-table-render.ts
+          - src/ts/okr-panel-utils.ts
+          - src/ts/icons.ts
+        spec: |
+          Import { escapeHtml, sanitizeAttr, isValidColor } from './core/sanitize'.
+
+          data-table-render.ts:
+          1. Line ~41: replace `if (k === 'html') e.innerHTML = v` with sanitizeAttr
+          2. Line ~111: escape custom renderer output before td.innerHTML assignment
+          3. Validate color values in cellRenderers with isValidColor
+
+          okr-panel-utils.ts:
+          1. Line ~67: replace `if (key === 'html') node.innerHTML = attrs[key]` with sanitizeAttr
+          2. Validate color values in SVG template literals with isValidColor
+
+          icons.ts:
+          1. Line ~37: escape opts.ariaLabel before embedding in attribute string
+        verify:
+          - "grep 'sanitizeAttr\\|escapeHtml' src/ts/data-table-render.ts"
+          - "grep 'sanitizeAttr' src/ts/okr-panel-utils.ts"
+          - "grep 'escapeHtml' src/ts/icons.ts"
+          - "npx tsc --noEmit"
+
+      - id: T-204
+        title: "XSS fix: forms-widgets.ts + data-binding.ts"
+        requirements: [F-01, F-03]
+        executor: task-executor
+        model: opus
+        effort: M
+        tokens_est: 10000
+        depends_on: [T-101]
+        files:
+          - src/ts/forms-widgets.ts
+          - src/ts/data-binding.ts
+        spec: |
+          Import { escapeHtml, ALLOWED_BIND_PROPERTIES } from './core/sanitize'.
+
+          forms-widgets.ts:
+          1. Lines ~132-134: escape files[0].name before innerHTML assignment
+          2. Use textContent where possible instead of innerHTML for file names
+
+          data-binding.ts:
+          1. Lines ~36-47: replace open property assignment with ALLOWED_BIND_PROPERTIES whitelist check
+          2. If property === 'innerHTML': use escapeHtml(String(value)) instead of raw assignment
+          3. If property.startsWith('style.'): validate the value is not a URL/expression
+          4. If property not in ALLOWED_BIND_PROPERTIES: console.warn and skip
+          5. Remove the catch-all `el[property] = value` for arbitrary properties
+        verify:
+          - "grep 'escapeHtml' src/ts/forms-widgets.ts"
+          - "grep 'ALLOWED_BIND_PROPERTIES' src/ts/data-binding.ts"
+          - "! grep -n 'el\\[property\\] = value' src/ts/data-binding.ts"
+          - "npx tsc --noEmit"
+
+      - id: T-205
+        title: "XSS fix: color validation in remaining files"
+        requirements: [F-05]
+        executor: task-executor
+        model: opus
+        effort: S
+        tokens_est: 8000
+        depends_on: [T-101]
+        files:
+          - src/ts/okr-panel-cards.ts
+          - src/ts/gantt.ts
+          - src/ts/gantt-render.ts
+          - src/ts/funnel.ts
+        spec: |
+          Import { isValidColor } from './core/sanitize' in each file.
+
+          okr-panel-cards.ts:
+          1. Line ~75: validate color before style.color assignment
+
+          gantt.ts + gantt-render.ts:
+          1. Validate all color values from task/stage data before inline style use
+          2. Fallback to token colors if invalid
+
+          funnel.ts:
+          1. Validate stage colors before inline style application
+
+          Pattern: if (!isValidColor(color)) color = 'var(--grigio-alluminio)';
+        verify:
+          - "grep 'isValidColor' src/ts/okr-panel-cards.ts"
+          - "grep 'isValidColor' src/ts/gantt.ts"
+          - "grep 'isValidColor' src/ts/funnel.ts"
+          - "npx tsc --noEmit"
+
+  - id: 3
+    theme: "Accessibility — WCAG 2.2 AA Compliance"
+    merge_mode: sync
+    tasks:
+      - id: T-301
+        title: "A11y: Canvas chart text alternatives (all chart modules)"
+        requirements: [F-06]
+        executor: task-executor
+        model: opus
+        effort: L
+        tokens_est: 18000
+        files:
+          - src/ts/charts-sparkline.ts
+          - src/ts/charts-donut.ts
+          - src/ts/charts-area.ts
+          - src/ts/charts-live.ts
+          - src/ts/charts-radar.ts
+          - src/ts/charts-bubble.ts
+          - src/ts/charts-halfgauge.ts
+          - src/ts/charts-hbar.ts
+          - src/ts/charts-sparkbar.ts
+          - src/ts/gauge-engine.ts
+          - src/ts/speedometer.ts
+        spec: |
+          For EVERY canvas-rendering function:
+          1. Add role="img" to canvas element
+          2. Generate descriptive aria-label from data: "{chartType}: {dataDescription}"
+             - sparkline: "Sparkline: values from {min} to {max}, latest {last}"
+             - donut: "Donut chart: {segment1} {pct1}%, {segment2} {pct2}%..."
+             - area: "Area chart: {seriesCount} series, {pointCount} data points"
+             - bar/hbar: "Bar chart: {count} categories, highest {name} at {value}"
+             - radar: "Radar chart: {dimensions} dimensions"
+             - bubble: "Bubble chart: {count} data points"
+             - halfgauge: "Gauge: {value} of {max} {unit}"
+             - gauge (FerrariGauge): "Gauge: {value}{unit}, {label}"
+             - speedometer: "Speedometer: {value} of {max}"
+          3. Add visually-hidden <span class="mn-sr-only"> after canvas with text description
+          4. Canvas fallback text: set textContent on canvas element (shown if canvas not supported)
+          5. Update aria-label on data changes (if redraw function exists)
+        verify:
+          - "grep 'aria-label' src/ts/charts-sparkline.ts"
+          - "grep 'aria-label' src/ts/charts-donut.ts"
+          - "grep 'mn-sr-only' src/ts/gauge-engine.ts"
+          - "grep 'role.*img' src/ts/speedometer.ts"
+          - "npx tsc --noEmit"
+
+      - id: T-302
+        title: "A11y: Form accessibility (aria-describedby, aria-invalid, aria-required)"
+        requirements: [F-07, F-09]
+        executor: task-executor
+        model: opus
+        effort: M
+        tokens_est: 12000
+        files:
+          - src/ts/forms-validate.ts
+          - src/ts/forms-widgets.ts
+          - src/ts/forms.ts
+        spec: |
+          forms-validate.ts:
+          1. When showing error (line ~76): set input.setAttribute('aria-invalid', 'true')
+          2. Generate unique ID for error element, set aria-describedby on input linking to it
+          3. When clearing error: remove aria-invalid, remove aria-describedby
+          4. Add aria-live="assertive" on .mn-field__error elements
+          5. On validateForm failure: set focus to first invalid field
+
+          forms.ts (initForms):
+          1. For required fields: add aria-required="true" to input
+          2. For fields with .mn-field__hint: generate ID, set aria-describedby on input
+
+          forms-widgets.ts:
+          1. initFileUpload: announce selected filename via aria-live region
+          2. initTagInput: add aria-label="Type to add tags" on input
+          3. initFormSteps: add role="tablist" on step container, role="tab" + aria-selected on step buttons
+          4. initInlineEdit: add Escape key to cancel, Enter to confirm
+        verify:
+          - "grep 'aria-invalid' src/ts/forms-validate.ts"
+          - "grep 'aria-describedby' src/ts/forms-validate.ts"
+          - "grep 'aria-required' src/ts/forms.ts"
+          - "grep 'aria-live' src/ts/forms-validate.ts"
+          - "npx tsc --noEmit"
+
+      - id: T-303
+        title: "A11y: Keyboard navigation — date picker, command palette, detail panel"
+        requirements: [F-08, F-10]
+        executor: task-executor
+        model: opus
+        effort: L
+        tokens_est: 16000
+        files:
+          - src/ts/date-picker.ts
+          - src/ts/command-palette.ts
+          - src/ts/detail-panel.ts
+        spec: |
+          date-picker.ts:
+          1. Arrow keys to navigate days (Left/Right prev/next day, Up/Down prev/next week)
+          2. Home/End: first/last day of month
+          3. PageUp/PageDown: prev/next month
+          4. Enter/Space: select focused day
+          5. Escape: close picker
+          6. Add role="grid" on calendar, role="row" on weeks, role="gridcell" on days
+          7. Add aria-label on nav buttons ("Previous month", "Next month")
+          8. Mark selected day with aria-selected="true"
+
+          command-palette.ts:
+          1. Add role="combobox" on input, aria-owns linking to results list
+          2. Add role="listbox" on results container
+          3. Add role="option" + aria-selected on each item
+          4. Arrow Up/Down to navigate items, highlight active
+          5. Enter to select highlighted item
+          6. aria-activedescendant on input tracking focused item
+          7. Use aria-hidden instead of display:none for filtered items
+
+          detail-panel.ts:
+          1. Add Escape key handler to close panel
+          2. Focus trap: Tab cycles within panel
+          3. Return focus to trigger element on close
+          4. Add aria-label on close button
+        verify:
+          - "grep 'ArrowDown\\|ArrowUp\\|ArrowLeft\\|ArrowRight' src/ts/date-picker.ts"
+          - "grep 'combobox' src/ts/command-palette.ts"
+          - "grep 'Escape' src/ts/detail-panel.ts"
+          - "npx tsc --noEmit"
+
+      - id: T-304
+        title: "A11y: Keyboard nav — drawer, tabs, org tree, gantt"
+        requirements: [F-08, F-10]
+        executor: task-executor
+        model: opus
+        effort: L
+        tokens_est: 14000
+        files:
+          - src/ts/controls.ts
+          - src/ts/controls-dialogs.ts
+          - src/ts/gantt.ts
+          - src/ts/gantt-events.ts
+        spec: |
+          controls.ts (drawer):
+          1. Add Escape key to close drawer
+          2. Add focus trap within drawer
+          3. Return focus to trigger on close
+          4. initOrgTree: add aria-expanded on toggle buttons
+          5. initOrgTree: add Arrow Up/Down to navigate tree items, Left/Right to collapse/expand
+          6. initDrillDown: set aria-expanded on initial render, not just on click
+
+          controls-dialogs.ts (tabs):
+          1. Add Home key → focus first tab
+          2. Add End key → focus last tab
+          3. initDropdown: set aria-selected="false" on all items at init
+
+          gantt.ts + gantt-events.ts:
+          1. Add actual keyboard handlers matching the aria-label promise:
+             - Arrow Left/Right: scroll timeline
+             - Arrow Up/Down: navigate between tasks
+             - Enter: select/expand task
+             - Escape: deselect
+          2. Add role="row" for task rows, role="gridcell" for task bars
+          3. tabindex="0" on each task bar for keyboard focus
+        verify:
+          - "grep 'Escape' src/ts/controls.ts"
+          - "grep 'aria-expanded' src/ts/controls.ts"
+          - "grep 'Home\\|End' src/ts/controls-dialogs.ts"
+          - "grep 'ArrowLeft\\|ArrowRight' src/ts/gantt-events.ts"
+          - "npx tsc --noEmit"
+
+      - id: T-305
+        title: "A11y: Live regions + ARIA data table + remaining gaps"
+        requirements: [F-09, F-10]
+        executor: task-executor
+        model: opus
+        effort: M
+        tokens_est: 12000
+        files:
+          - src/ts/data-table.ts
+          - src/ts/data-table-render.ts
+          - src/ts/data-binding-ui.ts
+        spec: |
+          data-table.ts:
+          1. Add role="row" on all <tr> elements
+          2. Add scope="col" on <th> elements
+          3. Add role="gridcell" on <td> elements (explicit for AT)
+          4. Filter input: add aria-label="Filter {columnName}"
+          5. Create status live region: <div aria-live="polite" class="mn-sr-only">
+          6. On sort: announce "Sorted by {column} {direction}" via live region
+          7. On filter: announce "Showing {count} of {total} rows" via live region
+          8. On pagination: announce "Page {n} of {total}" via live region
+
+          data-table-render.ts:
+          1. Pagination controls: add aria-current="page" on active page
+          2. Total rows count accessible via sr-only text
+
+          data-binding-ui.ts:
+          1. updateGauge: after updating gauge value, update aria-label on canvas
+          2. bindChart: after chart redraw, update aria-label with new data summary
+        verify:
+          - "grep 'aria-live' src/ts/data-table.ts"
+          - "grep 'scope.*col' src/ts/data-table.ts"
+          - "grep 'role.*row' src/ts/data-table.ts"
+          - "grep 'aria-label' src/ts/data-binding-ui.ts"
+          - "npx tsc --noEmit"
+
+  - id: 4
+    theme: "Code Quality — File Limits, CSS, Silent Failures"
+    merge_mode: sync
+    tasks:
+      - id: T-401
+        title: "Split CSS files exceeding 250 lines"
+        requirements: [F-12]
+        executor: task-executor
+        model: opus
+        effort: L
+        tokens_est: 18000
+        files:
+          - src/css/tokens.css (253 → split)
+          - src/css/layouts-data-table-compact-2.css (251 → split)
+          - src/css/patterns-strip-pod.css (250 → review)
+          - src/css/layouts-detail-controls-1.css (244 → review)
+          - src/css/layouts-data-table-1.css (242 → review)
+          - src/css/forms-inputs.css (233 → review)
+          - src/css/themes-base.css (223 → review)
+          - src/css/gauge.css (221 → review)
+          - src/css/forms-checkboxes-radios.css (215 → review)
+          - src/css/index.css (update imports)
+        spec: |
+          Split strategy — only files >250 lines MUST split, 200-250 review for logical splits:
+
+          1. tokens.css (253): split into tokens-color.css + tokens-spacing-type.css
+          2. layouts-data-table-compact-2.css (251): split into -compact-2a.css (core) + -compact-2b.css (responsive)
+
+          For files 200-250: review if there's a natural split point. If the file has distinct sections
+          (e.g., base + responsive, or light + dark variants), split. Otherwise leave as-is since they're
+          under the hard limit.
+
+          3. Update all @import references in barrel files (index.css, forms.css, etc.)
+          4. Ensure @layer declarations are preserved in split files
+          5. NO visual changes — output CSS must be identical
+        verify:
+          - "wc -l src/css/tokens-color.css | awk '$1 <= 250'"
+          - "wc -l src/css/tokens-spacing-type.css | awk '$1 <= 250'"
+          - "! find src/css -name '*.css' -exec sh -c 'test $(wc -l < \"$1\") -gt 250' _ {} \\; -print | grep ."
+
+      - id: T-402
+        title: "Split TS files exceeding 250 lines"
+        requirements: [F-12]
+        executor: task-executor
+        model: opus
+        effort: M
+        tokens_est: 10000
+        files:
+          - src/ts/ai-chat-dom.ts (245 → split)
+          - src/ts/controls-ferrari-dials.ts (246 → split)
+        spec: |
+          ai-chat-dom.ts (245):
+          1. Extract renderContent + markdown helpers to ai-chat-render.ts
+          2. Keep DOM construction in ai-chat-dom.ts
+          3. Update imports in ai-chat-messages.ts and index.ts
+
+          controls-ferrari-dials.ts (246):
+          1. Extract steppedRotary to controls-ferrari-rotary.ts
+          2. Keep manettino in controls-ferrari-dials.ts
+          3. Update imports in index.ts and maranello.ts
+
+          Both files must be <=250 lines after split. Update all re-exports.
+        verify:
+          - "wc -l src/ts/ai-chat-dom.ts | awk '$1 <= 250'"
+          - "wc -l src/ts/controls-ferrari-dials.ts | awk '$1 <= 250'"
+          - "npx tsc --noEmit"
+
+      - id: T-403
+        title: "Replace silent failures with console.warn"
+        requirements: [F-13]
+        executor: task-executor
+        model: opus
+        effort: S
+        tokens_est: 8000
+        files:
+          - src/ts/forms-widgets.ts
+          - src/ts/okr-panel.ts
+          - src/ts/login.ts
+          - src/ts/observers.ts
+          - src/ts/data-table-logic.ts
+          - src/ts/map-view-helpers.ts
+        spec: |
+          In each file, find all `return null` (or early returns) where a DOM element
+          is expected but not found. Replace with:
+
+          console.warn('[Maranello] {functionName}: element not found', { selector });
+          return null;
+
+          Pattern: every guard clause that returns null/undefined on missing DOM must warn.
+
+          login.ts: also fix the silent catch block (~line 204) — add console.warn for health check network errors.
+
+          Use consistent prefix: '[Maranello]' for all warnings.
+        verify:
+          - "grep -c 'console.warn' src/ts/forms-widgets.ts"
+          - "grep -c 'console.warn' src/ts/okr-panel.ts"
+          - "grep -c 'console.warn' src/ts/login.ts"
+          - "grep 'console.warn' src/ts/observers.ts"
+          - "grep 'console.warn' src/ts/data-table-logic.ts"
+          - "grep 'console.warn' src/ts/map-view-helpers.ts"
+          - "npx tsc --noEmit"
+
+      - id: T-404
+        title: "CSS: Remove !important, fix with @layer ordering"
+        requirements: [F-15]
+        executor: task-executor
+        model: opus
+        effort: L
+        tokens_est: 18000
+        files:
+          - src/css/ (multiple files with !important — 48 occurrences)
+        spec: |
+          1. Audit all 48 !important occurrences across CSS files
+          2. For each:
+             a. If used for theme override: move to higher-priority @layer (e.g., @layer themes.overrides)
+             b. If used for state (.is-active, .is-open, etc.): increase specificity with :where() or nesting
+             c. If used for accessibility (mn-reduced-motion, mn-high-contrast): KEEP — these are legitimate
+             d. If used for utility classes (.mn-hidden, .mn-sr-only): KEEP — utility layers are highest priority
+          3. Target: reduce from 48 to <10 (only legitimate accessibility/utility uses)
+          4. NO visual regressions — all themes must render identically
+          5. Document which !important were kept and why in a comment at top of relevant file
+        verify:
+          - "grep -r '!important' src/css/ | grep -vc 'accessibility\\|mn-sr-only\\|mn-hidden\\|mn-reduced-motion\\|mn-high-contrast\\|mn-no-focus' | awk '$1 < 15'"
+
+      - id: T-405
+        title: "Align CLAUDE.md with actual code"
+        requirements: [F-16]
+        executor: task-executor
+        model: opus
+        effort: S
+        tokens_est: 6000
+        files:
+          - CLAUDE.md
+        spec: |
+          Update CLAUDE.md to match actual codebase:
+          1. Web Components: add mn-mapbox and mn-tab to the WC table (25 total, not 23)
+          2. IIFE exports: add progressRing and flipCounter to Charts section
+          3. Update version references to 3.2.1
+          4. Verify all other listings match actual exports in index.ts
+          5. Keep format compact (tables, no prose bloat)
+        verify:
+          - "grep 'mn-mapbox' CLAUDE.md"
+          - "grep 'mn-tab' CLAUDE.md"
+          - "grep 'progressRing' CLAUDE.md"
+          - "grep 'flipCounter' CLAUDE.md"
+          - "grep '3.2.1' CLAUDE.md"
+
+  - id: 5
+    theme: "Testing — Unit + E2E Coverage Expansion"
+    merge_mode: sync
+    tasks:
+      - id: T-501
+        title: "Unit tests: data-binding, forms-validate, map-view"
+        requirements: [F-17]
+        executor: task-executor
+        model: opus
+        effort: L
+        tokens_est: 16000
+        files:
+          - tests/unit/data-binding.test.ts (NEW)
+          - tests/unit/forms-validate.test.ts (NEW)
+          - tests/unit/map-view.test.ts (NEW)
+        spec: |
+          data-binding.test.ts:
+          1. bind() with allowed properties (textContent, className, value)
+          2. bind() rejects disallowed properties (onclick, __proto__) — verify console.warn
+          3. bind() with innerHTML property — verify escaping
+          4. emit/on/off event lifecycle
+          5. autoBind finds [data-bind] elements
+
+          forms-validate.test.ts:
+          1. validateField with valid/invalid values
+          2. validateForm returns correct boolean
+          3. aria-invalid set on invalid fields
+          4. aria-describedby linked to error element
+          5. aria-required set on required fields
+          6. initLiveValidation attaches listeners
+          7. addValidator registers custom validator
+
+          map-view.test.ts:
+          1. mapView creates container
+          2. Marker rendering with valid/invalid data
+          3. Tooltip positioning
+
+          Use happy-dom, vitest, AAA pattern. Mock DOM as needed.
+        verify:
+          - "npx vitest run tests/unit/data-binding.test.ts"
+          - "npx vitest run tests/unit/forms-validate.test.ts"
+          - "npx vitest run tests/unit/map-view.test.ts"
+
+      - id: T-502
+        title: "Unit tests: ai-chat, detail-panel, web components"
+        requirements: [F-17]
+        executor: task-executor
+        model: opus
+        effort: L
+        tokens_est: 16000
+        files:
+          - tests/unit/ai-chat.test.ts (NEW)
+          - tests/unit/detail-panel.test.ts (NEW)
+          - tests/unit/wc-lifecycle.test.ts (NEW)
+        spec: |
+          ai-chat.test.ts:
+          1. buildUI creates chat container with correct structure
+          2. renderContent escapes HTML before markdown processing
+          3. renderContent processes **bold**, `code`, newlines
+          4. XSS payloads in messages are escaped (test with script tags, event handlers)
+          5. Agent icon sanitization (SVG with onload stripped)
+
+          detail-panel.test.ts:
+          1. createDetailPanel creates panel with correct ARIA
+          2. Escape key closes panel
+          3. Focus trap keeps focus within panel
+          4. Close returns focus to trigger
+
+          wc-lifecycle.test.ts:
+          1. registerAll() registers all 24 tags
+          2. isRegistered() returns correct boolean
+          3. getAvailableTags() returns full list
+          4. Attribute changes trigger rebuild
+          5. Test at least mn-gauge, mn-chart, mn-toast attribute observation
+
+          Use happy-dom, vitest, AAA pattern.
+        verify:
+          - "npx vitest run tests/unit/ai-chat.test.ts"
+          - "npx vitest run tests/unit/detail-panel.test.ts"
+          - "npx vitest run tests/unit/wc-lifecycle.test.ts"
+
+      - id: T-503
+        title: "E2E tests: accessibility + interaction coverage"
+        requirements: [F-18]
+        executor: task-executor
+        model: opus
+        effort: L
+        tokens_est: 16000
+        files:
+          - tests/e2e/a11y.spec.ts (NEW)
+          - tests/e2e/keyboard.spec.ts (NEW)
+          - tests/e2e/security.spec.ts (NEW)
+        spec: |
+          Requires demo server running at localhost:3000.
+
+          a11y.spec.ts:
+          1. All interactive elements have visible focus indicators
+          2. Charts have aria-label attributes
+          3. Form fields have linked error messages (trigger validation, check aria-describedby)
+          4. Modals have role="dialog" and aria-modal
+          5. Skip link navigates to main content
+          6. Page has no axe-core violations (install @axe-core/playwright)
+
+          keyboard.spec.ts:
+          1. Tab through all interactive elements
+          2. Modal: Escape closes, focus trapped
+          3. Dropdown: Arrow keys navigate, Enter selects
+          4. Tabs: Arrow keys switch, Home/End jump
+          5. Command palette: Ctrl+K opens, Arrow keys navigate items, Enter selects
+          6. Date picker: Arrow keys navigate days
+
+          security.spec.ts:
+          1. XSS payload in chart labels: verify no script execution
+          2. XSS payload in table cell data: verify escaped
+          3. Malicious SVG in chat agent icon: verify sanitized
+          4. Filename with HTML in file upload: verify escaped
+
+          Add @axe-core/playwright to devDependencies if not present.
+        verify:
+          - "test -f tests/e2e/a11y.spec.ts"
+          - "test -f tests/e2e/keyboard.spec.ts"
+          - "test -f tests/e2e/security.spec.ts"
+
+  - id: 6
+    theme: "Closure — Build Verify + CHANGELOG + Final Validation"
+    merge_mode: sync
+    tasks:
+      - id: TF-tests
+        title: "Run full test suite and type-check"
+        requirements: [F-01, F-02, F-03, F-04, F-05, F-06, F-07, F-08, F-09, F-10, F-11, F-12, F-13, F-14, F-15, F-16, F-17, F-18]
+        executor: task-executor
+        model: opus
+        effort: M
+        tokens_est: 10000
+        files: []
+        spec: |
+          1. npx tsc --noEmit — zero errors
+          2. npx vitest run — all unit tests pass
+          3. npm run build — build succeeds (ESM + CJS + IIFE + CSS + WC + types)
+          4. Verify dist/ output: check IIFE banner says 3.2.1
+          5. Verify no file in src/ exceeds 250 lines
+          6. Verify grep -r '!important' src/css/ count < 15
+          7. Verify zero any in src/ts/ (excluding vendor/declarations)
+        verify:
+          - "npx tsc --noEmit"
+          - "npx vitest run"
+          - "npm run build"
+          - "grep 'v3.2.1' dist/iife/maranello.min.js"
+
+      - id: TF-doc
+        title: "CHANGELOG + TROUBLESHOOTING update"
+        requirements: [F-16]
+        executor: task-executor
+        model: opus
+        effort: S
+        tokens_est: 5000
+        depends_on: [TF-tests]
+        files:
+          - CHANGELOG.md
+          - TROUBLESHOOTING.md
+        spec: |
+          CHANGELOG.md — add entry:
+          ## [3.2.1] - 2026-03-13
+          ### Security
+          - Fix XSS vulnerabilities: escapeHtml applied to all innerHTML with user data
+          - Sanitize SVG parsing for agent icons
+          - Property whitelist in data-binding prevents arbitrary property injection
+          - Color value validation for all inline styles
+
+          ### Accessibility
+          - Canvas charts: text alternatives, aria-label, sr-only descriptions
+          - Form errors: aria-describedby, aria-invalid, aria-required
+          - Complete keyboard navigation: date picker, command palette, detail panel, drawer, tabs, org tree, gantt
+          - Live regions for data table, form validation, chart updates
+          - ARIA: combobox pattern on command palette, grid roles on data table
+
+          ### Fixed
+          - Version sync across package.json, index.ts, esbuild banner
+          - 17 files split to respect 250-line limit
+          - Silent failures replaced with console.warn
+          - TypeScript any removed from map-mapbox.ts
+          - 40+ CSS !important replaced with @layer ordering
+
+          ### Added
+          - core/sanitize.ts: escapeHtml, isValidColor, sanitizeSvg, sanitizeAttr, ALLOWED_BIND_PROPERTIES
+          - Unit tests: sanitize, data-binding, forms-validate, map-view, ai-chat, detail-panel, wc-lifecycle
+          - E2E tests: accessibility, keyboard navigation, security
+
+          TROUBLESHOOTING.md — add sections for:
+          - XSS in custom renderers: use escapeHtml for user data
+          - Data binding property whitelist: how to extend ALLOWED_BIND_PROPERTIES
+        verify:
+          - "grep '3.2.1' CHANGELOG.md"
+          - "grep 'escapeHtml' TROUBLESHOOTING.md"
+
+      - id: TF-pr
+        title: "Final PR creation"
+        requirements: [F-01, F-02, F-03, F-04, F-05, F-06, F-07, F-08, F-09, F-10, F-11, F-12, F-13, F-14, F-15, F-16, F-17, F-18]
+        executor: task-executor
+        model: opus
+        effort: S
+        tokens_est: 5000
+        depends_on: [TF-doc]
+        files: []
+        spec: |
+          1. Stage all changes
+          2. Commit with conventional message: "fix!: security hardening + WCAG 2.2 AA + quality enforcement (v3.2.1)"
+          3. Create PR with full summary referencing all F-xx requirements
+          4. PR body: Security fixes, Accessibility improvements, Quality enforcement, Test coverage
+        verify:
+          - "git log -1 --oneline | grep '3.2.1'"
+
+      - id: TF-deploy-verify
+        title: "Build verification and version check"
+        requirements: [F-11]
+        executor: task-executor
+        model: opus
+        effort: XS
+        tokens_est: 3000
+        depends_on: [TF-pr]
+        files: []
+        spec: |
+          1. npm run build — verify clean build
+          2. Check dist/iife/maranello.min.js contains "v3.2.1"
+          3. Check dist/esm/index.js exports VERSION === '3.2.1'
+          4. Verify package.json version is 3.2.1
+          5. npm run test:unit — all green
+        verify:
+          - "npm run build && grep 'v3.2.1' dist/iife/maranello.min.js"
+          - "npx vitest run"

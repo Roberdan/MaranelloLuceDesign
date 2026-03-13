@@ -7,7 +7,7 @@
 <p align="center">
   <strong>Ferrari Luce-inspired design system for business dashboards.</strong><br>
   Warm leather tones · Cockpit-grade controls · Canvas data engines<br><br>
-  <a href="https://roberdan.github.io/MaranelloLuceDesign/demo/">▶ Live Demo</a> ·
+  <a href="https://roberdan.github.io/MaranelloLuceDesign/">▶ Live Demo</a> ·
   <a href="#quick-start">Quick Start</a> ·
   <a href="docs/INTEGRATION.md">Integration Guide</a> ·
   <a href="AGENT_GUIDE.md">AI Agent Guide</a>
@@ -344,7 +344,7 @@ Now use semantic CSS variables everywhere:
 
 ## Preview
 
-> **[▶ Live Demo](https://roberdan.github.io/MaranelloLuceDesign/demo/)** — 23 interactive sections, 87 APIs, 4 themes
+> **[▶ Live Demo](https://roberdan.github.io/MaranelloLuceDesign/)** — 23 interactive sections, 87 APIs, 4 themes
 
 <details open>
 <summary><strong>🌙 Nero Theme (Dark)</strong></summary>
