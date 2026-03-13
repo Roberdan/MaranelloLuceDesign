@@ -70,7 +70,7 @@ export function createCardsSection() {
       <p class="mn-section-number">02 — Components</p>
       <h2 class="mn-title-section" style="margin-bottom:var(--space-lg)">Cards & Signal Surfaces</h2>
       <p class="mn-body" style="margin-bottom:var(--space-xl)">
-        A richer, VirtualBPM-style card gallery for FightTheStroke therapy centers: KPI tiles, operational media, therapist profiles,
+        A richer, extended card gallery for FightTheStroke therapy centers: KPI tiles, operational media, therapist profiles,
         and dashboard micro-panels built to feel cinematic but still highly readable.
       </p>
 
@@ -79,7 +79,7 @@ export function createCardsSection() {
         <span class="mn-tag">Therapy Centers</span>
         <span class="mn-tag">Hybrid Care</span>
         <span class="mn-tag">Family Outcomes</span>
-        <span class="mn-tag mn-tag--xs">VirtualBPM mood</span>
+        <span class="mn-tag mn-tag--xs">dashboard</span>
       </div>
 
       <h3 class="mn-title-sub" style="text-align:center;margin-bottom:var(--space-lg)">KPI stat cards</h3>
