@@ -4,6 +4,7 @@
  * @version 2.0.0
  */
 import { cssVar, clamp, createElement } from './core/utils';
+import { escapeHtml, isValidColor } from './core/sanitize';
 
 export type OkrStatus = 'on-track' | 'at-risk' | 'behind';
 export type OkrScope = 'LOCAL' | 'TEAM' | 'GLOBAL' | string;
@@ -64,7 +65,7 @@ export function el<K extends keyof HTMLElementTagNameMap>(
   if (className) node.className = className;
   if (attrs) Object.keys(attrs).forEach((key) => {
     if (key === 'text') node.textContent = attrs[key];
-    else if (key === 'html') node.innerHTML = attrs[key];
+    else if (key === 'html') node.innerHTML = escapeHtml(String(attrs[key]));
     else node.setAttribute(key, attrs[key]);
   });
   return node;
@@ -80,20 +81,22 @@ export function ringTemplate(
   size: number, stroke: number, percent: number, color: string,
   centerText: string | null, trackClass: string, progressClass: string,
 ): string {
+  const safeColor = isValidColor(color) ? color : '#999';
   const radius = (size - stroke) / 2, cx = size / 2;
   const circ = 2 * Math.PI * radius;
   const bounded = clamp(safeNumber(percent), 0, 100);
   const off = circ - (bounded / 100) * circ;
   let svg = `<svg class="mn-okr__ring" viewBox="0 0 ${size} ${size}" aria-hidden="true">` +
     `<circle class="${trackClass}" cx="${cx}" cy="${cx}" r="${radius}" stroke-width="${stroke}"></circle>` +
-    `<circle class="${progressClass}" cx="${cx}" cy="${cx}" r="${radius}" stroke-width="${stroke}" stroke="${color}" ` +
+    `<circle class="${progressClass}" cx="${cx}" cy="${cx}" r="${radius}" stroke-width="${stroke}" stroke="${safeColor}" ` +
     `data-circumference="${circ.toFixed(2)}" data-target-offset="${off.toFixed(2)}" ` +
     `stroke-dasharray="${circ.toFixed(2)}" stroke-dashoffset="${circ.toFixed(2)}"></circle>`;
-  if (centerText != null) svg += `<text class="mn-okr__ring-text" x="50%" y="50%" dominant-baseline="middle" text-anchor="middle">${centerText}</text>`;
+  if (centerText != null) svg += `<text class="mn-okr__ring-text" x="50%" y="50%" dominant-baseline="middle" text-anchor="middle">${escapeHtml(String(centerText))}</text>`;
   return svg + '</svg>';
 }
 
 export function heroGaugeSVG(percent: number, color: string): string {
+  const safeColor = isValidColor(color) ? color : '#999';
   const w = 240, h = 140, cx = w / 2, cy = h - 10, r = 100;
   const startAngle = Math.PI;
   const bounded = clamp(safeNumber(percent), 0, 100);
@@ -120,14 +123,14 @@ export function heroGaugeSVG(percent: number, color: string): string {
     `<defs><filter id="okr-glow"><feGaussianBlur stdDeviation="4" result="blur"/>` +
     `<feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>` +
     `<path d="${trackPath}" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="8" stroke-linecap="round"/>` +
-    `<path class="mn-okr__gauge-progress" d="${progressPath}" fill="none" stroke="${color}" ` +
+    `<path class="mn-okr__gauge-progress" d="${progressPath}" fill="none" stroke="${safeColor}" ` +
     `stroke-width="8" stroke-linecap="round" filter="url(#okr-glow)" ` +
     `stroke-dasharray="${(Math.PI * r).toFixed(1)}" stroke-dashoffset="${(Math.PI * r).toFixed(1)}" data-target="0"/>` +
     ticks.join('') +
     `<line class="mn-okr__needle" x1="${cx}" y1="${cy}" x2="${nx.toFixed(1)}" y2="${ny.toFixed(1)}" ` +
-    `stroke="${color}" stroke-width="2.5" stroke-linecap="round" filter="url(#okr-glow)" ` +
+    `stroke="${safeColor}" stroke-width="2.5" stroke-linecap="round" filter="url(#okr-glow)" ` +
     `data-cx="${cx}" data-cy="${cy}" data-r="${r - 28}" data-target-angle="${needleAngle.toFixed(4)}"/>` +
-    `<circle cx="${cx}" cy="${cy}" r="5" fill="${color}"/>` +
+    `<circle cx="${cx}" cy="${cy}" r="5" fill="${safeColor}"/>` +
     `<circle cx="${cx}" cy="${cy}" r="2.5" fill="#111"/></svg>`;
 }
 

@@ -4,6 +4,7 @@
  */
 
 import type { IconCatalog, RenderIconOptions } from './core/types';
+import { escapeHtml } from './core/sanitize';
 import { navIcons } from './icons-nav';
 import { statusIcons } from './icons-status';
 import { actionIcons } from './icons-actions';
@@ -32,8 +33,11 @@ export function renderIcon(
   const sizeClass = opts?.size ? ` mn-icon--${opts.size}` : '';
   const extraClass = opts?.class ? ` ${opts.class}` : '';
   const svg = icons[name]();
-  const ariaAttr = opts?.ariaLabel
-    ? `role="img" aria-label="${opts.ariaLabel}"`
+  const safeLabel = opts?.ariaLabel
+    ? escapeHtml(opts.ariaLabel).replace(/"/g, '&quot;')
+    : '';
+  const ariaAttr = safeLabel
+    ? `role="img" aria-label="${safeLabel}"`
     : 'aria-hidden="true"';
   const a11ySvg = svg.replace('<svg ', `<svg ${ariaAttr} `);
   el.innerHTML = `<span class="mn-icon${sizeClass}${extraClass}">${a11ySvg}</span>`;

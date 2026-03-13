@@ -5,6 +5,7 @@
 
 import type { DataTableColumn, DataTableOptions } from './core/types';
 import { createElement } from './core/utils';
+import { escapeHtml, isValidColor } from './core/sanitize';
 
 export interface DataTableStatusMeta { cls: string; icon: string }
 export interface DataTableState<RowT = Record<string, unknown>> {
@@ -38,7 +39,7 @@ export function el(tag: string, cls: string, attrs?: Record<string, string>): HT
   if (attrs) {
     for (const [k, v] of Object.entries(attrs)) {
       if (k === 'text') e.textContent = v;
-      else if (k === 'html') e.innerHTML = v;
+      else if (k === 'html') e.innerHTML = escapeHtml(String(v));
       else e.setAttribute(k, v);
     }
   }
@@ -86,7 +87,12 @@ export const cellRenderers: Record<string, (val: unknown, row?: unknown, col?: u
   },
   custom: (val, row, col) => {
     const c = col as DataTableColumn | undefined;
-    if (c?.render) return String(c.render(val, row as Record<string, unknown>));
+    if (c?.render) {
+      const html = String(c.render(val, row as Record<string, unknown>));
+      return html.replace(/style="[^"]*color:\s*([^;"]+)/g, (match, colorVal) => {
+        return isValidColor(colorVal.trim()) ? match : match.replace(colorVal, 'inherit');
+      });
+    }
     return escHtml(val);
   },
 };
