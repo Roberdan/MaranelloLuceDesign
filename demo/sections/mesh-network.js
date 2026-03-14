@@ -95,7 +95,7 @@ export function meshNetworkSection() {
           <article class="mn-mesh-node" style="--mn-mesh-border-accent: var(--azzurro-chiaro, #4EA8DE);">
             <div style="display:flex;gap:4px;margin-bottom:var(--space-sm)"><span style="width:8px;height:8px;border-radius:50%;background:#DC0000"></span><span style="width:8px;height:8px;border-radius:50%;background:#FFC72C"></span><span style="width:8px;height:8px;border-radius:50%;background:#00A651"></span></div>
             <div class="mn-mesh-node__header">
-              <span aria-hidden="true" style="display:inline-flex;align-items:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C9 2 7 5 7 8c0 1.5.4 2.8 1 3.8L6 16c-.5 1-.8 2.2-.3 3 .5.8 1.5 1 2.3.5l1.5-1 .5 2c.2.8 1 1.5 2 1.5s1.8-.7 2-1.5l.5-2 1.5 1c.8.5 1.8.3 2.3-.5.5-.8.2-2-.3-3l-2-4.2c.6-1 1-2.3 1-3.8 0-3-2-6-5-6zm-2 7a1 1 0 110-2 1 1 0 010 2zm4 0a1 1 0 110-2 1 1 0 010 2z"/></svg></span>
+              <span aria-hidden="true" style="display:inline-flex;align-items:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12.5 2C10.8 2 9.6 3.4 9.1 5.2c-.6-.2-1.3-.1-1.7.4C6.8 6.3 7 7.3 7.4 8c-.7.8-1.1 1.9-1.1 3.1 0 1.8.6 3.3 1.5 4.2l-.6 3c-.2.8-.5 1.7-.1 2.5.4.7 1.2 1.2 2 1.2h6.6c.8 0 1.6-.5 2-1.2.4-.8.1-1.7-.1-2.5l-.6-3c.9-.9 1.5-2.4 1.5-4.2 0-1.2-.4-2.3-1.1-3.1.4-.7.6-1.7 0-2.4-.4-.5-1.1-.6-1.7-.4C15.2 3.4 14 2 12.5 2zM10 10.5a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm5 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm-4 3.5c0 0 .7 1 1.5 1s1.5-1 1.5-1"/></svg></span>
               <h4 class="mn-mesh-node__name">OMARCHY</h4>
               <span class="mn-mesh-status mn-mesh-status--on" title="online"></span>
             </div>

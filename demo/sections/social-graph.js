@@ -157,7 +157,18 @@ function drawFallbackGraph(host, opts) {
     opts.edges.forEach((e) => {
       const a = nodeMap.get(e.source), b = nodeMap.get(e.target);
       if (!a || !b) return;
-      ctx.globalAlpha = 0.35; ctx.strokeStyle = '#d5d9e0'; ctx.lineWidth = e.weight; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+      const dx = b.x - a.x, dy = b.y - a.y;
+      const dist = Math.hypot(dx, dy);
+      const nx = -dy / Math.max(1, dist), ny = dx / Math.max(1, dist);
+      const curvature = Math.min(dist * 0.25, 40);
+      const cx1 = (a.x + b.x) / 2 + nx * curvature;
+      const cy1 = (a.y + b.y) / 2 + ny * curvature;
+      const grad = ctx.createLinearGradient(a.x, a.y, b.x, b.y);
+      const colA = opts.groups[a.group] || '#FFC72C';
+      const colB = opts.groups[b.group] || '#FFC72C';
+      grad.addColorStop(0, colA); grad.addColorStop(1, colB);
+      ctx.globalAlpha = 0.3; ctx.strokeStyle = grad; ctx.lineWidth = e.weight;
+      ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.quadraticCurveTo(cx1, cy1, b.x, b.y); ctx.stroke();
     });
     nodes.forEach((n) => {
       ctx.globalAlpha = 1; ctx.fillStyle = opts.groups[n.group] || '#FFC72C'; ctx.beginPath(); ctx.arc(n.x, n.y, n.size, 0, Math.PI * 2); ctx.fill();
