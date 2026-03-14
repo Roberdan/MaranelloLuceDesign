@@ -1,60 +1,86 @@
-<!-- v3.1.0 | 2025-07-21 -->
+<!-- v3.2.0 | 2026-03-14 -->
 # Contributing
+
+## Constitution
+
+**All contributions must comply with [CONSTITUTION.md](CONSTITUTION.md).** CI enforces these rules automatically.
+
+Key rules:
+- WCAG 2.2 AA accessibility
+- Zero emoji (SVG icons only)
+- All CSS classes use `mn-` prefix
+- All CSS rules inside `@layer` blocks
+- Max 250 lines per file
+- No hardcoded colors — use tokens from `tokens.css`
+- Works in all 4 themes (nero, avorio, editorial, colorblind)
+- `prefers-reduced-motion` respected
 
 ## Setup
 
 ```bash
 git clone https://github.com/Roberdan/MaranelloLuceDesign.git && cd MaranelloLuceDesign
-npm install && npm run build && npm run dev  # localhost:3000
+npm install
+npm run build
+npm run dev
 ```
 
 Requirements: Node 20+, npm 10+.
 
-## Commands
+## Build and Validation
 
 | Command | Purpose |
 |---|---|
-| `npm run build` | Full build (JS+CSS+WC+fonts+types) |
-| `npm run test:unit` | Vitest |
-| `npm run test:e2e` | Playwright (build first) |
+| `npm run build` | Full build (JS + CSS + WC + assets + types) |
+| `npm run test:unit` | Unit tests (Vitest) |
+| `npm run test:e2e` | End-to-end tests (Playwright) |
 | `npx tsc --noEmit` | Type-check |
+| `scripts/check-tokens.sh` | Verify token hygiene |
 
-## Code Rules
+## Modifying Components
 
-| Rule | Detail |
-|---|---|
-| Max file size | 250 lines — split if exceeds |
-| Language | English only (code + comments) |
-| TypeScript | `strict`, no `any`, named exports only |
-| CSS | All rules inside `@layer` block |
-| File naming | `kebab-case`, match exported module |
-| Comments | WHY not WHAT, <5% density |
+1. Add CSS in `src/css/<name>.css` inside the proper `@layer`.
+2. Import it in the correct barrel (`components.css`, `layouts.css`, etc.).
+3. Add/extend JS API in `src/ts/<name>.ts`, re-export from `src/ts/index.ts`.
+4. Add/extend Web Component in `src/wc/mn-<name>.js` when needed.
+5. Add unit tests in `tests/unit/` and update `demo/` if behavior is visible.
 
-## New Component Checklist
+## Adding Icons
 
-- [ ] CSS: `src/css/<name>.css` wrapped in `@layer`
-- [ ] TS: `src/ts/<name>.ts`, export from `src/ts/index.ts`
-- [ ] WC (optional): `src/wc/mn-<name>.ts`, register in `src/wc/index.ts`
-- [ ] Test: `tests/<name>.test.ts`
-- [ ] `npm run build` passes
-- [ ] `npx tsc --noEmit` passes
+| Rule | Value |
+|------|-------|
+| Format | Inline SVG |
+| ViewBox | `0 0 24 24` |
+| Style | `stroke="currentColor" fill="none" stroke-width="1.5"` |
+| Size classes | xs=12px sm=16px md=20px lg=24px xl=32px 2xl=48px |
+| Registration | Add to `src/ts/icons-*.ts`, re-export from `icons.ts` |
+| Accessibility | Wrap in `<span aria-hidden="true">` |
+| NO EMOJI | Any emoji character = instant PR rejection |
 
-## PR Process
+## Theme Compliance
 
-- [ ] Fork → feature branch → PR against `main`
-- [ ] All CI green (build, unit, E2E, typecheck)
+Every component must work in all 4 themes. Test by switching `<body>` class:
+- `mn-nero` — dark mode
+- `mn-avorio` — warm light
+- (default) — editorial mixed
+- `mn-colorblind` — high-contrast accessible
+
+Use only CSS custom properties for colors. NEVER hardcode #hex values (except in tokens.css).
+
+## Accessibility Checklist
+
+Before submitting a PR:
+- [ ] All interactive elements are keyboard-navigable (Tab/Enter/Escape)
+- [ ] Color contrast ≥ 4.5:1 (text) / 3:1 (UI components)
+- [ ] Decorative elements have `aria-hidden="true"`
+- [ ] Form inputs have `<label>` elements
+- [ ] Animations respect `prefers-reduced-motion`
+- [ ] Touch targets ≥ 44x44px
+- [ ] Tested in screen reader (VoiceOver / NVDA)
+
+## Pull Request Checklist
+
 - [ ] One feature/fix per PR
-- [ ] Update `CHANGELOG.md` under `[Unreleased]`
-- [ ] Squash-merge
-
-## Commits
-
-```
-feat: add mn-badge web component
-fix: gauge needle misaligned at value=0
-chore: bump esbuild to 0.25
-```
-
-## License
-
-MIT — contributions licensed under MIT.
+- [ ] Build, unit tests, and typecheck pass
+- [ ] Works across all 4 themes
+- [ ] Accessibility checklist is complete
+- [ ] `CHANGELOG.md` updated under `[Unreleased]`

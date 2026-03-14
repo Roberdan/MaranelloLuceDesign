@@ -399,3 +399,36 @@ Sizes: `xs` (12px), `sm` (16px), `md` (20px), `lg` (24px), `xl` (32px), `2xl` (4
 </form>
 <script>Maranello.initForms(document.getElementById('myForm'))</script>
 ```
+
+## Modifying This Design System
+
+Read [CONSTITUTION.md](CONSTITUTION.md) first. All rules are enforced by CI.
+
+### Add a CSS component
+1. Create `src/css/<name>.css` inside appropriate `@layer`
+2. Import in barrel file (`layouts.css`, `components.css`, etc.)
+3. Use `mn-` prefix, BEM naming, token variables only
+4. Verify in all 4 themes
+
+### Add a JS API
+1. Create `src/ts/<name>.ts` with named exports
+2. Re-export from `src/ts/index.ts`
+3. Add unit test in `tests/unit/<name>.test.ts`
+4. JSDoc on all public functions
+
+### Add an icon
+1. Add SVG to appropriate `src/ts/icons-*.ts` file
+2. viewBox="0 0 24 24", stroke="currentColor", fill="none", stroke-width="1.5"
+3. Re-export from `src/ts/icons.ts`
+4. NO EMOJI — ever
+
+### Add a Web Component
+1. Create `src/wc/mn-<name>.js`
+2. Register in WC barrel
+3. Add demo in `demo/sections/`
+4. Include `aria-*` attributes on interactive parts
+
+### Validation
+```bash
+npm run build && npm run test:unit && npx tsc --noEmit
+```

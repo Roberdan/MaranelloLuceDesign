@@ -5,9 +5,10 @@
 </p>
 
 <p align="center">
-  <strong>Ferrari Luce-inspired design system for business dashboards and AI agent orchestration.</strong><br>
+  <strong>Ferrari Luce-inspired design system for AI agent dashboards and orchestration.</strong><br>
   Inspired by <a href="https://www.ferrari.com/it-IT/auto/ferrari-luce">Ferrari Luce</a> interior design language.<br>
   Part of <a href="https://github.com/Roberdan/MyConvergio">Convergio</a>.
+  Aligned with the <a href="https://github.com/Roberdan/MyConvergio/blob/master/AgenticManifesto.md">Agentic Manifesto</a>.
 </p>
 
 <p align="center">
@@ -66,6 +67,22 @@ Or CDN (no build):
 
 **→ [AGENT.md](AGENT.md)** — Complete API reference, CSS class catalog, decision tree, and copy-paste recipes. Optimized for LLM consumption.
 
+## Rules & Governance
+
+**→ [CONSTITUTION.md](CONSTITUTION.md)** — Binding design rules enforced by CI. Accessibility, theming, naming, icons.
+
+## Live Demo
+
+> **[▶ Open Full Demo](https://roberdan.github.io/MaranelloLuceDesign/)** — 30+ interactive sections, 150+ APIs, 4 themes
+
+<p align="center">
+  <a href="https://roberdan.github.io/MaranelloLuceDesign/">
+    <img src="docs/screenshots/hero-nero.png" alt="Maranello Luce — Nero Theme Demo" width="720">
+  </a>
+</p>
+
+The demo is self-documenting: every component shows its API usage inline.
+
 ## Development
 
 ```bash
@@ -74,20 +91,6 @@ npm run dev          # Demo at localhost:3000
 npm run test:unit    # Vitest (201 tests)
 npm run test:e2e     # Playwright
 ```
-
-## Preview
-
-[▶ Live Demo](https://roberdan.github.io/MaranelloLuceDesign/) — 30 interactive sections, all components, 4 themes.
-
-<details>
-<summary>Screenshots</summary>
-
-![Gauges](docs/screenshots/gauges-nero.png)
-![Charts](docs/screenshots/charts-nero.png)
-![Controls](docs/screenshots/controls-nero.png)
-![Cockpit](docs/screenshots/cockpit-nero.png)
-
-</details>
 
 ## Sponsor ❤️
 

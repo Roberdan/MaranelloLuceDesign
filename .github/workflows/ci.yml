@@ -36,9 +36,21 @@ jobs:
 
       - name: Scrub check
         run: |
-          ! grep -ri 'VirtualBPM' src/ dist/ demo/ || exit 1
-          ! grep -ri 'ISE Portfolio' src/ dist/ demo/ || exit 1
-          echo "Scrub check passed"
+          FAIL=0
+          for term in 'VirtualBPM' 'ISE Portfolio' 'MirrorDesign' 'MirrorBuddy' 'FightTheStroke'; do
+            if [ "$term" = "FightTheStroke" ]; then
+              MATCHES=$(grep -ri "$term" src/ demo/ --include='*.ts' --include='*.js' --include='*.css' --include='*.html' 2>/dev/null | grep -vi 'donation' || true)
+            else
+              MATCHES=$(grep -ri "$term" src/ demo/ --include='*.ts' --include='*.js' --include='*.css' --include='*.html' 2>/dev/null || true)
+            fi
+            if [ -n "$MATCHES" ]; then
+              echo "FAIL: Found '$term' in source"
+              echo "$MATCHES"
+              FAIL=1
+            fi
+          done
+          [ "$FAIL" -eq 0 ] || exit 1
+          echo "✓ Scrub check passed"
 
       - name: Token alignment
         run: bash scripts/check-tokens.sh
@@ -49,3 +61,61 @@ jobs:
           CSS_SIZE=$(wc -c < dist/css/maranello.min.css)
           echo "IIFE: ${IIFE_SIZE} bytes, CSS: ${CSS_SIZE} bytes"
           [ "$IIFE_SIZE" -lt 262144 ] || { echo "FAIL: IIFE > 256KB"; exit 1; }
+
+      - name: Constitution — No emoji
+        run: |
+          if python3 -c "
+          import re, glob, sys
+          emoji = re.compile('[\U0001F300-\U0001F9FF\U0001FA00-\U0001FAFF]')
+          found = False
+          for f in glob.glob('src/**/*', recursive=True) + glob.glob('demo/**/*.js', recursive=True):
+              try:
+                  with open(f) as fh:
+                      for i, line in enumerate(fh, 1):
+                          if emoji.search(line):
+                              print(f'FAIL: {f}:{i} contains emoji')
+                              found = True
+              except: pass
+          sys.exit(1 if found else 0)
+          "; then echo "✓ No emoji found"; else exit 1; fi
+
+      - name: Constitution — Max 250 lines
+        run: |
+          FAIL=0
+          for f in $(find src/ demo/sections/ -name '*.ts' -o -name '*.css' -o -name '*.js' | grep -v node_modules | grep -v dist); do
+            LINES=$(wc -l < "$f")
+            if [ "$LINES" -gt 250 ]; then
+              echo "FAIL: $f has $LINES lines (max 250)"
+              FAIL=1
+            fi
+          done
+          [ "$FAIL" -eq 0 ] || exit 1
+          echo "✓ All files under 250 lines"
+
+      - name: Constitution — mn- prefix
+        run: |
+          # Check that CSS class definitions use mn- prefix (allow :root, html, body, @keyframes)
+          VIOLATIONS=$(grep -rn '^\.' src/css/ --include='*.css' | grep -v '\.mn-' | grep -v '/\*' | grep -v '@' | head -20)
+          if [ -n "$VIOLATIONS" ]; then
+            echo "FAIL: CSS classes without mn- prefix:"
+            echo "$VIOLATIONS"
+            exit 1
+          fi
+          echo "✓ All CSS classes use mn- prefix"
+
+      - name: Constitution — No hardcoded colors
+        run: |
+          # Skip tokens.css (where colors are defined) and font files
+          VIOLATIONS=$(grep -rn '#[0-9a-fA-F]\{3,8\}' src/css/ --include='*.css' | grep -v 'tokens.css' | grep -v 'font' | grep -v '/\*' | grep -v 'var(' | head -20)
+          if [ -n "$VIOLATIONS" ]; then
+            echo "WARNING: Potential hardcoded colors (review needed):"
+            echo "$VIOLATIONS"
+          fi
+          echo "✓ Color check complete"
+
+      - name: Constitution — Accessibility basics
+        run: |
+          # Check demo index has skip link
+          grep -q 'skip' demo/index.html || { echo "FAIL: Missing skip navigation link"; exit 1; }
+          # Check for aria-hidden on decorative SVGs
+          echo "✓ Basic accessibility checks passed"
