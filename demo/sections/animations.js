@@ -99,7 +99,7 @@ export function createAnimationsSection() {
       <div class="demo-section-label">Composable Dashboard Grid</div>
       <!-- Dashboard header toolbar -->
       <div style="display:flex;align-items:center;gap:var(--space-md);padding:12px 16px;background:linear-gradient(180deg,rgba(255,199,44,0.06),transparent);border:1px solid var(--grigio-scuro,#333);border-radius:var(--radius-md) var(--radius-md) 0 0;margin-bottom:0">
-        <span class="mn-label" style="color:var(--mn-accent);font-size:0.75rem;letter-spacing:0.06em">FIGHT<span style="color:var(--grigio-alluminio)">THE</span>STROKE</span>
+        <span class="mn-label" style="color:var(--mn-accent);font-size:0.75rem;letter-spacing:0.06em">MARANELLO<span style="color:var(--grigio-alluminio)"> LUCE</span></span>
         <div style="display:flex;gap:2px;margin-left:var(--space-md)">
           <button class="mn-btn-cluster__item mn-btn-cluster__item--active" style="padding:6px 8px;font-size:0.6rem" title="Dashboard">▦</button>
           <button class="mn-btn-cluster__item" style="padding:6px 8px;font-size:0.6rem" title="Table">☰</button>
