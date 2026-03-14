@@ -97,7 +97,7 @@
   overflow: hidden;
 }
 .mn-bar-metric {
-  color: #666;
+  color: var(--grigio-medio);
   min-width: 24px;
 }
 .mn-strip__board-cell {

@@ -67,12 +67,12 @@
   color: var(--nero-assoluto);
 }
 .mn-btn--accent:hover {
-  background: #e6b325;
-  border-color: #e6b325;
+  background: var(--giallo-hover);
+  border-color: var(--giallo-hover);
 }
 .mn-btn--accent:active {
-  background: #cc9a1d;
-  border-color: #cc9a1d;
+  background: var(--giallo-hover);
+  border-color: var(--giallo-hover);
   transform: translateY(1px);
 }
 

@@ -197,8 +197,8 @@
   z-index: 5;
 }
 .mn-gauge__counter-digit {
-  background: #1a1a1a;
-  border: 1px solid #333;
+  background: var(--nero-soft);
+  border: 1px solid var(--bordo);
   padding: 1px 3px;
   font-family: var(--font-display);
   font-size: 0.6rem;

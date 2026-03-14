@@ -3,24 +3,24 @@
 
 body.mn-colorblind .mn-tag--success,
 body.mn-colorblind .mn-status--success .mn-status__dot,
-body.mn-colorblind .mn-led--green .mn-led__bulb { background: #0072B2; }
+body.mn-colorblind .mn-led--green .mn-led__bulb { background: var(--mn-cb-blue); }
 body.mn-colorblind .mn-tag--danger,
 body.mn-colorblind .mn-status--danger .mn-status__dot,
-body.mn-colorblind .mn-led--red .mn-led__bulb { background: #D55E00; }
+body.mn-colorblind .mn-led--red .mn-led__bulb { background: var(--mn-cb-orange); }
 body.mn-colorblind .mn-tag--warning,
-body.mn-colorblind .mn-led--amber .mn-led__bulb { background: #E69F00; }
+body.mn-colorblind .mn-led--amber .mn-led__bulb { background: var(--mn-cb-yellow); }
 
 /* Navigation */
 body.mn-colorblind .mn-sidebar__item--active {
-  color: #0072B2;
-  border-left-color: #0072B2;
+  color: var(--mn-cb-blue);
+  border-left-color: var(--mn-cb-blue);
   background: rgba(0, 114, 178, 0.08);
 }
 body.mn-colorblind .mn-nav__link--active,
-body.mn-colorblind .mn-nav__brand-accent { color: #0072B2; }
+body.mn-colorblind .mn-nav__brand-accent { color: var(--mn-cb-blue); }
 
 /* Data viz */
-body.mn-colorblind .mn-treemap__cell { color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.6); }
+body.mn-colorblind .mn-treemap__cell { color: var(--bianco-puro); text-shadow: 0 1px 3px rgba(0,0,0,0.6); }
 
 
 /* ============================================================
@@ -99,17 +99,17 @@ body.mn-avorio .mn-a11y-panel__reset:hover { background: var(--avorio-medio); co
 /* ============================================================
    COLORBLIND — Data Table Overrides
    ============================================================ */
-body.mn-colorblind .mn-dt__th--sortable:hover { color: #FFB000; }
-body.mn-colorblind .mn-dt__th--sorted { color: #FFB000; }
-body.mn-colorblind .mn-dt__filter-input:focus { border-color: #FFB000; box-shadow: 0 0 0 2px rgba(255,176,0,0.15); }
+body.mn-colorblind .mn-dt__th--sortable:hover { color: var(--mn-accent); }
+body.mn-colorblind .mn-dt__th--sorted { color: var(--mn-accent); }
+body.mn-colorblind .mn-dt__filter-input:focus { border-color: var(--mn-accent); box-shadow: 0 0 0 2px rgba(255,176,0,0.15); }
 body.mn-colorblind .mn-dt--crosshair .mn-dt__row--hovered { background: rgba(255,176,0,0.06); }
 body.mn-colorblind .mn-dt__row--selected { background: rgba(255,176,0,0.10); }
 body.mn-colorblind .mn-dt__col-highlight { background: rgba(255,176,0,0.04); }
-body.mn-colorblind .mn-dt__badge--green { background: #0072B2; }
-body.mn-colorblind .mn-dt__badge--red { background: #D55E00; }
-body.mn-colorblind .mn-dt__badge--yellow { background: #E69F00; }
-body.mn-colorblind .mn-a11y-fab { background: #FFB000; }
-body.mn-colorblind .mn-a11y-toggle--on { background: #FFB000; }
+body.mn-colorblind .mn-dt__badge--green { background: var(--mn-cb-blue); }
+body.mn-colorblind .mn-dt__badge--red { background: var(--mn-cb-orange); }
+body.mn-colorblind .mn-dt__badge--yellow { background: var(--mn-cb-yellow); }
+body.mn-colorblind .mn-a11y-fab { background: var(--mn-accent); }
+body.mn-colorblind .mn-a11y-toggle--on { background: var(--mn-accent); }
 
 
 /* ============================================================

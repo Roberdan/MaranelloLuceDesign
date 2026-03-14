@@ -15,7 +15,7 @@
 /* ── Text Color Utilities (replaces all inline color styles) ── */
 .mn-text-muted   { color: var(--grigio-chiaro); }
 .mn-text-subtle  { color: var(--grigio-medio); }
-.mn-text-dim     { color: #666; }
+.mn-text-dim     { color: var(--grigio-medio); }
 .mn-text-giallo  { color: var(--giallo-ferrari); }
 .mn-text-verde   { color: var(--verde-racing); }
 .mn-text-rosso   { color: var(--rosso-corsa); }

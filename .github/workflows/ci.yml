@@ -105,13 +105,21 @@ jobs:
 
       - name: Constitution — No hardcoded colors
         run: |
-          # Skip tokens.css (where colors are defined) and font files
-          VIOLATIONS=$(grep -rn '#[0-9a-fA-F]\{3,8\}' src/css/ --include='*.css' | grep -v 'tokens.css' | grep -v 'font' | grep -v '/\*' | grep -v 'var(' | head -20)
+          # Fail on semantic colors used inline (background/color: #hex) outside token files.
+          # Allow: token definitions (--var: #hex), gradient texture stops, var() fallbacks,
+          # tokens-*.css, font refs, comments, rgba().
+          VIOLATIONS=$(grep -rn '#[0-9a-fA-F]\{3,8\}' src/css/ --include='*.css' \
+            | grep -v 'tokens.css' | grep -v 'tokens-color.css' | grep -v 'tokens-spacing' \
+            | grep -v 'font' | grep -v '/\*' | grep -v 'var(' | grep -v '\-\-' \
+            | grep -v 'rgba' | grep -v 'gradient' | grep -v 'conic' \
+            | grep -v '[0-9]\+%' | grep -v '[0-9]\+deg' \
+            | head -20)
           if [ -n "$VIOLATIONS" ]; then
-            echo "WARNING: Potential hardcoded colors (review needed):"
+            echo "FAIL: Hardcoded colors outside tokens (use var() or define token):"
             echo "$VIOLATIONS"
+            exit 1
           fi
-          echo "✓ Color check complete"
+          echo "✓ No hardcoded colors outside tokens"
 
       - name: Constitution — Accessibility basics
         run: |

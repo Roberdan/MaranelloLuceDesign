@@ -21,7 +21,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: #c8c8c8;
+  color: var(--grigio-alluminio);
 }
 .mn-chart-panel__badge {
   font-family: var(--font-display);

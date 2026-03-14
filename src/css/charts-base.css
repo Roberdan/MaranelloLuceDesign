@@ -89,7 +89,7 @@
 }
 .mn-chart-tooltip__label {
   font-size: 0.65rem;
-  color: #9e9e9e;
+  color: var(--grigio-chiaro);
   margin-bottom: 4px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -116,7 +116,7 @@
   padding: 8px 0;
   font-size: 0.7rem;
   font-family: var(--font-body);
-  color: #9e9e9e;
+  color: var(--grigio-chiaro);
 }
 .mn-chart-legend__item {
   display: flex;

@@ -175,21 +175,21 @@
 
 /* ── COLORBLIND OVERRIDES (Okabe-Ito palette) ── */
 body.mn-colorblind .mn-live-panel__mode--accent {
-  border-color: #0072B2;
-  color: #0072B2;
+  border-color: var(--mn-cb-blue);
+  color: var(--mn-cb-blue);
 }
 body.mn-colorblind .mn-live-panel__mode {
-  border-color: #E69F00;
-  color: #E69F00;
+  border-color: var(--mn-cb-yellow);
+  color: var(--mn-cb-yellow);
 }
 body.mn-colorblind .mn-bar-chart__bar {
-  background: var(--mn-chart-series-1, #56B4E9);
+  background: var(--mn-chart-series-1);
 }
 body.mn-colorblind .mn-bar-chart__bar:hover {
   box-shadow: 0 0 8px rgba(0,114,178,0.3);
 }
 body.mn-colorblind .mn-progress-ring__fill {
-  stroke: #0072B2;
+  stroke: var(--mn-cb-blue);
 }
 
 
