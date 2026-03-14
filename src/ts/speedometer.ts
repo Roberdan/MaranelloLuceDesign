@@ -1,7 +1,4 @@
-/**
- * Maranello Luce Design - Speedometer gauge
- * Animated needle speedometer with optional bar indicator.
- */
+/** Maranello Luce Design - Speedometer gauge (animated needle + optional bar). */
 import type { SpeedometerOptions, SpeedometerController } from './core/types';
 import { cssVar } from './core/utils';
 
