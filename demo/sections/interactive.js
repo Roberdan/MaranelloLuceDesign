@@ -36,6 +36,6 @@ function initProfile(M, section) {
   const container = section.querySelector('#demo-profile-menu'); if (!container) return; if (!M.profileMenu) return placeholder(container, 'Profile Menu');
   try {
     const trigger = document.createElement('div'); trigger.style.cssText = 'display:flex;align-items:center;justify-content:center;height:100%;padding:var(--space-xl)'; container.innerHTML = ''; container.appendChild(trigger);
-    M.profileMenu(trigger, { name: 'Roberto D'Angelo', email: 'roberdan@maranelloluce.ai', avatarUrl: 'https://github.com/Roberdan.png', sections: [{ items: [{ label: 'View Profile', action: () => console.log('[mn-profile] View Profile') }, { label: 'Settings', action: () => console.log('[mn-profile] Settings') }] }, { items: [{ label: 'Switch Theme', action: () => { window.Maranello?.cycleTheme?.(); } }, { label: 'Sign Out', action: () => console.log('[mn-profile] Sign Out') }] }] });
+    M.profileMenu(trigger, { name: "Roberto D'Angelo", email: 'roberdan@maranelloluce.ai', avatarUrl: 'https://github.com/Roberdan.png', sections: [{ items: [{ label: 'View Profile', action: () => console.log('[mn-profile] View Profile') }, { label: 'Settings', action: () => console.log('[mn-profile] Settings') }] }, { items: [{ label: 'Switch Theme', action: () => { window.Maranello?.cycleTheme?.(); } }, { label: 'Sign Out', action: () => console.log('[mn-profile] Sign Out') }] }] });
   } catch (e) { console.warn('[mn-profile] error:', e); placeholder(container, 'Profile Menu'); }
 }
