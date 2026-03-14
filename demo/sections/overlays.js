@@ -13,14 +13,14 @@ export function createOverlaysSection() {
       <h2 class="mn-title-section mn-mb-sm mn-anim-fadeInUp">Modals, Toasts &amp; Drawers</h2>
       <p class="mn-body mn-mb-2xl">Contextual overlays: confirmation dialogs, non-blocking notifications, and slide-out panels.</p>
 
-      <div class="demo-section-label mn-mt-xl">Modal Dialogs</div>
+      <div class="mn-demo-section-label mn-mt-xl">Modal Dialogs</div>
       <div class="mn-flex-wrap mn-gap-md mn-mb-2xl">
         <button class="mn-btn mn-btn--accent" id="ovl-modal-info">Info Modal</button>
         <button class="mn-btn mn-btn--ghost" id="ovl-modal-confirm">Confirm Modal</button>
         <button class="mn-btn mn-btn--ghost" id="ovl-modal-danger">Danger Modal</button>
       </div>
 
-      <div class="demo-section-label">Toast Notifications</div>
+      <div class="mn-demo-section-label">Toast Notifications</div>
       <div class="mn-flex-wrap mn-gap-md mn-mb-2xl">
         <button class="mn-btn mn-btn--ghost" id="ovl-toast-info">Info Toast</button>
         <button class="mn-btn mn-btn--ghost" id="ovl-toast-success">Success Toast</button>
@@ -28,12 +28,12 @@ export function createOverlaysSection() {
         <button class="mn-btn mn-btn--ghost" id="ovl-toast-error">Error Toast</button>
       </div>
 
-      <div class="demo-section-label">Command Palette</div>
+      <div class="mn-demo-section-label">Command Palette</div>
       <div class="mn-flex-wrap mn-gap-md mn-mb-2xl">
         <button class="mn-btn mn-btn--ghost" id="ovl-cmd-palette">Open Command Palette <span class="mn-micro" style="opacity:.6;margin-left:var(--space-xs)">⌘K</span></button>
       </div>
 
-      <div class="demo-section-label">Slide-out Drawer</div>
+      <div class="mn-demo-section-label">Slide-out Drawer</div>
       <div class="mn-flex-wrap mn-gap-md mn-mb-2xl">
         <button class="mn-btn mn-btn--ghost" id="ovl-drawer-open">Open Drawer</button>
       </div>
