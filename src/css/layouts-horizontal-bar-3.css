@@ -1,6 +1,7 @@
 @layer layouts {
 /* layouts — Horizontal Bar 3 | Maranello Design System v1.4.0 */
 
+.mn-okr__kr-bar {
   border-radius: inherit;
   transition: width 900ms cubic-bezier(0.2, 1, 0.2, 1);
 }
