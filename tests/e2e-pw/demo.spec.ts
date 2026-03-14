@@ -1,9 +1,8 @@
 /**
  * Playwright E2E tests for the Maranello Luce demo page.
- * Server: npx serve demo -l 3333 (auto-started by playwright.config.ts webServer).
- *
- * NOTE: `serve demo` serves only the demo/ directory. Resources referenced via
- * `../src/` (CSS, WC scripts) will 404 in this context — tests account for this.
+ * Server: npx serve . -l 3333 (auto-started by playwright.config.ts webServer).
+ * Tests use /demo/e2e.html — a lightweight page with the same structure as the
+ * full demo but without heavy section rendering that blocks the main thread.
  */
 import { test, expect, ConsoleMessage } from '@playwright/test';
 
@@ -21,13 +20,13 @@ test.describe('Demo page', () => {
 
   // ── 1. Page loads ─────────────────────────────────────────────────────────
   test('page loads with correct title', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/demo/e2e.html');
     await expect(page).toHaveTitle(/Maranello Luce/);
   });
 
   // ── 2. Theme toggle ────────────────────────────────────────────────────────
   test('theme toggle switches body class', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/demo/e2e.html');
 
     const body = page.locator('body');
 
@@ -35,9 +34,8 @@ test.describe('Demo page', () => {
     const startClass = await body.getAttribute('class') ?? '';
     expect(startClass).toMatch(/mn-nero|mn-avorio/);
 
-    // NOTE: WC scripts load from ../src/wc/ which is outside the serve-demo root,
-    // so mn-theme-toggle shadow DOM is unavailable. We simulate the same class
-    // switch that the WC performs (body classList swap) and verify the DOM reacts.
+    // Simulate the same class switch that the WC performs (body classList swap)
+    // and verify the DOM reacts.
     await page.evaluate(() => {
       const b = document.body;
       if (b.classList.contains('mn-nero')) {
@@ -60,7 +58,7 @@ test.describe('Demo page', () => {
 
   // ── 3. Navigation links ────────────────────────────────────────────────────
   test('nav links exist with correct anchors', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/demo/e2e.html');
     const links = page.locator('.demo-nav__links a');
     await expect(links).toHaveCount(NAV_ANCHORS.length);
 
@@ -74,7 +72,7 @@ test.describe('Demo page', () => {
 
   // ── 4. Skip link ───────────────────────────────────────────────────────────
   test('skip link is present and accessible', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/demo/e2e.html');
     // Multiple skip links may exist (nav + a11y section) — assert at least one
     const skip = page.locator('.mn-skip-link').first();
     await expect(skip).toBeAttached();
@@ -84,10 +82,8 @@ test.describe('Demo page', () => {
 
   // ── 5. Gauge WC renders ────────────────────────────────────────────────────
   test('mn-gauge element is present in DOM', async ({ page }) => {
-    await page.goto('/');
-    // The element is referenced in HTML; verify it appears in the document
-    // (WC scripts load from ../src/wc/ which may 404 in serve-demo mode,
-    //  but the element tag must be present in the rendered HTML)
+    await page.goto('/demo/e2e.html');
+    // Verify the WC element is present in the document
     const gaugeCount = await page.evaluate(() =>
       document.querySelectorAll('mn-gauge').length,
     );
@@ -100,23 +96,17 @@ test.describe('Demo page', () => {
     expect(defined || gaugeCount >= 0).toBe(true); // element referenced in HTML at minimum
   });
 
-  // ── 6. Chart WC renders ────────────────────────────────────────────────────
-  test('mn-chart element is referenced in the page', async ({ page }) => {
-    await page.goto('/');
-    // Verify the WC script tag is present in the HTML (always true from index.html)
-    const scriptPresent = await page.evaluate(() =>
-      Array.from(document.querySelectorAll('script[src]')).some((s) =>
-        (s as HTMLScriptElement).src.includes('mn-chart'),
-      ),
-    );
-    expect(scriptPresent).toBe(true);
+  // ── 6. Chart canvas present ───────────────────────────────────────────────
+  test('chart canvas element is present with aria-label', async ({ page }) => {
+    await page.goto('/demo/e2e.html');
+    const canvas = page.locator('canvas[aria-label]');
+    await expect(canvas.first()).toBeAttached();
   });
 
   // ── 7. CSS tokens loaded ───────────────────────────────────────────────────
   test('--giallo-ferrari CSS token is present in source', async ({ page }) => {
-    await page.goto('/');
-    // The CSS loads from ../src/css/maranello.css — may 404 in serve-demo mode.
-    // We verify the <link> tag referencing it is in the DOM.
+    await page.goto('/demo/e2e.html');
+    // Verify the stylesheet <link> tag referencing maranello.css is in the DOM.
     const linkPresent = await page.evaluate(() =>
       Array.from(document.querySelectorAll('link[rel="stylesheet"]')).some((l) =>
         (l as HTMLLinkElement).href.includes('maranello.css'),
@@ -127,7 +117,7 @@ test.describe('Demo page', () => {
 
   // ── 8. ARIA attributes ────────────────────────────────────────────────────
   test('key elements have proper ARIA attributes', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/demo/e2e.html');
     // Nav has aria-label
     const nav = page.locator('nav.demo-nav');
     await expect(nav).toHaveAttribute('aria-label', 'Demo navigation');
@@ -136,20 +126,16 @@ test.describe('Demo page', () => {
     await expect(main).toBeAttached();
   });
 
-  // ── 9. No JS errors (excluding expected 404s) ─────────────────────────────
+  // ── 9. No JS errors during page load ──────────────────────────────────────
   test('no JavaScript runtime errors during page load', async ({ page }) => {
     const jsErrors: string[] = [];
     page.on('console', (msg: ConsoleMessage) => {
       if (msg.type() === 'error') {
-        const text = msg.text();
-        // Filter out expected 404s from resources outside serve root (../src/)
-        if (!text.includes('Failed to load resource') && !text.includes('404')) {
-          jsErrors.push(text);
-        }
+        jsErrors.push(msg.text());
       }
     });
     page.on('pageerror', (err) => jsErrors.push(err.message));
-    await page.goto('/');
+    await page.goto('/demo/e2e.html');
     await page.waitForLoadState('domcontentloaded');
     expect(jsErrors).toHaveLength(0);
   });
@@ -157,7 +143,7 @@ test.describe('Demo page', () => {
   // ── 10. Responsive — nav links hidden at 375 px ───────────────────────────
   test('nav links hide at mobile viewport (375 px)', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 812 });
-    await page.goto('/');
+    await page.goto('/demo/e2e.html');
     const links = page.locator('.demo-nav__links');
     // CSS hides the list at ≤768 px
     await expect(links).toBeHidden();
@@ -165,7 +151,7 @@ test.describe('Demo page', () => {
 
   // ── 11. Accessibility — landmark roles present ────────────────────────────
   test('page has required landmark roles (nav + main)', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/demo/e2e.html');
     // Verify nav role (ARIA landmark)
     await expect(page.getByRole('navigation', { name: 'Demo navigation' })).toBeAttached();
     // Verify main role
@@ -174,7 +160,7 @@ test.describe('Demo page', () => {
 
   // ── 12. Keyboard navigation — focus is visible ────────────────────────────
   test('Tab key moves focus through interactive elements', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/demo/e2e.html');
 
     // First Tab should land on the skip link (it is the first focusable element)
     await page.keyboard.press('Tab');

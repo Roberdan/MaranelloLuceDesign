@@ -11,7 +11,7 @@ export default defineConfig({
     screenshot: 'only-on-failure',
   },
   webServer: {
-    command: 'npx serve demo -l 3333 --no-clipboard',
+    command: 'npx serve . -l 3333 --no-clipboard',
     port: 3333,
     reuseExistingServer: true,
     timeout: 30_000,

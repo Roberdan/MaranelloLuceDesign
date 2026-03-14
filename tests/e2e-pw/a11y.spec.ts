@@ -3,9 +3,8 @@
  * Covers: focus indicators, chart canvas aria-labels, form error aria-describedby,
  * and optional axe-core scan.
  *
- * Server: auto-started by playwright.config.ts (npx serve demo -l 3333).
- * WC scripts load from ../src/wc/ which is outside the serve root, so shadow
- * DOM may be unavailable — tests target plain DOM where possible.
+ * Server: auto-started by playwright.config.ts (npx serve . -l 3333).
+ * Tests navigate to /demo/ so ../src/ and ../dist/ paths resolve correctly.
  */
 import { test, expect } from '@playwright/test';
 
@@ -22,7 +21,7 @@ test.describe('Accessibility', () => {
 
   // ── 1. Focus indicators visible ───────────────────────────────────────────
   test('focus ring is visible on nav links', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/demo/e2e.html');
 
     // Tab into the first focusable element
     await page.keyboard.press('Tab');
@@ -40,7 +39,7 @@ test.describe('Accessibility', () => {
 
   // ── 2. Chart canvas has aria-label ────────────────────────────────────────
   test('chart canvas elements have aria-label or role=img', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/demo/e2e.html');
     // Wait for app.js to mount sections (module scripts run after DOMContentLoaded)
     await page.waitForLoadState('networkidle', { timeout: 15_000 }).catch(() => {/* ignore timeout */});
 
@@ -72,7 +71,7 @@ test.describe('Accessibility', () => {
 
   // ── 3. Form errors linked with aria-describedby ───────────────────────────
   test('form validation errors use aria-describedby', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/demo/e2e.html');
     await page.waitForLoadState('networkidle', { timeout: 15_000 }).catch(() => {/* ignore */});
 
     // Find the first required text input in the forms section
@@ -100,14 +99,14 @@ test.describe('Accessibility', () => {
 
   // ── 4. Landmark roles present ─────────────────────────────────────────────
   test('page has required ARIA landmarks (nav + main)', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/demo/e2e.html');
     await expect(page.getByRole('navigation', { name: 'Demo navigation' })).toBeAttached();
     await expect(page.getByRole('main')).toBeAttached();
   });
 
   // ── 5. Skip link accessible ───────────────────────────────────────────────
   test('skip link points to #demo-root', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/demo/e2e.html');
     const skip = page.locator('.mn-skip-link').first();
     await expect(skip).toBeAttached();
     expect(await skip.getAttribute('href')).toBe('#demo-root');
@@ -120,7 +119,7 @@ test.describe('Accessibility', () => {
       return;
     }
 
-    await page.goto('/');
+    await page.goto('/demo/e2e.html');
     await page.waitForLoadState('domcontentloaded');
 
     const results = await new AxeBuilder({ page })

@@ -4,7 +4,7 @@
  * verify body class changes, verify gauge elements have readable contrast
  * in Avorio theme, verify colorblind palette CSS vars are applied.
  *
- * Server: auto-started by playwright.config.ts (npx serve demo -l 3333).
+ * Server: auto-started by playwright.config.ts (npx serve . -l 3333).
  */
 import { test, expect } from '@playwright/test';
 
@@ -29,7 +29,7 @@ test.describe('Theme switching', () => {
   // ── 1. All 4 themes apply correct body class ──────────────────────────────
   for (const theme of THEMES) {
     test(`switching to ${theme.name} theme sets correct body class`, async ({ page }) => {
-      await page.goto('/');
+      await page.goto('/demo/e2e.html');
 
       await applyTheme(page, theme.bodyClass);
 
@@ -46,7 +46,7 @@ test.describe('Theme switching', () => {
 
   // ── 2. Nero theme — giallo-ferrari accent token resolves ──────────────────
   test('Nero theme: --giallo-ferrari token resolves to a non-empty value', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/demo/e2e.html');
     await applyTheme(page, 'mn-nero');
 
     const value = await page.evaluate(() =>
@@ -60,7 +60,7 @@ test.describe('Theme switching', () => {
 
   // ── 3. Avorio theme — rosso-corsa is used as accent ───────────────────────
   test('Avorio theme: --rosso-corsa token resolves', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/demo/e2e.html');
     await applyTheme(page, 'mn-avorio');
 
     const value = await page.evaluate(() =>
@@ -74,7 +74,7 @@ test.describe('Theme switching', () => {
 
   // ── 4. Avorio theme — body background is a light color ────────────────────
   test('Avorio theme: body background-color is light (luminance > 0.5)', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/demo/e2e.html');
     await applyTheme(page, 'mn-avorio');
 
     const isLight = await page.evaluate(() => {
@@ -94,7 +94,7 @@ test.describe('Theme switching', () => {
 
   // ── 5. Colorblind theme — dedicated palette tokens are applied ────────────
   test('Colorblind theme: body has mn-colorblind class', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/demo/e2e.html');
     await applyTheme(page, 'mn-colorblind');
 
     const bodyClass = await page.getAttribute('body', 'class') ?? '';
@@ -103,7 +103,7 @@ test.describe('Theme switching', () => {
 
   // ── 6. Colorblind theme — no pure red accent (uses blue palette) ──────────
   test('Colorblind theme: --mn-accent is not #DC0000 (rosso-corsa)', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/demo/e2e.html');
     await applyTheme(page, 'mn-colorblind');
 
     const accent = await page.evaluate(() =>
@@ -118,7 +118,7 @@ test.describe('Theme switching', () => {
 
   // ── 7. Gauge elements readable in Avorio theme ────────────────────────────
   test('Avorio theme: mn-gauge elements are visible in DOM', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/demo/e2e.html');
     await page.waitForLoadState('networkidle', { timeout: 15_000 }).catch(() => {/* ignore */});
     await applyTheme(page, 'mn-avorio');
 
@@ -138,7 +138,7 @@ test.describe('Theme switching', () => {
 
   // ── 8. Theme toggle persists across simulated reload context ─────────────
   test('Editorial theme: no theme class on body', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/demo/e2e.html');
 
     // Start from Nero, switch to Editorial
     await applyTheme(page, 'mn-nero');
@@ -152,7 +152,7 @@ test.describe('Theme switching', () => {
 
   // ── 9. Theme cycling — all 4 are visually distinct ───────────────────────
   test('each theme produces a distinct --mn-accent CSS var value', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/demo/e2e.html');
 
     const accents: string[] = [];
     for (const theme of THEMES) {

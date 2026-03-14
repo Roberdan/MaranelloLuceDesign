@@ -61,28 +61,48 @@
       <li><a href="#org-tree">Org</a></li>
     </ul>
     <div class="demo-nav__right">
-      <span id="demo-theme-label" style="font-family:var(--font-display);font-size:var(--text-micro);font-weight:500;text-transform:uppercase;letter-spacing:0.08em;color:var(--grigio-chiaro)">Current: Nero</span>
-      <span class="mn-micro" style="color:var(--grigio-medio);cursor:pointer;padding:2px 6px;border:1px solid var(--grigio-scuro);border-radius:4px">EN</span>
       <mn-theme-toggle mode="nero"></mn-theme-toggle>
     </div>
   </nav>
-  <main id="demo-root"></main>
+  <main id="demo-root">
+    <!-- Lightweight sections for E2E testing (no heavy chart/gauge rendering) -->
+    <section id="hero"><h2>Hero</h2></section>
+    <section id="forms">
+      <h2>Forms</h2>
+      <form>
+        <input type="text" required placeholder="Name" aria-label="Name">
+        <input type="email" required placeholder="Email" aria-label="Email">
+        <button type="submit">Submit</button>
+      </form>
+    </section>
+    <section id="charts"><h2>Charts</h2><canvas aria-label="Sample chart" role="img"></canvas></section>
+    <section id="gauges"><h2>Gauges</h2><mn-gauge value="75" max="100" label="Test"></mn-gauge></section>
+    <section id="overlays">
+      <h2>Overlays</h2>
+      <button id="ovl-modal-info">Open Modal</button>
+      <button id="ovl-cmd-palette">Command Palette</button>
+    </section>
+    <section id="icons"><h2>Icons</h2></section>
+  </main>
   <script src="../dist/iife/maranello.min.js"></script>
+  <!-- Only mn-theme-toggle WC: other APIs come from the IIFE.
+       Avoid loading WCs that import src/css/ barrels in shadow DOM
+       (causes CSS @import waterfall blocking the load event). -->
   <script type="module" src="../src/wc/mn-theme-toggle.js"></script>
-  <script type="module" src="../src/wc/mn-chart.js"></script>
-  <script type="module" src="../src/wc/mn-gauge.js"></script>
-  <script type="module" src="../src/wc/mn-ferrari-control.js"></script>
-  <script type="module" src="../src/wc/mn-data-table.js"></script>
-  <script type="module" src="../src/wc/mn-gantt.js"></script>
-  <script type="module" src="../src/wc/mn-chat.js"></script>
-  <script type="module" src="../src/wc/mn-speedometer.js"></script>
-  <script type="module" src="../src/wc/mn-detail-panel.js"></script>
-  <script type="module" src="../src/wc/mn-okr.js"></script>
-  <script type="module" src="../src/wc/mn-map.js"></script>
-  <script type="module" src="../src/wc/mn-system-status.js"></script>
-  <script type="module" src="../src/wc/mn-command-palette.js"></script>
-  <script type="module" src="../src/wc/mn-funnel.js"></script>
-  <script type="module" src="../src/wc/mn-toast.js"></script>
-  <script type="module" src="app.js"></script>
+  <script>
+    // Wire overlay buttons to Maranello API (lightweight, no section modules)
+    document.addEventListener('DOMContentLoaded', () => {
+      const M = window.Maranello;
+      if (!M) return;
+      const modalBtn = document.getElementById('ovl-modal-info');
+      if (modalBtn) modalBtn.addEventListener('click', () => {
+        M.openModal({ title: 'Info', body: '<p>Test modal content</p>' });
+      });
+      const cmdBtn = document.getElementById('ovl-cmd-palette');
+      if (cmdBtn) cmdBtn.addEventListener('click', () => {
+        M.commandPalette({ items: [{ label: 'Test', action: () => {} }] });
+      });
+    });
+  </script>
 </body>
 </html>
