@@ -166,4 +166,15 @@ body.mn-colorblind .mn-okr__status--behind { color: var(--mn-cb-orange); }
 body.mn-colorblind .mn-okr__scope--studio { background: var(--mn-cb-blue); }
 body.mn-colorblind .mn-okr__scope--org { background: #CC79A7; }
 body.mn-colorblind .mn-okr__scope--global { background: var(--mn-cb-yellow); }
+body.mn-colorblind .mn-okr__kr-bar--on-track { background: linear-gradient(90deg, var(--mn-cb-blue), var(--mn-cb-blue)); box-shadow: 0 0 8px rgba(0,114,178,0.3); }
+body.mn-colorblind .mn-okr__kr-bar--at-risk { background: linear-gradient(90deg, var(--mn-cb-yellow), var(--mn-cb-yellow)); box-shadow: 0 0 8px rgba(230,159,0,0.3); }
+body.mn-colorblind .mn-okr__kr-bar--behind { background: linear-gradient(90deg, var(--mn-cb-orange), var(--mn-cb-orange)); box-shadow: 0 0 8px rgba(213,94,0,0.3); }
+
+/* ============================================================
+   COLORBLIND — Capacity Heatmap
+   ============================================================ */
+body.mn-colorblind .mn-cap-grid__cell--low { background: var(--mn-cb-blue); }
+body.mn-colorblind .mn-cap-grid__cell--mid { background: var(--mn-cb-yellow); }
+body.mn-colorblind .mn-cap-grid__cell--high { background: var(--mn-cb-orange); }
+body.mn-colorblind .mn-cap-grid__cell--over { background: var(--mn-cb-orange); }
 } /* end @layer themes */
