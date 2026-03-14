@@ -120,25 +120,25 @@
 
 /* ── COLORBLIND OVERRIDES (Okabe-Ito palette) ── */
 body.mn-colorblind .mn-temp-badge {
-  border-color: #D55E00;
+  border-color: var(--mn-cb-orange);
 }
 body.mn-colorblind .mn-temp-badge:hover {
   box-shadow: 0 0 12px rgba(213,94,0,0.3);
 }
 body.mn-colorblind .mn-temp-badge--cool {
-  border-color: #0072B2;
+  border-color: var(--mn-cb-blue);
 }
 body.mn-colorblind .mn-temp-badge--cool:hover {
   box-shadow: 0 0 12px rgba(0,114,178,0.3);
 }
 body.mn-colorblind .mn-temp-badge--warm {
-  border-color: #D55E00;
+  border-color: var(--mn-cb-orange);
 }
 body.mn-colorblind .mn-temp-badge--neutral {
-  border-color: #999999;
+  border-color: var(--grigio-chiaro);
 }
 body.mn-colorblind .mn-progress-ring__fill {
-  stroke: #0072B2;
+  stroke: var(--mn-cb-blue);
 }
 
 

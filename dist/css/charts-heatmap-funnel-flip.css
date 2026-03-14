@@ -24,7 +24,7 @@
   box-shadow: 0 2px 8px rgba(0,0,0,0.4);
 }
 /* Intensity levels */
-.mn-heatmap__cell--0 { background: rgba(200,200,200,0.05); color: #555; }
+.mn-heatmap__cell--0 { background: rgba(200,200,200,0.05); color: var(--grigio-medio); }
 .mn-heatmap__cell--1 { background: rgba(0,166,81,0.2); }
 .mn-heatmap__cell--2 { background: rgba(0,166,81,0.4); }
 .mn-heatmap__cell--3 { background: rgba(255,199,44,0.4); }
@@ -34,7 +34,7 @@
 .mn-heatmap__row-label,
 .mn-heatmap__col-label {
   font-size: 0.55rem;
-  color: #9e9e9e;
+  color: var(--grigio-chiaro);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -69,7 +69,7 @@
 .mn-funnel__stage-label {
   font-size: 0.7rem;
   font-weight: 500;
-  color: #fafafa;
+  color: var(--bianco-caldo);
   min-width: 80px;
 }
 .mn-funnel__stage-value {
@@ -80,7 +80,7 @@
 }
 .mn-funnel__stage-pct {
   font-size: 0.6rem;
-  color: #9e9e9e;
+  color: var(--grigio-chiaro);
   margin-left: auto;
 }
 
@@ -132,7 +132,7 @@
   font-family: var(--font-display);
   font-size: 1.8rem;
   font-weight: 600;
-  color: #fafafa;
+  color: var(--bianco-caldo);
   letter-spacing: -0.02em;
 }
 /* Separator (colon, dot, comma) */
@@ -140,7 +140,7 @@
   font-family: var(--font-display);
   font-size: 1.4rem;
   font-weight: 600;
-  color: #616161;
+  color: var(--grigio-medio);
   margin: 0 2px;
   line-height: 52px;
 }

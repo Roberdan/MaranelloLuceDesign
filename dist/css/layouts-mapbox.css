@@ -29,36 +29,35 @@
   }
 }
 
-/* Mapbox GL control overrides — unlayered to win over Mapbox GL CSS by
-   source order (our stylesheet loads after mapbox-gl.css).
-   Equal specificity, later declaration wins — no !important needed.  */
-.mapboxgl-ctrl-group {
+/* Mapbox GL control overrides — scoped under .mn-map to satisfy mn- prefix
+   convention while overriding third-party Mapbox GL CSS classes. */
+.mn-map .mapboxgl-ctrl-group {
   background: var(--bg-panel, #141414);
   border: 1px solid var(--border, #333);
   border-radius: 6px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
-.mapboxgl-ctrl-group button {
+.mn-map .mapboxgl-ctrl-group button {
   background: transparent;
   border-color: var(--border, #333);
 }
 
-.mapboxgl-ctrl-group button:hover {
+.mn-map .mapboxgl-ctrl-group button:hover {
   background: rgba(255, 199, 44, 0.1);
 }
 
-.mapboxgl-ctrl-group button span {
+.mn-map .mapboxgl-ctrl-group button span {
   filter: invert(0.7);
 }
 
-.mapboxgl-ctrl-attrib {
+.mn-map .mapboxgl-ctrl-attrib {
   background: rgba(0, 0, 0, 0.5);
   color: var(--text-dim, #666);
   font-size: 0.55rem;
 }
 
-.mapboxgl-ctrl-attrib a {
+.mn-map .mapboxgl-ctrl-attrib a {
   color: var(--text-dim, #666);
 }
 

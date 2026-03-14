@@ -1,0 +1,54 @@
+@layer themes {
+/* themes — Nero Patterns | Maranello Design System v1.4.0
+   Binnacle, strip, pod, signal panel reinforcement */
+
+
+/* ============================================================
+   NERO — Binnacle Overrides
+   Binnacle is dark by default; Nero ensures explicit tokens
+   ============================================================ */
+body.mn-nero .mn-binnacle {
+  background: linear-gradient(
+    180deg,
+    var(--grigio-scuro) 0%, var(--nero-soft) 5%, var(--nero-carbon) 15%,
+    var(--nero-profondo) 50%,
+    var(--nero-carbon) 85%, var(--nero-soft) 95%, var(--grigio-scuro) 100%
+  );
+  border-color: rgba(255, 255, 255, 0.06);
+  color: var(--bianco-caldo);
+}
+body.mn-nero .mn-binnacle__title { color: var(--grigio-medio); }
+body.mn-nero .mn-binnacle__badge {
+  border-color: var(--grigio-scuro);
+  color: var(--grigio-chiaro);
+}
+
+
+/* ============================================================
+   NERO — Strip Overrides
+   ============================================================ */
+body.mn-nero .mn-strip__inner {
+  background: var(--nero-profondo);
+  color: var(--bianco-caldo);
+}
+body.mn-nero .mn-strip__label { color: var(--grigio-chiaro); }
+body.mn-nero .mn-strip__value { color: var(--bianco-caldo); }
+body.mn-nero .mn-strip__dim { color: var(--grigio-chiaro); }
+body.mn-nero .mn-strip__divider { background: linear-gradient(180deg, transparent, var(--grigio-scuro), transparent); }
+body.mn-nero .mn-strip__board-cell { border-color: var(--grigio-scuro); }
+body.mn-nero .mn-strip__legend { background: rgba(10, 10, 10, 0.94); border-top-color: rgba(255, 199, 44, 0.12); }
+body.mn-nero .mn-strip__legend-item { color: var(--grigio-chiaro); }
+body.mn-nero .mn-strip__legend-key { color: var(--grigio-chiaro); }
+body.mn-nero .mn-strip__legend-toggle { color: var(--grigio-chiaro); background: rgba(255, 255, 255, 0.06); border-color: rgba(255, 255, 255, 0.08); }
+body.mn-nero .mn-strip__legend-toggle:hover { background: rgba(255, 199, 44, 0.15); border-color: rgba(255, 199, 44, 0.3); color: var(--giallo-ferrari); }
+body.mn-nero .mn-bar-track { background: rgba(255, 255, 255, 0.04); }
+body.mn-nero .mn-bar-metric { color: var(--grigio-medio); }
+
+
+/* ============================================================
+   NERO — Pod Overrides
+   ============================================================ */
+body.mn-nero .mn-pod__label { color: var(--grigio-chiaro); }
+
+
+} /* end @layer themes */

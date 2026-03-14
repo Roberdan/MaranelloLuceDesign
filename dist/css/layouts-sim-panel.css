@@ -140,7 +140,7 @@ body.mn-avorio .mn-sim-preview strong { color:var(--nero-1); }
 body.mn-avorio .mn-sim-kpi { background:var(--bianco-2); border-color:var(--bordo); }
 body.mn-avorio .mn-sim-kpi__val { color:var(--nero-1); }
 body.mn-avorio .mn-sim-detail-row { color:var(--nero-1); border-bottom-color:var(--grigio-2); }
-body.mn-avorio .mn-sim-btn--primary { background:var(--rosso-corsa); color:#fff; border-color:var(--rosso-corsa); }
+body.mn-avorio .mn-sim-btn--primary { background:var(--rosso-corsa); color:var(--bianco-puro); border-color:var(--rosso-corsa); }
 body.mn-avorio .mn-sim-btn--ghost { color:var(--nero-2); border-color:var(--bordo); }
 
 /* ── Simulation mode banner ── */

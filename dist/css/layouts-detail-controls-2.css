@@ -145,7 +145,7 @@ body.mn-avorio .mn-date-picker__month-title { color: var(--nero-assoluto); }
 body.mn-avorio .mn-date-picker__day { color: var(--nero-assoluto); }
 body.mn-avorio .mn-date-picker__day:hover:not(.mn-date-picker__day--disabled):not(.mn-date-picker__day--empty) { background: rgba(220,0,0,0.08); color: var(--rosso-corsa); }
 /* body + class + double-class = 0,3,0 — beats all day state variants */
-body.mn-avorio .mn-date-picker__day--selected.mn-date-picker__day--selected { background: var(--rosso-corsa); color: #fff; }
+body.mn-avorio .mn-date-picker__day--selected.mn-date-picker__day--selected { background: var(--rosso-corsa); color: var(--bianco-puro); }
 body.mn-avorio .mn-detail-panel__person-results { background: var(--avorio-chiaro); border-color: var(--avorio-scuro); }
 body.mn-avorio .mn-detail-panel__person-result { color: var(--nero-assoluto); }
 body.mn-avorio .mn-detail-panel__person-result:hover { background: rgba(220,0,0,0.06); }

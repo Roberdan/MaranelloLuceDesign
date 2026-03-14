@@ -18,31 +18,31 @@ body.mn-nero .mn-form-textarea {
    ══════════════════════════════════════════════════════════════ */
 
 body.mn-colorblind {
-  --mn-form-focus: #0072B2;
+  --mn-form-focus: var(--mn-cb-blue);
   --mn-form-focus-ring: rgba(0, 114, 178, 0.25);
-  --mn-form-error: #D55E00;
-  --mn-form-success: #009E73;
-  --mn-form-warning: #E69F00;
+  --mn-form-error: var(--mn-cb-orange);
+  --mn-form-success: var(--mn-cb-green);
+  --mn-form-warning: var(--mn-cb-yellow);
 }
 body.mn-colorblind .mn-checkbox input:checked + .mn-checkbox__box {
-  background: #0072B2;
-  border-color: #0072B2;
+  background: var(--mn-cb-blue);
+  border-color: var(--mn-cb-blue);
 }
 body.mn-colorblind .mn-radio input:checked + .mn-radio__circle {
-  border-color: #0072B2;
+  border-color: var(--mn-cb-blue);
 }
 body.mn-colorblind .mn-radio__dot {
-  background: #0072B2;
+  background: var(--mn-cb-blue);
 }
 body.mn-colorblind .mn-form-toggle input:checked + .mn-form-toggle__track {
-  background: #0072B2;
+  background: var(--mn-cb-blue);
 }
 body.mn-colorblind .mn-form-range::-webkit-slider-thumb {
-  background: #0072B2;
+  background: var(--mn-cb-blue);
 }
 body.mn-colorblind .mn-form-btn--primary {
-  background: #0072B2;
-  border-color: #0072B2;
+  background: var(--mn-cb-blue);
+  border-color: var(--mn-cb-blue);
   color: var(--bianco-puro);
 }
 

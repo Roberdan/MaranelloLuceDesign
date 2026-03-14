@@ -50,17 +50,17 @@ body.mn-nero .mn-chat-panel__header { background: rgba(10,10,10,0.85); }
 /* ============================================================
    COLORBLIND — Chat, Profile accents
    ============================================================ */
-body.mn-colorblind .mn-chat-panel__accent { background: #FFB000; }
-body.mn-colorblind .mn-chat-panel__title { color: #FFB000; }
-body.mn-colorblind .mn-chat-msg__icon { color: #FFB000; }
-body.mn-colorblind .mn-chat-fab { color: #FFB000; }
-body.mn-colorblind .mn-chat-fab__pulse { border-color: #FFB000; }
-body.mn-colorblind .mn-chat-panel__send { background: #FFB000; }
-body.mn-colorblind .mn-chat-panel__quick-btn:hover { border-color: #FFB000; color: #FFB000; }
-body.mn-colorblind .mn-sys-status__dot--active { background: #0072B2; box-shadow: 0 0 6px #0072B2; }
-body.mn-colorblind .mn-sys-status__dot--warning { background: #E69F00; box-shadow: 0 0 6px #E69F00; }
-body.mn-colorblind .mn-sys-status__dot--danger { background: #D55E00; box-shadow: 0 0 6px #D55E00; }
-body.mn-colorblind .mn-sys-status__env { color: #0072B2; }
+body.mn-colorblind .mn-chat-panel__accent { background: var(--mn-accent); }
+body.mn-colorblind .mn-chat-panel__title { color: var(--mn-accent); }
+body.mn-colorblind .mn-chat-msg__icon { color: var(--mn-accent); }
+body.mn-colorblind .mn-chat-fab { color: var(--mn-accent); }
+body.mn-colorblind .mn-chat-fab__pulse { border-color: var(--mn-accent); }
+body.mn-colorblind .mn-chat-panel__send { background: var(--mn-accent); }
+body.mn-colorblind .mn-chat-panel__quick-btn:hover { border-color: var(--mn-accent); color: var(--mn-accent); }
+body.mn-colorblind .mn-sys-status__dot--active { background: var(--mn-cb-blue); box-shadow: 0 0 6px var(--mn-cb-blue); }
+body.mn-colorblind .mn-sys-status__dot--warning { background: var(--mn-cb-yellow); box-shadow: 0 0 6px var(--mn-cb-yellow); }
+body.mn-colorblind .mn-sys-status__dot--danger { background: var(--mn-cb-orange); box-shadow: 0 0 6px var(--mn-cb-orange); }
+body.mn-colorblind .mn-sys-status__env { color: var(--mn-cb-blue); }
 
 
 /* ============================================================
@@ -94,22 +94,22 @@ body.mn-nero .mn-ctrl-stepped__mark--active { color: var(--bianco-caldo); }
 /* ============================================================
    COLORBLIND — Ferrari Controls v2
    ============================================================ */
-body.mn-colorblind .mn-ctrl-cruise__mark--active { color: #0072B2; }
-body.mn-colorblind .mn-ctrl-manettino__pos--active { color: #D55E00; }
-body.mn-colorblind .mn-ctrl-lever--on .mn-ctrl-lever__track { border-color: #0072B2; background: linear-gradient(180deg, var(--nero-carbon) 0%, rgba(0,114,178,0.3) 100%); }
+body.mn-colorblind .mn-ctrl-cruise__mark--active { color: var(--mn-cb-blue); }
+body.mn-colorblind .mn-ctrl-manettino__pos--active { color: var(--mn-cb-orange); }
+body.mn-colorblind .mn-ctrl-lever--on .mn-ctrl-lever__track { border-color: var(--mn-cb-blue); background: linear-gradient(180deg, var(--nero-carbon) 0%, rgba(0,114,178,0.3) 100%); }
 body.mn-colorblind .mn-ctrl-stepped__mark--active { color: #E69F00; }
 
 /* ============================================================
    COLORBLIND — Map View
    ============================================================ */
-body.mn-colorblind .mn-map__marker { background: #0072B2; }
-body.mn-colorblind .mn-map__marker--active { background: #D55E00; }
+body.mn-colorblind .mn-map__marker { background: var(--mn-cb-blue); }
+body.mn-colorblind .mn-map__marker--active { background: var(--mn-cb-orange); }
 
 /* ============================================================
    COLORBLIND — Profile Menu
    ============================================================ */
 body.mn-colorblind .mn-profile-dropdown__item:hover { background: rgba(0,114,178,0.15); }
-body.mn-colorblind .mn-profile-dropdown__badge { background: #D55E00; }
+body.mn-colorblind .mn-profile-dropdown__badge { background: var(--mn-cb-orange); }
 
 /* ============================================================
    NERO — Accessibility Panel (full)
@@ -162,8 +162,8 @@ body.mn-nero .mn-okr__kr-title { color: var(--grigio-chiaro); }
    ============================================================ */
 body.mn-colorblind .mn-okr__status--on-track { color: #009E73; }
 body.mn-colorblind .mn-okr__status--at-risk { color: #E69F00; }
-body.mn-colorblind .mn-okr__status--behind { color: #D55E00; }
-body.mn-colorblind .mn-okr__scope--studio { background: #0072B2; }
+body.mn-colorblind .mn-okr__status--behind { color: var(--mn-cb-orange); }
+body.mn-colorblind .mn-okr__scope--studio { background: var(--mn-cb-blue); }
 body.mn-colorblind .mn-okr__scope--org { background: #CC79A7; }
-body.mn-colorblind .mn-okr__scope--global { background: #E69F00; }
+body.mn-colorblind .mn-okr__scope--global { background: var(--mn-cb-yellow); }
 } /* end @layer themes */

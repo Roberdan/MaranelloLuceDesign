@@ -207,13 +207,13 @@
   box-shadow: 0 0 0 5px rgba(255, 255, 255, 0.04);
 }
 .mn-okr__status-dot--on-track {
-  background: #00A651;
+  background: var(--verde-racing);
 }
 .mn-okr__status-dot--at-risk {
-  background: #FFC72C;
+  background: var(--giallo-ferrari);
 }
 .mn-okr__status-dot--behind {
-  background: #DC0000;
+  background: var(--rosso-corsa);
 }
 .mn-okr__summary-label {
 } /* end @layer layouts */

@@ -1,0 +1,80 @@
+@layer themes {
+/* themes — Nero Layouts 2 | Maranello Design System v1.4.0
+   Sim panel, network/detail-resource, filter chips, column layout */
+
+
+/* ============================================================
+   NERO — Sim Panel Overrides
+   ============================================================ */
+body.mn-nero .mn-sim-panel { background: var(--nero-profondo); border-top-color: var(--grigio-scuro); }
+body.mn-nero .mn-sim-panel__header { border-bottom-color: var(--grigio-scuro); }
+body.mn-nero .mn-sim-panel__title { color: var(--bianco-caldo); }
+body.mn-nero .mn-sim-scenario { background: var(--nero-carbon); border-color: var(--grigio-scuro); color: var(--bianco-caldo); }
+body.mn-nero .mn-sim-scenario:hover { border-color: var(--mn-accent); background: var(--nero-soft); }
+body.mn-nero .mn-sim-scenario__desc { color: var(--grigio-medio); }
+body.mn-nero .mn-sim-input { background: var(--nero-carbon); border-color: var(--grigio-scuro); color: var(--bianco-caldo); }
+body.mn-nero .mn-sim-input:focus { border-color: var(--mn-accent); }
+body.mn-nero .mn-sim-input::placeholder { color: var(--grigio-medio); }
+body.mn-nero .mn-sim-label { color: var(--grigio-chiaro); }
+body.mn-nero .mn-sim-txt { color: var(--grigio-medio); }
+body.mn-nero .mn-sim-select__trigger { background: var(--nero-carbon); border-color: var(--grigio-scuro); color: var(--bianco-caldo); }
+body.mn-nero .mn-sim-select__trigger:hover { border-color: var(--mn-accent); }
+body.mn-nero .mn-sim-select__dropdown { background: var(--nero-profondo); border-color: var(--grigio-scuro); }
+body.mn-nero .mn-sim-select__search { color: var(--bianco-caldo); border-bottom-color: var(--grigio-scuro); }
+body.mn-nero .mn-sim-select__item { color: var(--bianco-caldo); }
+body.mn-nero .mn-sim-select__item:hover { background: var(--nero-soft); }
+body.mn-nero .mn-sim-select__sub { color: var(--grigio-medio); }
+body.mn-nero .mn-sim-preview { background: var(--nero-carbon); border-left-color: var(--mn-accent); }
+body.mn-nero .mn-sim-preview strong { color: var(--bianco-caldo); }
+body.mn-nero .mn-sim-preview span { color: var(--grigio-chiaro); }
+body.mn-nero .mn-sim-kpi { background: var(--nero-carbon); border-color: var(--grigio-scuro); }
+body.mn-nero .mn-sim-kpi__val { color: var(--bianco-caldo); }
+body.mn-nero .mn-sim-kpi__label { color: var(--grigio-medio); }
+body.mn-nero .mn-sim-kpi__icon { color: var(--grigio-medio); }
+body.mn-nero .mn-sim-detail-row { color: var(--bianco-caldo); border-bottom-color: var(--grigio-scuro); }
+body.mn-nero .mn-sim-detail-row--head { color: var(--grigio-medio); border-bottom-color: var(--grigio-scuro); }
+body.mn-nero .mn-sim-btn--primary { background: var(--mn-accent); color: var(--nero-profondo); border-color: var(--mn-accent); }
+body.mn-nero .mn-sim-btn--ghost { color: var(--grigio-chiaro); border-color: var(--grigio-scuro); }
+body.mn-nero .mn-sim-btn--ghost:hover { color: var(--bianco-caldo); border-color: var(--grigio-medio); }
+body.mn-nero .mn-sim-banner { background: rgba(220, 0, 0, 0.10); }
+body.mn-nero .mn-sim-empty { color: var(--grigio-medio); }
+
+
+/* ============================================================
+   NERO — Network / Detail Resource Overrides
+   ============================================================ */
+body.mn-nero .mn-network__canvas { background: var(--nero-profondo); }
+body.mn-nero .mn-detail-resource__avatar { color: var(--nero-profondo); }
+body.mn-nero .mn-detail-resource__subtitle { color: var(--grigio-chiaro); }
+body.mn-nero .mn-detail-resource__manager { color: var(--grigio-medio); }
+body.mn-nero .mn-detail-resource__fte-bar { background: var(--nero-carbon); }
+body.mn-nero .mn-detail-resource__fte-label { color: var(--grigio-chiaro); }
+body.mn-nero .mn-detail-resource__section-title { color: var(--bianco-caldo); }
+body.mn-nero .mn-detail-resource__empty { color: var(--grigio-medio); }
+body.mn-nero .mn-detail-resource__eng { background: var(--nero-carbon); border-left-color: var(--mn-accent); }
+body.mn-nero .mn-detail-resource__eng:hover { background: var(--nero-soft); }
+body.mn-nero .mn-detail-resource__eng-title { color: var(--bianco-caldo); }
+body.mn-nero .mn-detail-resource__eng-meta { color: var(--grigio-chiaro); }
+body.mn-nero .mn-detail-resource__eng-fte { color: var(--mn-accent); }
+body.mn-nero .mn-detail-resource__mate { border-bottom-color: var(--grigio-scuro); }
+body.mn-nero .mn-detail-resource__mate-avatar { color: var(--nero-profondo); }
+body.mn-nero .mn-detail-resource__mate-name { color: var(--bianco-caldo); }
+body.mn-nero .mn-detail-resource__mate-shared { color: var(--grigio-medio); }
+
+
+/* ============================================================
+   NERO — Filter Chips Overrides
+   ============================================================ */
+body.mn-nero .mn-filter-chip { background: var(--nero-carbon); border-color: var(--grigio-scuro); color: var(--bianco-caldo); }
+body.mn-nero .mn-filter-chip__label { color: var(--grigio-medio); }
+body.mn-nero .mn-filter-chip__remove { color: var(--grigio-medio); }
+body.mn-nero .mn-search-bar__reset { color: var(--grigio-medio); }
+
+
+/* ============================================================
+   NERO — Column Layout Overrides
+   ============================================================ */
+body.mn-nero .mn-layout__left { border-right-color: var(--grigio-scuro); }
+body.mn-nero .mn-layout__right { border-left-color: var(--grigio-scuro); }
+body.mn-nero .mn-layout__simulator.mn-sim-active { border-top-color: var(--grigio-scuro); }
+} /* end @layer themes */

@@ -34,6 +34,10 @@
   --arancio-warm:     #D4622B;
   --verde-racing:     #00A651;
   --verde-hover:      #008f47;
+  --verde-racing-light: #00C966;
+  --giallo-ferrari-light: #FFD85C;
+  --rosso-corsa-light: #FF3333;
+  --arancio-ambra:    #b45309;
 
   /* ─── Color: Semantic ─── */
   --status-active:    #00C853;
@@ -132,6 +136,33 @@
   --role-12:     #FB923C;   /* Mandarino */
   --role-13:     #06B6D4;   /* Ciano     */
   --role-14:     #9CA3AF;   /* Grigio    */
+
+  /* ─── Color: Colorblind (Okabe-Ito palette) ─── */
+  --mn-cb-blue:       #0072B2;
+  --mn-cb-blue-dark:  #005f94;
+  --mn-cb-orange:     #D55E00;
+  --mn-cb-green:      #009E73;
+  --mn-cb-yellow:     #E69F00;
+
+  /* ─── Color: Surface Gradients ─── */
+  --mn-surface-nero-1:   var(--nero-soft);       /* #1a1a1a */
+  --mn-surface-nero-2:   var(--nero-carbon);     /* #111111 */
+  --mn-surface-nero-3:   var(--nero-profondo);   /* #0a0a0a */
+  --mn-surface-avorio-1: #e8e3da;
+  --mn-surface-avorio-2: #ddd8cf;
+  --mn-surface-avorio-3: #d8d4cc;
+  --mn-surface-avorio-4: #cec9c0;
+  --mn-surface-avorio-5: #c4bfb6;
+  --mn-surface-avorio-6: #ccc7be;
+
+  /* ─── Color: Metal Texture (rotary/knob) ─── */
+  --mn-metal-1:      #6a6a68;
+  --mn-metal-2:      #5a5a58;
+  --mn-metal-3:      #4a4a48;
+  --mn-metal-4:      #3a3a38;
+  --mn-metal-dial-hi: #3a3a3a;
+  --mn-metal-dial-lo: var(--nero-soft);
+  --mn-metal-slider:  #2a2a2a;
 
   /* ─── Color: Extended ─── */
   --viola-chart:      #8B5CF6;

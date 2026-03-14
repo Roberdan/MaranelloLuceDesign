@@ -15,7 +15,7 @@
 /* ── Text Color Utilities (replaces all inline color styles) ── */
 .mn-text-muted   { color: var(--grigio-chiaro); }
 .mn-text-subtle  { color: var(--grigio-medio); }
-.mn-text-dim     { color: #666; }
+.mn-text-dim     { color: var(--grigio-medio); }
 .mn-text-giallo  { color: var(--giallo-ferrari); }
 .mn-text-verde   { color: var(--verde-racing); }
 .mn-text-rosso   { color: var(--rosso-corsa); }
@@ -122,12 +122,12 @@ body.mn-avorio .mn-section-dark .mn-text-dim { color: var(--grigio-medio); }
 /* ============================================================
    DEMO PAGE STYLES
    ============================================================ */
-.demo-swatch-grid {
+.mn-demo-swatch-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   gap: var(--space-md);
 }
-.demo-swatch {
+.mn-demo-swatch {
   aspect-ratio: 1;
   border-radius: var(--radius-md);
   display: flex;
@@ -142,11 +142,11 @@ body.mn-avorio .mn-section-dark .mn-text-dim { color: var(--grigio-medio); }
   letter-spacing: 0.06em;
   border: 1px solid var(--grigio-ghost);
 }
-.demo-swatch--dark { color: var(--bianco-caldo); border-color: transparent; }
+.mn-demo-swatch--dark { color: var(--bianco-caldo); border-color: transparent; }
 
-.demo-spacer { height: 56px; }
+.mn-demo-spacer { height: 56px; }
 
-.demo-section-label {
+.mn-demo-section-label {
   font-family: var(--font-display);
   font-size: var(--text-micro);
   font-weight: 600;

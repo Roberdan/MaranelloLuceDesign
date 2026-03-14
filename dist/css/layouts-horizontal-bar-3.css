@@ -5,9 +5,9 @@
   transition: width 900ms cubic-bezier(0.2, 1, 0.2, 1);
 }
 
-.mn-okr__kr-bar--on-track { background: linear-gradient(90deg, #00A651, #00C966); box-shadow: 0 0 8px rgba(0,166,81,0.3); }
-.mn-okr__kr-bar--at-risk { background: linear-gradient(90deg, #FFC72C, #FFD85C); box-shadow: 0 0 8px rgba(255,199,44,0.3); }
-.mn-okr__kr-bar--behind { background: linear-gradient(90deg, #DC0000, #FF3333); box-shadow: 0 0 8px rgba(220,0,0,0.3); }
+.mn-okr__kr-bar--on-track { background: linear-gradient(90deg, var(--verde-racing), var(--verde-racing-light)); box-shadow: 0 0 8px rgba(0,166,81,0.3); }
+.mn-okr__kr-bar--at-risk { background: linear-gradient(90deg, var(--giallo-ferrari), var(--giallo-ferrari-light)); box-shadow: 0 0 8px rgba(255,199,44,0.3); }
+.mn-okr__kr-bar--behind { background: linear-gradient(90deg, var(--rosso-corsa), var(--rosso-corsa-light)); box-shadow: 0 0 8px rgba(220,0,0,0.3); }
 
 .mn-okr__empty {
   border: 1px dashed var(--grigio-scuro);

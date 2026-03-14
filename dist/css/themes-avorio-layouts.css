@@ -91,30 +91,30 @@ body.mn-avorio .mn-drill-down:hover { background: var(--avorio-medio); color: va
 body.mn-colorblind {
   /* Accent color remapping */
   --giallo: #FFB000;
-  --rosso: #D55E00;
-  --verde: #0072B2;
-  --arancio: #E69F00;
+  --rosso: var(--mn-cb-orange);
+  --verde: var(--mn-cb-blue);
+  --arancio: var(--mn-cb-yellow);
 
-  /* Chart series palette */
-  --mn-chart-series-1: #0072B2;
-  --mn-chart-series-2: #D55E00;
-  --mn-chart-series-3: #009E73;
+  /* Chart series palette (Okabe-Ito safe) */
+  --mn-chart-series-1: var(--mn-cb-blue);
+  --mn-chart-series-2: var(--mn-cb-orange);
+  --mn-chart-series-3: var(--mn-cb-green);
   --mn-chart-series-4: #F0E442;
   --mn-chart-series-5: #CC79A7;
   --mn-chart-series-6: #56B4E9;
-  --mn-chart-series-7: #E69F00;
-  --mn-chart-series-8: #000000;
-  --mn-chart-series-9: #0072B2;
-  --mn-chart-series-10: #D55E00;
-  --mn-chart-series-11: #009E73;
+  --mn-chart-series-7: var(--mn-cb-yellow);
+  --mn-chart-series-8: var(--nero-assoluto);
+  --mn-chart-series-9: var(--mn-cb-blue);
+  --mn-chart-series-10: var(--mn-cb-orange);
+  --mn-chart-series-11: var(--mn-cb-green);
   --mn-chart-series-12: #F0E442;
 
   /* Form overrides */
   --mn-form-focus: #FFB000;
   --mn-form-focus-ring: rgba(255, 176, 0, 0.25);
-  --mn-form-error: #D55E00;
+  --mn-form-error: var(--mn-cb-orange);
   --mn-form-error-bg: rgba(213, 94, 0, 0.06);
-  --mn-form-success: #0072B2;
+  --mn-form-success: var(--mn-cb-blue);
   --mn-form-success-bg: rgba(0, 114, 178, 0.06);
 }
 

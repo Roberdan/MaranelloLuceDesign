@@ -16,9 +16,9 @@
   border-radius: 50%;
   background: conic-gradient(
     from 200deg,
-    #5a5a58 0deg, #6a6a68 40deg, #5a5a58 80deg,
-    #4a4a48 120deg, #3a3a38 180deg, #4a4a48 240deg,
-    #5a5a58 280deg, #6a6a68 320deg, #5a5a58 360deg
+    var(--mn-metal-2) 0deg, var(--mn-metal-1) 40deg, var(--mn-metal-2) 80deg,
+    var(--mn-metal-3) 120deg, var(--mn-metal-4) 180deg, var(--mn-metal-3) 240deg,
+    var(--mn-metal-2) 280deg, var(--mn-metal-1) 320deg, var(--mn-metal-2) 360deg
   );
   box-shadow:
     0 6px 24px rgba(0,0,0,0.5),
@@ -32,7 +32,7 @@
   position: absolute;
   inset: 10px;
   border-radius: 50%;
-  background: radial-gradient(circle at 45% 40%, #3a3a3a 0%, #1a1a1a 100%);
+  background: radial-gradient(circle at 45% 40%, var(--mn-metal-dial-hi) 0%, var(--mn-metal-dial-lo) 100%);
   box-shadow: inset 0 2px 8px rgba(0,0,0,0.8), 0 1px 0 rgba(255,255,255,0.06);
 }
 .mn-rotary__pointer {
@@ -97,7 +97,7 @@
   position: relative;
   height: 6px;
   border-radius: 3px;
-  background: linear-gradient(90deg, #1a1a1a, #2a2a2a);
+  background: linear-gradient(90deg, var(--mn-surface-nero-1), var(--mn-metal-slider));
   box-shadow: inset 0 1px 3px rgba(0,0,0,0.6);
   cursor: pointer;
 }
@@ -125,7 +125,7 @@
   height: 20px;
   border-radius: 50%;
   transform: translate(-50%, -50%);
-  background: radial-gradient(circle at 40% 35%, #ccc 0%, #888 40%, #555 100%);
+  background: radial-gradient(circle at 40% 35%, var(--grigio-alluminio) 0%, var(--grigio-medio) 40%, var(--mn-metal-2) 100%);
   box-shadow:
     0 2px 6px rgba(0,0,0,0.5),
     inset 0 1px 0 rgba(255,255,255,0.3),

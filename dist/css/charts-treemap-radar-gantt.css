@@ -59,7 +59,7 @@
   align-items: center;
 }
 .mn-gantt__label {
-  color: #c8c8c8;
+  color: var(--grigio-alluminio);
   font-weight: 500;
   white-space: nowrap;
   overflow: hidden;
