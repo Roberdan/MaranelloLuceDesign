@@ -8,7 +8,7 @@
 ## Install
 
 ```bash
-npm i github:Roberdan/MaranelloLuceDesign#v3.2.1
+npm i github:Roberdan/MaranelloLuceDesign#v3.3.0
 ```
 
 ## Import Paths
@@ -27,8 +27,8 @@ npm i github:Roberdan/MaranelloLuceDesign#v3.2.1
 
 CDN (no build):
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v3.2.1/dist/css/index.css">
-<script src="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v3.2.1/dist/iife/maranello.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v3.3.0/dist/css/index.css">
+<script src="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v3.3.0/dist/iife/maranello.min.js"></script>
 ```
 IIFE attaches everything to `window.Maranello`.
 

@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.3.0] - 14 Mar 2026
+
+### Added
+- Body `background`/`color` for `mn-nero` and `mn-avorio` theme classes — full-page theme support
+- Nero overrides: sim panel, network graph, filter chips, column layout, binnacle, strip/pod
+- Avorio overrides: Ferrari control labels, detail panel comments, slide-out shadows, spinner, sim panel, network graph
+- Colorblind overrides: sim panel status tags, OKR bar gradients, capacity heatmap cells, binnacle/strip-pod accents
+- Avorio speedometer palette (warm ivory bg, rosso-corsa needle, dark text for contrast)
+- 4 new color tokens: `--verde-racing-light`, `--giallo-ferrari-light`, `--rosso-corsa-light`, `--arancio-ambra`
+
+### Changed
+- 27 hardcoded hex values in TS canvas code replaced with `cssVar()` calls (theme-reactive at runtime)
+- 14 remaining CSS hardcoded colors tokenized across 8 source files
+- CI hardcoded color check upgraded from WARNING to blocking FAIL
+- Social graph edges: cubic bezier curves with glow effects (replaces straight lines)
+
+### Fixed
+- Complete theme coverage matrix: all major components now covered across 4 themes
+- OKR bar gradients now use Okabe-Ito palette in colorblind mode
+- Capacity heatmap cells remap green/red to blue/orange in colorblind mode
+
 ## [3.2.1] - 14 Mar 2026
 
 ### Security

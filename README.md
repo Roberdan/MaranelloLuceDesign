@@ -20,7 +20,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-3.2.1-FFC72C?style=flat-square">
+  <img src="https://img.shields.io/badge/version-3.3.0-FFC72C?style=flat-square">
   <img src="https://img.shields.io/badge/license-MPL_2.0-green?style=flat-square">
   <img src="https://img.shields.io/badge/tests-354_passed-00A651?style=flat-square">
   <img src="https://img.shields.io/badge/zero_deps-vanilla_TS-4EA8DE?style=flat-square">
@@ -71,13 +71,13 @@
 ## Install
 
 ```bash
-npm install github:Roberdan/MaranelloLuceDesign#v3.2.1
+npm install github:Roberdan/MaranelloLuceDesign#v3.3.0
 ```
 
 Or CDN:
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v3.2.1/dist/css/index.css">
-<script src="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v3.2.1/dist/iife/maranello.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v3.3.0/dist/css/index.css">
+<script src="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v3.3.0/dist/iife/maranello.min.js"></script>
 ```
 
 ## For AI Agents → [AGENT.md](AGENT.md)
