@@ -5,7 +5,7 @@
 
 import type { DataTableColumn, DataTableOptions } from './core/types';
 import { createElement } from './core/utils';
-import { escapeHtml, isValidColor } from './core/sanitize';
+import { escapeHtml, isValidColor, sanitizeHtml } from './core/sanitize';
 
 export interface DataTableStatusMeta { cls: string; icon: string }
 export interface DataTableState<RowT = Record<string, unknown>> {
@@ -88,8 +88,10 @@ export const cellRenderers: Record<string, (val: unknown, row?: unknown, col?: u
   custom: (val, row, col) => {
     const c = col as DataTableColumn | undefined;
     if (c?.render) {
-      const html = String(c.render(val, row as Record<string, unknown>));
-      return html.replace(/style="[^"]*color:\s*([^;"]+)/g, (match, colorVal) => {
+      // Sanitize custom renderer output before innerHTML assignment to prevent XSS
+      const raw = String(c.render(val, row as Record<string, unknown>));
+      const safe = sanitizeHtml(raw);
+      return safe.replace(/style="[^"]*color:\s*([^;"]+)/g, (match, colorVal) => {
         return isValidColor(colorVal.trim()) ? match : match.replace(colorVal, 'inherit');
       });
     }

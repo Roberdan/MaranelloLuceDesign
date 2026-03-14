@@ -57,16 +57,15 @@ test.describe('Security — XSS prevention', () => {
     await page.goto('/');
     await page.waitForLoadState('networkidle', { timeout: 15_000 }).catch(() => {/* ignore */});
 
-    // Find table cells and inject payload as text (safe) vs innerHTML (dangerous)
+    // TODO: This test uses textContent (always safe) and does not exercise Maranello's
+    // sanitization pipeline (sanitizeHtml / custom renderer path). A future test should
+    // feed a payload through the dataTable API and assert it is escaped in the DOM.
     await page.evaluate((payload) => {
       const cells = Array.from(document.querySelectorAll('td, .mn-dt-cell'));
       if (cells.length === 0) return;
 
       // Safe path: textContent (should NOT trigger XSS)
       cells[0].textContent = payload;
-
-      // Verify Maranello's dataTable renders labels as text, not innerHTML
-      // by checking a cell that was rendered by the library
     }, XSS_PAYLOAD);
 
     await page.waitForTimeout(200);

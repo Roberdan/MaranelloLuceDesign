@@ -85,32 +85,13 @@ function initOverlays(section) {
   });
 
   // --- Drawer ---
+  // openDrawer API expects a string element id, not a DOM element
   section.querySelector('#ovl-drawer-open')?.addEventListener('click', () => {
     if (!M.openDrawer) return;
-    const host = section.querySelector('#ovl-drawer-host');
-    M.openDrawer(host, {
-      title: 'Agent Details — opus-07',
-      content: `
-        <div style="padding:var(--space-lg);display:flex;flex-direction:column;gap:var(--space-md)">
-          <div class="mn-card-dark" style="padding:var(--space-md)">
-            <p class="mn-label mn-mb-xs">Status</p>
-            <p class="mn-body" style="color:var(--verde-racing)">Active — processing 4 tasks</p>
-          </div>
-          <div class="mn-card-dark" style="padding:var(--space-md)">
-            <p class="mn-label mn-mb-xs">Region</p>
-            <p class="mn-body">us-east-1</p>
-          </div>
-          <div class="mn-card-dark" style="padding:var(--space-md)">
-            <p class="mn-label mn-mb-xs">Token spend (last 24h)</p>
-            <p class="mn-body" style="color:var(--mn-accent)">142,380 tokens</p>
-          </div>
-          <button class="mn-btn mn-btn--ghost" id="ovl-drawer-close-btn">Close Drawer</button>
-        </div>`,
-      onClose: () => M.closeDrawer?.(host),
-    });
+    M.openDrawer('ovl-drawer-host');
     setTimeout(() => {
       const btn = document.getElementById('ovl-drawer-close-btn');
-      btn?.addEventListener('click', () => M.closeDrawer?.(host));
+      btn?.addEventListener('click', () => M.closeDrawer?.('ovl-drawer-host'));
     }, 100);
   });
 }

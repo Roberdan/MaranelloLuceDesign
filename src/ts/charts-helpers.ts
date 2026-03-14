@@ -80,11 +80,17 @@ export function applyChartA11y(canvas: HTMLCanvasElement, label: string): void {
   canvas.setAttribute('role', 'img');
   canvas.setAttribute('aria-label', label);
   canvas.textContent = label;
-  const srSpan = document.createElement('span');
-  srSpan.className = 'mn-sr-only';
-  srSpan.textContent = label;
   if (canvas.parentElement) {
-    canvas.parentElement.insertBefore(srSpan, canvas.nextSibling);
+    // Reuse existing sr-only sibling on re-render to avoid accumulation
+    const existing = canvas.nextElementSibling;
+    if (existing && existing.classList.contains('mn-sr-only')) {
+      existing.textContent = label;
+    } else {
+      const srSpan = document.createElement('span');
+      srSpan.className = 'mn-sr-only';
+      srSpan.textContent = label;
+      canvas.parentElement.insertBefore(srSpan, canvas.nextSibling);
+    }
   }
 }
 

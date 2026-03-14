@@ -65,8 +65,8 @@ test.describe('Accessibility', () => {
       }).length;
     });
 
-    // Report count — we expect zero violations once charts are wired with ARIA
-    expect(violations).toBeGreaterThanOrEqual(0); // non-blocking: documents current state
+    // Expect zero violations — every canvas must have an aria-label or role=img+title
+    expect(violations).toBe(0);
   });
 
   // ── 3. Form errors linked with aria-describedby ───────────────────────────

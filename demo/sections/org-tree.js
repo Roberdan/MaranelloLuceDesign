@@ -74,7 +74,9 @@ function initOrgTree(section) {
 
   if (M?.initOrgTree) {
     try {
-      const ctrl = M.initOrgTree(container, ORG_DATA);
+      // Render the tree DOM first — initOrgTree(container) wires behaviors on existing DOM
+      renderFallback(container);
+      const ctrl = M.initOrgTree(container);
       section.querySelector('#org-expand-all')?.addEventListener('click', () => ctrl?.expandAll?.());
       section.querySelector('#org-collapse-all')?.addEventListener('click', () => ctrl?.collapseAll?.());
     } catch (e) {

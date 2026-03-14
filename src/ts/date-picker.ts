@@ -102,6 +102,8 @@ export function datePicker(anchor: HTMLElement, opts?: DatePickerOptions): DateP
     prevBtn.addEventListener('click', () => {
       viewM--;
       if (viewM < 0) { viewM = 11; viewY--; }
+      // Clamp focusedDay to the new month's length to avoid out-of-range tabindex=0
+      focusedDay = Math.min(focusedDay, daysInMonth(viewY, viewM));
       renderCalendar();
     });
 
@@ -119,6 +121,8 @@ export function datePicker(anchor: HTMLElement, opts?: DatePickerOptions): DateP
     nextBtn.addEventListener('click', () => {
       viewM++;
       if (viewM > 11) { viewM = 0; viewY++; }
+      // Clamp focusedDay to the new month's length to avoid out-of-range tabindex=0
+      focusedDay = Math.min(focusedDay, daysInMonth(viewY, viewM));
       renderCalendar();
     });
 

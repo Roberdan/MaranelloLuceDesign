@@ -117,8 +117,9 @@ export function render<RowT extends Record<string, unknown>>(
   paginationEl: HTMLDivElement | null,
   liveRegion?: HTMLElement,
 ): void {
-  if (!state.data || state.data.length === 0) {
-    console.warn('[Maranello] dataTable: no data provided to render');
+  // Warn only when data is missing (null/undefined) — an empty array is valid
+  if (state.data == null) {
+    console.warn('[Maranello] dataTable: data is null or undefined');
   }
   tbody.innerHTML = '';
   const rows = getProcessedData(state);

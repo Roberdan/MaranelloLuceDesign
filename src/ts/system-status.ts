@@ -4,7 +4,6 @@
  */
 
 import { createElement } from './core/utils';
-import { escapeHtml } from './core/sanitize';
 import type {
   SystemStatusService,
   SystemStatusCheckResult,

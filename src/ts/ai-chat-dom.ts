@@ -77,7 +77,9 @@ export function el<K extends keyof HTMLElementTagNameMap>(
   if (attrs) {
     for (const [k, v] of Object.entries(attrs)) {
       if (k === 'text') e.textContent = v;
-      else if (k === 'html') e.innerHTML = escapeHtml(String(v));
+      // SVG markup from the internal icons module is trusted — assign directly.
+      // User-supplied html strings must be escaped to prevent XSS.
+      else if (k === 'html') e.innerHTML = String(v).trimStart().startsWith('<svg') ? String(v) : escapeHtml(String(v));
       else e.setAttribute(k, sanitizeAttr(k, v));
     }
   }

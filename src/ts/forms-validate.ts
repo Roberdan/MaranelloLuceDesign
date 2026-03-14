@@ -82,12 +82,24 @@ export function validateField(field: Element): boolean {
       }
       errorEl.setAttribute('aria-live', 'assertive');
       errorEl.textContent = errorMsg;
-      input.setAttribute('aria-describedby', errorEl.id);
+      // Append error id while preserving other aria-describedby tokens
+      const existing = (input.getAttribute('aria-describedby') ?? '').split(/\s+/).filter(Boolean);
+      if (!existing.includes(errorEl.id)) {
+        input.setAttribute('aria-describedby', [...existing, errorEl.id].join(' '));
+      }
     }
   } else {
     input.removeAttribute('aria-invalid');
     if (errorEl) {
-      input.removeAttribute('aria-describedby');
+      // Remove only the error id token, preserving any other aria-describedby values
+      const tokens = (input.getAttribute('aria-describedby') ?? '').split(/\s+/).filter(
+        (t) => t && t !== errorEl.id,
+      );
+      if (tokens.length > 0) {
+        input.setAttribute('aria-describedby', tokens.join(' '));
+      } else {
+        input.removeAttribute('aria-describedby');
+      }
       errorEl.textContent = '';
     }
     if (value.length > 0) field.classList.add('mn-field--success');

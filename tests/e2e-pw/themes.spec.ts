@@ -166,10 +166,13 @@ test.describe('Theme switching', () => {
 
     // At least 2 different accent values across the 4 themes (if CSS loaded)
     const nonEmpty = accents.filter(Boolean);
-    if (nonEmpty.length > 0) {
-      const unique = new Set(nonEmpty);
-      expect(unique.size).toBeGreaterThanOrEqual(1);
+    if (nonEmpty.length < 2) {
+      // CSS not loaded — cannot verify distinctness
+      test.skip(true, 'CSS tokens not available — serve-demo mode');
+      return;
     }
+    const unique = new Set(nonEmpty);
+    expect(unique.size).toBeGreaterThanOrEqual(2);
   });
 
 });
