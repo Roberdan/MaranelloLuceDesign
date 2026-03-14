@@ -39,6 +39,7 @@ export function speedoPalette(): SpeedoPalette {
   const cl = document.body.classList;
   const isCB = cl.contains('mn-colorblind');
   const isNero = cl.contains('mn-nero');
+  const isAvorio = cl.contains('mn-avorio');
   const D: SpeedoPalette = {
     needle: null, arc: null, barStops: null,
     bg: ['#0d0d0d', '#1a1a1a', '#2c2c2c'], border: '#3a3a3a',
@@ -50,6 +51,16 @@ export function speedoPalette(): SpeedoPalette {
   if (isCB) {
     return { ...D, needle: '#4D9DE0', arc: '#7EC8E3',
       barStops: ['#E15759', '#EDC948', '#59A14F'] };
+  }
+  if (isAvorio) {
+    return { ...D,
+      bg: ['#faf3e6', '#f0e4cc', '#e8d5b0'], border: '#c4b99a',
+      minorTick: '#999', majStroke: '#555', majText: '#333',
+      capFill: '#333', capStroke: '#555',
+      value: '#1a1a1a', unit: '#555', subLabel: '#777',
+      barBg: '#e8d5b0', barDim: '#777', barBright: '#444',
+      needle: '#DC0000', arc: '#DC0000',
+    };
   }
   if (isNero) {
     return { ...D, bg: ['#050505', '#111', '#1a1a1a'], border: '#2a2a2a',

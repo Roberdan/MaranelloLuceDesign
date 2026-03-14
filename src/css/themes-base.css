@@ -25,10 +25,16 @@
    NERO MODE — light/ivory sections → dark
    ============================================================ */
 /* Nero accent: giallo Ferrari (default) */
-body.mn-nero { --mn-accent: var(--giallo-ferrari); --mn-accent-hover: var(--giallo-hover); --mn-accent-text: #111; }
+body.mn-nero {
+  background: var(--nero-assoluto); color: var(--bianco-caldo);
+  --mn-accent: var(--giallo-ferrari); --mn-accent-hover: var(--giallo-hover); --mn-accent-text: #111;
+}
 
 /* Avorio accent: rosso Corsa */
-body.mn-avorio { --mn-accent: var(--rosso-corsa); --mn-accent-hover: #b30000; --mn-accent-text: #fff; }
+body.mn-avorio {
+  background: var(--avorio-chiaro); color: var(--nero-assoluto);
+  --mn-accent: var(--rosso-corsa); --mn-accent-hover: #b30000; --mn-accent-text: #fff;
+}
 
 /* Colorblind accent: high-contrast blue */
 body.mn-colorblind { --mn-accent: #0072B2; --mn-accent-hover: #005f94; --mn-accent-text: #fff; }
