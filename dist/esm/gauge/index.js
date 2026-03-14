@@ -1,10 +1,10 @@
-/* Maranello Luce Design v3.2.1 | MIT | github.com/Roberdan/MaranelloLuceDesign */
+/* Maranello Luce Design v3.2.1 | MPL-2.0 | github.com/Roberdan/MaranelloLuceDesign */
 import {
   FerrariGauge,
   buildGaugePalette,
   speedometer
-} from "../chunks/chunk-IBF5423D.js";
-import "../chunks/chunk-F34GBXYY.js";
+} from "../chunks/chunk-BX66OLUY.js";
+import "../chunks/chunk-IALFYTKY.js";
 export {
   FerrariGauge,
   buildGaugePalette,

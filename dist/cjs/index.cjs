@@ -1,4 +1,4 @@
-/* Maranello Luce Design v3.2.1 | MIT | github.com/Roberdan/MaranelloLuceDesign */
+/* Maranello Luce Design v3.2.1 | MPL-2.0 | github.com/Roberdan/MaranelloLuceDesign */
 "use strict";
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -256,6 +256,9 @@ var eventBus = new EventBus();
 // src/ts/core/sanitize.ts
 function escapeHtml(str) {
   return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+function sanitizeHtml(str) {
+  return escapeHtml(str);
 }
 var HEX_RE = /^#(?:[0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})$/i;
 var RGB_RE = /^rgba?\(\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}\s*(?:,\s*(?:0|1|0?\.\d+))?\s*\)$/;
@@ -851,7 +854,10 @@ function alpha2(color, opacity) {
 }
 function neuralNodes(container, opts = {}) {
   const target = resolveContainer2(container);
-  if (!target) return null;
+  if (!target) {
+    console.warn("[Maranello] neuralNodes: container not found");
+    return null;
+  }
   const host = target;
   const options = {
     nodeCount: 30,
@@ -1789,7 +1795,7 @@ function el(tag, cls, attrs) {
   if (attrs) {
     for (const [k, v] of Object.entries(attrs)) {
       if (k === "text") e.textContent = v;
-      else if (k === "html") e.innerHTML = escapeHtml(String(v));
+      else if (k === "html") e.innerHTML = String(v).trimStart().startsWith("<svg") ? String(v) : escapeHtml(String(v));
       else e.setAttribute(k, sanitizeAttr(k, v));
     }
   }
@@ -2550,11 +2556,16 @@ function applyChartA11y(canvas, label) {
   canvas.setAttribute("role", "img");
   canvas.setAttribute("aria-label", label);
   canvas.textContent = label;
-  const srSpan = document.createElement("span");
-  srSpan.className = "mn-sr-only";
-  srSpan.textContent = label;
   if (canvas.parentElement) {
-    canvas.parentElement.insertBefore(srSpan, canvas.nextSibling);
+    const existing = canvas.nextElementSibling;
+    if (existing && existing.classList.contains("mn-sr-only")) {
+      existing.textContent = label;
+    } else {
+      const srSpan = document.createElement("span");
+      srSpan.className = "mn-sr-only";
+      srSpan.textContent = label;
+      canvas.parentElement.insertBefore(srSpan, canvas.nextSibling);
+    }
   }
 }
 function drawSmoothLine(ctx, data, getX, getY, smooth) {
@@ -3210,7 +3221,10 @@ function clampVal(v, min, max) {
 }
 function hBarChart(container, opts) {
   const root = typeof container === "string" ? document.querySelector(container) : container;
-  if (!root) return null;
+  if (!root) {
+    console.warn("[Maranello] hBarChart: container not found");
+    return null;
+  }
   const state = {
     opts: {
       title: "",
@@ -3327,7 +3341,8 @@ function hBarChart(container, opts) {
       const valueEl = createEl("div", "mn-hbar__value");
       const pct2 = clampVal(bar.value / maxValue * 100, 0, 100);
       const txtColor = hexLum(bar.color) > 0.55 ? "#111111" : "#FFFFFF";
-      fill.style.background = bar.color;
+      const safeColor3 = isValidColor(bar.color) ? bar.color : cssVar("--mn-accent");
+      fill.style.background = safeColor3;
       fill.style.height = (state.opts.barHeight || 28) + "px";
       fill.style.width = state.opts.animate ? "0%" : pct2 + "%";
       valueEl.style.color = txtColor;
@@ -7312,8 +7327,9 @@ var cellRenderers = {
   custom: (val, row, col) => {
     const c = col;
     if (c?.render) {
-      const html = String(c.render(val, row));
-      return html.replace(/style="[^"]*color:\s*([^;"]+)/g, (match, colorVal) => {
+      const raw = String(c.render(val, row));
+      const safe = sanitizeHtml(raw);
+      return safe.replace(/style="[^"]*color:\s*([^;"]+)/g, (match, colorVal) => {
         return isValidColor(colorVal.trim()) ? match : match.replace(colorVal, "inherit");
       });
     }
@@ -7542,8 +7558,8 @@ function getGroupedData(rows, groupBy, groupOrder) {
   return { groups, order };
 }
 function render2(state, opts, tbody, paginationEl, liveRegion) {
-  if (!state.data || state.data.length === 0) {
-    console.warn("[Maranello] dataTable: no data provided to render");
+  if (state.data == null) {
+    console.warn("[Maranello] dataTable: data is null or undefined");
   }
   tbody.innerHTML = "";
   const rows = getProcessedData(state);
@@ -7990,6 +8006,7 @@ function datePicker(anchor, opts) {
         viewM = 11;
         viewY--;
       }
+      focusedDay = Math.min(focusedDay, daysInMonth(viewY, viewM));
       renderCalendar();
     });
     const title = document.createElement("span");
@@ -8008,6 +8025,7 @@ function datePicker(anchor, opts) {
         viewM = 0;
         viewY++;
       }
+      focusedDay = Math.min(focusedDay, daysInMonth(viewY, viewM));
       renderCalendar();
     });
     nav.append(prevBtn, title, nextBtn);
@@ -8184,12 +8202,22 @@ function validateField(field) {
       }
       errorEl.setAttribute("aria-live", "assertive");
       errorEl.textContent = errorMsg;
-      input.setAttribute("aria-describedby", errorEl.id);
+      const existing = (input.getAttribute("aria-describedby") ?? "").split(/\s+/).filter(Boolean);
+      if (!existing.includes(errorEl.id)) {
+        input.setAttribute("aria-describedby", [...existing, errorEl.id].join(" "));
+      }
     }
   } else {
     input.removeAttribute("aria-invalid");
     if (errorEl) {
-      input.removeAttribute("aria-describedby");
+      const tokens = (input.getAttribute("aria-describedby") ?? "").split(/\s+/).filter(
+        (t) => t && t !== errorEl.id
+      );
+      if (tokens.length > 0) {
+        input.setAttribute("aria-describedby", tokens.join(" "));
+      } else {
+        input.removeAttribute("aria-describedby");
+      }
       errorEl.textContent = "";
     }
     if (value.length > 0) field.classList.add("mn-field--success");
@@ -9513,7 +9541,8 @@ function renderRows2(ctx, bars, maxValue) {
     const valueEl = createEl2("div", "mn-hbar__value");
     const pct2 = clampVal2(bar.value / maxValue * 100, 0, 100);
     const txtColor = hexLum3(bar.color) > 0.55 ? "#111111" : "#FFFFFF";
-    fill.style.background = bar.color;
+    const safeColor3 = isValidColor(bar.color) ? bar.color : cssVar("--mn-accent");
+    fill.style.background = safeColor3;
     fill.style.height = (state.opts.barHeight || 28) + "px";
     fill.style.width = state.opts.animate ? "0%" : pct2 + "%";
     valueEl.style.color = txtColor;
@@ -9664,7 +9693,7 @@ var renderers = {
   badge(val, field) {
     const span = createElement("span", "mn-tag mn-tag--sm");
     const color = field.badgeColors?.[String(val)] ?? "";
-    if (color) span.style.background = color;
+    if (color && isValidColor(color)) span.style.background = color;
     span.textContent = val ? String(val) : DASH;
     return span;
   },
@@ -9672,7 +9701,7 @@ var renderers = {
     const span = createElement("span", "mn-tag mn-tag--sm");
     const colors = field.statusColors ?? {};
     const c = colors[String(val)];
-    if (c) {
+    if (c && isValidColor(c)) {
       span.style.background = c;
       span.style.color = "#fff";
     }
@@ -10895,7 +10924,10 @@ var TEMPLATES = [
 var CLASS_PREFIX = "mn-grid-template--";
 function gridLayout(container, template = "masonry-auto", options) {
   const target = typeof container === "string" ? document.querySelector(container) : container;
-  if (!target) return null;
+  if (!target) {
+    console.warn("[Maranello] gridLayout: container not found");
+    return null;
+  }
   const host = target;
   const opts = { gap: "", padding: "", animate: true, ...options };
   let current = template;

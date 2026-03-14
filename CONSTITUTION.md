@@ -118,4 +118,4 @@ Semver. CHANGELOG.md updated on every release. Breaking changes = major bump.
 
 ---
 
-(c) Roberdan 2026 — Roberto D'Angelo · MIT License
+(c) Roberdan 2026 — Roberto D'Angelo · MPL-2.0 License

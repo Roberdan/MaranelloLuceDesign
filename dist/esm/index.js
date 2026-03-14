@@ -1,4 +1,4 @@
-/* Maranello Luce Design v3.2.1 | MIT | github.com/Roberdan/MaranelloLuceDesign */
+/* Maranello Luce Design v3.2.1 | MPL-2.0 | github.com/Roberdan/MaranelloLuceDesign */
 import {
   SERIES,
   areaChart,
@@ -17,15 +17,15 @@ import {
   radar,
   sparkline,
   sparklineInteract
-} from "./chunks/chunk-FP4X2EEQ.js";
+} from "./chunks/chunk-7Y7WS3KI.js";
 import {
   FerrariGauge,
   buildGaugePalette,
   speedometer
-} from "./chunks/chunk-IBF5423D.js";
+} from "./chunks/chunk-BX66OLUY.js";
 import {
   gantt
-} from "./chunks/chunk-H5S5JSHO.js";
+} from "./chunks/chunk-72VFLS54.js";
 import {
   closeDetailPanel,
   closeDrawer,
@@ -38,7 +38,7 @@ import {
   steppedRotary,
   toggleLever,
   toggleNotifications
-} from "./chunks/chunk-EECZCMS3.js";
+} from "./chunks/chunk-B2WLUWS5.js";
 import {
   ALLOWED_BIND_PROPERTIES,
   clamp,
@@ -55,10 +55,11 @@ import {
   isValidColor,
   lerp,
   sanitizeAttr,
+  sanitizeHtml,
   sanitizeSvg,
   setTheme,
   throttle
-} from "./chunks/chunk-F34GBXYY.js";
+} from "./chunks/chunk-IALFYTKY.js";
 import {
   addValidator,
   defaultMessages,
@@ -77,11 +78,11 @@ import {
   validateField,
   validateForm,
   validators
-} from "./chunks/chunk-JYGQEA3I.js";
+} from "./chunks/chunk-XS3HV6WU.js";
 import {
   EventBus,
   eventBus
-} from "./chunks/chunk-CS3G24KE.js";
+} from "./chunks/chunk-35KGZ4N4.js";
 
 // src/ts/network-messages.ts
 function resolveContainer(container) {
@@ -299,7 +300,10 @@ function alpha2(color, opacity) {
 }
 function neuralNodes(container, opts = {}) {
   const target = resolveContainer2(container);
-  if (!target) return null;
+  if (!target) {
+    console.warn("[Maranello] neuralNodes: container not found");
+    return null;
+  }
   const host = target;
   const options = {
     nodeCount: 30,
@@ -1237,7 +1241,7 @@ function el(tag, cls, attrs) {
   if (attrs) {
     for (const [k, v] of Object.entries(attrs)) {
       if (k === "text") e.textContent = v;
-      else if (k === "html") e.innerHTML = escapeHtml(String(v));
+      else if (k === "html") e.innerHTML = String(v).trimStart().startsWith("<svg") ? String(v) : escapeHtml(String(v));
       else e.setAttribute(k, sanitizeAttr(k, v));
     }
   }
@@ -2976,8 +2980,9 @@ var cellRenderers = {
   custom: (val, row, col) => {
     const c = col;
     if (c?.render) {
-      const html = String(c.render(val, row));
-      return html.replace(/style="[^"]*color:\s*([^;"]+)/g, (match, colorVal) => {
+      const raw = String(c.render(val, row));
+      const safe = sanitizeHtml(raw);
+      return safe.replace(/style="[^"]*color:\s*([^;"]+)/g, (match, colorVal) => {
         return isValidColor(colorVal.trim()) ? match : match.replace(colorVal, "inherit");
       });
     }
@@ -3206,8 +3211,8 @@ function getGroupedData(rows, groupBy, groupOrder) {
   return { groups, order };
 }
 function render2(state, opts, tbody, paginationEl, liveRegion) {
-  if (!state.data || state.data.length === 0) {
-    console.warn("[Maranello] dataTable: no data provided to render");
+  if (state.data == null) {
+    console.warn("[Maranello] dataTable: data is null or undefined");
   }
   tbody.innerHTML = "";
   const rows = getProcessedData(state);
@@ -3654,6 +3659,7 @@ function datePicker(anchor, opts) {
         viewM = 11;
         viewY--;
       }
+      focusedDay = Math.min(focusedDay, daysInMonth(viewY, viewM));
       renderCalendar();
     });
     const title = document.createElement("span");
@@ -3672,6 +3678,7 @@ function datePicker(anchor, opts) {
         viewM = 0;
         viewY++;
       }
+      focusedDay = Math.min(focusedDay, daysInMonth(viewY, viewM));
       renderCalendar();
     });
     nav.append(prevBtn, title, nextBtn);
@@ -4741,7 +4748,8 @@ function renderRows(ctx, bars, maxValue) {
     const valueEl = createEl("div", "mn-hbar__value");
     const pct2 = clampVal(bar.value / maxValue * 100, 0, 100);
     const txtColor = hexLum2(bar.color) > 0.55 ? "#111111" : "#FFFFFF";
-    fill.style.background = bar.color;
+    const safeColor2 = isValidColor(bar.color) ? bar.color : cssVar("--mn-accent");
+    fill.style.background = safeColor2;
     fill.style.height = (state.opts.barHeight || 28) + "px";
     fill.style.width = state.opts.animate ? "0%" : pct2 + "%";
     valueEl.style.color = txtColor;
@@ -4892,7 +4900,7 @@ var renderers = {
   badge(val, field) {
     const span = createElement("span", "mn-tag mn-tag--sm");
     const color = field.badgeColors?.[String(val)] ?? "";
-    if (color) span.style.background = color;
+    if (color && isValidColor(color)) span.style.background = color;
     span.textContent = val ? String(val) : DASH;
     return span;
   },
@@ -4900,7 +4908,7 @@ var renderers = {
     const span = createElement("span", "mn-tag mn-tag--sm");
     const colors = field.statusColors ?? {};
     const c = colors[String(val)];
-    if (c) {
+    if (c && isValidColor(c)) {
       span.style.background = c;
       span.style.color = "#fff";
     }
@@ -6123,7 +6131,10 @@ var TEMPLATES = [
 var CLASS_PREFIX = "mn-grid-template--";
 function gridLayout(container, template = "masonry-auto", options) {
   const target = typeof container === "string" ? document.querySelector(container) : container;
-  if (!target) return null;
+  if (!target) {
+    console.warn("[Maranello] gridLayout: container not found");
+    return null;
+  }
   const host = target;
   const opts = { gap: "", padding: "", animate: true, ...options };
   let current = template;

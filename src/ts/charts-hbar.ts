@@ -3,6 +3,7 @@
  */
 import type { HBarData, HBarChartOptions, HBarChartController } from './core/types';
 import { cssVar } from './core/utils';
+import { isValidColor } from './core/sanitize';
 
 interface ListenerRecord {
   el: HTMLElement;
@@ -60,7 +61,10 @@ export function hBarChart(
 ): HBarChartController | null {
   const root = typeof container === 'string'
     ? document.querySelector(container) : container;
-  if (!root) return null;
+  if (!root) {
+    console.warn('[Maranello] hBarChart: container not found');
+    return null;
+  }
 
   const state = {
     opts: {
@@ -185,7 +189,8 @@ export function hBarChart(
       const pct = clampVal((bar.value / maxValue) * 100, 0, 100);
       const txtColor = hexLum(bar.color) > 0.55 ? '#111111' : '#FFFFFF';
 
-      (fill as HTMLElement).style.background = bar.color;
+      const safeColor = isValidColor(bar.color) ? bar.color : cssVar('--mn-accent');
+      (fill as HTMLElement).style.background = safeColor;
       (fill as HTMLElement).style.height = (state.opts.barHeight || 28) + 'px';
       (fill as HTMLElement).style.width = state.opts.animate ? '0%' : pct + '%';
       (valueEl as HTMLElement).style.color = txtColor;

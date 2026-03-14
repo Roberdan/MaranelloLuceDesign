@@ -1,4 +1,4 @@
-/* Maranello Luce Design v3.2.1 | MIT | github.com/Roberdan/MaranelloLuceDesign */
+/* Maranello Luce Design v3.2.1 | MPL-2.0 | github.com/Roberdan/MaranelloLuceDesign */
 "use strict";
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -114,12 +114,22 @@ function validateField(field) {
       }
       errorEl.setAttribute("aria-live", "assertive");
       errorEl.textContent = errorMsg;
-      input.setAttribute("aria-describedby", errorEl.id);
+      const existing = (input.getAttribute("aria-describedby") ?? "").split(/\s+/).filter(Boolean);
+      if (!existing.includes(errorEl.id)) {
+        input.setAttribute("aria-describedby", [...existing, errorEl.id].join(" "));
+      }
     }
   } else {
     input.removeAttribute("aria-invalid");
     if (errorEl) {
-      input.removeAttribute("aria-describedby");
+      const tokens = (input.getAttribute("aria-describedby") ?? "").split(/\s+/).filter(
+        (t) => t && t !== errorEl.id
+      );
+      if (tokens.length > 0) {
+        input.setAttribute("aria-describedby", tokens.join(" "));
+      } else {
+        input.removeAttribute("aria-describedby");
+      }
       errorEl.textContent = "";
     }
     if (value.length > 0) field.classList.add("mn-field--success");

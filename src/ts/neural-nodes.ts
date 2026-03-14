@@ -33,7 +33,10 @@ export function neuralNodes(
   opts: NeuralNodesOptions = {},
 ): NeuralNodesController | null {
   const target = resolveContainer(container);
-  if (!target) return null;
+  if (!target) {
+    console.warn('[Maranello] neuralNodes: container not found');
+    return null;
+  }
   const host = target;
   const options: Required<Omit<NeuralNodesOptions, 'width' | 'height'>> & Pick<NeuralNodesOptions, 'width' | 'height'> = {
     nodeCount: 30, connectionDensity: 0.15, colors: DEFAULT_COLORS,

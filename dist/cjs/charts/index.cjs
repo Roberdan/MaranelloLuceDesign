@@ -1,4 +1,4 @@
-/* Maranello Luce Design v3.2.1 | MIT | github.com/Roberdan/MaranelloLuceDesign */
+/* Maranello Luce Design v3.2.1 | MPL-2.0 | github.com/Roberdan/MaranelloLuceDesign */
 "use strict";
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -288,11 +288,16 @@ function applyChartA11y(canvas, label) {
   canvas.setAttribute("role", "img");
   canvas.setAttribute("aria-label", label);
   canvas.textContent = label;
-  const srSpan = document.createElement("span");
-  srSpan.className = "mn-sr-only";
-  srSpan.textContent = label;
   if (canvas.parentElement) {
-    canvas.parentElement.insertBefore(srSpan, canvas.nextSibling);
+    const existing = canvas.nextElementSibling;
+    if (existing && existing.classList.contains("mn-sr-only")) {
+      existing.textContent = label;
+    } else {
+      const srSpan = document.createElement("span");
+      srSpan.className = "mn-sr-only";
+      srSpan.textContent = label;
+      canvas.parentElement.insertBefore(srSpan, canvas.nextSibling);
+    }
   }
 }
 function drawSmoothLine(ctx, data, getX, getY, smooth) {
@@ -948,7 +953,10 @@ function clampVal(v, min, max) {
 }
 function hBarChart(container, opts) {
   const root = typeof container === "string" ? document.querySelector(container) : container;
-  if (!root) return null;
+  if (!root) {
+    console.warn("[Maranello] hBarChart: container not found");
+    return null;
+  }
   const state = {
     opts: {
       title: "",
@@ -1065,7 +1073,8 @@ function hBarChart(container, opts) {
       const valueEl = createEl("div", "mn-hbar__value");
       const pct = clampVal(bar.value / maxValue * 100, 0, 100);
       const txtColor = hexLum(bar.color) > 0.55 ? "#111111" : "#FFFFFF";
-      fill.style.background = bar.color;
+      const safeColor2 = isValidColor(bar.color) ? bar.color : cssVar("--mn-accent");
+      fill.style.background = safeColor2;
       fill.style.height = (state.opts.barHeight || 28) + "px";
       fill.style.width = state.opts.animate ? "0%" : pct + "%";
       valueEl.style.color = txtColor;
