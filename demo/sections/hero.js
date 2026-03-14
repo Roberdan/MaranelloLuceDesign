@@ -28,9 +28,9 @@ export function createHeroSection() {
       </h2>
 
       <p class="mn-body" style="max-width:640px;margin:0 auto var(--space-2xl);color:var(--grigio-medio);line-height:1.7">
-        A fictional demonstration of the Maranello Luce Design System — Ferrari-inspired
-        dashboards for agent orchestration, model routing, token budgets, and inference pipelines.
-        Maranello Luce is an <strong style="color:var(--grigio-chiaro)">agentic AI operations platform</strong>.
+        Inspired by the <a href="https://www.ferrari.com/it-IT/auto/ferrari-luce" target="_blank" style="color:var(--mn-accent);text-decoration:none;border-bottom:1px solid rgba(255,199,44,0.4)">Ferrari Luce</a> interior design language —
+        warm leather tones, precision instruments, and cockpit-grade controls.
+        90+ components, 4 themes, Canvas 2D engines for <strong style="color:var(--grigio-chiaro)">agentic AI operations</strong>.
       </p>
 
       <div style="display:flex;gap:var(--space-2xl);justify-content:center;flex-wrap:wrap;margin-bottom:var(--space-2xl)">

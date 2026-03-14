@@ -6,6 +6,7 @@
 
 <p align="center">
   <strong>Ferrari Luce-inspired design system for business dashboards.</strong><br>
+  Inspired by the <a href="https://www.ferrari.com/it-IT/auto/ferrari-luce">Ferrari Luce</a> interior design language.<br>
   Warm leather tones · Cockpit-grade controls · Canvas data engines<br><br>
   <a href="https://roberdan.github.io/MaranelloLuceDesign/">▶ Live Demo</a> ·
   <a href="#quick-start">Quick Start</a> ·
