@@ -26,6 +26,8 @@ import { createOkrSection } from './sections/okr-panel.js';
 import { createMapSection } from './sections/map.js';
 import { createSocialGraphSection } from './sections/social-graph.js';
 import { createAdvancedSection } from './sections/advanced.js';
+import { createMeshNetworkSection } from './sections/mesh-network.js';
+import { createConvergioSection } from './sections/convergio.js';
 import { createWebComponentsSection } from './sections/web-components.js';
 import { createLaunchSection } from './sections/launch.js';
 import { createAccessibilitySection } from './sections/accessibility.js';
@@ -59,6 +61,8 @@ const sections = [
   createMapSection(),
   createSocialGraphSection(),
   createAdvancedSection(),
+  createMeshNetworkSection(),
+  createConvergioSection(),
   createWebComponentsSection(),
   createLaunchSection(),
   createAccessibilitySection(),

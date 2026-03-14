@@ -9,6 +9,7 @@ import { statusIcons } from './icons-status';
 import { actionIcons } from './icons-actions';
 import { dataIcons } from './icons-data';
 import { objectIcons } from './icons-objects';
+import { platformIcons } from './icons-platform';
 
 /** Full icon catalog merging all icon groups. */
 export const icons: IconCatalog = {
@@ -17,6 +18,7 @@ export const icons: IconCatalog = {
   ...actionIcons,
   ...dataIcons,
   ...objectIcons,
+  ...platformIcons,
 };
 
 /** Render an icon into a target element. */
@@ -47,3 +49,4 @@ export { statusIcons } from './icons-status';
 export { actionIcons } from './icons-actions';
 export { dataIcons } from './icons-data';
 export { objectIcons } from './icons-objects';
+export { platformIcons } from './icons-platform';

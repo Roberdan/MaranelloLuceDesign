@@ -5,13 +5,22 @@
 </p>
 
 <p align="center">
-  <strong>Ferrari Luce-inspired design system for business dashboards.</strong><br>
+  <strong>Ferrari Luce-inspired design system for business dashboards and AI agent orchestration.</strong><br>
   Inspired by the <a href="https://www.ferrari.com/it-IT/auto/ferrari-luce">Ferrari Luce</a> interior design language.<br>
-  Warm leather tones · Cockpit-grade controls · Canvas data engines<br><br>
-  <a href="https://roberdan.github.io/MaranelloLuceDesign/">▶ Live Demo</a> ·
+  Warm leather tones · Cockpit-grade controls · Canvas data engines · Distributed agent visualization
+</p>
+
+<p align="center">
+  <a href="https://roberdan.github.io/MaranelloLuceDesign/">
+    <img src="https://img.shields.io/badge/🏎️_Live_Demo-GitHub_Pages-FFC72C?style=for-the-badge&logo=github" alt="Live Demo">
+  </a>
+</p>
+
+<p align="center">
   <a href="#quick-start">Quick Start</a> ·
   <a href="docs/INTEGRATION.md">Integration Guide</a> ·
-  <a href="AGENT_GUIDE.md">AI Agent Guide</a>
+  <a href="AGENT_GUIDE.md">AI Agent Guide</a> ·
+  <a href="https://www.ferrari.com/it-IT/auto/ferrari-luce">Ferrari Luce Design</a>
 </p>
 
 <p align="center">
@@ -31,10 +40,11 @@ Part of the [Convergio](https://github.com/Roberdan/MyConvergio) ecosystem.
 | Layer | What | Count |
 |-------|------|-------|
 | **CSS Tokens** | Colors, spacing, typography, shadows, gradients | 422 tokens |
-| **CSS Components** | Cards, buttons, badges, tables, forms, layouts | 92 files |
-| **Web Components** | `<mn-gauge>`, `<mn-chart>`, `<mn-gantt>`, `<mn-mapbox>` + 20 more | 24 WCs |
-| **Headless JS** | Canvas charts, gauges, speedometers, maps, data tables, social graphs | 88 APIs |
+| **CSS Components** | Cards, buttons, badges, tables, forms, layouts, mesh networks, mission tracking | 102 files |
+| **Web Components** | `<mn-gauge>`, `<mn-chart>`, `<mn-gantt>`, `<mn-mesh-network>` + 28 more | 32 WCs |
+| **Headless JS** | Canvas charts, gauges, speedometers, maps, data tables, social graphs, mesh visualization | 95 APIs |
 | **Integration Layer** | Theme bridge, resets, utilities — drop-in for any SPA | 4 modules |
+| **Icons & Assets** | Platform icons (Apple, Windows, Linux, Docker), AI agent icons (Brain, Robot, Night Agent) | 45+ SVG icons |
 
 - **4 themes**: Nero (dark), Avorio (warm light), Editorial (mixed), Colorblind (WCAG AA)
 - **CSS @layer cascade**: 12 layers for zero-specificity conflicts
@@ -43,6 +53,9 @@ Part of the [Convergio](https://github.com/Roberdan/MyConvergio) ecosystem.
 - **WCAG 2.2 AA**: keyboard nav, ARIA, `prefers-color-scheme` auto
 - **Zero runtime deps**: pure CSS + vanilla TypeScript
 - **AI-discoverable**: `components.json` + `AGENT_GUIDE.md` for AI agent integration
+- **Distributed AI visualization**: Mesh network graphs for agent orchestration and swarm intelligence
+- **Mission tracking**: Active task cards, Night Agent monitoring, animated idea collection
+- **Convergio ecosystem**: Designed for Convergio AI operations and business intelligence
 
 ## Quick Start
 
@@ -199,16 +212,47 @@ gauge.create(canvas, { value: 72, label: 'RPM' });
 ## Component Catalog
 
 ### CSS Components
-Buttons, stat cards, tags, dividers, tables, status indicators, navigation bars, footers, input groups, form controls, filter chips, page headers, sidebars, toolbars, drawers, notification panels
+Buttons, stat cards, tags, dividers, tables, status indicators, navigation bars, footers, input groups, form controls, filter chips, page headers, sidebars, toolbars, drawers, notification panels, mission cards, night agent cards, idea jar, mesh network layouts, Convergio toolbar
 
 ### Web Components (`mn-*`)
-`mn-gauge`, `mn-chart`, `mn-gantt`, `mn-data-table`, `mn-date-picker`, `mn-funnel`, `mn-map`, `mn-hbar`, `mn-speedometer`, `mn-toast`, `mn-modal`, `mn-tabs`, `mn-theme-toggle`, `mn-command-palette`, `mn-login`, `mn-profile`, `mn-chat`, `mn-detail-panel`, `mn-system-status`, `mn-ferrari-control`, `mn-okr`, `mn-a11y`
+
+#### Data Visualization
+`mn-gauge`, `mn-chart`, `mn-gantt`, `mn-data-table`, `mn-funnel`, `mn-hbar`, `mn-speedometer`, `mn-map`, `mn-mesh-network`
+
+#### AI & Agent Orchestration (NEW)
+`mn-mission-card` — Active task tracking with status indicators  
+`mn-night-agent-card` — Nightly job monitoring cards  
+`mn-idea-jar` — Animated idea collection widget  
+`mn-mesh-network` — Distributed AI agent visualization with real-time connection mapping  
+`mn-agent-status` — Live agent health monitoring
+
+#### UI & Navigation
+`mn-toast`, `mn-modal`, `mn-tabs`, `mn-theme-toggle`, `mn-command-palette`, `mn-login`, `mn-profile`, `mn-chat`, `mn-detail-panel`, `mn-system-status`, `mn-ferrari-control`, `mn-okr`, `mn-a11y`, `mn-convergio-toolbar`
+
+#### Date & Input
+`mn-date-picker`, form validation components, Ferrari-style controls (rotary, slider, dials)
 
 ### Headless JS Engines
-Charts (donut, area, bar, bubble, sparkline, sparkbar, radar, half-gauge, live), Gantt timeline, Gauge/Speedometer (Ferrari instrument cluster), Funnel/Sankey, Data Table (sort/filter/paginate), Map View (Mapbox), Social Graph, HBar charts, OKR panels, Forms validation, Controls (rotary, slider, Ferrari dials)
+Charts (donut, area, bar, bubble, sparkline, sparkbar, radar, half-gauge, live), Gantt timeline, Gauge/Speedometer (Ferrari instrument cluster), Funnel/Sankey, Data Table (sort/filter/paginate), Map View (Mapbox), Social Graph, HBar charts, OKR panels, Forms validation, Controls (rotary, slider, Ferrari dials), Mesh Network Renderer, Mission Timeline, Agent Orchestration Graphs
+
+### Icons & Assets
+
+#### Platform Icons (NEW)
+**Operating Systems**: Apple (macOS), Windows, Linux, Ubuntu  
+**Hardware**: CPU, RAM, Disk, Network  
+**DevOps**: Terminal, Shell, Git, Docker, Kubernetes  
+**Cloud**: AWS, Azure, GCP
+
+#### AI & Agent Icons (NEW)
+**Agent Types**: Brain (reasoning), Robot (automation), Sparkle (creative AI), Night Agent (scheduled jobs), Autopilot (autonomous systems)  
+**Status**: Active, Idle, Error, Success, Warning  
+**Operations**: Deploy, Monitor, Scale, Orchestrate
+
+#### Ferrari Luce Icons
+Gauge, Speedometer, Steering Wheel, Dashboard, Headlights (inspired by Ferrari Luce design language)
 
 ### Layouts
-Data tables (standard, compact, panel), detail panels (base, comments, Gantt), org trees, heatmaps, capacity heatmaps, network graphs, command palette, chat, login, sim panels, horizontal bars, funnels
+Data tables (standard, compact, panel), detail panels (base, comments, Gantt), org trees, heatmaps, capacity heatmaps, network graphs, mesh topologies, command palette, chat, login, sim panels, horizontal bars, funnels, mission control dashboards, agent orchestration views
 
 ## Integration Guides
 
@@ -274,6 +318,61 @@ dist/
     </div>
     <mn-chart type="area" data='[{"x":1,"y":20},{"x":2,"y":45},{"x":3,"y":30}]'></mn-chart>
   </div>
+</body>
+```
+
+### AI Agent Orchestration Dashboard (NEW)
+
+```html
+<body class="mn-nero">
+  <!-- Convergio Toolbar with pill navigation -->
+  <mn-convergio-toolbar>
+    <a href="#agents" class="active">Agents</a>
+    <a href="#missions">Missions</a>
+    <a href="#insights">Insights</a>
+    <span class="status-indicator status--healthy">All Systems Operational</span>
+  </mn-convergio-toolbar>
+
+  <!-- Mesh Network Visualization -->
+  <mn-mesh-network
+    nodes='[{"id":"planner","type":"orchestrator"},{"id":"executor-1","type":"worker"},{"id":"executor-2","type":"worker"}]'
+    edges='[{"source":"planner","target":"executor-1"},{"source":"planner","target":"executor-2"}]'
+    theme="nero">
+  </mn-mesh-network>
+
+  <!-- Active Mission Cards -->
+  <div class="mission-grid">
+    <mn-mission-card
+      title="Deploy v3.2.0"
+      status="in-progress"
+      progress="67"
+      agent="Night Agent"
+      eta="2h 15m">
+    </mn-mission-card>
+    
+    <mn-mission-card
+      title="Security Audit"
+      status="queued"
+      agent="Validator"
+      priority="high">
+    </mn-mission-card>
+  </div>
+
+  <!-- Night Agent Monitoring -->
+  <mn-night-agent-card
+    job-name="Nightly Build"
+    status="success"
+    last-run="2026-01-15 03:00"
+    duration="8m 42s"
+    next-run="2026-01-16 03:00">
+  </mn-night-agent-card>
+
+  <!-- Idea Collection -->
+  <mn-idea-jar
+    count="12"
+    latest="Implement vector search for session history"
+    theme="nero">
+  </mn-idea-jar>
 </body>
 ```
 

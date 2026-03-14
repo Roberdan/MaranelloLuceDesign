@@ -14,3 +14,4 @@ export { statusIcons } from './icons-status';
 export { actionIcons } from './icons-actions';
 export { dataIcons } from './icons-data';
 export { objectIcons } from './icons-objects';
+export { platformIcons } from './icons-platform';

@@ -1,5 +1,5 @@
 /**
- * Accessibility section — MirrorBuddy-style panel with floating FAB + inline preview.
+ * Accessibility section — themed panel with floating FAB + inline preview.
  */
 const STORAGE_KEY = 'mn-a11y-settings';
 const STYLE_ID = 'mn-a11y-demo-style';
@@ -30,7 +30,7 @@ export function createAccessibilitySection() {
     <div class="mn-container">
       <p class="mn-section-number">15 — Accessibility</p>
       <h2 class="mn-title-section" style="margin-bottom:var(--space-lg)">Accessibility</h2>
-      <p class="mn-body" style="margin-bottom:var(--space-lg)">MirrorBuddy-inspired accessibility controls with quick profiles, focused toggles, a themed voice selector, and a persistent gold FAB.</p>
+      <p class="mn-body" style="margin-bottom:var(--space-lg)">Accessibility controls with quick profiles, focused toggles, a themed voice selector, and a persistent gold FAB.</p>
       <p class="mn-micro" style="margin-bottom:var(--space-xl);color:var(--grigio-medio)">The live panel is shown inline below for preview, while the floating action button opens the same interface as a slide-up overlay from the bottom-right.</p>
       <div class="mn-a11y-demo-stage">${panelMarkup('inline')}</div>
     </div>`;
