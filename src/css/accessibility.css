@@ -97,7 +97,7 @@
 
 /* Avorio text adjustments for contrast */
 body.mn-avorio .mn-text-subtle {
-  color: #555; /* darker than grigio-medio for contrast on ivory bg */
+  color: var(--grigio-medio); /* WCAG AA contrast on ivory bg */
 }
 
 

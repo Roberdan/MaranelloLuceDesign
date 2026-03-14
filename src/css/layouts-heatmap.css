@@ -102,7 +102,7 @@ body.mn-avorio .mn-heatmap__row--idle { background:rgba(255,179,0,.08); }
 body.mn-avorio .mn-heatmap__row--over { background:rgba(220,0,0,.06); }
 body.mn-avorio .mn-heatmap__name { color:var(--nero-assoluto); }
 body.mn-avorio .mn-heatmap__card__number { color:var(--nero-assoluto); }
-body.mn-avorio .mn-heatmap__card--idle .mn-heatmap__card__number { color:#b45309; }
+body.mn-avorio .mn-heatmap__card--idle .mn-heatmap__card__number { color:var(--arancio-ambra); }
 body.mn-avorio .mn-heatmap__card--over .mn-heatmap__card__number { color:var(--rosso-corsa); }
 body.mn-avorio .mn-heatmap__value { color:var(--nero-assoluto); text-shadow:0 1px 2px rgba(255,255,255,.5); }
 body.mn-avorio .mn-heatmap__bar--before { border-color:var(--grigio-chiaro); }
