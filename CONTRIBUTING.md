@@ -84,3 +84,7 @@ Before submitting a PR:
 - [ ] Works across all 4 themes
 - [ ] Accessibility checklist is complete
 - [ ] `CHANGELOG.md` updated under `[Unreleased]`
+
+## License
+
+MPL-2.0 — contributions licensed under the Mozilla Public License 2.0.

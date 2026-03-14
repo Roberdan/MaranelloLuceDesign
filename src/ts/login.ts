@@ -151,7 +151,9 @@ export function loginScreen(
           render(host!, state, options);
         }
       })
-      .catch(() => { /* silent */ });
+      .catch((err: unknown) => {
+        console.warn('[Maranello] loginScreen: health fetch failed:', err);
+      });
   }
 
   if (options.autoHealth !== false && typeof fetch !== 'undefined') {

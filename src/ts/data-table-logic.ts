@@ -115,16 +115,22 @@ export function render<RowT extends Record<string, unknown>>(
   opts: DataTableOptions<RowT>,
   tbody: HTMLTableSectionElement,
   paginationEl: HTMLDivElement | null,
+  liveRegion?: HTMLElement,
 ): void {
+  // Warn only when data is missing (null/undefined) — an empty array is valid
+  if (state.data == null) {
+    console.warn('[Maranello] dataTable: data is null or undefined');
+  }
   tbody.innerHTML = '';
   const rows = getProcessedData(state);
   const grouped = getGroupedData(rows, opts.groupBy, opts.groupOrder);
   const colSpan = opts.columns.length;
-  const renderFn = () => render(state, opts, tbody, paginationEl);
+  const renderFn = () => render(state, opts, tbody, paginationEl, liveRegion);
 
   if (rows.length === 0) {
     tbody.appendChild(buildEmptyRow(opts.emptyMessage ?? 'No data found', colSpan));
     buildPagination(0, paginationEl, opts.pageSize ?? 0, state, renderFn);
+    announce('Showing 0 of ' + state.data.length + ' rows', liveRegion);
     return;
   }
 
@@ -157,10 +163,28 @@ export function render<RowT extends Record<string, unknown>>(
     buildPagination(rows.length, paginationEl, pageSize, state, renderFn);
   }
 
-  announce('Table updated: ' + rows.length + ' rows');
+  const totalData = state.data.length;
+  const hasFilters = Object.keys(state.filters).length > 0;
+  const sortDir = state.sortDir === 1 ? 'ascending' : 'descending';
+  const pgSize = opts.pageSize ?? 0;
+  const totalPages = pgSize > 0 ? Math.ceil(rows.length / pgSize) : 1;
+
+  let msg: string;
+  if (state.sortKey && hasFilters) {
+    msg = 'Sorted by ' + state.sortKey + ' ' + sortDir + '. Showing ' + rows.length + ' of ' + totalData + ' rows';
+  } else if (state.sortKey) {
+    msg = 'Sorted by ' + state.sortKey + ' ' + sortDir;
+  } else if (hasFilters) {
+    msg = 'Showing ' + rows.length + ' of ' + totalData + ' rows';
+  } else {
+    msg = rows.length + ' rows';
+  }
+  if (pgSize > 0) {
+    msg += '. Page ' + (state.page + 1) + ' of ' + totalPages;
+  }
+  announce(msg, liveRegion);
 }
 
-function announce(msg: string): void {
-  const announcer = document.getElementById('mn-announcer');
-  if (announcer) announcer.textContent = msg;
+function announce(msg: string, liveRegion?: HTMLElement): void {
+  if (liveRegion) liveRegion.textContent = msg;
 }

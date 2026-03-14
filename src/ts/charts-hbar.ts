@@ -3,6 +3,7 @@
  */
 import type { HBarData, HBarChartOptions, HBarChartController } from './core/types';
 import { cssVar } from './core/utils';
+import { isValidColor } from './core/sanitize';
 
 interface ListenerRecord {
   el: HTMLElement;
@@ -60,7 +61,10 @@ export function hBarChart(
 ): HBarChartController | null {
   const root = typeof container === 'string'
     ? document.querySelector(container) : container;
-  if (!root) return null;
+  if (!root) {
+    console.warn('[Maranello] hBarChart: container not found');
+    return null;
+  }
 
   const state = {
     opts: {
@@ -146,8 +150,17 @@ export function hBarChart(
     const ticks = buildTicks(maxValue);
     titleEl.style.display = state.opts.title ? '' : 'none';
     titleEl.textContent = state.opts.title || '';
+    const highest = bars.length > 0
+      ? bars.reduce((a, b) => (b.value > a.value ? b : a), bars[0]) : null;
+    const hbarLabel = highest
+      ? `Bar chart: ${bars.length} categories, highest ${highest.label} at ${highest.value}`
+      : (state.opts.title || 'Horizontal bar chart');
     host.setAttribute('role', 'img');
-    host.setAttribute('aria-label', state.opts.title || 'Horizontal bar chart');
+    host.setAttribute('aria-label', hbarLabel);
+    const prevSr = host.querySelector('.mn-sr-only');
+    if (prevSr) prevSr.remove();
+    const srSpan = createEl('span', 'mn-sr-only', hbarLabel);
+    frame.appendChild(srSpan);
     (frame as HTMLElement).style.setProperty(
       '--mn-hbar-bar-height', (state.opts.barHeight || 28) + 'px',
     );
@@ -176,7 +189,8 @@ export function hBarChart(
       const pct = clampVal((bar.value / maxValue) * 100, 0, 100);
       const txtColor = hexLum(bar.color) > 0.55 ? '#111111' : '#FFFFFF';
 
-      (fill as HTMLElement).style.background = bar.color;
+      const safeColor = isValidColor(bar.color) ? bar.color : cssVar('--mn-accent');
+      (fill as HTMLElement).style.background = safeColor;
       (fill as HTMLElement).style.height = (state.opts.barHeight || 28) + 'px';
       (fill as HTMLElement).style.width = state.opts.animate ? '0%' : pct + '%';
       (valueEl as HTMLElement).style.color = txtColor;

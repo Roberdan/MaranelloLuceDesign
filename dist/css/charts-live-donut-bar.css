@@ -43,7 +43,7 @@
 .mn-live-panel__unit {
   font-size: 1rem;
   font-weight: 400;
-  color: #9e9e9e;
+  color: var(--grigio-chiaro, #9e9e9e);
   margin-left: 4px;
 }
 .mn-live-panel__graph {
@@ -55,7 +55,7 @@
   bottom: 2px;
   right: 0;
   font-size: 0.55rem;
-  color: #616161;
+  color: var(--grigio-medio, #616161);
   letter-spacing: 0.05em;
   text-transform: uppercase;
 }
@@ -67,7 +67,7 @@
   display: flex;
   justify-content: space-between;
   font-size: 0.5rem;
-  color: #555;
+  color: var(--grigio-medio, #555);
 }
 .mn-live-panel__info {
   text-align: right;
@@ -82,7 +82,7 @@
 }
 .mn-live-panel__info-secondary {
   font-size: 0.7rem;
-  color: #9e9e9e;
+  color: var(--grigio-chiaro, #9e9e9e);
 }
 
 
@@ -112,7 +112,7 @@
   font-size: 0.6rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #9e9e9e;
+  color: var(--grigio-chiaro, #9e9e9e);
 }
 .mn-donut--sm { width: 80px; height: 80px; }
 .mn-donut--sm .mn-donut__value { font-size: 1rem; }
@@ -148,7 +148,7 @@
   left: 50%;
   transform: translateX(-50%);
   font-size: 0.5rem;
-  color: #616161;
+  color: var(--grigio-medio, #616161);
   white-space: nowrap;
 }
 /* Stacked bars */
@@ -169,6 +169,27 @@
   height: auto;
   min-height: 20px;
   border-radius: 0 3px 3px 0;
+}
+
+
+
+/* ── COLORBLIND OVERRIDES (Okabe-Ito palette) ── */
+body.mn-colorblind .mn-live-panel__mode--accent {
+  border-color: #0072B2;
+  color: #0072B2;
+}
+body.mn-colorblind .mn-live-panel__mode {
+  border-color: #E69F00;
+  color: #E69F00;
+}
+body.mn-colorblind .mn-bar-chart__bar {
+  background: var(--mn-chart-series-1, #56B4E9);
+}
+body.mn-colorblind .mn-bar-chart__bar:hover {
+  box-shadow: 0 0 8px rgba(0,114,178,0.3);
+}
+body.mn-colorblind .mn-progress-ring__fill {
+  stroke: #0072B2;
 }
 
 

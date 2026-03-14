@@ -4,6 +4,7 @@
  */
 
 import { eventBus } from './core/events';
+import { escapeHtml, ALLOWED_BIND_PROPERTIES } from './core/sanitize';
 
 interface BindOptions {
   url?: string;
@@ -30,14 +31,25 @@ function toElementArray(selector: string | Element): Element[] {
   return [selector];
 }
 
+const UNSAFE_STYLE_RE = /url\s*\(\s*javascript:/i;
+const EXPRESSION_RE = /expression\s*\(/i;
+
 function setElementProperty(el: Element, property: string, value: unknown): void {
+  if (!ALLOWED_BIND_PROPERTIES.has(property) && !property.startsWith('style.') && !property.startsWith('data-')) {
+    console.warn('[Maranello] bind: property "%s" not in whitelist', property);
+  }
   if (property === 'textContent') {
     el.textContent = value == null ? '' : String(value);
   } else if (property === 'innerHTML') {
-    el.innerHTML = value == null ? '' : String(value);
+    el.innerHTML = value == null ? '' : escapeHtml(String(value));
   } else if (property.startsWith('style.')) {
     if (el instanceof HTMLElement) {
-      (el.style as unknown as Record<string, string>)[property.slice(6)] = value == null ? '' : String(value);
+      const strVal = value == null ? '' : String(value);
+      if (UNSAFE_STYLE_RE.test(strVal) || EXPRESSION_RE.test(strVal)) {
+        console.warn('[Maranello] bind: blocked unsafe style value for "%s"', property);
+        return;
+      }
+      (el.style as unknown as Record<string, string>)[property.slice(6)] = strVal;
     }
   } else if (property.startsWith('data-')) {
     const attrValue = typeof value === 'object' && value !== null
@@ -94,7 +106,14 @@ export function autoBind(): void {
     if (!rawBind) return;
     rawBind.split(';').forEach((pair) => {
       const kv = pair.split(':');
-      if (kv.length === 2) config[kv[0].trim()] = kv[1].trim();
+      if (kv.length === 2) {
+        const key = kv[0].trim();
+        if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
+          console.warn('[Maranello] autoBind: rejected unsafe key "%s"', key);
+          return;
+        }
+        config[key] = kv[1].trim();
+      }
     });
     if (config.url) {
       bind(el, {

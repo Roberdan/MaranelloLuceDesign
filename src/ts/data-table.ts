@@ -75,7 +75,11 @@ export function dataTable<RowT extends Record<string, unknown>>(
   const tbody = el('tbody', 'mn-dt__body') as HTMLTableSectionElement;
   tbody.setAttribute('role', 'rowgroup');
 
-  function doRender(): void { render(state, resolved, tbody, paginationEl); }
+  const liveRegion = el('div', 'mn-sr-only');
+  liveRegion.setAttribute('aria-live', 'polite');
+  liveRegion.setAttribute('role', 'status');
+
+  function doRender(): void { render(state, resolved, tbody, paginationEl, liveRegion); }
 
   resolved.columns.forEach((col, ci) => {
     const th = el('th', 'mn-dt__th');
@@ -129,6 +133,7 @@ export function dataTable<RowT extends Record<string, unknown>>(
   table.appendChild(tbody);
   scrollWrap.appendChild(table);
   containerEl.appendChild(scrollWrap);
+  containerEl.appendChild(liveRegion);
 
   let paginationEl: HTMLDivElement | null = null;
   if ((resolved.pageSize ?? 0) > 0) {

@@ -173,7 +173,33 @@ export function speedometer(
   const s = dim / 220;
   const cx = dim / 2, cy = dim / 2, R = dim * 0.4;
 
-  let curAngle = v2a(options.value as number, options.max as number);
+  // Accessibility: role, aria-label, fallback text, sr-only span
+  const max = options.max as number;
+  const unit = (options.unit as string) || '';
+
+  function buildLabel(v: number): string {
+    const suffix = unit ? `${Math.round(v)}${unit}` : String(Math.round(v));
+    return `Speedometer: ${suffix} of ${max}`;
+  }
+
+  canvas.setAttribute('role', 'img');
+  const initLabel = buildLabel(options.value as number);
+  canvas.setAttribute('aria-label', initLabel);
+  canvas.textContent = initLabel;
+
+  const srSpan = document.createElement('span');
+  srSpan.className = 'mn-sr-only';
+  srSpan.textContent = initLabel;
+  canvas.parentElement?.insertBefore(srSpan, canvas.nextSibling);
+
+  function updateA11y(v: number): void {
+    const l = buildLabel(v);
+    canvas.setAttribute('aria-label', l);
+    canvas.textContent = l;
+    srSpan.textContent = l;
+  }
+
+  let curAngle = v2a(options.value as number, max);
   let curVal = options.value as number;
   let barVal = options.bar ? ((options.bar as Record<string, unknown>).value as number || 0) : 0;
   let animId: number | null = null;
@@ -192,23 +218,24 @@ export function speedometer(
       curAngle = fromA + (toAngle - fromA) * ep;
       curVal = fromV + (toVal - fromV) * ep;
       draw();
-      if (p < 1) animId = requestAnimationFrame(tick); else animId = null;
+      if (p < 1) animId = requestAnimationFrame(tick);
+      else { animId = null; updateA11y(toVal); }
     };
     tick(performance.now());
   }
 
   if (options.animate) {
     curAngle = START; curVal = 0;
-    animateTo(v2a(options.value as number, options.max as number), options.value as number);
+    animateTo(v2a(options.value as number, max), options.value as number);
   } else {
     draw();
   }
 
   return {
     setValue(v: number): void {
-      const ta = v2a(v, options.max as number);
+      const ta = v2a(v, max);
       if (options.animate) animateTo(ta, v);
-      else { curAngle = ta; curVal = v; draw(); }
+      else { curAngle = ta; curVal = v; draw(); updateA11y(v); }
     },
     setBar(v: number): void { barVal = Math.max(0, Math.min(1, v)); if (!animId) draw(); },
     destroy(): void { if (animId) cancelAnimationFrame(animId); ctx.clearRect(0, 0, dim * dpr, dim * dpr); },

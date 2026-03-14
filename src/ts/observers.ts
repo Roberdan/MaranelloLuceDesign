@@ -3,6 +3,7 @@
  * Lazy gauge initialization, scroll-reveal, nav tracking, and auto-contrast.
  */
 import { FerrariGauge } from './gauge-engine';
+import { throttle } from './core/utils';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -60,8 +61,13 @@ export function initGauges(opts?: GaugeInitOptions): FerrariGauge[] {
   const selector = opts?.selector ?? '.mn-gauge__canvas';
   const threshold = opts?.threshold ?? 0.2;
   const instances: FerrariGauge[] = [];
+  const canvases = document.querySelectorAll<HTMLCanvasElement>(selector);
 
-  document.querySelectorAll<HTMLCanvasElement>(selector).forEach((canvas) => {
+  if (!canvases.length) {
+    console.warn('[Maranello] initGauges: no gauge canvases found for selector:', selector);
+  }
+
+  canvases.forEach((canvas) => {
     const obs = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -102,7 +108,11 @@ export function initScrollReveal(opts?: ScrollRevealOptions): void {
     { threshold, rootMargin },
   );
 
-  document.querySelectorAll(selector).forEach((el) => observer.observe(el));
+  const revealEls = document.querySelectorAll(selector);
+  if (!revealEls.length) {
+    console.warn('[Maranello] initScrollReveal: no elements found for selector:', selector);
+  }
+  revealEls.forEach((el) => observer.observe(el));
 }
 
 // ---------------------------------------------------------------------------
@@ -119,7 +129,14 @@ export function initNavTracking(opts?: NavTrackingOptions): void {
   const sections = document.querySelectorAll<HTMLElement>(sectionSelector);
   const navLinks = document.querySelectorAll<HTMLElement>(linkSelector);
 
-  window.addEventListener('scroll', () => {
+  if (!sections.length) {
+    console.warn('[Maranello] initNavTracking: no sections found for selector:', sectionSelector);
+  }
+  if (!navLinks.length) {
+    console.warn('[Maranello] initNavTracking: no nav links found for selector:', linkSelector);
+  }
+
+  const handleScroll = throttle(() => {
     let current = '';
     sections.forEach((section) => {
       if (window.scrollY >= section.offsetTop - offsetPx) {
@@ -132,7 +149,9 @@ export function initNavTracking(opts?: NavTrackingOptions): void {
         link.getAttribute('href') === `#${current}`,
       );
     });
-  });
+  }, 100);
+
+  window.addEventListener('scroll', handleScroll);
 }
 
 // ---------------------------------------------------------------------------

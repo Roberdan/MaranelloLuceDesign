@@ -13,7 +13,7 @@ export function createAnimationsSection() {
       <h2 class="mn-title-section mn-mb-sm">Animations</h2>
       <p class="mn-body mn-mb-2xl">Subtle motion guides the eye. Every animation respects <code>prefers-reduced-motion</code>.</p>
 
-      <div class="demo-section-label mn-mt-2xl">Entrance Animations</div>
+      <div class="mn-demo-section-label mn-mt-2xl">Entrance Animations</div>
       <div class="mn-flex-wrap mn-gap-md mn-mb-2xl" style="align-items:stretch" id="anim-entrance-row">
         <div class="mn-panel" data-anim="mn-anim-fadeIn" style="min-width:120px;text-align:center;padding:var(--space-md);opacity:0">
           <span class="mn-micro mn-text-muted">fadeIn</span>
@@ -32,7 +32,7 @@ export function createAnimationsSection() {
         <button class="mn-btn mn-btn--ghost mn-btn--sm" id="anim-replay-entrance">↺ Replay Entrance</button>
       </div>
 
-      <div class="demo-section-label">Attention Animations</div>
+      <div class="mn-demo-section-label">Attention Animations</div>
       <div class="mn-flex-wrap mn-gap-xl mn-mb-2xl" style="align-items:center">
         <div class="mn-panel mn-anim-pulse" style="padding:var(--space-md)">
           <span class="mn-micro mn-text-muted">pulse</span>
@@ -51,7 +51,7 @@ export function createAnimationsSection() {
         </span>
       </div>
 
-      <div class="demo-section-label">Skeleton Loading</div>
+      <div class="mn-demo-section-label">Skeleton Loading</div>
       <div class="mn-flex-wrap mn-gap-xl mn-mb-2xl" style="align-items:flex-start">
         <div class="mn-flex-col mn-gap-sm" style="min-width:240px">
           <div class="mn-shimmer mn-shimmer--bar" style="width:80%"></div>
@@ -83,7 +83,7 @@ export function createAnimationsSection() {
         </div>
       </div>
 
-      <div class="demo-section-label">Hover Effects</div>
+      <div class="mn-demo-section-label">Hover Effects</div>
       <div class="mn-flex-wrap mn-gap-md mn-mb-2xl">
         <div class="mn-panel mn-hover-lift" style="padding:var(--space-md);min-width:120px;text-align:center">
           <span class="mn-micro mn-text-muted">hover-lift</span>
@@ -96,7 +96,7 @@ export function createAnimationsSection() {
         </div>
       </div>
 
-      <div class="demo-section-label">Composable Dashboard Grid</div>
+      <div class="mn-demo-section-label">Composable Dashboard Grid</div>
       <!-- Dashboard header toolbar -->
       <div style="display:flex;align-items:center;gap:var(--space-md);padding:12px 16px;background:linear-gradient(180deg,rgba(255,199,44,0.06),transparent);border:1px solid var(--grigio-scuro,#333);border-radius:var(--radius-md) var(--radius-md) 0 0;margin-bottom:0">
         <div style="display:flex;gap:var(--space-sm);align-items:center">

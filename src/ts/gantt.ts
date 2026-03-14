@@ -3,6 +3,7 @@
  * Creates an interactive, canvas-based Gantt timeline.
  */
 import type { GanttTask, GanttController, GanttRow } from './core/types';
+import { escapeHtml, isValidColor } from './core/sanitize';
 import {
   DEFAULTS, DPR, buildPalette, buildChildPalette, buildRange, buildRows,
   parseDate, daysBetween, contentH, themeColors,
@@ -62,7 +63,8 @@ export function gantt(
   Object.keys(pal).forEach((st) => {
     const span = document.createElement('span');
     span.className = 'mn-gantt-timeline__legend-item';
-    span.innerHTML = '<span class="mn-gantt-timeline__legend-swatch" style="background:' + pal[st] + ';"></span>' + st;
+    const safeCol = isValidColor(pal[st]) ? pal[st] : 'var(--grigio-alluminio)';
+    span.innerHTML = '<span class="mn-gantt-timeline__legend-swatch" style="background:' + safeCol + ';"></span>' + escapeHtml(st);
     leg.appendChild(span);
   });
   const todayLeg = document.createElement('span');
@@ -76,8 +78,9 @@ export function gantt(
   wrap.className = 'mn-gantt-timeline__canvas-wrap';
   container.appendChild(wrap); s.wrap = wrap;
   const canvas = document.createElement('canvas');
-  canvas.setAttribute('role', 'img');
+  canvas.setAttribute('role', 'grid');
   canvas.setAttribute('aria-label', 'Interactive Gantt timeline. Use arrow keys to navigate, Enter to expand rows.');
+  canvas.setAttribute('aria-roledescription', 'gantt chart');
   canvas.setAttribute('tabindex', '0');
   wrap.appendChild(canvas); s.canvas = canvas;
   const tip = document.createElement('div');

@@ -107,6 +107,40 @@ body.mn-nero .mn-btn-cluster__item {
 }
 
 /* ══════════════════════════════════════════════════════════════
+   COLORBLIND THEME — Controls Overrides (Okabe-Ito palette)
+   ══════════════════════════════════════════════════════════════ */
+
+body.mn-colorblind .mn-machined-btn {
+  box-shadow:
+    0 4px 12px rgba(0,0,0,0.18),
+    0 1px 3px rgba(0,0,0,0.1),
+    inset 0 1px 0 rgba(255,255,255,0.12),
+    inset 0 -1px 0 rgba(0,0,0,0.1);
+}
+body.mn-colorblind .mn-machined-btn:active,
+body.mn-colorblind .mn-machined-btn[aria-pressed="true"] {
+  border-color: #0072B2;
+  box-shadow: inset 0 2px 4px rgba(0,114,178,0.3);
+}
+body.mn-colorblind .mn-toggle__track--on {
+  background: #0072B2;
+  border-color: #005f94;
+}
+body.mn-colorblind .mn-segmented__item--active {
+  background: #0072B2;
+  color: #fff;
+}
+body.mn-colorblind .mn-climate {
+  border: 1px solid rgba(0,114,178,0.25);
+}
+body.mn-colorblind .mn-btn-cluster__item[aria-pressed="true"],
+body.mn-colorblind .mn-btn-cluster__item--active {
+  background: #0072B2;
+  color: #fff;
+  border-color: #005f94;
+}
+
+/* ══════════════════════════════════════════════════════════════
    FERRARI CONTROLS v2 — Manettino, Cruise Lever, Toggle Lever, Stepped Rotary
    ══════════════════════════════════════════════════════════════ */
 

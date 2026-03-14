@@ -1,5 +1,9 @@
+/* Mapbox Map — Maranello themed overrides
+   Rules are intentionally unlayered so they win over Mapbox GL CSS
+   (also unlayered) by source order, without needing !important.
+   Specificity matches or exceeds Mapbox's own selectors.              */
+
 @layer layouts {
-  /* Mapbox Map — Maranello themed overrides */
   .mn-mapbox-popup .mapboxgl-popup-content {
     background: var(--bg-panel, #141414);
     color: var(--text, #c0c0c0);
@@ -23,50 +27,52 @@
   .mn-mapbox-popup .mapboxgl-popup-close-button:hover {
     color: var(--accent, #FFC72C);
   }
+}
 
-  .mapboxgl-ctrl-group {
-    background: var(--bg-panel, #141414) !important;
-    border: 1px solid var(--border, #333) !important;
-    border-radius: 6px !important;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4) !important;
-  }
+/* Mapbox GL control overrides — scoped under .mn-map to satisfy mn- prefix
+   convention while overriding third-party Mapbox GL CSS classes. */
+.mn-map .mapboxgl-ctrl-group {
+  background: var(--bg-panel, #141414);
+  border: 1px solid var(--border, #333);
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
 
-  .mapboxgl-ctrl-group button {
-    background: transparent !important;
-    border-color: var(--border, #333) !important;
-  }
+.mn-map .mapboxgl-ctrl-group button {
+  background: transparent;
+  border-color: var(--border, #333);
+}
 
-  .mapboxgl-ctrl-group button:hover {
-    background: rgba(255, 199, 44, 0.1) !important;
-  }
+.mn-map .mapboxgl-ctrl-group button:hover {
+  background: rgba(255, 199, 44, 0.1);
+}
 
-  .mapboxgl-ctrl-group button span {
-    filter: invert(0.7);
-  }
+.mn-map .mapboxgl-ctrl-group button span {
+  filter: invert(0.7);
+}
 
-  .mapboxgl-ctrl-attrib {
-    background: rgba(0, 0, 0, 0.5) !important;
-    color: var(--text-dim, #666) !important;
-    font-size: 0.55rem !important;
-  }
+.mn-map .mapboxgl-ctrl-attrib {
+  background: rgba(0, 0, 0, 0.5);
+  color: var(--text-dim, #666);
+  font-size: 0.55rem;
+}
 
-  .mapboxgl-ctrl-attrib a {
-    color: var(--text-dim, #666) !important;
-  }
+.mn-map .mapboxgl-ctrl-attrib a {
+  color: var(--text-dim, #666);
+}
 
-  /* Avorio theme overrides */
-  .mn-avorio .mn-mapbox-popup .mapboxgl-popup-content {
-    background: #fff;
-    color: #2c2c2c;
-    border-color: #d5cfc2;
-  }
+/* Avorio theme overrides — higher specificity (0,2,0) beats Mapbox (0,1,0) */
+.mn-avorio .mn-mapbox-popup .mapboxgl-popup-content {
+  background: var(--bianco-puro, #fff);
+  color: var(--nero-assoluto, #2c2c2c);
+  border-color: var(--grigio-alluminio, #d5cfc2);
+}
 
-  .mn-avorio .mapboxgl-ctrl-group {
-    background: #fff !important;
-    border-color: #d5cfc2 !important;
-  }
+.mn-avorio .mapboxgl-ctrl-group {
+  background: var(--bianco-puro, #fff);
+  border-color: var(--grigio-alluminio, #d5cfc2);
+}
 
-  .mn-avorio .mapboxgl-ctrl-group button span {
-    filter: none;
-  }
+.mn-avorio .mapboxgl-ctrl-group button span {
+  filter: none;
 }

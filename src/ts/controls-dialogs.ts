@@ -27,7 +27,10 @@ export function initDropdown(el: HTMLElement): DropdownController {
   trigger.setAttribute('aria-haspopup', 'listbox');
   trigger.setAttribute('aria-expanded', 'false');
   if (menu) menu.setAttribute('role', 'listbox');
-  items.forEach((item) => item.setAttribute('role', 'option'));
+  items.forEach((item) => {
+    item.setAttribute('role', 'option');
+    item.setAttribute('aria-selected', 'false');
+  });
 
   function openMenu(): void {
     el.classList.add('mn-dropdown--open');
@@ -144,6 +147,16 @@ export function initTabs(el: HTMLElement): TabsController {
         const prev = (i - 1 + tabs.length) % tabs.length;
         activate(prev);
         tabs[prev].focus();
+      }
+      if (e.key === 'Home') {
+        e.preventDefault();
+        activate(0);
+        tabs[0].focus();
+      }
+      if (e.key === 'End') {
+        e.preventDefault();
+        activate(tabs.length - 1);
+        tabs[tabs.length - 1].focus();
       }
     });
   });

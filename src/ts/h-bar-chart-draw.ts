@@ -3,6 +3,7 @@
  * Extracted from charts-hbar.ts for separation of concerns.
  */
 import { cssVar } from './core/utils';
+import { isValidColor } from './core/sanitize';
 
 /** Compute relative luminance of a hex color (WCAG formula). */
 export function hexLum(hex: string): number {
@@ -201,7 +202,8 @@ function renderRows(
     const pct = clampVal((bar.value / maxValue) * 100, 0, 100);
     const txtColor = hexLum(bar.color) > 0.55 ? '#111111' : '#FFFFFF';
 
-    fill.style.background = bar.color;
+    const safeColor = isValidColor(bar.color) ? bar.color : cssVar('--mn-accent');
+    fill.style.background = safeColor;
     fill.style.height = (state.opts.barHeight || 28) + 'px';
     fill.style.width = state.opts.animate ? '0%' : pct + '%';
     valueEl.style.color = txtColor;

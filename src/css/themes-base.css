@@ -94,8 +94,8 @@ body.mn-nero .mn-card__text { color: var(--grigio-chiaro); }
 body.mn-nero .mn-card__title { color: var(--bianco-caldo); }
 
 /* Misc */
-body.mn-nero .demo-swatch { border-color: var(--grigio-scuro); }
-body.mn-nero .demo-section-label { color: var(--giallo-ferrari); }
+body.mn-nero .mn-demo-swatch { border-color: var(--grigio-scuro); }
+body.mn-nero .mn-demo-section-label { color: var(--giallo-ferrari); }
 body.mn-nero .mn-dot { background: var(--grigio-scuro); }
 body.mn-nero .mn-dot--active { background: var(--bianco-caldo); }
 body.mn-nero .mn-progress { background: var(--grigio-scuro); }

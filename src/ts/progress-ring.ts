@@ -3,6 +3,7 @@
  */
 import type { ProgressRingOptions } from './core/types';
 import { cssVar } from './core/utils';
+import { isValidColor } from './core/sanitize';
 
 interface ProgressRingController {
   setValue: (newVal: number) => void;
@@ -24,6 +25,7 @@ export function progressRing(
     ...opts,
   };
 
+  const safeColor = isValidColor(o.color) ? o.color : 'var(--giallo-ferrari)';
   const radius = (o.size - o.thickness) / 2;
   const circumference = 2 * Math.PI * radius;
   const pct = Math.max(0, Math.min(1, o.value / o.max));
@@ -35,7 +37,7 @@ export function progressRing(
     `<circle class="mn-progress-ring__track" cx="${half}" cy="${half}" r="${radius}" ` +
     `stroke-width="${o.thickness}"/>` +
     `<circle class="mn-progress-ring__fill" cx="${half}" cy="${half}" r="${radius}" ` +
-    `stroke-width="${o.thickness}" stroke="${o.color}" ` +
+    `stroke-width="${o.thickness}" stroke="${safeColor}" ` +
     `stroke-dasharray="${circumference}" ` +
     `stroke-dashoffset="${o.animate ? circumference : offset}"/>` +
     '</svg>';

@@ -1,0 +1,51 @@
+@layer integration {
+  [data-theme="maranello"], [data-theme="nero"], body.mn-nero {
+    --bg-deep: var(--nero-profondo, #0a0a0a);
+    --bg-panel: var(--nero-soft, #141414);
+    --bg-card: var(--grigio-scuro, #1e1e1e);
+    --bg-input: var(--nero-carbon, #111);
+    --accent: var(--giallo-ferrari, #FFC72C);
+    --accent-hover: var(--giallo-vivace, #FFD54F);
+    --danger: var(--rosso-corsa, #DC0000);
+    --success: var(--verde-racing, #00A651);
+    --warning: var(--arancio-caldo, #D4622B);
+    --info: var(--azzurro-chiaro, #4EA8DE);
+    --text: var(--grigio-alluminio, #C0C0C0);
+    --text-dim: var(--grigio-medio, #666);
+    --text-bright: var(--bianco-2, #f5f5f5);
+    --border: var(--grigio-scuro, #333);
+    --border-accent: var(--giallo-ferrari, #FFC72C);
+    --chart-1: #FFC72C; --chart-2: #DC0000; --chart-3: #00A651;
+    --chart-4: #4EA8DE; --chart-5: #D4622B; --chart-6: #8B5CF6;
+    --chart-7: #E91E63; --chart-8: #00BCD4; --chart-9: #FF9800; --chart-10: #9C27B0;
+    --shadow-card: 0 2px 8px rgba(0,0,0,0.4);
+    --shadow-elevated: 0 8px 24px rgba(0,0,0,0.5);
+    --shadow-deep: 0 16px 48px rgba(0,0,0,0.6);
+    --gradient-accent: linear-gradient(135deg, var(--accent), var(--danger));
+    --gradient-header: linear-gradient(180deg, rgba(255,199,44,0.08) 0%, transparent 100%);
+    --radius-sm: 4px; --radius-md: 8px; --radius-lg: 12px; --radius-xl: 16px;
+  }
+
+  [data-theme="avorio"], body.mn-avorio {
+    --bg-deep: #faf8f3;
+    --bg-panel: #fff;
+    --bg-card: #f5f0e8;
+    --bg-input: #fff;
+    --accent: #b8860b;
+    --accent-hover: #d4a017;
+    --danger: #c62828;
+    --success: #2e7d32;
+    --warning: #e65100;
+    --info: #1565c0;
+    --text: #2c2c2c;
+    --text-dim: #666;
+    --text-bright: #1a1a1a;
+    --border: #d5cfc2;
+    --border-accent: #b8860b;
+    --shadow-card: 0 2px 8px rgba(0,0,0,0.08);
+    --shadow-elevated: 0 8px 24px rgba(0,0,0,0.12);
+    --shadow-deep: 0 16px 48px rgba(0,0,0,0.16);
+    --gradient-accent: linear-gradient(135deg, #b8860b, #c62828);
+    --gradient-header: linear-gradient(180deg, rgba(184,134,11,0.06) 0%, transparent 100%);
+  }
+}

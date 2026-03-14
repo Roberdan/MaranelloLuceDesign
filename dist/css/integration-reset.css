@@ -1,0 +1,18 @@
+@layer integration {
+  body { font-family: var(--font-body, 'Inter', system-ui, sans-serif); background: var(--bg-deep); color: var(--text); -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+  h1, h2, h3 { font-family: var(--font-display, 'Outfit', sans-serif); text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-bright); margin: 0 0 0.5em; }
+  h1 { font-size: 2rem; font-weight: 700; }
+  h2 { font-size: 1.25rem; font-weight: 600; }
+  h3 { font-size: 0.95rem; font-weight: 600; }
+  input, select, textarea { background: var(--bg-input); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 12px; font-size: 0.85rem; transition: border-color 0.2s, box-shadow 0.2s; outline: none; }
+  input:focus, select:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(255,199,44,0.2); }
+  table { width: 100%; border-collapse: collapse; }
+  table th { text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.08em; color: var(--text-dim); padding: 8px 12px; border-bottom: 1px solid var(--border); text-align: left; font-weight: 600; }
+  table td { padding: 8px 12px; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 0.85rem; }
+  table tr:hover td { background: rgba(255,199,44,0.03); }
+  ::selection { background: rgba(255,199,44,0.3); color: var(--text-bright); }
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+}

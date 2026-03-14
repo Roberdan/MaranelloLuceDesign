@@ -4,6 +4,7 @@
  */
 
 import { buildTriggerAvatar, buildDropdown } from './profile-menu-dom';
+import { throttle } from './core/utils';
 import type { ProfileMenuSection } from './core/types';
 
 export interface ProfileMenuUser {
@@ -119,7 +120,7 @@ export function profileMenu(trigger: HTMLElement, options?: ProfileMenuOptions):
 
   btn.addEventListener('click', (e) => { e.stopPropagation(); isOpen ? close() : open(); });
 
-  function onResize(): void { if (isOpen) positionDropdown(); }
+  const onResize = throttle((): void => { if (isOpen) positionDropdown(); }, 300);
   window.addEventListener('resize', onResize);
 
   const setUser = ((uOrName: ProfileMenuUser | string, email?: string, avatarUrl?: string | null) => {

@@ -2,7 +2,7 @@
  * Maranello Luce Design - Bubble chart (Canvas 2D)
  */
 import type { BubbleDataItem, BubbleOptions } from './core/types';
-import { chartHiDpi, getCanvasSize, SERIES } from './charts-helpers';
+import { chartHiDpi, getCanvasSize, SERIES, applyChartA11y } from './charts-helpers';
 
 /** Render a bubble chart on a canvas element. */
 export function bubble(
@@ -71,6 +71,8 @@ export function bubble(
       ctx.fillText(d.label, bx, by + br + 12);
     }
   });
+
+  applyChartA11y(canvas, `Bubble chart: ${data.length} data points`);
 
   return canvas;
 }

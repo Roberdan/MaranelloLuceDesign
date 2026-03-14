@@ -177,7 +177,10 @@ export function drawMarker(
 }
 
 export function renderLegend(legendEl: HTMLElement | null, mc: Record<MarkerColor, string>): void {
-  if (!legendEl) return;
+  if (!legendEl) {
+    console.warn('[Maranello] renderLegend: legend container element is null');
+    return;
+  }
   legendEl.innerHTML = '';
   const cats: MarkerColor[] = ['active', 'warning', 'danger'];
   const labels = ['Active', 'Warning', 'Danger'];

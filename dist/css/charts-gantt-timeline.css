@@ -27,7 +27,7 @@
 }
 .mn-gantt-timeline__zoom-btn {
   background: rgba(255,255,255,0.06);
-  color: #c8c8c8;
+  color: var(--grigio-alluminio, #c8c8c8);
   border: 1px solid rgba(255,255,255,0.08);
   border-radius: 4px;
   padding: 4px 10px;
@@ -59,7 +59,7 @@
   align-items: center;
   gap: 4px;
   font-size: 0.6rem;
-  color: #9e9e9e;
+  color: var(--grigio-chiaro, #9e9e9e);
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -93,7 +93,7 @@ body.mn-avorio .mn-gantt-timeline__controls {
 }
 body.mn-avorio .mn-gantt-timeline__zoom-btn {
   background: rgba(0,0,0,0.04);
-  color: #333;
+  color: var(--bordo, #333);
   border-color: rgba(0,0,0,0.08);
 }
 body.mn-avorio .mn-gantt-timeline__zoom-btn:hover {
@@ -102,7 +102,7 @@ body.mn-avorio .mn-gantt-timeline__zoom-btn:hover {
   color: var(--rosso-corsa);
 }
 body.mn-avorio .mn-gantt-timeline__legend-item {
-  color: #666;
+  color: var(--grigio-medio, #666);
 }
 /* Nero theme */
 body.mn-nero .mn-gantt-timeline {

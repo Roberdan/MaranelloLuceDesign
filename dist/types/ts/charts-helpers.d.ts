@@ -12,5 +12,7 @@ export declare function getCanvasSize(canvas: HTMLCanvasElement, defaultW?: numb
 export declare function hexToRgba(hex: string, alpha: number): string;
 /** Create a vertical gradient from a hex color (top alpha to bottom 0). */
 export declare function hexFillGradient(ctx: CanvasRenderingContext2D, hex: string, h: number, opacity: number): CanvasGradient;
+/** Apply accessibility attributes to a canvas chart element. */
+export declare function applyChartA11y(canvas: HTMLCanvasElement, label: string): void;
 /** Draw a smooth bezier curve through data points. */
 export declare function drawSmoothLine(ctx: CanvasRenderingContext2D, data: number[], getX: (i: number) => number, getY: (v: number) => number, smooth: boolean): void;

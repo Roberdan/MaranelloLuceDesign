@@ -4,6 +4,7 @@
  */
 
 import { icons } from './icons';
+import { escapeHtml, sanitizeAttr } from './core/sanitize';
 
 export type ChatRole = 'user' | 'ai';
 
@@ -76,8 +77,10 @@ export function el<K extends keyof HTMLElementTagNameMap>(
   if (attrs) {
     for (const [k, v] of Object.entries(attrs)) {
       if (k === 'text') e.textContent = v;
-      else if (k === 'html') e.innerHTML = v;
-      else e.setAttribute(k, v);
+      // SVG markup from the internal icons module is trusted — assign directly.
+      // User-supplied html strings must be escaped to prevent XSS.
+      else if (k === 'html') e.innerHTML = String(v).trimStart().startsWith('<svg') ? String(v) : escapeHtml(String(v));
+      else e.setAttribute(k, sanitizeAttr(k, v));
     }
   }
   return e;
@@ -111,8 +114,7 @@ export function renderContent(text: string): DocumentFragment {
       container.appendChild(block);
     } else if (part) {
       const span = el('span', '');
-      span.innerHTML = part
-        .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      span.innerHTML = escapeHtml(part)
         .replace(/`([^`]+)`/g, '<code class="mn-chat-msg__code">$1</code>')
         .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
         .replace(/\n/g, '<br>');

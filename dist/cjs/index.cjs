@@ -1,4 +1,4 @@
-/* Maranello Luce Design v3.0.0 | MIT | github.com/Roberdan/MaranelloLuceDesign */
+/* Maranello Luce Design v3.2.1 | MPL-2.0 | github.com/Roberdan/MaranelloLuceDesign */
 "use strict";
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -253,6 +253,276 @@ var EventBus = class {
 };
 var eventBus = new EventBus();
 
+// src/ts/core/sanitize.ts
+function escapeHtml(str) {
+  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+function sanitizeHtml(str) {
+  return escapeHtml(str);
+}
+var HEX_RE = /^#(?:[0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})$/i;
+var RGB_RE = /^rgba?\(\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}\s*(?:,\s*(?:0|1|0?\.\d+))?\s*\)$/;
+var HSL_RE = /^hsla?\(\s*\d{1,3}\s*,\s*\d{1,3}%\s*,\s*\d{1,3}%\s*(?:,\s*(?:0|1|0?\.\d+))?\s*\)$/;
+var CSS_VAR_RE = /^var\(--[\w-]+(?:\s*,\s*[^)]+)?\)$/;
+var CSS_KEYWORDS = /* @__PURE__ */ new Set([
+  "transparent",
+  "currentColor",
+  "currentcolor",
+  "inherit",
+  "initial",
+  "unset",
+  "revert"
+]);
+var NAMED_COLORS = /* @__PURE__ */ new Set([
+  "aliceblue",
+  "antiquewhite",
+  "aqua",
+  "aquamarine",
+  "azure",
+  "beige",
+  "bisque",
+  "black",
+  "blanchedalmond",
+  "blue",
+  "blueviolet",
+  "brown",
+  "burlywood",
+  "cadetblue",
+  "chartreuse",
+  "chocolate",
+  "coral",
+  "cornflowerblue",
+  "cornsilk",
+  "crimson",
+  "cyan",
+  "darkblue",
+  "darkcyan",
+  "darkgoldenrod",
+  "darkgray",
+  "darkgreen",
+  "darkgrey",
+  "darkkhaki",
+  "darkmagenta",
+  "darkolivegreen",
+  "darkorange",
+  "darkorchid",
+  "darkred",
+  "darksalmon",
+  "darkseagreen",
+  "darkslateblue",
+  "darkslategray",
+  "darkslategrey",
+  "darkturquoise",
+  "darkviolet",
+  "deeppink",
+  "deepskyblue",
+  "dimgray",
+  "dimgrey",
+  "dodgerblue",
+  "firebrick",
+  "floralwhite",
+  "forestgreen",
+  "fuchsia",
+  "gainsboro",
+  "ghostwhite",
+  "gold",
+  "goldenrod",
+  "gray",
+  "green",
+  "greenyellow",
+  "grey",
+  "honeydew",
+  "hotpink",
+  "indianred",
+  "indigo",
+  "ivory",
+  "khaki",
+  "lavender",
+  "lavenderblush",
+  "lawngreen",
+  "lemonchiffon",
+  "lightblue",
+  "lightcoral",
+  "lightcyan",
+  "lightgoldenrodyellow",
+  "lightgray",
+  "lightgreen",
+  "lightgrey",
+  "lightpink",
+  "lightsalmon",
+  "lightseagreen",
+  "lightskyblue",
+  "lightslategray",
+  "lightslategrey",
+  "lightsteelblue",
+  "lightyellow",
+  "lime",
+  "limegreen",
+  "linen",
+  "magenta",
+  "maroon",
+  "mediumaquamarine",
+  "mediumblue",
+  "mediumorchid",
+  "mediumpurple",
+  "mediumseagreen",
+  "mediumslateblue",
+  "mediumspringgreen",
+  "mediumturquoise",
+  "mediumvioletred",
+  "midnightblue",
+  "mintcream",
+  "mistyrose",
+  "moccasin",
+  "navajowhite",
+  "navy",
+  "oldlace",
+  "olive",
+  "olivedrab",
+  "orange",
+  "orangered",
+  "orchid",
+  "palegoldenrod",
+  "palegreen",
+  "paleturquoise",
+  "palevioletred",
+  "papayawhip",
+  "peachpuff",
+  "peru",
+  "pink",
+  "plum",
+  "powderblue",
+  "purple",
+  "rebeccapurple",
+  "red",
+  "rosybrown",
+  "royalblue",
+  "saddlebrown",
+  "salmon",
+  "sandybrown",
+  "seagreen",
+  "seashell",
+  "sienna",
+  "silver",
+  "skyblue",
+  "slateblue",
+  "slategray",
+  "slategrey",
+  "snow",
+  "springgreen",
+  "steelblue",
+  "tan",
+  "teal",
+  "thistle",
+  "tomato",
+  "turquoise",
+  "violet",
+  "wheat",
+  "white",
+  "whitesmoke",
+  "yellow",
+  "yellowgreen"
+]);
+function isValidColor(val) {
+  const trimmed = val.trim();
+  if (!trimmed) return false;
+  const lower = trimmed.toLowerCase();
+  if (lower.includes("javascript:")) return false;
+  if (lower.includes("expression(")) return false;
+  if (lower.includes(";")) return false;
+  if (lower.includes("url(")) return false;
+  if (HEX_RE.test(trimmed)) return true;
+  if (RGB_RE.test(trimmed)) return true;
+  if (HSL_RE.test(trimmed)) return true;
+  if (CSS_VAR_RE.test(trimmed)) return true;
+  if (CSS_KEYWORDS.has(lower)) return true;
+  if (NAMED_COLORS.has(lower)) return true;
+  return false;
+}
+function sanitizeAttr(key, val) {
+  if (key === "html") return escapeHtml(val);
+  return val;
+}
+var SAFE_SVG_TAGS = /* @__PURE__ */ new Set([
+  "svg",
+  "path",
+  "circle",
+  "rect",
+  "line",
+  "polyline",
+  "polygon",
+  "g",
+  "text",
+  "defs",
+  "clippath"
+]);
+var DANGEROUS_SVG_TAGS = /* @__PURE__ */ new Set([
+  "script",
+  "foreignobject"
+]);
+function sanitizeSvg(svgString) {
+  if (!svgString || typeof svgString !== "string") return "";
+  const doc = new DOMParser().parseFromString(svgString, "text/html");
+  const svg = doc.querySelector("svg");
+  if (!svg) return "";
+  cleanSvgNode(svg);
+  return svg.outerHTML;
+}
+function cleanSvgNode(el4) {
+  for (const attr of Array.from(el4.attributes)) {
+    if (attr.name.toLowerCase().startsWith("on")) {
+      el4.removeAttribute(attr.name);
+    }
+  }
+  const children = Array.from(el4.children);
+  for (const child of children) {
+    const tag = child.tagName.toLowerCase();
+    if (DANGEROUS_SVG_TAGS.has(tag)) {
+      child.remove();
+      continue;
+    }
+    if (tag === "use") {
+      const href = child.getAttribute("href") ?? child.getAttribute("xlink:href") ?? "";
+      if (href && !href.startsWith("#")) {
+        child.remove();
+        continue;
+      }
+    }
+    if (tag.startsWith("animate")) {
+      const attrName = child.getAttribute("attributeName") ?? "";
+      if (attrName.toLowerCase().startsWith("on") || attrName === "href") {
+        child.remove();
+        continue;
+      }
+    }
+    if (!SAFE_SVG_TAGS.has(tag) && tag !== "use" && !tag.startsWith("animate")) {
+      child.remove();
+      continue;
+    }
+    cleanSvgNode(child);
+  }
+}
+var ALLOWED_BIND_PROPERTIES = /* @__PURE__ */ new Set([
+  "textContent",
+  "className",
+  "value",
+  "checked",
+  "disabled",
+  "hidden",
+  "src",
+  "href",
+  "alt",
+  "title",
+  "placeholder",
+  "aria-label",
+  "aria-hidden",
+  "aria-expanded",
+  "aria-selected",
+  "aria-describedby",
+  "aria-invalid",
+  "innerHTML"
+]);
+
 // src/ts/core/utils.ts
 var BODY_CLASSES = {
   editorial: "",
@@ -366,9 +636,6 @@ function hiDpiCanvas(canvas, width, height) {
   const ctx = canvas.getContext("2d");
   if (ctx) ctx.scale(dpr2, dpr2);
   return dpr2;
-}
-function escapeHtml(str) {
-  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 }
 
 // src/ts/network-messages.ts
@@ -587,7 +854,10 @@ function alpha2(color, opacity) {
 }
 function neuralNodes(container, opts = {}) {
   const target = resolveContainer2(container);
-  if (!target) return null;
+  if (!target) {
+    console.warn("[Maranello] neuralNodes: container not found");
+    return null;
+  }
   const host = target;
   const options = {
     nodeCount: 30,
@@ -1055,7 +1325,8 @@ function renderIcon(target, name, opts) {
   const sizeClass = opts?.size ? ` mn-icon--${opts.size}` : "";
   const extraClass = opts?.class ? ` ${opts.class}` : "";
   const svg = icons[name]();
-  const ariaAttr = opts?.ariaLabel ? `role="img" aria-label="${opts.ariaLabel}"` : 'aria-hidden="true"';
+  const safeLabel = opts?.ariaLabel ? escapeHtml(opts.ariaLabel).replace(/"/g, "&quot;") : "";
+  const ariaAttr = safeLabel ? `role="img" aria-label="${safeLabel}"` : 'aria-hidden="true"';
   const a11ySvg = svg.replace("<svg ", `<svg ${ariaAttr} `);
   el4.innerHTML = `<span class="mn-icon${sizeClass}${extraClass}">${a11ySvg}</span>`;
 }
@@ -1216,23 +1487,77 @@ function closeModal(id) {
 }
 
 // src/ts/command-palette.ts
+function getVisibleItems(palette) {
+  const all = palette.querySelectorAll(".mn-command-palette__item");
+  return Array.from(all).filter((el4) => el4.style.display !== "none");
+}
+function clearActive(palette) {
+  palette.querySelectorAll(".mn-command-palette__item").forEach((el4) => {
+    el4.classList.remove("mn-command-palette__item--active");
+    el4.setAttribute("aria-selected", "false");
+  });
+}
+function activateItem(input, items, index) {
+  items.forEach((el4, i) => {
+    const active = i === index;
+    el4.classList.toggle("mn-command-palette__item--active", active);
+    el4.setAttribute("aria-selected", String(active));
+  });
+  const target = items[index];
+  if (target) {
+    input.setAttribute("aria-activedescendant", target.id || "");
+    target.scrollIntoView({ block: "nearest" });
+  }
+}
 function commandPalette(id) {
   const palette = document.getElementById(id);
   if (!palette) return { open: () => {
   }, close: () => {
   } };
   const input = palette.querySelector(".mn-command-palette__input");
+  const listEl = palette.querySelector(".mn-command-palette__list");
   const items = palette.querySelectorAll(".mn-command-palette__item");
+  let activeIndex = -1;
+  if (listEl) {
+    listEl.setAttribute("role", "listbox");
+    const listId = id + "-list";
+    listEl.id = listId;
+    if (input) input.setAttribute("aria-owns", listId);
+  }
+  if (input) {
+    input.setAttribute("role", "combobox");
+    input.setAttribute("aria-expanded", "false");
+    input.setAttribute("aria-autocomplete", "list");
+    input.setAttribute("aria-activedescendant", "");
+  }
+  items.forEach((item, i) => {
+    item.setAttribute("role", "option");
+    item.setAttribute("aria-selected", "false");
+    if (!item.id) item.id = id + "-item-" + i;
+  });
   function open() {
     palette.classList.add("mn-command-palette--open");
     if (input) {
       input.value = "";
+      input.setAttribute("aria-expanded", "true");
       input.focus();
     }
+    activeIndex = -1;
+    clearActive(palette);
     filterItems("");
   }
   function close() {
     palette.classList.remove("mn-command-palette--open");
+    if (input) {
+      input.setAttribute("aria-expanded", "false");
+      input.setAttribute("aria-activedescendant", "");
+    }
+    activeIndex = -1;
+  }
+  function selectItem(item) {
+    const text = item.querySelector(".mn-command-palette__item-text");
+    eventBus.emit("command-select", { text: text?.textContent ?? "" });
+    close();
   }
   function filterItems(query) {
     const q = query.toLowerCase();
@@ -1241,11 +1566,34 @@ function commandPalette(id) {
       const match = !q || (text?.textContent?.toLowerCase().includes(q) ?? false);
       item.style.display = match ? "" : "none";
     });
+    activeIndex = -1;
+    clearActive(palette);
   }
   if (input) {
     input.addEventListener("input", () => filterItems(input.value));
     input.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") close();
+      const visible = getVisibleItems(palette);
+      switch (e.key) {
+        case "ArrowDown":
+          e.preventDefault();
+          activeIndex = activeIndex < visible.length - 1 ? activeIndex + 1 : 0;
+          activateItem(input, visible, activeIndex);
+          break;
+        case "ArrowUp":
+          e.preventDefault();
+          activeIndex = activeIndex > 0 ? activeIndex - 1 : visible.length - 1;
+          activateItem(input, visible, activeIndex);
+          break;
+        case "Enter":
+          e.preventDefault();
+          if (activeIndex >= 0 && activeIndex < visible.length) {
+            selectItem(visible[activeIndex]);
+          }
+          break;
+        case "Escape":
+          close();
+          break;
+      }
     });
   }
   document.addEventListener("keydown", (e) => {
@@ -1255,11 +1603,7 @@ function commandPalette(id) {
     }
   });
   items.forEach((item) => {
-    item.addEventListener("click", () => {
-      const text = item.querySelector(".mn-command-palette__item-text");
-      eventBus.emit("command-select", { text: text?.textContent ?? "" });
-      close();
-    });
+    item.addEventListener("click", () => selectItem(item));
   });
   return { open, close };
 }
@@ -1282,7 +1626,8 @@ function arc(cx, cy, r, sa, ea) {
   return `M ${x1.toFixed(1)} ${y1.toFixed(1)} A ${r} ${r} 0 ${large} 1 ${x2.toFixed(1)} ${y2.toFixed(1)}`;
 }
 function miniGaugeSVG(status, latencyMs, label) {
-  const color = STATUS_COLORS[status] ?? cssVar("--stage-completed", "#6B7280");
+  let color = STATUS_COLORS[status] ?? cssVar("--stage-completed", "#6B7280");
+  if (!isValidColor(color)) color = "var(--grigio-alluminio)";
   const pct2 = status === "healthy" ? 95 : status === "degraded" ? 55 : 10;
   const sz = 56, cx = sz / 2, cy = sz - 4, r = 22;
   const startAngle = Math.PI, needleAngle = startAngle + clamp(pct2, 0, 100) / 100 * Math.PI;
@@ -1296,7 +1641,7 @@ function miniGaugeSVG(status, latencyMs, label) {
   const nx = cx + Math.cos(needleAngle) * (r - 8);
   const ny = cy + Math.sin(needleAngle) * (r - 8);
   const latencyText = latencyMs != null ? `${latencyMs}ms` : "";
-  return `<svg viewBox="0 0 ${sz} ${sz}" width="${sz}" height="${sz}" aria-label="${label}"><path d="${arc(cx, cy, r, startAngle, 2 * Math.PI)}" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="4" stroke-linecap="round"/><path d="${arc(cx, cy, r, startAngle, needleAngle)}" fill="none" stroke="${color}" stroke-width="4" stroke-linecap="round" style="filter:drop-shadow(0 0 4px ${color}60)"/>` + ticks + `<line x1="${cx}" y1="${cy}" x2="${nx.toFixed(1)}" y2="${ny.toFixed(1)}" stroke="${color}" stroke-width="1.5" stroke-linecap="round"/><circle cx="${cx}" cy="${cy}" r="2.5" fill="${color}"/><circle cx="${cx}" cy="${cy}" r="1" fill="#111"/>` + (latencyText ? `<text x="${cx}" y="${cy - r - 6}" text-anchor="middle" fill="${color}" font-family="var(--font-mono)" font-size="7" font-weight="600">${latencyText}</text>` : "") + "</svg>";
+  return `<svg viewBox="0 0 ${sz} ${sz}" width="${sz}" height="${sz}" aria-label="${escapeHtml(label)}"><path d="${arc(cx, cy, r, startAngle, 2 * Math.PI)}" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="4" stroke-linecap="round"/><path d="${arc(cx, cy, r, startAngle, needleAngle)}" fill="none" stroke="${color}" stroke-width="4" stroke-linecap="round" style="filter:drop-shadow(0 0 4px ${color}60)"/>` + ticks + `<line x1="${cx}" y1="${cy}" x2="${nx.toFixed(1)}" y2="${ny.toFixed(1)}" stroke="${color}" stroke-width="1.5" stroke-linecap="round"/><circle cx="${cx}" cy="${cy}" r="2.5" fill="${color}"/><circle cx="${cx}" cy="${cy}" r="1" fill="#111"/>` + (latencyText ? `<text x="${cx}" y="${cy - r - 6}" text-anchor="middle" fill="${color}" font-family="var(--font-mono)" font-size="7" font-weight="600">${latencyText}</text>` : "") + "</svg>";
 }
 function compassSVG(size) {
   return `<svg viewBox="0 0 64 64" width="${size}" height="${size}" aria-hidden="true"><defs><linearGradient id="lb" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#666"/><stop offset="100%" stop-color="#1a1a1a"/></linearGradient><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#FFD85C"/><stop offset="50%" stop-color="#FFC72C"/><stop offset="100%" stop-color="#E8A838"/></linearGradient><linearGradient id="ln" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FF4444"/><stop offset="100%" stop-color="#CC0000"/></linearGradient><filter id="lg2"><feGaussianBlur stdDeviation="1.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><circle cx="32" cy="32" r="31" fill="url(#lb)" stroke="#555" stroke-width=".5"/><circle cx="32" cy="32" r="27" fill="#0d0d0d"/><g stroke="url(#lg)" stroke-width="1.5" stroke-linecap="round" filter="url(#lg2)"><line x1="32" y1="6" x2="32" y2="11"/><line x1="32" y1="6" x2="32" y2="11" transform="rotate(90,32,32)"/><line x1="32" y1="6" x2="32" y2="11" transform="rotate(180,32,32)"/><line x1="32" y1="6" x2="32" y2="11" transform="rotate(270,32,32)"/></g><g stroke="rgba(255,255,255,.4)" stroke-width="1" stroke-linecap="round"><line x1="32" y1="6" x2="32" y2="10" transform="rotate(45,32,32)"/><line x1="32" y1="6" x2="32" y2="10" transform="rotate(135,32,32)"/><line x1="32" y1="6" x2="32" y2="10" transform="rotate(225,32,32)"/><line x1="32" y1="6" x2="32" y2="10" transform="rotate(315,32,32)"/></g><text x="32" y="16" text-anchor="middle" dominant-baseline="middle" fill="#FFC72C" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="7" filter="url(#lg2)">N</text><polygon points="32,10 29,32 32,30 35,32" fill="url(#ln)" filter="url(#lg2)"/><polygon points="32,54 29,32 32,34 35,32" fill="#999"/><circle cx="32" cy="32" r="4" fill="url(#lg)" filter="url(#lg2)"/><circle cx="32" cy="32" r="2" fill="#1a1a1a"/></svg>`;
@@ -1400,7 +1745,8 @@ function loginScreen(container, opts) {
         state.checks = data.checks;
         render(host, state, options);
       }
-    }).catch(() => {
+    }).catch((err) => {
+      console.warn("[Maranello] loginScreen: health fetch failed:", err);
     });
   }
   if (options.autoHealth !== false && typeof fetch !== "undefined") {
@@ -1449,8 +1795,8 @@ function el(tag, cls, attrs) {
   if (attrs) {
     for (const [k, v] of Object.entries(attrs)) {
       if (k === "text") e.textContent = v;
-      else if (k === "html") e.innerHTML = v;
-      else e.setAttribute(k, v);
+      else if (k === "html") e.innerHTML = String(v).trimStart().startsWith("<svg") ? String(v) : escapeHtml(String(v));
+      else e.setAttribute(k, sanitizeAttr(k, v));
     }
   }
   return e;
@@ -1483,7 +1829,7 @@ function renderContent(text) {
       container.appendChild(block);
     } else if (part) {
       const span = el("span", "");
-      span.innerHTML = part.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/`([^`]+)`/g, '<code class="mn-chat-msg__code">$1</code>').replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>").replace(/\n/g, "<br>");
+      span.innerHTML = escapeHtml(part).replace(/`([^`]+)`/g, '<code class="mn-chat-msg__code">$1</code>').replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>").replace(/\n/g, "<br>");
       container.appendChild(span);
     }
   }
@@ -1706,10 +2052,8 @@ function initMessages(state, els, opts) {
       if (agent.id === state.activeAgentId) card.classList.add("mn-chat-agent-card--active");
       const iconEl = el("span", "mn-chat-agent-card__icon");
       if (agent.icon && /<svg/i.test(agent.icon)) {
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(agent.icon, "image/svg+xml");
-        const svg = doc.querySelector("svg");
-        if (svg && !doc.querySelector("parsererror")) iconEl.appendChild(svg);
+        const safeSvg = sanitizeSvg(agent.icon);
+        if (safeSvg) iconEl.innerHTML = safeSvg;
         else iconEl.textContent = "\u{1F916}";
       } else iconEl.textContent = agent.icon ?? "\u{1F916}";
       card.appendChild(iconEl);
@@ -2123,9 +2467,9 @@ function profileMenu(trigger, options) {
     e.stopPropagation();
     isOpen ? close() : open();
   });
-  function onResize() {
+  const onResize = throttle(() => {
     if (isOpen) positionDropdown();
-  }
+  }, 300);
   window.addEventListener("resize", onResize);
   const setUser = ((uOrName, email, avatarUrl) => {
     if (typeof uOrName === "string") {
@@ -2208,6 +2552,22 @@ function hexFillGradient(ctx, hex, h, opacity) {
   grad.addColorStop(1, `rgba(${r},${g},${b},0)`);
   return grad;
 }
+function applyChartA11y(canvas, label) {
+  canvas.setAttribute("role", "img");
+  canvas.setAttribute("aria-label", label);
+  canvas.textContent = label;
+  if (canvas.parentElement) {
+    const existing = canvas.nextElementSibling;
+    if (existing && existing.classList.contains("mn-sr-only")) {
+      existing.textContent = label;
+    } else {
+      const srSpan = document.createElement("span");
+      srSpan.className = "mn-sr-only";
+      srSpan.textContent = label;
+      canvas.parentElement.insertBefore(srSpan, canvas.nextSibling);
+    }
+  }
+}
 function drawSmoothLine(ctx, data, getX, getY, smooth) {
   ctx.moveTo(getX(0), getY(data[0]));
   if (smooth && data.length > 2) {
@@ -2269,6 +2629,8 @@ function sparkline(canvas, data, opts) {
     ctx.lineWidth = 1;
     ctx.stroke();
   }
+  const last = data[data.length - 1];
+  applyChartA11y(canvas, `Sparkline: values from ${mn} to ${mx}, latest ${last}`);
   return canvas;
 }
 
@@ -2309,6 +2671,11 @@ function donut(canvas, segments, opts) {
     ctx.stroke();
     angle += sweep + o.gap;
   });
+  const segDesc = segments.map((s2, i) => {
+    const pct2 = total > 0 ? Math.round(s2.value / total * 100) : 0;
+    return `segment ${i + 1} ${pct2}%`;
+  }).join(", ");
+  applyChartA11y(canvas, `Donut chart: ${segDesc}`);
   return canvas;
 }
 
@@ -2368,6 +2735,8 @@ function halfGauge(canvas, opts) {
   ctx.textAlign = "center";
   ctx.fillText(String(o.min), cx - radius + lineW / 2, cy + radius * 0.18);
   ctx.fillText(String(o.max), cx + radius - lineW / 2, cy + radius * 0.18);
+  const unitSuffix = o.unit ? " " + o.unit : "";
+  applyChartA11y(canvas, `Gauge: ${o.value} of ${o.max}${unitSuffix}`);
   return canvas;
 }
 
@@ -2425,6 +2794,11 @@ function barChart(canvas, data, opts) {
       ctx.fillText(d.label, x + barW / 2, h - 4);
     }
   });
+  const highest = data.reduce((a, b) => b.value > a.value ? b : a, data[0]);
+  applyChartA11y(
+    canvas,
+    `Bar chart: ${data.length} categories, highest ${highest.label || "item"} at ${highest.value}`
+  );
   return canvas;
 }
 
@@ -2482,6 +2856,7 @@ function liveGraph(canvas, data, opts) {
   ctx.shadowBlur = 6;
   ctx.stroke();
   ctx.shadowBlur = 0;
+  applyChartA11y(canvas, `Live chart: ${o.unitLabel || "real-time data"}`);
   return canvas;
 }
 
@@ -2543,6 +2918,8 @@ function areaChart(canvas, datasets, opts) {
     ctx.fillStyle = aGrad;
     ctx.fill();
   });
+  const maxPts = Math.max(...datasets.map((ds) => ds.data.length));
+  applyChartA11y(canvas, `Area chart: ${datasets.length} series, ${maxPts} points`);
   return canvas;
 }
 
@@ -2558,12 +2935,13 @@ function progressRing(container, opts) {
     animate: true,
     ...opts
   };
+  const safeColor3 = isValidColor(o.color) ? o.color : "var(--giallo-ferrari)";
   const radius = (o.size - o.thickness) / 2;
   const circumference = 2 * Math.PI * radius;
   const pct2 = Math.max(0, Math.min(1, o.value / o.max));
   const offset = circumference * (1 - pct2);
   const half = o.size / 2;
-  container.innerHTML = `<svg width="${o.size}" height="${o.size}" viewBox="0 0 ${o.size} ${o.size}"><circle class="mn-progress-ring__track" cx="${half}" cy="${half}" r="${radius}" stroke-width="${o.thickness}"/><circle class="mn-progress-ring__fill" cx="${half}" cy="${half}" r="${radius}" stroke-width="${o.thickness}" stroke="${o.color}" stroke-dasharray="${circumference}" stroke-dashoffset="${o.animate ? circumference : offset}"/></svg>`;
+  container.innerHTML = `<svg width="${o.size}" height="${o.size}" viewBox="0 0 ${o.size} ${o.size}"><circle class="mn-progress-ring__track" cx="${half}" cy="${half}" r="${radius}" stroke-width="${o.thickness}"/><circle class="mn-progress-ring__fill" cx="${half}" cy="${half}" r="${radius}" stroke-width="${o.thickness}" stroke="${safeColor3}" stroke-dasharray="${circumference}" stroke-dashoffset="${o.animate ? circumference : offset}"/></svg>`;
   if (o.animate) {
     requestAnimationFrame(() => {
       const fill = container.querySelector(".mn-progress-ring__fill");
@@ -2747,6 +3125,7 @@ function radar(canvas, data, opts) {
     ctx.fillStyle = o.color;
     ctx.fill();
   });
+  applyChartA11y(canvas, `Radar chart: ${n} dimensions`);
   return canvas;
 }
 
@@ -2803,6 +3182,7 @@ function bubble(canvas, data, opts) {
       ctx.fillText(d.label, bx, by + br + 12);
     }
   });
+  applyChartA11y(canvas, `Bubble chart: ${data.length} data points`);
   return canvas;
 }
 
@@ -2841,7 +3221,10 @@ function clampVal(v, min, max) {
 }
 function hBarChart(container, opts) {
   const root = typeof container === "string" ? document.querySelector(container) : container;
-  if (!root) return null;
+  if (!root) {
+    console.warn("[Maranello] hBarChart: container not found");
+    return null;
+  }
   const state = {
     opts: {
       title: "",
@@ -2922,8 +3305,14 @@ function hBarChart(container, opts) {
     const ticks = buildTicks(maxValue);
     titleEl.style.display = state.opts.title ? "" : "none";
     titleEl.textContent = state.opts.title || "";
+    const highest = bars.length > 0 ? bars.reduce((a, b) => b.value > a.value ? b : a, bars[0]) : null;
+    const hbarLabel = highest ? `Bar chart: ${bars.length} categories, highest ${highest.label} at ${highest.value}` : state.opts.title || "Horizontal bar chart";
     host.setAttribute("role", "img");
-    host.setAttribute("aria-label", state.opts.title || "Horizontal bar chart");
+    host.setAttribute("aria-label", hbarLabel);
+    const prevSr = host.querySelector(".mn-sr-only");
+    if (prevSr) prevSr.remove();
+    const srSpan = createEl("span", "mn-sr-only", hbarLabel);
+    frame.appendChild(srSpan);
     frame.style.setProperty(
       "--mn-hbar-bar-height",
       (state.opts.barHeight || 28) + "px"
@@ -2952,7 +3341,8 @@ function hBarChart(container, opts) {
       const valueEl = createEl("div", "mn-hbar__value");
       const pct2 = clampVal(bar.value / maxValue * 100, 0, 100);
       const txtColor = hexLum(bar.color) > 0.55 ? "#111111" : "#FFFFFF";
-      fill.style.background = bar.color;
+      const safeColor3 = isValidColor(bar.color) ? bar.color : cssVar("--mn-accent");
+      fill.style.background = safeColor3;
       fill.style.height = (state.opts.barHeight || 28) + "px";
       fill.style.width = state.opts.animate ? "0%" : pct2 + "%";
       valueEl.style.color = txtColor;
@@ -3026,6 +3416,9 @@ function positionTooltip(tip, x, y) {
   tip.style.left = left + "px";
   tip.style.top = top + "px";
 }
+function safeColor(c, fallback) {
+  return isValidColor(c) ? c : fallback;
+}
 function buildTooltipHTML(meta, index, series) {
   const esc = escapeHtml;
   if (meta.type === "area" || meta.type === "line") {
@@ -3033,7 +3426,7 @@ function buildTooltipHTML(meta, index, series) {
     let html = '<div class="mn-chart-tooltip__label">' + esc(meta.labels && meta.labels[index] ? meta.labels[index] : "Point " + (index + 1)) + "</div>";
     datasets.forEach((ds, i) => {
       if (index < ds.data.length) {
-        const color = ds.color || series[i % series.length];
+        const color = safeColor(ds.color || series[i % series.length], "#999");
         html += '<div style="display:flex;align-items:center;gap:6px;margin-top:3px;"><span class="mn-chart-tooltip__dot" style="background:' + color + ';"></span><span style="color:var(--chart-label,#9e9e9e);font-size:0.65rem;">' + esc(ds.label || "Series " + (i + 1)) + '</span><span class="mn-chart-tooltip__value" style="margin-left:auto;color:' + color + ';">' + ds.data[index].toFixed(1) + "</span></div>";
       }
     });
@@ -3041,7 +3434,7 @@ function buildTooltipHTML(meta, index, series) {
   }
   if (meta.type === "bar") {
     const d = meta.data[index];
-    const color = d.color || series[index % series.length];
+    const color = safeColor(d.color || series[index % series.length], "#999");
     return '<div class="mn-chart-tooltip__label">' + esc(d.label || "Bar " + (index + 1)) + '</div><div class="mn-chart-tooltip__value" style="color:' + color + ';">' + d.value + "</div>";
   }
   if (meta.type === "donut") {
@@ -3258,7 +3651,8 @@ function sparklineInteract(canvas, data, opts) {
     ctx.stroke();
     ctx.restore();
     const label = opts.labels ? opts.labels[idx] : "Point " + (idx + 1);
-    tip.innerHTML = '<div class="mn-chart-tooltip__label">' + label + '</div><div class="mn-chart-tooltip__value" style="color:' + color + ';">' + data[idx] + "</div>";
+    const safeC = safeColor(color, "#FFC72C");
+    tip.innerHTML = '<div class="mn-chart-tooltip__label">' + escapeHtml(label) + '</div><div class="mn-chart-tooltip__value" style="color:' + safeC + ';">' + data[idx] + "</div>";
     tip.classList.add("mn-chart-tooltip--visible");
     positionTooltip(tip, e.clientX, e.clientY);
   });
@@ -3944,6 +4338,7 @@ function drawMultigraph(ctx, mg, cx, cy, radius, size, progress, P) {
 var SIZES = { sm: 120, md: 220, lg: 320 };
 var FerrariGauge = class {
   constructor(canvas) {
+    this.srSpan = null;
     this.canvas = canvas;
     this.ctx = canvas.getContext("2d");
     this.config = JSON.parse(canvas.dataset.gauge || "{}");
@@ -3974,10 +4369,41 @@ var FerrariGauge = class {
     this.cy = size / 2;
     this.radius = size * 0.4;
     this.density = size <= 140 ? "sm" : size <= 260 ? "md" : "lg";
+    this.initA11y();
     this.animate();
+  }
+  /** Set up ARIA attributes and screen-reader helpers on the canvas. */
+  initA11y() {
+    this.canvas.setAttribute("role", "img");
+    const label = this.buildA11yLabel();
+    this.canvas.setAttribute("aria-label", label);
+    this.canvas.textContent = label;
+    if (!this.srSpan) {
+      this.srSpan = document.createElement("span");
+      this.srSpan.className = "mn-sr-only";
+      this.canvas.parentElement?.insertBefore(this.srSpan, this.canvas.nextSibling);
+    }
+    this.srSpan.textContent = label;
+  }
+  /** Build an accessible label from gauge config values. */
+  buildA11yLabel() {
+    const c = this.config;
+    const value = c.value ?? 0;
+    const unit = c.unit || "";
+    const label = c.label || "";
+    const suffix = unit ? `${value}${unit}` : String(value);
+    return label ? `Gauge: ${suffix}, ${label}` : `Gauge: ${suffix}`;
+  }
+  /** Sync aria-label and sr-only span with current config. */
+  updateA11y() {
+    const label = this.buildA11yLabel();
+    this.canvas.setAttribute("aria-label", label);
+    this.canvas.textContent = label;
+    if (this.srSpan) this.srSpan.textContent = label;
   }
   /** Redraw at full progress. */
   redraw() {
+    this.updateA11y();
     this.draw(1);
   }
   /** Animate from 0 to full with ease-in-out-cubic. */
@@ -4230,7 +4656,27 @@ function speedometer(canvas, opts) {
   ctx.scale(dpr2, dpr2);
   const s = dim / 220;
   const cx = dim / 2, cy = dim / 2, R = dim * 0.4;
-  let curAngle = v2a(options.value, options.max);
+  const max = options.max;
+  const unit = options.unit || "";
+  function buildLabel(v) {
+    const suffix = unit ? `${Math.round(v)}${unit}` : String(Math.round(v));
+    return `Speedometer: ${suffix} of ${max}`;
+  }
+  canvas.setAttribute("role", "img");
+  const initLabel = buildLabel(options.value);
+  canvas.setAttribute("aria-label", initLabel);
+  canvas.textContent = initLabel;
+  const srSpan = document.createElement("span");
+  srSpan.className = "mn-sr-only";
+  srSpan.textContent = initLabel;
+  canvas.parentElement?.insertBefore(srSpan, canvas.nextSibling);
+  function updateA11y(v) {
+    const l = buildLabel(v);
+    canvas.setAttribute("aria-label", l);
+    canvas.textContent = l;
+    srSpan.textContent = l;
+  }
+  let curAngle = v2a(options.value, max);
   let curVal = options.value;
   let barVal = options.bar ? options.bar.value || 0 : 0;
   let animId = null;
@@ -4248,25 +4694,29 @@ function speedometer(canvas, opts) {
       curVal = fromV + (toVal - fromV) * ep;
       draw();
       if (p < 1) animId = requestAnimationFrame(tick);
-      else animId = null;
+      else {
+        animId = null;
+        updateA11y(toVal);
+      }
     };
     tick(performance.now());
   }
   if (options.animate) {
     curAngle = START;
     curVal = 0;
-    animateTo(v2a(options.value, options.max), options.value);
+    animateTo(v2a(options.value, max), options.value);
   } else {
     draw();
   }
   return {
     setValue(v) {
-      const ta = v2a(v, options.max);
+      const ta = v2a(v, max);
       if (options.animate) animateTo(ta, v);
       else {
         curAngle = ta;
         curVal = v;
         draw();
+        updateA11y(v);
       }
     },
     setBar(v) {
@@ -5068,6 +5518,7 @@ function attachGanttEvents(s) {
     if (typeof s._fitView === "function") s._fitView(s.wrap.getBoundingClientRect().width || 800);
     render3();
   });
+  const SCROLL_STEP = 40;
   canvas.addEventListener("keydown", (e) => {
     const rows = s.rows;
     let idx;
@@ -5085,6 +5536,14 @@ function attachGanttEvents(s) {
         s.selected = rows[idx - 1].task.id;
         render3();
       }
+    } else if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      s.scrollX = Math.max(0, s.scrollX - SCROLL_STEP);
+      render3();
+    } else if (e.key === "ArrowRight") {
+      e.preventDefault();
+      s.scrollX = s.scrollX + SCROLL_STEP;
+      render3();
     } else if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
       const r = rows.find((r2) => r2.task.id === s.selected);
@@ -5191,7 +5650,8 @@ function gantt(container, tasks, userOpts) {
   Object.keys(pal).forEach((st) => {
     const span = document.createElement("span");
     span.className = "mn-gantt-timeline__legend-item";
-    span.innerHTML = '<span class="mn-gantt-timeline__legend-swatch" style="background:' + pal[st] + ';"></span>' + st;
+    const safeCol = isValidColor(pal[st]) ? pal[st] : "var(--grigio-alluminio)";
+    span.innerHTML = '<span class="mn-gantt-timeline__legend-swatch" style="background:' + safeCol + ';"></span>' + escapeHtml(st);
     leg.appendChild(span);
   });
   const todayLeg = document.createElement("span");
@@ -5206,8 +5666,9 @@ function gantt(container, tasks, userOpts) {
   container.appendChild(wrap);
   s.wrap = wrap;
   const canvas = document.createElement("canvas");
-  canvas.setAttribute("role", "img");
+  canvas.setAttribute("role", "grid");
   canvas.setAttribute("aria-label", "Interactive Gantt timeline. Use arrow keys to navigate, Enter to expand rows.");
+  canvas.setAttribute("aria-roledescription", "gantt chart");
   canvas.setAttribute("tabindex", "0");
   wrap.appendChild(canvas);
   s.canvas = canvas;
@@ -5494,7 +5955,10 @@ function drawMarker(ctx, m, mc, pulse, highlighted, hovered) {
   }
 }
 function renderLegend(legendEl, mc) {
-  if (!legendEl) return;
+  if (!legendEl) {
+    console.warn("[Maranello] renderLegend: legend container element is null");
+    return;
+  }
   legendEl.innerHTML = "";
   const cats = ["active", "warning", "danger"];
   const labels = ["Active", "Warning", "Danger"];
@@ -5618,8 +6082,13 @@ function mapView(container, opts) {
     tip.style.left = left + "px";
     tip.style.top = top + "px";
   }
-  if (window.ResizeObserver) new ResizeObserver(() => render3()).observe(container);
-  new MutationObserver(() => render3()).observe(document.body, { attributes: true, attributeFilter: ["class"] });
+  let resizeObs = null;
+  if (window.ResizeObserver) {
+    resizeObs = new ResizeObserver(() => render3());
+    resizeObs.observe(container);
+  }
+  const mutationObs = new MutationObserver(() => render3());
+  mutationObs.observe(document.body, { attributes: true, attributeFilter: ["class"] });
   render3();
   return {
     setMarkers: (m) => {
@@ -5642,7 +6111,7 @@ function mapView(container, opts) {
       viewState.zoom = z;
       render3();
     },
-    panTo: (lat, lon) => {
+    panTo: (_lat, _lon) => {
       render3();
     },
     fitBounds: () => {
@@ -5652,6 +6121,8 @@ function mapView(container, opts) {
       render3();
     },
     destroy: () => {
+      resizeObs?.disconnect();
+      mutationObs.disconnect();
       container.innerHTML = "";
     }
   };
@@ -5668,20 +6139,27 @@ var DEFAULT_STAGES = [
   { id: "on-hold", label: "On Hold", color: "#DC0000" }
 ];
 function getMapboxGL() {
-  if (typeof mapboxgl !== "undefined") return mapboxgl;
-  if (typeof window !== "undefined" && window.mapboxgl) return window.mapboxgl;
+  if (typeof mapboxgl !== "undefined" && mapboxgl) return mapboxgl;
+  if (typeof window !== "undefined") {
+    const win = window;
+    if (win.mapboxgl) return win.mapboxgl;
+  }
   return null;
+}
+function safeColor2(c, fallback) {
+  return c && isValidColor(c) ? c : fallback;
 }
 function mapboxView(container, opts) {
   const target = typeof container === "string" ? document.querySelector(container) : container;
   if (!target) return null;
   const host = target;
   const root = target;
-  const mb = getMapboxGL();
-  if (!mb) {
+  const mbRaw = getMapboxGL();
+  if (!mbRaw) {
     host.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:200px;color:var(--text-dim,#666);font-size:0.8rem">mapbox-gl not loaded. Add &lt;script src="mapbox-gl.js"&gt; to use this component.</div>';
     return null;
   }
+  const mb = mbRaw;
   const o = {
     accessToken: "",
     style: DARK_STYLE,
@@ -5716,8 +6194,8 @@ function mapboxView(container, opts) {
     stageColors[s.id] = s.color;
   });
   function markerColor(m) {
-    if (m.color) return m.color;
-    if (m.stage && stageColors[m.stage]) return stageColors[m.stage];
+    if (m.color) return safeColor2(m.color, "#FFC72C");
+    if (m.stage && stageColors[m.stage]) return safeColor2(stageColors[m.stage], "#FFC72C");
     return "#FFC72C";
   }
   let markerInstances = [];
@@ -5739,7 +6217,7 @@ function mapboxView(container, opts) {
       el4.addEventListener("mouseleave", () => {
         el4.style.transform = "";
       });
-      const popup = new mb.Popup({ offset: 20, closeButton: false, className: "mn-mapbox-popup" }).setHTML(`<div style="font-weight:600;margin-bottom:2px">${m.label}</div>${m.detail ? `<div style="font-size:0.75rem;opacity:0.7">${m.detail}</div>` : ""}`);
+      const popup = new mb.Popup({ offset: 20, closeButton: false, className: "mn-mapbox-popup" }).setHTML(`<div style="font-weight:600;margin-bottom:2px">${escapeHtml(m.label)}</div>${m.detail ? `<div style="font-size:0.75rem;opacity:0.7">${escapeHtml(m.detail)}</div>` : ""}`);
       const marker = new mb.Marker({ element: el4 }).setLngLat([m.lon, m.lat]).setPopup(popup).addTo(map);
       if (o.onClick) {
         el4.addEventListener("click", () => o.onClick(m));
@@ -5753,7 +6231,8 @@ function mapboxView(container, opts) {
     legend.className = "mn-mapbox-legend";
     legend.style.cssText = "position:absolute;bottom:8px;left:8px;display:flex;gap:10px;padding:6px 10px;background:rgba(0,0,0,0.7);border-radius:6px;font-size:0.65rem;z-index:1";
     o.stages.forEach((s) => {
-      legend.innerHTML += `<span style="display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:${s.color};display:inline-block"></span><span style="color:var(--text-dim,#999)">${s.label}</span></span>`;
+      const c = safeColor2(s.color, "#999");
+      legend.innerHTML += `<span style="display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:${c};display:inline-block"></span><span style="color:var(--text-dim,#999)">${escapeHtml(s.label)}</span></span>`;
     });
     root.style.position = "relative";
     root.appendChild(legend);
@@ -6101,21 +6580,47 @@ function closeDetailPanel(id) {
     backdrop.classList.remove("mn-detail-panel__backdrop--visible");
   }
 }
-function openDrawer(id) {
+function openDrawer(id, triggerEl) {
   const drawer = document.getElementById(id);
   if (!drawer) return;
   drawer.classList.add("mn-drawer--open");
+  const trigger = triggerEl ?? document.activeElement;
   const backdrop = drawer.previousElementSibling;
   if (backdrop && backdrop.classList.contains("mn-drawer__backdrop")) {
     backdrop.classList.add("mn-drawer__backdrop--visible");
     backdrop.addEventListener(
       "click",
-      () => closeDrawer(id),
+      () => closeDrawer(id, trigger),
       { once: true }
     );
   }
+  const onKey = (e) => {
+    if (e.key === "Escape") {
+      e.preventDefault();
+      closeDrawer(id, trigger);
+      return;
+    }
+    if (e.key !== "Tab") return;
+    const focusable = drawer.querySelectorAll(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+    if (!focusable.length) return;
+    const first2 = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (e.shiftKey && document.activeElement === first2) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first2.focus();
+    }
+  };
+  drawer.addEventListener("keydown", onKey);
+  drawer._mnDrawerKeyHandler = onKey;
+  const first = drawer.querySelector("button, [href], input, [tabindex]");
+  if (first) first.focus();
 }
-function closeDrawer(id) {
+function closeDrawer(id, triggerEl) {
   const drawer = document.getElementById(id);
   if (!drawer) return;
   drawer.classList.remove("mn-drawer--open");
@@ -6123,22 +6628,32 @@ function closeDrawer(id) {
   if (backdrop && backdrop.classList.contains("mn-drawer__backdrop")) {
     backdrop.classList.remove("mn-drawer__backdrop--visible");
   }
+  const handler = drawer._mnDrawerKeyHandler;
+  if (typeof handler === "function") {
+    drawer.removeEventListener("keydown", handler);
+    delete drawer._mnDrawerKeyHandler;
+  }
+  if (triggerEl && typeof triggerEl.focus === "function") triggerEl.focus();
 }
 function initOrgTree(container) {
   container.querySelectorAll(".mn-org-tree__toggle").forEach((toggle) => {
     if (toggle.classList.contains("mn-org-tree__toggle--leaf")) return;
+    const item = toggle.closest(".mn-org-tree__item");
+    const children = item?.querySelector(".mn-org-tree__children");
+    const isCollapsed = children?.classList.contains("mn-org-tree__children--collapsed") ?? true;
+    toggle.setAttribute("aria-expanded", String(!isCollapsed));
     toggle.addEventListener("click", (e) => {
       e.stopPropagation();
-      const item = toggle.closest(".mn-org-tree__item");
-      if (!item) return;
-      const children = item.querySelector(".mn-org-tree__children");
-      if (!children) return;
-      const isCollapsed = children.classList.contains("mn-org-tree__children--collapsed");
+      if (!item || !children) return;
+      const collapsed = children.classList.contains("mn-org-tree__children--collapsed");
       children.classList.toggle("mn-org-tree__children--collapsed");
-      toggle.classList.toggle("mn-org-tree__toggle--expanded", isCollapsed);
+      toggle.classList.toggle("mn-org-tree__toggle--expanded", collapsed);
+      toggle.setAttribute("aria-expanded", String(collapsed));
     });
   });
-  container.querySelectorAll(".mn-org-tree__node").forEach((node) => {
+  const nodes = container.querySelectorAll(".mn-org-tree__node");
+  nodes.forEach((node, idx) => {
+    node.setAttribute("tabindex", idx === 0 ? "0" : "-1");
     node.addEventListener("click", () => {
       container.querySelectorAll(".mn-org-tree__node--active").forEach((n) => {
         n.classList.remove("mn-org-tree__node--active");
@@ -6149,6 +6664,29 @@ function initOrgTree(container) {
         label: label ? label.textContent ?? "" : "",
         node
       });
+    });
+    node.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        const next = idx + 1 < nodes.length ? idx + 1 : idx;
+        nodes[next].focus();
+        nodes[next].setAttribute("tabindex", "0");
+        node.setAttribute("tabindex", "-1");
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        const prev = idx > 0 ? idx - 1 : 0;
+        nodes[prev].focus();
+        nodes[prev].setAttribute("tabindex", "0");
+        node.setAttribute("tabindex", "-1");
+      } else if (e.key === "ArrowRight") {
+        e.preventDefault();
+        const toggle = node.closest(".mn-org-tree__item")?.querySelector(".mn-org-tree__toggle");
+        if (toggle && toggle.getAttribute("aria-expanded") === "false") toggle.click();
+      } else if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        const toggle = node.closest(".mn-org-tree__item")?.querySelector(".mn-org-tree__toggle");
+        if (toggle && toggle.getAttribute("aria-expanded") === "true") toggle.click();
+      }
     });
   });
 }
@@ -6162,6 +6700,8 @@ function initDrillDown(container) {
     const content = trigger.nextElementSibling;
     if (!content || !content.classList.contains("mn-drill-down__content")) return;
     const contentEl = content;
+    const initiallyOpen = contentEl.classList.contains("mn-drill-down__content--open");
+    trigger.setAttribute("aria-expanded", String(initiallyOpen));
     trigger.addEventListener("click", () => {
       const isOpen = contentEl.classList.contains("mn-drill-down__content--open");
       contentEl.classList.toggle("mn-drill-down__content--open");
@@ -6523,14 +7063,24 @@ function toElementArray(selector) {
   if (typeof selector === "string") return Array.from(document.querySelectorAll(selector));
   return [selector];
 }
+var UNSAFE_STYLE_RE = /url\s*\(\s*javascript:/i;
+var EXPRESSION_RE = /expression\s*\(/i;
 function setElementProperty(el4, property, value) {
+  if (!ALLOWED_BIND_PROPERTIES.has(property) && !property.startsWith("style.") && !property.startsWith("data-")) {
+    console.warn('[Maranello] bind: property "%s" not in whitelist', property);
+  }
   if (property === "textContent") {
     el4.textContent = value == null ? "" : String(value);
   } else if (property === "innerHTML") {
-    el4.innerHTML = value == null ? "" : String(value);
+    el4.innerHTML = value == null ? "" : escapeHtml(String(value));
   } else if (property.startsWith("style.")) {
     if (el4 instanceof HTMLElement) {
-      el4.style[property.slice(6)] = value == null ? "" : String(value);
+      const strVal = value == null ? "" : String(value);
+      if (UNSAFE_STYLE_RE.test(strVal) || EXPRESSION_RE.test(strVal)) {
+        console.warn('[Maranello] bind: blocked unsafe style value for "%s"', property);
+        return;
+      }
+      el4.style[property.slice(6)] = strVal;
     }
   } else if (property.startsWith("data-")) {
     const attrValue = typeof value === "object" && value !== null ? JSON.stringify(value) : String(value ?? "");
@@ -6577,7 +7127,14 @@ function autoBind() {
     if (!rawBind) return;
     rawBind.split(";").forEach((pair) => {
       const kv = pair.split(":");
-      if (kv.length === 2) config[kv[0].trim()] = kv[1].trim();
+      if (kv.length === 2) {
+        const key = kv[0].trim();
+        if (key === "__proto__" || key === "constructor" || key === "prototype") {
+          console.warn('[Maranello] autoBind: rejected unsafe key "%s"', key);
+          return;
+        }
+        config[key] = kv[1].trim();
+      }
     });
     if (config.url) {
       bind(el4, {
@@ -6626,6 +7183,10 @@ function updateGauge(canvas, newConfig, gaugeMap) {
     gauge.config.complications = { ...newConfig.complications };
   }
   gauge.animate();
+  const label = String(gauge.config.label ?? "Gauge");
+  const val = gauge.config.value ?? newConfig.value ?? "";
+  const unit = gauge.config.unit ?? "";
+  canvas.setAttribute("aria-label", label + ": " + val + (unit ? " " + unit : ""));
 }
 function bindChart(canvas, chartType, options, chartRegistry) {
   const opts = {
@@ -6647,6 +7208,7 @@ function bindChart(canvas, chartType, options, chartRegistry) {
     fetchFn().then((raw) => {
       const data = opts.map(raw);
       chartFn(canvas, data, opts.chartOpts ?? {});
+      canvas.setAttribute("aria-label", chartType + " chart, updated");
       eventBus.emit("chart-update", { canvas, type: chartType, data });
     }).catch((err) => {
       console.warn("bindChart error:", err);
@@ -6722,7 +7284,7 @@ function el2(tag, cls, attrs) {
   if (attrs) {
     for (const [k, v] of Object.entries(attrs)) {
       if (k === "text") e.textContent = v;
-      else if (k === "html") e.innerHTML = v;
+      else if (k === "html") e.innerHTML = escapeHtml(String(v));
       else e.setAttribute(k, v);
     }
   }
@@ -6764,7 +7326,13 @@ var cellRenderers = {
   },
   custom: (val, row, col) => {
     const c = col;
-    if (c?.render) return String(c.render(val, row));
+    if (c?.render) {
+      const raw = String(c.render(val, row));
+      const safe = sanitizeHtml(raw);
+      return safe.replace(/style="[^"]*color:\s*([^;"]+)/g, (match, colorVal) => {
+        return isValidColor(colorVal.trim()) ? match : match.replace(colorVal, "inherit");
+      });
+    }
     return escHtml(val);
   }
 };
@@ -6847,7 +7415,7 @@ function buildPagination(totalRows, paginationEl, pageSize, state, renderFn) {
   paginationEl.innerHTML = "";
   const totalPages = Math.ceil(totalRows / pageSize);
   if (totalPages <= 1) return;
-  const info = el2("span", "mn-dt__page-info", { text: `Page ${state.page + 1} of ${totalPages}  \xB7  ${totalRows} rows` });
+  const srTotal = el2("span", "mn-sr-only", { text: totalRows + " total rows" });
   const prevBtn = el2("button", "mn-dt__page-btn", { text: "\u2190", "aria-label": "Previous page" });
   prevBtn.disabled = state.page === 0;
   prevBtn.addEventListener("click", () => {
@@ -6856,6 +7424,29 @@ function buildPagination(totalRows, paginationEl, pageSize, state, renderFn) {
       renderFn();
     }
   });
+  paginationEl.appendChild(prevBtn);
+  paginationEl.appendChild(srTotal);
+  const windowSize = 5;
+  let winStart = Math.max(0, state.page - Math.floor(windowSize / 2));
+  const winEnd = Math.min(totalPages, winStart + windowSize);
+  if (winEnd - winStart < windowSize) winStart = Math.max(0, winEnd - windowSize);
+  for (let p = winStart; p < winEnd; p++) {
+    const isActive = p === state.page;
+    const pageBtn = el2("button", "mn-dt__page-btn" + (isActive ? " mn-dt__page-btn--active" : ""), {
+      text: String(p + 1),
+      "aria-label": "Page " + (p + 1)
+    });
+    if (isActive) {
+      pageBtn.setAttribute("aria-current", "page");
+      pageBtn.disabled = true;
+    }
+    const captured = p;
+    pageBtn.addEventListener("click", () => {
+      state.page = captured;
+      renderFn();
+    });
+    paginationEl.appendChild(pageBtn);
+  }
   const nextBtn = el2("button", "mn-dt__page-btn", { text: "\u2192", "aria-label": "Next page" });
   nextBtn.disabled = state.page >= totalPages - 1;
   nextBtn.addEventListener("click", () => {
@@ -6864,8 +7455,6 @@ function buildPagination(totalRows, paginationEl, pageSize, state, renderFn) {
       renderFn();
     }
   });
-  paginationEl.appendChild(prevBtn);
-  paginationEl.appendChild(info);
   paginationEl.appendChild(nextBtn);
 }
 function buildEmptyRow(emptyMessage, colSpan) {
@@ -6968,15 +7557,19 @@ function getGroupedData(rows, groupBy, groupOrder) {
   }
   return { groups, order };
 }
-function render2(state, opts, tbody, paginationEl) {
+function render2(state, opts, tbody, paginationEl, liveRegion) {
+  if (state.data == null) {
+    console.warn("[Maranello] dataTable: data is null or undefined");
+  }
   tbody.innerHTML = "";
   const rows = getProcessedData(state);
   const grouped = getGroupedData(rows, opts.groupBy, opts.groupOrder);
   const colSpan = opts.columns.length;
-  const renderFn = () => render2(state, opts, tbody, paginationEl);
+  const renderFn = () => render2(state, opts, tbody, paginationEl, liveRegion);
   if (rows.length === 0) {
     tbody.appendChild(buildEmptyRow(opts.emptyMessage ?? "No data found", colSpan));
     buildPagination(0, paginationEl, opts.pageSize ?? 0, state, renderFn);
+    announce("Showing 0 of " + state.data.length + " rows", liveRegion);
     return;
   }
   if (grouped !== null) {
@@ -7007,11 +7600,28 @@ function render2(state, opts, tbody, paginationEl) {
     }
     buildPagination(rows.length, paginationEl, pageSize, state, renderFn);
   }
-  announce("Table updated: " + rows.length + " rows");
+  const totalData = state.data.length;
+  const hasFilters = Object.keys(state.filters).length > 0;
+  const sortDir = state.sortDir === 1 ? "ascending" : "descending";
+  const pgSize = opts.pageSize ?? 0;
+  const totalPages = pgSize > 0 ? Math.ceil(rows.length / pgSize) : 1;
+  let msg;
+  if (state.sortKey && hasFilters) {
+    msg = "Sorted by " + state.sortKey + " " + sortDir + ". Showing " + rows.length + " of " + totalData + " rows";
+  } else if (state.sortKey) {
+    msg = "Sorted by " + state.sortKey + " " + sortDir;
+  } else if (hasFilters) {
+    msg = "Showing " + rows.length + " of " + totalData + " rows";
+  } else {
+    msg = rows.length + " rows";
+  }
+  if (pgSize > 0) {
+    msg += ". Page " + (state.page + 1) + " of " + totalPages;
+  }
+  announce(msg, liveRegion);
 }
-function announce(msg) {
-  const announcer = document.getElementById("mn-announcer");
-  if (announcer) announcer.textContent = msg;
+function announce(msg, liveRegion) {
+  if (liveRegion) liveRegion.textContent = msg;
 }
 
 // src/ts/data-table.ts
@@ -7062,8 +7672,11 @@ function dataTable(container, opts) {
   if (filterRow) filterRow.setAttribute("role", "row");
   const tbody = el2("tbody", "mn-dt__body");
   tbody.setAttribute("role", "rowgroup");
+  const liveRegion = el2("div", "mn-sr-only");
+  liveRegion.setAttribute("aria-live", "polite");
+  liveRegion.setAttribute("role", "status");
   function doRender() {
-    render2(state, resolved, tbody, paginationEl);
+    render2(state, resolved, tbody, paginationEl, liveRegion);
   }
   resolved.columns.forEach((col, ci) => {
     const th = el2("th", "mn-dt__th");
@@ -7114,6 +7727,7 @@ function dataTable(container, opts) {
   table.appendChild(tbody);
   scrollWrap.appendChild(table);
   containerEl.appendChild(scrollWrap);
+  containerEl.appendChild(liveRegion);
   let paginationEl = null;
   if ((resolved.pageSize ?? 0) > 0) {
     paginationEl = el2("div", "mn-dt__pagination");
@@ -7184,6 +7798,113 @@ function dataTable(container, opts) {
   };
 }
 
+// src/ts/date-picker-keys.ts
+function attachDatePickerKeys(picker, ctx) {
+  picker.addEventListener("keydown", (e) => {
+    const target = e.target;
+    if (!(target instanceof HTMLButtonElement)) return;
+    if (!target.classList.contains("mn-date-picker__day")) return;
+    const day = ctx.getFocusedDay();
+    if (!day) return;
+    let handled = true;
+    switch (e.key) {
+      case "ArrowLeft":
+        navigateDay(ctx, day, -1);
+        break;
+      case "ArrowRight":
+        navigateDay(ctx, day, 1);
+        break;
+      case "ArrowUp":
+        navigateDay(ctx, day, -7);
+        break;
+      case "ArrowDown":
+        navigateDay(ctx, day, 7);
+        break;
+      case "Home":
+        ctx.setFocusedDay(1);
+        ctx.focusDayCell(1);
+        break;
+      case "End": {
+        const last = ctx.daysInMonth(ctx.getViewYear(), ctx.getViewMonth());
+        ctx.setFocusedDay(last);
+        ctx.focusDayCell(last);
+        break;
+      }
+      case "PageUp":
+        changeMonth(ctx, -1);
+        break;
+      case "PageDown":
+        changeMonth(ctx, 1);
+        break;
+      case "Enter":
+      case " ":
+        e.preventDefault();
+        if (!ctx.isDisabled(ctx.getViewYear(), ctx.getViewMonth(), day)) {
+          ctx.selectDay(day);
+        }
+        return;
+      case "Escape":
+        ctx.closePicker();
+        return;
+      default:
+        handled = false;
+    }
+    if (handled) e.preventDefault();
+  });
+}
+function navigateDay(ctx, current, delta) {
+  let y = ctx.getViewYear();
+  let m = ctx.getViewMonth();
+  let target = current + delta;
+  if (target < 1) {
+    m--;
+    if (m < 0) {
+      m = 11;
+      y--;
+    }
+    ctx.setView(y, m);
+    target = ctx.daysInMonth(y, m) + target;
+    ctx.renderCalendar();
+    ctx.setFocusedDay(target);
+    ctx.focusDayCell(target);
+    return;
+  }
+  const max = ctx.daysInMonth(y, m);
+  if (target > max) {
+    target = target - max;
+    m++;
+    if (m > 11) {
+      m = 0;
+      y++;
+    }
+    ctx.setView(y, m);
+    ctx.renderCalendar();
+    ctx.setFocusedDay(target);
+    ctx.focusDayCell(target);
+    return;
+  }
+  ctx.setFocusedDay(target);
+  ctx.focusDayCell(target);
+}
+function changeMonth(ctx, dir) {
+  let y = ctx.getViewYear();
+  let m = ctx.getViewMonth() + dir;
+  if (m < 0) {
+    m = 11;
+    y--;
+  }
+  if (m > 11) {
+    m = 0;
+    y++;
+  }
+  ctx.setView(y, m);
+  const maxDay = ctx.daysInMonth(y, m);
+  const day = Math.min(ctx.getFocusedDay(), maxDay);
+  ctx.renderCalendar();
+  ctx.setFocusedDay(day);
+  ctx.focusDayCell(day);
+}
+
 // src/ts/date-picker.ts
 var MONTHS = [
   "January",
@@ -7233,12 +7954,24 @@ function firstDayOfWeek(y, m) {
   const d = new Date(y, m, 1).getDay();
   return d === 0 ? 6 : d - 1;
 }
+function focusDayCellInPicker(picker, day) {
+  const cells = picker.querySelectorAll(
+    ".mn-date-picker__day:not(.mn-date-picker__day--empty)"
+  );
+  const target = cells[day - 1];
+  if (target) {
+    cells.forEach((c) => c.setAttribute("tabindex", "-1"));
+    target.setAttribute("tabindex", "0");
+    target.focus();
+  }
+}
 function datePicker(anchor, opts) {
   closePicker();
   const options = opts ?? {};
   let sel = parseVal(options.value);
   let viewY = sel ? sel.y : (/* @__PURE__ */ new Date()).getFullYear();
   let viewM = sel ? sel.m : (/* @__PURE__ */ new Date()).getMonth();
+  let focusedDay = sel ? sel.d : 1;
   const minD = parseVal(options.min);
   const maxD = parseVal(options.max);
   const todayY = (/* @__PURE__ */ new Date()).getFullYear();
@@ -7253,6 +7986,11 @@ function datePicker(anchor, opts) {
     if (maxD && ds > toDateStr(maxD.y, maxD.m, maxD.d)) return true;
     return false;
   }
+  function selectDay(day) {
+    sel = { y: viewY, m: viewM, d: day };
+    if (options.onSelect) options.onSelect(toDateStr(viewY, viewM, day));
+    closePicker();
+  }
   function renderCalendar() {
     picker.innerHTML = "";
     const nav = document.createElement("div");
@@ -7261,75 +7999,93 @@ function datePicker(anchor, opts) {
     prevBtn.type = "button";
     prevBtn.className = "mn-date-picker__nav-btn";
     prevBtn.innerHTML = "\u25C0";
-    prevBtn.title = "Previous month";
+    prevBtn.setAttribute("aria-label", "Previous month");
     prevBtn.addEventListener("click", () => {
       viewM--;
       if (viewM < 0) {
         viewM = 11;
         viewY--;
       }
+      focusedDay = Math.min(focusedDay, daysInMonth(viewY, viewM));
       renderCalendar();
     });
     const title = document.createElement("span");
     title.className = "mn-date-picker__month-title";
+    title.id = "mn-dp-title";
     title.textContent = MONTHS[viewM] + " " + viewY;
+    title.setAttribute("aria-live", "polite");
     const nextBtn = document.createElement("button");
     nextBtn.type = "button";
     nextBtn.className = "mn-date-picker__nav-btn";
     nextBtn.innerHTML = "\u25B6";
-    nextBtn.title = "Next month";
+    nextBtn.setAttribute("aria-label", "Next month");
     nextBtn.addEventListener("click", () => {
       viewM++;
       if (viewM > 11) {
         viewM = 0;
         viewY++;
       }
+      focusedDay = Math.min(focusedDay, daysInMonth(viewY, viewM));
       renderCalendar();
     });
-    nav.appendChild(prevBtn);
-    nav.appendChild(title);
-    nav.appendChild(nextBtn);
+    nav.append(prevBtn, title, nextBtn);
     picker.appendChild(nav);
     const dayHeaders = document.createElement("div");
     dayHeaders.className = "mn-date-picker__days-header";
+    dayHeaders.setAttribute("role", "row");
     DAYS.forEach((d) => {
       const dh = document.createElement("span");
       dh.className = "mn-date-picker__day-name";
+      dh.setAttribute("role", "columnheader");
       dh.textContent = d;
       dayHeaders.appendChild(dh);
     });
     picker.appendChild(dayHeaders);
     const grid = document.createElement("div");
     grid.className = "mn-date-picker__grid";
+    grid.setAttribute("role", "grid");
+    grid.setAttribute("aria-labelledby", "mn-dp-title");
     const startDay = firstDayOfWeek(viewY, viewM);
     const totalDays = daysInMonth(viewY, viewM);
+    let row = document.createElement("div");
+    row.setAttribute("role", "row");
     for (let e = 0; e < startDay; e++) {
       const empty = document.createElement("span");
       empty.className = "mn-date-picker__day mn-date-picker__day--empty";
-      grid.appendChild(empty);
+      empty.setAttribute("role", "gridcell");
+      row.appendChild(empty);
     }
     for (let d = 1; d <= totalDays; d++) {
+      const cellIdx = (startDay + d - 1) % 7;
+      if (cellIdx === 0 && d > 1) {
+        grid.appendChild(row);
+        row = document.createElement("div");
+        row.setAttribute("role", "row");
+      }
       const cell = document.createElement("button");
       cell.type = "button";
       cell.className = "mn-date-picker__day";
+      cell.setAttribute("role", "gridcell");
       cell.textContent = String(d);
+      cell.setAttribute("tabindex", d === focusedDay ? "0" : "-1");
+      const dateLabel = d + " " + MONTHS[viewM] + " " + viewY;
+      cell.setAttribute("aria-label", dateLabel);
       const disabled = isDisabled(viewY, viewM, d);
       if (disabled) cell.classList.add("mn-date-picker__day--disabled");
       cell.disabled = disabled;
+      const isSelected = sel && d === sel.d && viewM === sel.m && viewY === sel.y;
       if (d === todayD && viewM === todayM && viewY === todayY) {
         cell.classList.add("mn-date-picker__day--today");
       }
-      if (sel && d === sel.d && viewM === sel.m && viewY === sel.y) {
+      if (isSelected) {
         cell.classList.add("mn-date-picker__day--selected");
+        cell.setAttribute("aria-selected", "true");
       }
       const day = d;
-      cell.addEventListener("click", () => {
-        sel = { y: viewY, m: viewM, d: day };
-        if (options.onSelect) options.onSelect(toDateStr(viewY, viewM, day));
-        closePicker();
-      });
-      grid.appendChild(cell);
+      cell.addEventListener("click", () => selectDay(day));
+      row.appendChild(cell);
     }
+    grid.appendChild(row);
     picker.appendChild(grid);
     const todayBtn = document.createElement("button");
     todayBtn.type = "button";
@@ -7344,13 +8100,28 @@ function datePicker(anchor, opts) {
     });
     picker.appendChild(todayBtn);
   }
+  attachDatePickerKeys(picker, {
+    getViewYear: () => viewY,
+    getViewMonth: () => viewM,
+    setView: (y, m) => {
+      viewY = y;
+      viewM = m;
+    },
+    daysInMonth,
+    isDisabled,
+    selectDay,
+    closePicker,
+    renderCalendar,
+    getFocusedDay: () => focusedDay,
+    setFocusedDay: (d) => {
+      focusedDay = d;
+    },
+    focusDayCell: (d) => focusDayCellInPicker(picker, d)
+  });
   renderCalendar();
   anchor.style.position = "relative";
   anchor.appendChild(picker);
-  setTimeout(() => {
-    const first = picker.querySelector(".mn-date-picker__day:not(.mn-date-picker__day--empty)");
-    if (first instanceof HTMLElement) first.focus();
-  }, 50);
+  setTimeout(() => focusDayCellInPicker(picker, focusedDay), 50);
   setTimeout(() => {
     document.addEventListener("mousedown", onDocClick);
     document.addEventListener("keydown", onDocKey);
@@ -7424,11 +8195,33 @@ function validateField(field) {
   const errorEl = field.querySelector(".mn-field__error");
   if (!valid) {
     field.classList.add("mn-field--error");
-    if (errorEl) errorEl.textContent = errorMsg;
-  } else if (value.length > 0) {
-    field.classList.add("mn-field--success");
+    input.setAttribute("aria-invalid", "true");
+    if (errorEl) {
+      if (!errorEl.id) {
+        errorEl.id = "mn-err-" + Date.now() + "-" + Math.random().toString(36).slice(2, 6);
+      }
+      errorEl.setAttribute("aria-live", "assertive");
+      errorEl.textContent = errorMsg;
+      const existing = (input.getAttribute("aria-describedby") ?? "").split(/\s+/).filter(Boolean);
+      if (!existing.includes(errorEl.id)) {
+        input.setAttribute("aria-describedby", [...existing, errorEl.id].join(" "));
+      }
+    }
+  } else {
+    input.removeAttribute("aria-invalid");
+    if (errorEl) {
+      const tokens = (input.getAttribute("aria-describedby") ?? "").split(/\s+/).filter(
+        (t) => t && t !== errorEl.id
+      );
+      if (tokens.length > 0) {
+        input.setAttribute("aria-describedby", tokens.join(" "));
+      } else {
+        input.removeAttribute("aria-describedby");
+      }
+      errorEl.textContent = "";
+    }
+    if (value.length > 0) field.classList.add("mn-field--success");
   }
-  if (errorEl && valid) errorEl.textContent = "";
   return valid;
 }
 function validateForm(formEl) {
@@ -7487,10 +8280,14 @@ function initAutoResize(el4) {
   resize();
 }
 function initTagInput(container) {
-  if (!container) return null;
+  if (!container) {
+    console.warn("[Maranello] initTagInput: container element is null");
+    return null;
+  }
   const root = container;
   const field = root.querySelector(".mn-tag-input__field");
   if (!field) return null;
+  if (!field.hasAttribute("aria-label")) field.setAttribute("aria-label", "Type to add tags");
   let tags = [];
   function addTag(text) {
     const t = text.trim();
@@ -7548,7 +8345,10 @@ function initPasswordToggle(wrap) {
   });
 }
 function initFileUpload(container) {
-  if (!container) return null;
+  if (!container) {
+    console.warn("[Maranello] initFileUpload: container element is null");
+    return null;
+  }
   const root = container;
   const input = root.querySelector('input[type="file"]');
   if (!input) return null;
@@ -7571,11 +8371,21 @@ function initFileUpload(container) {
     eventBus.emit("file-upload", { files, container: root });
     updateLabel();
   });
+  const liveRegion = root.querySelector(".mn-file-upload__live") ?? Object.assign(document.createElement("span"), { className: "mn-file-upload__live" });
+  liveRegion.setAttribute("aria-live", "polite");
+  liveRegion.setAttribute("role", "status");
+  liveRegion.style.cssText = "position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)";
+  if (!liveRegion.parentNode) root.appendChild(liveRegion);
   function updateLabel() {
     const textEl = root.querySelector(".mn-file-upload__text");
-    if (textEl && files.length > 0) {
-      textEl.innerHTML = files.length === 1 ? "<strong>" + files[0].name + "</strong>" : "<strong>" + files.length + " files</strong> selected";
-    }
+    if (!textEl || files.length === 0) return;
+    textEl.textContent = "";
+    const strong = document.createElement("strong");
+    const msg = files.length === 1 ? files[0].name : files.length + " files selected";
+    strong.textContent = files.length === 1 ? files[0].name : files.length + " files";
+    textEl.appendChild(strong);
+    if (files.length > 1) textEl.appendChild(document.createTextNode(" selected"));
+    liveRegion.textContent = msg;
   }
   return {
     getFiles: () => files,
@@ -7588,15 +8398,24 @@ function initFileUpload(container) {
   };
 }
 function initFormSteps(container) {
-  if (!container) return null;
+  if (!container) {
+    console.warn("[Maranello] initFormSteps: container element is null");
+    return null;
+  }
+  container.setAttribute("role", "group");
+  if (!container.getAttribute("aria-label")) container.setAttribute("aria-label", "Form steps");
   const steps = container.querySelectorAll(".mn-form-step");
   let current = 0;
   function setStep(index) {
     current = Math.max(0, Math.min(index, steps.length - 1));
     steps.forEach((step, i) => {
       step.classList.remove("mn-form-step--active", "mn-form-step--complete");
+      step.removeAttribute("aria-current");
       if (i < current) step.classList.add("mn-form-step--complete");
-      if (i === current) step.classList.add("mn-form-step--active");
+      if (i === current) {
+        step.classList.add("mn-form-step--active");
+        step.setAttribute("aria-current", "step");
+      }
     });
     eventBus.emit("form-step-change", { step: current, total: steps.length });
   }
@@ -7659,7 +8478,10 @@ function initCharCounter(field) {
   update();
 }
 function initSearchClear(wrap) {
-  if (!wrap) return;
+  if (!wrap) {
+    console.warn("[Maranello] initSearchClear: wrapper element is null");
+    return;
+  }
   const input = wrap.querySelector(".mn-form-input");
   const clearBtn = wrap.querySelector(".mn-search-input__clear");
   if (!input || !clearBtn) return;
@@ -7680,7 +8502,28 @@ function initSearchClear(wrap) {
 function qsa(root, ...sels) {
   return root.querySelectorAll(sels.join(","));
 }
+function applyFieldA11y(root) {
+  const fields = root.querySelectorAll ? root.querySelectorAll(".mn-field") : document.querySelectorAll(".mn-field");
+  fields.forEach((field) => {
+    const input = getFieldInput(field);
+    if (!input) return;
+    if (input.hasAttribute("required") || input.getAttribute("data-validate")?.includes("required")) {
+      input.setAttribute("aria-required", "true");
+    }
+    const hint = field.querySelector(".mn-field__hint");
+    if (hint) {
+      if (!hint.id) {
+        hint.id = "mn-hint-" + Date.now() + "-" + Math.random().toString(36).slice(2, 6);
+      }
+      const existing = input.getAttribute("aria-describedby");
+      if (!existing?.includes(hint.id)) {
+        input.setAttribute("aria-describedby", existing ? existing + " " + hint.id : hint.id);
+      }
+    }
+  });
+}
 function initForms(root = document) {
+  applyFieldA11y(root);
   qsa(root, "[data-mn-validate]", ".mn-form[data-live-validate]").forEach(
     (form) => initLiveValidation(form)
   );
@@ -7813,7 +8656,8 @@ function funnel(container, options) {
     const svg = svgEl("svg", { viewBox: "0 0 " + VB_W + " " + svgH, preserveAspectRatio: "xMidYMid meet" });
     svg.style.width = "100%";
     svg.style.height = "auto";
-    pipe.forEach((stage, i) => {
+    pipe.forEach((stageRaw, i) => {
+      const stage = isValidColor(stageRaw.color) ? stageRaw : { ...stageRaw, color: "var(--grigio-alluminio)" };
       const barW = Math.max(PIPE_W * MIN_BAR, stage.count / maxC * PIPE_W);
       const barX = PIPE_L + (PIPE_W - barW) / 2;
       const y = PAD + i * (BAR_H + GAP);
@@ -7838,8 +8682,10 @@ function funnel(container, options) {
       let cTxt = String(stage.count);
       if (total > 0) cTxt += " (" + Math.round(stage.count / total * 100) + "%)";
       svg.appendChild(svgText({ x: PIPE_L + PIPE_W / 2, y: y + 29, "text-anchor": "middle", "font-size": 14, "font-family": "'Barlow Condensed',sans-serif", fill: tc, "font-weight": "700" }, cTxt));
-      if (stage.holdCount && stage.holdCount > 0) renderExitPill(svg, barX, y, "left", stage.holdCount, data.onHold?.color || "#ea580c", "\u23F8");
-      if (stage.withdrawnCount && stage.withdrawnCount > 0) renderExitPill(svg, barX + barW, y, "right", stage.withdrawnCount, data.withdrawn?.color || "#666", "\u2715");
+      const holdClr = isValidColor(data.onHold?.color || "") ? data.onHold.color : "#ea580c";
+      const wdClr = isValidColor(data.withdrawn?.color || "") ? data.withdrawn.color : "#666";
+      if (stage.holdCount && stage.holdCount > 0) renderExitPill(svg, barX, y, "left", stage.holdCount, holdClr, "\u23F8");
+      if (stage.withdrawnCount && stage.withdrawnCount > 0) renderExitPill(svg, barX + barW, y, "right", stage.withdrawnCount, wdClr, "\u2715");
       const hit = svgEl("rect", { x: barX, y, width: barW, height: BAR_H, fill: "transparent", cursor: "pointer", "pointer-events": "all" });
       hit.addEventListener("mouseenter", () => {
         bar.style.filter = "brightness(1.3)";
@@ -7865,11 +8711,13 @@ function funnel(container, options) {
     });
     const legendY = svgH - 4;
     if (data.onHold && data.onHold.count > 0) {
-      svg.appendChild(svgEl("circle", { cx: PIPE_L, cy: legendY, r: 4, fill: data.onHold.color, opacity: "0.8" }));
+      const ohLegClr = isValidColor(data.onHold.color) ? data.onHold.color : "#ea580c";
+      svg.appendChild(svgEl("circle", { cx: PIPE_L, cy: legendY, r: 4, fill: ohLegClr, opacity: "0.8" }));
       svg.appendChild(svgText({ x: PIPE_L + 8, y: legendY + 3, "font-size": 9, "font-family": "'Inter',sans-serif", fill: "var(--grigio-medio,#999)", "font-weight": "500" }, "\u23F8 On Hold: " + data.onHold.count));
     }
     if (data.withdrawn && data.withdrawn.count > 0) {
-      svg.appendChild(svgEl("circle", { cx: PIPE_L + PIPE_W / 2 + 20, cy: legendY, r: 4, fill: data.withdrawn.color, opacity: "0.8" }));
+      const wdLegClr = isValidColor(data.withdrawn.color) ? data.withdrawn.color : "#666";
+      svg.appendChild(svgEl("circle", { cx: PIPE_L + PIPE_W / 2 + 20, cy: legendY, r: 4, fill: wdLegClr, opacity: "0.8" }));
       svg.appendChild(svgText({ x: PIPE_L + PIPE_W / 2 + 28, y: legendY + 3, "font-size": 9, "font-family": "'Inter',sans-serif", fill: "var(--grigio-medio,#999)", "font-weight": "500" }, "\u2715 Withdrawn: " + data.withdrawn.count));
     }
     root.appendChild(svg);
@@ -7934,7 +8782,7 @@ function el3(tag, className, attrs) {
   if (className) node.className = className;
   if (attrs) Object.keys(attrs).forEach((key) => {
     if (key === "text") node.textContent = attrs[key];
-    else if (key === "html") node.innerHTML = attrs[key];
+    else if (key === "html") node.innerHTML = escapeHtml(String(attrs[key]));
     else node.setAttribute(key, attrs[key]);
   });
   return node;
@@ -7945,15 +8793,17 @@ function describeArc(cx, cy, r, sa, ea) {
   return `M ${x1.toFixed(2)} ${y1.toFixed(2)} A ${r} ${r} 0 ${ea - sa > Math.PI ? 1 : 0} 1 ${x2.toFixed(2)} ${y2.toFixed(2)}`;
 }
 function ringTemplate(size, stroke, percent, color, centerText, trackClass, progressClass) {
+  const safeColor3 = isValidColor(color) ? color : "#999";
   const radius = (size - stroke) / 2, cx = size / 2;
   const circ = 2 * Math.PI * radius;
   const bounded = clamp(safeNumber(percent), 0, 100);
   const off2 = circ - bounded / 100 * circ;
-  let svg = `<svg class="mn-okr__ring" viewBox="0 0 ${size} ${size}" aria-hidden="true"><circle class="${trackClass}" cx="${cx}" cy="${cx}" r="${radius}" stroke-width="${stroke}"></circle><circle class="${progressClass}" cx="${cx}" cy="${cx}" r="${radius}" stroke-width="${stroke}" stroke="${color}" data-circumference="${circ.toFixed(2)}" data-target-offset="${off2.toFixed(2)}" stroke-dasharray="${circ.toFixed(2)}" stroke-dashoffset="${circ.toFixed(2)}"></circle>`;
-  if (centerText != null) svg += `<text class="mn-okr__ring-text" x="50%" y="50%" dominant-baseline="middle" text-anchor="middle">${centerText}</text>`;
+  let svg = `<svg class="mn-okr__ring" viewBox="0 0 ${size} ${size}" aria-hidden="true"><circle class="${trackClass}" cx="${cx}" cy="${cx}" r="${radius}" stroke-width="${stroke}"></circle><circle class="${progressClass}" cx="${cx}" cy="${cx}" r="${radius}" stroke-width="${stroke}" stroke="${safeColor3}" data-circumference="${circ.toFixed(2)}" data-target-offset="${off2.toFixed(2)}" stroke-dasharray="${circ.toFixed(2)}" stroke-dashoffset="${circ.toFixed(2)}"></circle>`;
+  if (centerText != null) svg += `<text class="mn-okr__ring-text" x="50%" y="50%" dominant-baseline="middle" text-anchor="middle">${escapeHtml(String(centerText))}</text>`;
   return svg + "</svg>";
 }
 function heroGaugeSVG(percent, color) {
+  const safeColor3 = isValidColor(color) ? color : "#999";
   const w = 240, h = 140, cx = w / 2, cy = h - 10, r = 100;
   const startAngle = Math.PI;
   const bounded = clamp(safeNumber(percent), 0, 100);
@@ -7974,7 +8824,7 @@ function heroGaugeSVG(percent, color) {
   const progressEnd = startAngle + bounded / 100 * Math.PI;
   const progressPath = describeArc(cx, cy, r, startAngle, progressEnd);
   const nx = cx + Math.cos(needleAngle) * (r - 28), ny = cy + Math.sin(needleAngle) * (r - 28);
-  return `<svg class="mn-okr__gauge" viewBox="0 0 ${w} ${h}" aria-hidden="true"><defs><filter id="okr-glow"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><path d="${trackPath}" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="8" stroke-linecap="round"/><path class="mn-okr__gauge-progress" d="${progressPath}" fill="none" stroke="${color}" stroke-width="8" stroke-linecap="round" filter="url(#okr-glow)" stroke-dasharray="${(Math.PI * r).toFixed(1)}" stroke-dashoffset="${(Math.PI * r).toFixed(1)}" data-target="0"/>` + ticks.join("") + `<line class="mn-okr__needle" x1="${cx}" y1="${cy}" x2="${nx.toFixed(1)}" y2="${ny.toFixed(1)}" stroke="${color}" stroke-width="2.5" stroke-linecap="round" filter="url(#okr-glow)" data-cx="${cx}" data-cy="${cy}" data-r="${r - 28}" data-target-angle="${needleAngle.toFixed(4)}"/><circle cx="${cx}" cy="${cy}" r="5" fill="${color}"/><circle cx="${cx}" cy="${cy}" r="2.5" fill="#111"/></svg>`;
+  return `<svg class="mn-okr__gauge" viewBox="0 0 ${w} ${h}" aria-hidden="true"><defs><filter id="okr-glow"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><path d="${trackPath}" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="8" stroke-linecap="round"/><path class="mn-okr__gauge-progress" d="${progressPath}" fill="none" stroke="${safeColor3}" stroke-width="8" stroke-linecap="round" filter="url(#okr-glow)" stroke-dasharray="${(Math.PI * r).toFixed(1)}" stroke-dashoffset="${(Math.PI * r).toFixed(1)}" data-target="0"/>` + ticks.join("") + `<line class="mn-okr__needle" x1="${cx}" y1="${cy}" x2="${nx.toFixed(1)}" y2="${ny.toFixed(1)}" stroke="${safeColor3}" stroke-width="2.5" stroke-linecap="round" filter="url(#okr-glow)" data-cx="${cx}" data-cy="${cy}" data-r="${r - 28}" data-target-angle="${needleAngle.toFixed(4)}"/><circle cx="${cx}" cy="${cy}" r="5" fill="${safeColor3}"/><circle cx="${cx}" cy="${cy}" r="2.5" fill="#111"/></svg>`;
 }
 function animateRings(container) {
   const rings = Array.from(container.querySelectorAll(".mn-okr__ring-progress"));
@@ -8057,7 +8907,8 @@ function calculateStats(objectives) {
   return { counts, average: clamp(average, 0, 100) };
 }
 function createSummaryCard(status, count, description, total) {
-  const color = STATUS_COLORS2[status] || "#00A651";
+  const rawColor = STATUS_COLORS2[status] || "#00A651";
+  const color = isValidColor(rawColor) ? rawColor : "#00A651";
   const p = total > 0 ? count / total * 100 : 0;
   const card = el3("div", `mn-okr__summary-card mn-okr__summary-card--${status}`);
   const arcWrap = el3("div", "mn-okr__summary-arc");
@@ -8077,7 +8928,8 @@ function createSummaryCard(status, count, description, total) {
 }
 function createHero(stats, period) {
   const status = statusFromProgress(stats.average);
-  const color = STATUS_COLORS2[status];
+  const rawHeroColor = STATUS_COLORS2[status];
+  const color = isValidColor(rawHeroColor) ? rawHeroColor : "#00A651";
   const section = el3("section", "mn-okr__hero");
   const gaugeBlock = el3("div", "mn-okr__gauge-wrap");
   gaugeBlock.innerHTML = heroGaugeSVG(stats.average, color);
@@ -8151,7 +9003,10 @@ function createObjectiveCard(objective, index) {
 // src/ts/okr-panel.ts
 function okrPanel(container, opts) {
   const host = typeof container === "string" ? document.querySelector(container) : container;
-  if (!host) return null;
+  if (!host) {
+    console.warn("[Maranello] okrPanel: container not found:", container);
+    return null;
+  }
   const el_host = host;
   const title = opts?.title ?? "OKR Dashboard";
   const period = opts?.period ?? "";
@@ -8203,7 +9058,11 @@ function initGauges(opts) {
   const selector = opts?.selector ?? ".mn-gauge__canvas";
   const threshold = opts?.threshold ?? 0.2;
   const instances = [];
-  document.querySelectorAll(selector).forEach((canvas) => {
+  const canvases = document.querySelectorAll(selector);
+  if (!canvases.length) {
+    console.warn("[Maranello] initGauges: no gauge canvases found for selector:", selector);
+  }
+  canvases.forEach((canvas) => {
     const obs = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -8235,7 +9094,11 @@ function initScrollReveal(opts) {
     },
     { threshold, rootMargin }
   );
-  document.querySelectorAll(selector).forEach((el4) => observer.observe(el4));
+  const revealEls = document.querySelectorAll(selector);
+  if (!revealEls.length) {
+    console.warn("[Maranello] initScrollReveal: no elements found for selector:", selector);
+  }
+  revealEls.forEach((el4) => observer.observe(el4));
 }
 function initNavTracking(opts) {
   const sectionSelector = opts?.sectionSelector ?? "section[id]";
@@ -8244,7 +9107,13 @@ function initNavTracking(opts) {
   const activeClass = opts?.activeClass ?? "mn-nav__link--active";
   const sections = document.querySelectorAll(sectionSelector);
   const navLinks = document.querySelectorAll(linkSelector);
-  window.addEventListener("scroll", () => {
+  if (!sections.length) {
+    console.warn("[Maranello] initNavTracking: no sections found for selector:", sectionSelector);
+  }
+  if (!navLinks.length) {
+    console.warn("[Maranello] initNavTracking: no nav links found for selector:", linkSelector);
+  }
+  const handleScroll = throttle(() => {
     let current = "";
     sections.forEach((section) => {
       if (window.scrollY >= section.offsetTop - offsetPx) {
@@ -8257,7 +9126,8 @@ function initNavTracking(opts) {
         link.getAttribute("href") === `#${current}`
       );
     });
-  });
+  }, 100);
+  window.addEventListener("scroll", handleScroll);
 }
 function linearize(c) {
   return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
@@ -8671,7 +9541,8 @@ function renderRows2(ctx, bars, maxValue) {
     const valueEl = createEl2("div", "mn-hbar__value");
     const pct2 = clampVal2(bar.value / maxValue * 100, 0, 100);
     const txtColor = hexLum3(bar.color) > 0.55 ? "#111111" : "#FFFFFF";
-    fill.style.background = bar.color;
+    const safeColor3 = isValidColor(bar.color) ? bar.color : cssVar("--mn-accent");
+    fill.style.background = safeColor3;
     fill.style.height = (state.opts.barHeight || 28) + "px";
     fill.style.width = state.opts.animate ? "0%" : pct2 + "%";
     valueEl.style.color = txtColor;
@@ -8822,7 +9693,7 @@ var renderers = {
   badge(val, field) {
     const span = createElement("span", "mn-tag mn-tag--sm");
     const color = field.badgeColors?.[String(val)] ?? "";
-    if (color) span.style.background = color;
+    if (color && isValidColor(color)) span.style.background = color;
     span.textContent = val ? String(val) : DASH;
     return span;
   },
@@ -8830,7 +9701,7 @@ var renderers = {
     const span = createElement("span", "mn-tag mn-tag--sm");
     const colors = field.statusColors ?? {};
     const c = colors[String(val)];
-    if (c) {
+    if (c && isValidColor(c)) {
       span.style.background = c;
       span.style.color = "#fff";
     }
@@ -9202,6 +10073,10 @@ function renderBody(body, state, opts) {
 }
 
 // src/ts/detail-panel.ts
+function getFocusable(el4) {
+  const sel = 'a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
+  return Array.from(el4.querySelectorAll(sel));
+}
 function createDetailPanel(container, opts = {}) {
   const state = {
     activeTab: opts.tabs?.[0] ?? null,
@@ -9214,6 +10089,7 @@ function createDetailPanel(container, opts = {}) {
     data: opts.data ?? {},
     schema: opts.schema ?? []
   };
+  let triggerElement = null;
   const dom = buildDOM(container, opts, state.activeTab, (tab) => {
     state.activeTab = tab;
     if (dom.tabBar) {
@@ -9223,6 +10099,10 @@ function createDetailPanel(container, opts = {}) {
     }
     renderBody(dom.body, state, opts);
   });
+  container.setAttribute("role", "dialog");
+  container.setAttribute("aria-modal", "true");
+  if (opts.title) container.setAttribute("aria-label", opts.title);
+  dom.closeBtn.setAttribute("aria-label", "Close panel");
   renderBody(dom.body, state, opts);
   dom.closeBtn.addEventListener("click", () => {
     doClose();
@@ -9235,6 +10115,31 @@ function createDetailPanel(container, opts = {}) {
   dom.editBtn.addEventListener("click", () => startEdit());
   dom.cancelBtn.addEventListener("click", () => cancelEdit());
   dom.saveBtn.addEventListener("click", () => save());
+  function onKeyDown(e) {
+    if (!state.isOpen) return;
+    if (e.key === "Escape") {
+      doClose();
+      opts.onClose?.();
+      return;
+    }
+    if (e.key === "Tab") {
+      const focusable = getFocusable(container);
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey) {
+        if (document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        }
+      } else {
+        if (document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    }
+  }
   function startEdit() {
     state.isEditing = true;
     state.changes = {};
@@ -9263,18 +10168,29 @@ function createDetailPanel(container, opts = {}) {
   function doClose() {
     state.isOpen = false;
     container.classList.remove("mn-detail-panel--open");
+    document.removeEventListener("keydown", onKeyDown);
     const bd = container.previousElementSibling;
     if (bd && bd.classList.contains("mn-detail-panel__backdrop")) {
       bd.classList.remove("mn-detail-panel__backdrop--visible");
     }
+    if (triggerElement) {
+      triggerElement.focus();
+      triggerElement = null;
+    }
   }
   function doOpen() {
+    triggerElement = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     state.isOpen = true;
     container.classList.add("mn-detail-panel--open");
+    document.addEventListener("keydown", onKeyDown);
     const bd = container.previousElementSibling;
     if (bd && bd.classList.contains("mn-detail-panel__backdrop")) {
       bd.classList.add("mn-detail-panel__backdrop--visible");
     }
+    setTimeout(() => {
+      const focusable = getFocusable(container);
+      if (focusable.length) focusable[0].focus();
+    }, 50);
   }
   return {
     open: doOpen,
@@ -9292,6 +10208,7 @@ function createDetailPanel(container, opts = {}) {
     getData: () => ({ ...state.data }),
     setTitle(t) {
       dom.titleEl.textContent = t;
+      container.setAttribute("aria-label", t);
     },
     showLoading() {
       renderSkeleton(dom.body);
@@ -9312,6 +10229,7 @@ function createDetailPanel(container, opts = {}) {
       showToast(container, msg, type);
     },
     destroy() {
+      document.removeEventListener("keydown", onKeyDown);
       container.innerHTML = "";
     }
   };
@@ -9534,7 +10452,10 @@ function initDropdown(el4) {
   trigger.setAttribute("aria-haspopup", "listbox");
   trigger.setAttribute("aria-expanded", "false");
   if (menu) menu.setAttribute("role", "listbox");
-  items.forEach((item) => item.setAttribute("role", "option"));
+  items.forEach((item) => {
+    item.setAttribute("role", "option");
+    item.setAttribute("aria-selected", "false");
+  });
   function openMenu() {
     el4.classList.add("mn-dropdown--open");
     trigger.setAttribute("aria-expanded", "true");
@@ -9629,6 +10550,16 @@ function initTabs(el4) {
         const prev = (i - 1 + tabs.length) % tabs.length;
         activate(prev);
         tabs[prev].focus();
+      }
+      if (e.key === "Home") {
+        e.preventDefault();
+        activate(0);
+        tabs[0].focus();
+      }
+      if (e.key === "End") {
+        e.preventDefault();
+        activate(tabs.length - 1);
+        tabs[tabs.length - 1].focus();
       }
     });
   });
@@ -9993,7 +10924,10 @@ var TEMPLATES = [
 var CLASS_PREFIX = "mn-grid-template--";
 function gridLayout(container, template = "masonry-auto", options) {
   const target = typeof container === "string" ? document.querySelector(container) : container;
-  if (!target) return null;
+  if (!target) {
+    console.warn("[Maranello] gridLayout: container not found");
+    return null;
+  }
   const host = target;
   const opts = { gap: "", padding: "", animate: true, ...options };
   let current = template;
@@ -10241,5 +11175,5 @@ M.charts = {
 registerExtras(M);
 
 // src/ts/index.ts
-var VERSION = "3.0.0";
+var VERSION = "3.2.1";
 //# sourceMappingURL=index.cjs.map

@@ -1,4 +1,4 @@
-<!-- v3.1.0 | 2025-07-21 -->
+<!-- v3.2.1 | 2026-03-13 -->
 # MaranelloLuceDesign
 
 Ferrari Luce-inspired design system for business dashboards. Part of Convergio.
@@ -25,7 +25,7 @@ Ferrari Luce-inspired design system for business dashboards. Part of Convergio.
 |---|---|---|---|
 | CSS-only | `src/css/` (80 files) | Tokens, themes, components, layouts — zero JS | `./css` |
 | Headless JS | `src/ts/` | Charts, gauge, controls, forms — framework-agnostic | `./charts` `./gantt` `./gauge` `./controls` `./forms` |
-| Web Components | `src/wc/` (23 elements) | `mn-*` custom elements wrapping headless JS | `./wc` |
+| Web Components | `src/wc/` (25 elements) | `mn-*` custom elements wrapping headless JS | `./wc` |
 
 ## File Tree
 
@@ -40,6 +40,7 @@ Ferrari Luce-inspired design system for business dashboards. Part of Convergio.
 | `src/ts/gauge-engine*.ts` | Gauge sub-package |
 | `src/ts/controls.ts` | Controls sub-package entry |
 | `src/ts/forms.ts` | Forms sub-package entry |
+| `src/ts/core/sanitize.ts` | Security utilities (escapeHtml, sanitizeAttr, sanitizeSvg, isValidColor) |
 | `src/wc/index.ts` | WC registry (`registerAll()`) |
 | `esbuild.config.mjs` | JS build config |
 | `scripts/build-css.mjs` | CSS build config |
@@ -107,7 +108,7 @@ Ferrari Luce-inspired design system for business dashboards. Part of Convergio.
 ### Map (2)
 `mapView` · `attachEvents`
 
-## Web Components (23)
+## Web Components (25)
 
 | Tag | Attrs |
 |---|---|
@@ -130,6 +131,7 @@ Ferrari Luce-inspired design system for business dashboards. Part of Convergio.
 | `mn-system-status` | `services`, `poll-interval`, `version`, `environment` |
 | `mn-profile` | `name`, `email`, `avatar-url`, `sections` |
 | `mn-map` | `markers`, `zoom`, `center`, `theme` |
+| `mn-mapbox` | `markers`, `zoom`, `center`, `theme`, `style` |
 | `mn-theme-toggle` | `mode` |
 | `mn-tabs` / `mn-tab` | `active` / `label` |
 | `mn-a11y` | (FAB + settings panel) |
@@ -185,7 +187,7 @@ Ferrari Luce-inspired design system for business dashboards. Part of Convergio.
 
 - Max 250 lines/file — split if exceeds
 - English only (code + comments)
-- MIT license, © Roberdan 2026
+- MPL-2.0 license, © Roberdan 2026
 - CSS: all rules in `@layer` blocks
 - TS: strict mode, no `any`, named exports only
 - Comments: explain WHY, not WHAT, <5% density

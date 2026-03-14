@@ -5,6 +5,7 @@
 
 import type { DataTableColumn, DataTableOptions } from './core/types';
 import { createElement } from './core/utils';
+import { escapeHtml, isValidColor, sanitizeHtml } from './core/sanitize';
 
 export interface DataTableStatusMeta { cls: string; icon: string }
 export interface DataTableState<RowT = Record<string, unknown>> {
@@ -38,7 +39,7 @@ export function el(tag: string, cls: string, attrs?: Record<string, string>): HT
   if (attrs) {
     for (const [k, v] of Object.entries(attrs)) {
       if (k === 'text') e.textContent = v;
-      else if (k === 'html') e.innerHTML = v;
+      else if (k === 'html') e.innerHTML = escapeHtml(String(v));
       else e.setAttribute(k, v);
     }
   }
@@ -86,7 +87,14 @@ export const cellRenderers: Record<string, (val: unknown, row?: unknown, col?: u
   },
   custom: (val, row, col) => {
     const c = col as DataTableColumn | undefined;
-    if (c?.render) return String(c.render(val, row as Record<string, unknown>));
+    if (c?.render) {
+      // Sanitize custom renderer output before innerHTML assignment to prevent XSS
+      const raw = String(c.render(val, row as Record<string, unknown>));
+      const safe = sanitizeHtml(raw);
+      return safe.replace(/style="[^"]*color:\s*([^;"]+)/g, (match, colorVal) => {
+        return isValidColor(colorVal.trim()) ? match : match.replace(colorVal, 'inherit');
+      });
+    }
     return escHtml(val);
   },
 };
@@ -163,15 +171,36 @@ export function buildPagination(
   paginationEl.innerHTML = '';
   const totalPages = Math.ceil(totalRows / pageSize);
   if (totalPages <= 1) return;
-  const info = el('span', 'mn-dt__page-info', { text: `Page ${state.page + 1} of ${totalPages}  \u00B7  ${totalRows} rows` });
+  const srTotal = el('span', 'mn-sr-only', { text: totalRows + ' total rows' });
   const prevBtn = el('button', 'mn-dt__page-btn', { text: '\u2190', 'aria-label': 'Previous page' }) as HTMLButtonElement;
   prevBtn.disabled = state.page === 0;
   prevBtn.addEventListener('click', () => { if (state.page > 0) { state.page--; renderFn(); } });
+  paginationEl.appendChild(prevBtn);
+  paginationEl.appendChild(srTotal);
+
+  // Render up to 5 numbered page buttons with a sliding window
+  const windowSize = 5;
+  let winStart = Math.max(0, state.page - Math.floor(windowSize / 2));
+  const winEnd = Math.min(totalPages, winStart + windowSize);
+  if (winEnd - winStart < windowSize) winStart = Math.max(0, winEnd - windowSize);
+  for (let p = winStart; p < winEnd; p++) {
+    const isActive = p === state.page;
+    const pageBtn = el('button', 'mn-dt__page-btn' + (isActive ? ' mn-dt__page-btn--active' : ''), {
+      text: String(p + 1),
+      'aria-label': 'Page ' + (p + 1),
+    }) as HTMLButtonElement;
+    if (isActive) {
+      pageBtn.setAttribute('aria-current', 'page');
+      pageBtn.disabled = true;
+    }
+    const captured = p;
+    pageBtn.addEventListener('click', () => { state.page = captured; renderFn(); });
+    paginationEl.appendChild(pageBtn);
+  }
+
   const nextBtn = el('button', 'mn-dt__page-btn', { text: '\u2192', 'aria-label': 'Next page' }) as HTMLButtonElement;
   nextBtn.disabled = state.page >= totalPages - 1;
   nextBtn.addEventListener('click', () => { if (state.page < totalPages - 1) { state.page++; renderFn(); } });
-  paginationEl.appendChild(prevBtn);
-  paginationEl.appendChild(info);
   paginationEl.appendChild(nextBtn);
 }
 

@@ -47,6 +47,10 @@ export function updateGauge(
     gauge.config.complications = { ...newConfig.complications };
   }
   gauge.animate();
+  const label = String(gauge.config.label ?? 'Gauge');
+  const val = gauge.config.value ?? newConfig.value ?? '';
+  const unit = gauge.config.unit ?? '';
+  canvas.setAttribute('aria-label', label + ': ' + val + (unit ? ' ' + unit : ''));
 }
 
 /** Bind a chart to a data source with optional polling. */
@@ -76,6 +80,7 @@ export function bindChart(
     fetchFn().then((raw) => {
       const data = opts.map!(raw);
       chartFn(canvas, data, opts.chartOpts ?? {});
+      canvas.setAttribute('aria-label', chartType + ' chart, updated');
       eventBus.emit('chart-update', { canvas, type: chartType, data });
     }).catch((err: unknown) => {
       console.warn('bindChart error:', err);

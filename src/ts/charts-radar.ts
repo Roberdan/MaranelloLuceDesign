@@ -3,7 +3,7 @@
  */
 import type { RadarDataItem, RadarOptions } from './core/types';
 import { cssVar } from './core/utils';
-import { chartHiDpi, getCanvasSize } from './charts-helpers';
+import { chartHiDpi, getCanvasSize, applyChartA11y } from './charts-helpers';
 
 /** Render a radar (spider) chart on a canvas element. */
 export function radar(
@@ -95,6 +95,8 @@ export function radar(
     ctx.fillStyle = o.color;
     ctx.fill();
   });
+
+  applyChartA11y(canvas, `Radar chart: ${n} dimensions`);
 
   return canvas;
 }

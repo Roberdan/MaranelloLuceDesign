@@ -10,6 +10,7 @@ import {
   formatTime,
   renderContent,
 } from './ai-chat-dom';
+import { sanitizeSvg } from './core/sanitize';
 import type {
   AIChatAgent,
   AIChatMessage,
@@ -138,10 +139,8 @@ export function initMessages(state: ChatUIState, els: ChatUIElements, opts: Requ
       if (agent.id === state.activeAgentId) card.classList.add('mn-chat-agent-card--active');
       const iconEl = el('span', 'mn-chat-agent-card__icon');
       if (agent.icon && /<svg/i.test(agent.icon)) {
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(agent.icon, 'image/svg+xml');
-        const svg = doc.querySelector('svg');
-        if (svg && !doc.querySelector('parsererror')) iconEl.appendChild(svg);
+        const safeSvg = sanitizeSvg(agent.icon);
+        if (safeSvg) iconEl.innerHTML = safeSvg;
         else iconEl.textContent = '\u{1F916}';
       }
       else iconEl.textContent = agent.icon ?? '\u{1F916}';

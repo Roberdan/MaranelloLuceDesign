@@ -1,4 +1,4 @@
-/* Maranello Luce Design v3.0.0 | MIT | github.com/Roberdan/MaranelloLuceDesign */
+/* Maranello Luce Design v3.2.1 | MPL-2.0 | github.com/Roberdan/MaranelloLuceDesign */
 "use strict";
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -41,12 +41,193 @@ __export(index_exports, {
 });
 module.exports = __toCommonJS(index_exports);
 
+// src/ts/core/sanitize.ts
+function escapeHtml(str) {
+  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+var HEX_RE = /^#(?:[0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})$/i;
+var RGB_RE = /^rgba?\(\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}\s*(?:,\s*(?:0|1|0?\.\d+))?\s*\)$/;
+var HSL_RE = /^hsla?\(\s*\d{1,3}\s*,\s*\d{1,3}%\s*,\s*\d{1,3}%\s*(?:,\s*(?:0|1|0?\.\d+))?\s*\)$/;
+var CSS_VAR_RE = /^var\(--[\w-]+(?:\s*,\s*[^)]+)?\)$/;
+var CSS_KEYWORDS = /* @__PURE__ */ new Set([
+  "transparent",
+  "currentColor",
+  "currentcolor",
+  "inherit",
+  "initial",
+  "unset",
+  "revert"
+]);
+var NAMED_COLORS = /* @__PURE__ */ new Set([
+  "aliceblue",
+  "antiquewhite",
+  "aqua",
+  "aquamarine",
+  "azure",
+  "beige",
+  "bisque",
+  "black",
+  "blanchedalmond",
+  "blue",
+  "blueviolet",
+  "brown",
+  "burlywood",
+  "cadetblue",
+  "chartreuse",
+  "chocolate",
+  "coral",
+  "cornflowerblue",
+  "cornsilk",
+  "crimson",
+  "cyan",
+  "darkblue",
+  "darkcyan",
+  "darkgoldenrod",
+  "darkgray",
+  "darkgreen",
+  "darkgrey",
+  "darkkhaki",
+  "darkmagenta",
+  "darkolivegreen",
+  "darkorange",
+  "darkorchid",
+  "darkred",
+  "darksalmon",
+  "darkseagreen",
+  "darkslateblue",
+  "darkslategray",
+  "darkslategrey",
+  "darkturquoise",
+  "darkviolet",
+  "deeppink",
+  "deepskyblue",
+  "dimgray",
+  "dimgrey",
+  "dodgerblue",
+  "firebrick",
+  "floralwhite",
+  "forestgreen",
+  "fuchsia",
+  "gainsboro",
+  "ghostwhite",
+  "gold",
+  "goldenrod",
+  "gray",
+  "green",
+  "greenyellow",
+  "grey",
+  "honeydew",
+  "hotpink",
+  "indianred",
+  "indigo",
+  "ivory",
+  "khaki",
+  "lavender",
+  "lavenderblush",
+  "lawngreen",
+  "lemonchiffon",
+  "lightblue",
+  "lightcoral",
+  "lightcyan",
+  "lightgoldenrodyellow",
+  "lightgray",
+  "lightgreen",
+  "lightgrey",
+  "lightpink",
+  "lightsalmon",
+  "lightseagreen",
+  "lightskyblue",
+  "lightslategray",
+  "lightslategrey",
+  "lightsteelblue",
+  "lightyellow",
+  "lime",
+  "limegreen",
+  "linen",
+  "magenta",
+  "maroon",
+  "mediumaquamarine",
+  "mediumblue",
+  "mediumorchid",
+  "mediumpurple",
+  "mediumseagreen",
+  "mediumslateblue",
+  "mediumspringgreen",
+  "mediumturquoise",
+  "mediumvioletred",
+  "midnightblue",
+  "mintcream",
+  "mistyrose",
+  "moccasin",
+  "navajowhite",
+  "navy",
+  "oldlace",
+  "olive",
+  "olivedrab",
+  "orange",
+  "orangered",
+  "orchid",
+  "palegoldenrod",
+  "palegreen",
+  "paleturquoise",
+  "palevioletred",
+  "papayawhip",
+  "peachpuff",
+  "peru",
+  "pink",
+  "plum",
+  "powderblue",
+  "purple",
+  "rebeccapurple",
+  "red",
+  "rosybrown",
+  "royalblue",
+  "saddlebrown",
+  "salmon",
+  "sandybrown",
+  "seagreen",
+  "seashell",
+  "sienna",
+  "silver",
+  "skyblue",
+  "slateblue",
+  "slategray",
+  "slategrey",
+  "snow",
+  "springgreen",
+  "steelblue",
+  "tan",
+  "teal",
+  "thistle",
+  "tomato",
+  "turquoise",
+  "violet",
+  "wheat",
+  "white",
+  "whitesmoke",
+  "yellow",
+  "yellowgreen"
+]);
+function isValidColor(val) {
+  const trimmed = val.trim();
+  if (!trimmed) return false;
+  const lower = trimmed.toLowerCase();
+  if (lower.includes("javascript:")) return false;
+  if (lower.includes("expression(")) return false;
+  if (lower.includes(";")) return false;
+  if (lower.includes("url(")) return false;
+  if (HEX_RE.test(trimmed)) return true;
+  if (RGB_RE.test(trimmed)) return true;
+  if (HSL_RE.test(trimmed)) return true;
+  if (CSS_VAR_RE.test(trimmed)) return true;
+  if (CSS_KEYWORDS.has(lower)) return true;
+  if (NAMED_COLORS.has(lower)) return true;
+  return false;
+}
+
 // src/ts/core/utils.ts
 function cssVar(name, fallback = "") {
   return getComputedStyle(document.documentElement).getPropertyValue(name).trim() || fallback;
-}
-function escapeHtml(str) {
-  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 }
 
 // src/ts/charts-helpers.ts
@@ -102,6 +283,22 @@ function hexFillGradient(ctx, hex, h, opacity) {
   grad.addColorStop(0, `rgba(${r},${g},${b},${opacity})`);
   grad.addColorStop(1, `rgba(${r},${g},${b},0)`);
   return grad;
+}
+function applyChartA11y(canvas, label) {
+  canvas.setAttribute("role", "img");
+  canvas.setAttribute("aria-label", label);
+  canvas.textContent = label;
+  if (canvas.parentElement) {
+    const existing = canvas.nextElementSibling;
+    if (existing && existing.classList.contains("mn-sr-only")) {
+      existing.textContent = label;
+    } else {
+      const srSpan = document.createElement("span");
+      srSpan.className = "mn-sr-only";
+      srSpan.textContent = label;
+      canvas.parentElement.insertBefore(srSpan, canvas.nextSibling);
+    }
+  }
 }
 function drawSmoothLine(ctx, data, getX, getY, smooth) {
   ctx.moveTo(getX(0), getY(data[0]));
@@ -164,6 +361,8 @@ function sparkline(canvas, data, opts) {
     ctx.lineWidth = 1;
     ctx.stroke();
   }
+  const last = data[data.length - 1];
+  applyChartA11y(canvas, `Sparkline: values from ${mn} to ${mx}, latest ${last}`);
   return canvas;
 }
 
@@ -204,6 +403,11 @@ function donut(canvas, segments, opts) {
     ctx.stroke();
     angle += sweep + o.gap;
   });
+  const segDesc = segments.map((s2, i) => {
+    const pct = total > 0 ? Math.round(s2.value / total * 100) : 0;
+    return `segment ${i + 1} ${pct}%`;
+  }).join(", ");
+  applyChartA11y(canvas, `Donut chart: ${segDesc}`);
   return canvas;
 }
 
@@ -263,6 +467,8 @@ function halfGauge(canvas, opts) {
   ctx.textAlign = "center";
   ctx.fillText(String(o.min), cx - radius + lineW / 2, cy + radius * 0.18);
   ctx.fillText(String(o.max), cx + radius - lineW / 2, cy + radius * 0.18);
+  const unitSuffix = o.unit ? " " + o.unit : "";
+  applyChartA11y(canvas, `Gauge: ${o.value} of ${o.max}${unitSuffix}`);
   return canvas;
 }
 
@@ -320,6 +526,11 @@ function barChart(canvas, data, opts) {
       ctx.fillText(d.label, x + barW / 2, h - 4);
     }
   });
+  const highest = data.reduce((a, b) => b.value > a.value ? b : a, data[0]);
+  applyChartA11y(
+    canvas,
+    `Bar chart: ${data.length} categories, highest ${highest.label || "item"} at ${highest.value}`
+  );
   return canvas;
 }
 
@@ -377,6 +588,7 @@ function liveGraph(canvas, data, opts) {
   ctx.shadowBlur = 6;
   ctx.stroke();
   ctx.shadowBlur = 0;
+  applyChartA11y(canvas, `Live chart: ${o.unitLabel || "real-time data"}`);
   return canvas;
 }
 
@@ -438,6 +650,8 @@ function areaChart(canvas, datasets, opts) {
     ctx.fillStyle = aGrad;
     ctx.fill();
   });
+  const maxPts = Math.max(...datasets.map((ds) => ds.data.length));
+  applyChartA11y(canvas, `Area chart: ${datasets.length} series, ${maxPts} points`);
   return canvas;
 }
 
@@ -453,12 +667,13 @@ function progressRing(container, opts) {
     animate: true,
     ...opts
   };
+  const safeColor2 = isValidColor(o.color) ? o.color : "var(--giallo-ferrari)";
   const radius = (o.size - o.thickness) / 2;
   const circumference = 2 * Math.PI * radius;
   const pct = Math.max(0, Math.min(1, o.value / o.max));
   const offset = circumference * (1 - pct);
   const half = o.size / 2;
-  container.innerHTML = `<svg width="${o.size}" height="${o.size}" viewBox="0 0 ${o.size} ${o.size}"><circle class="mn-progress-ring__track" cx="${half}" cy="${half}" r="${radius}" stroke-width="${o.thickness}"/><circle class="mn-progress-ring__fill" cx="${half}" cy="${half}" r="${radius}" stroke-width="${o.thickness}" stroke="${o.color}" stroke-dasharray="${circumference}" stroke-dashoffset="${o.animate ? circumference : offset}"/></svg>`;
+  container.innerHTML = `<svg width="${o.size}" height="${o.size}" viewBox="0 0 ${o.size} ${o.size}"><circle class="mn-progress-ring__track" cx="${half}" cy="${half}" r="${radius}" stroke-width="${o.thickness}"/><circle class="mn-progress-ring__fill" cx="${half}" cy="${half}" r="${radius}" stroke-width="${o.thickness}" stroke="${safeColor2}" stroke-dasharray="${circumference}" stroke-dashoffset="${o.animate ? circumference : offset}"/></svg>`;
   if (o.animate) {
     requestAnimationFrame(() => {
       const fill = container.querySelector(".mn-progress-ring__fill");
@@ -642,6 +857,7 @@ function radar(canvas, data, opts) {
     ctx.fillStyle = o.color;
     ctx.fill();
   });
+  applyChartA11y(canvas, `Radar chart: ${n} dimensions`);
   return canvas;
 }
 
@@ -698,6 +914,7 @@ function bubble(canvas, data, opts) {
       ctx.fillText(d.label, bx, by + br + 12);
     }
   });
+  applyChartA11y(canvas, `Bubble chart: ${data.length} data points`);
   return canvas;
 }
 
@@ -736,7 +953,10 @@ function clampVal(v, min, max) {
 }
 function hBarChart(container, opts) {
   const root = typeof container === "string" ? document.querySelector(container) : container;
-  if (!root) return null;
+  if (!root) {
+    console.warn("[Maranello] hBarChart: container not found");
+    return null;
+  }
   const state = {
     opts: {
       title: "",
@@ -817,8 +1037,14 @@ function hBarChart(container, opts) {
     const ticks = buildTicks(maxValue);
     titleEl.style.display = state.opts.title ? "" : "none";
     titleEl.textContent = state.opts.title || "";
+    const highest = bars.length > 0 ? bars.reduce((a, b) => b.value > a.value ? b : a, bars[0]) : null;
+    const hbarLabel = highest ? `Bar chart: ${bars.length} categories, highest ${highest.label} at ${highest.value}` : state.opts.title || "Horizontal bar chart";
     host.setAttribute("role", "img");
-    host.setAttribute("aria-label", state.opts.title || "Horizontal bar chart");
+    host.setAttribute("aria-label", hbarLabel);
+    const prevSr = host.querySelector(".mn-sr-only");
+    if (prevSr) prevSr.remove();
+    const srSpan = createEl("span", "mn-sr-only", hbarLabel);
+    frame.appendChild(srSpan);
     frame.style.setProperty(
       "--mn-hbar-bar-height",
       (state.opts.barHeight || 28) + "px"
@@ -847,7 +1073,8 @@ function hBarChart(container, opts) {
       const valueEl = createEl("div", "mn-hbar__value");
       const pct = clampVal(bar.value / maxValue * 100, 0, 100);
       const txtColor = hexLum(bar.color) > 0.55 ? "#111111" : "#FFFFFF";
-      fill.style.background = bar.color;
+      const safeColor2 = isValidColor(bar.color) ? bar.color : cssVar("--mn-accent");
+      fill.style.background = safeColor2;
       fill.style.height = (state.opts.barHeight || 28) + "px";
       fill.style.width = state.opts.animate ? "0%" : pct + "%";
       valueEl.style.color = txtColor;
@@ -921,6 +1148,9 @@ function positionTooltip(tip, x, y) {
   tip.style.left = left + "px";
   tip.style.top = top + "px";
 }
+function safeColor(c, fallback) {
+  return isValidColor(c) ? c : fallback;
+}
 function buildTooltipHTML(meta, index, series) {
   const esc = escapeHtml;
   if (meta.type === "area" || meta.type === "line") {
@@ -928,7 +1158,7 @@ function buildTooltipHTML(meta, index, series) {
     let html = '<div class="mn-chart-tooltip__label">' + esc(meta.labels && meta.labels[index] ? meta.labels[index] : "Point " + (index + 1)) + "</div>";
     datasets.forEach((ds, i) => {
       if (index < ds.data.length) {
-        const color = ds.color || series[i % series.length];
+        const color = safeColor(ds.color || series[i % series.length], "#999");
         html += '<div style="display:flex;align-items:center;gap:6px;margin-top:3px;"><span class="mn-chart-tooltip__dot" style="background:' + color + ';"></span><span style="color:var(--chart-label,#9e9e9e);font-size:0.65rem;">' + esc(ds.label || "Series " + (i + 1)) + '</span><span class="mn-chart-tooltip__value" style="margin-left:auto;color:' + color + ';">' + ds.data[index].toFixed(1) + "</span></div>";
       }
     });
@@ -936,7 +1166,7 @@ function buildTooltipHTML(meta, index, series) {
   }
   if (meta.type === "bar") {
     const d = meta.data[index];
-    const color = d.color || series[index % series.length];
+    const color = safeColor(d.color || series[index % series.length], "#999");
     return '<div class="mn-chart-tooltip__label">' + esc(d.label || "Bar " + (index + 1)) + '</div><div class="mn-chart-tooltip__value" style="color:' + color + ';">' + d.value + "</div>";
   }
   if (meta.type === "donut") {
@@ -1153,7 +1383,8 @@ function sparklineInteract(canvas, data, opts) {
     ctx.stroke();
     ctx.restore();
     const label = opts.labels ? opts.labels[idx] : "Point " + (idx + 1);
-    tip.innerHTML = '<div class="mn-chart-tooltip__label">' + label + '</div><div class="mn-chart-tooltip__value" style="color:' + color + ';">' + data[idx] + "</div>";
+    const safeC = safeColor(color, "#FFC72C");
+    tip.innerHTML = '<div class="mn-chart-tooltip__label">' + escapeHtml(label) + '</div><div class="mn-chart-tooltip__value" style="color:' + safeC + ';">' + data[idx] + "</div>";
     tip.classList.add("mn-chart-tooltip--visible");
     positionTooltip(tip, e.clientX, e.clientY);
   });

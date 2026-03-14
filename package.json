@@ -1,6 +1,6 @@
 {
   "name": "maranello-luce-design-business",
-  "version": "3.2.0",
+  "version": "3.2.1",
   "description": "Ferrari Luce-inspired design system for business dashboards. Part of the Convergio project.",
   "type": "module",
   "exports": {
@@ -65,6 +65,7 @@
     }
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.11.1",
     "@playwright/test": "^1.50.0",
     "@typescript-eslint/eslint-plugin": "^8.0.0",
     "@typescript-eslint/parser": "^8.0.0",
@@ -91,7 +92,7 @@
     "clean": "rm -rf dist",
     "prepublishOnly": "npm run clean && npm run build"
   },
-  "license": "MIT",
+  "license": "MPL-2.0",
   "author": "Roberto D'Angelo (Roberdan)",
   "repository": {
     "type": "git",

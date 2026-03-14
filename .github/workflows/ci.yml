@@ -60,7 +60,7 @@ jobs:
           IIFE_SIZE=$(wc -c < dist/iife/maranello.min.js)
           CSS_SIZE=$(wc -c < dist/css/maranello.min.css)
           echo "IIFE: ${IIFE_SIZE} bytes, CSS: ${CSS_SIZE} bytes"
-          [ "$IIFE_SIZE" -lt 262144 ] || { echo "FAIL: IIFE > 256KB"; exit 1; }
+          [ "$IIFE_SIZE" -lt 307200 ] || { echo "FAIL: IIFE > 300KB"; exit 1; }
 
       - name: Constitution — No emoji
         run: |

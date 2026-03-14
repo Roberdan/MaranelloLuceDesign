@@ -35,5 +35,4 @@ export declare function clamp(value: number, min: number, max: number): number;
 export declare function lerp(a: number, b: number, t: number): number;
 /** Set up a hi-DPI canvas context. Returns the scaling factor. */
 export declare function hiDpiCanvas(canvas: HTMLCanvasElement, width: number, height: number): number;
-/** Escape HTML special characters to prevent XSS injection. */
-export declare function escapeHtml(str: string): string;
+export { escapeHtml } from './sanitize';

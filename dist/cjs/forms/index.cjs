@@ -1,4 +1,4 @@
-/* Maranello Luce Design v3.0.0 | MIT | github.com/Roberdan/MaranelloLuceDesign */
+/* Maranello Luce Design v3.2.1 | MPL-2.0 | github.com/Roberdan/MaranelloLuceDesign */
 "use strict";
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -107,11 +107,33 @@ function validateField(field) {
   const errorEl = field.querySelector(".mn-field__error");
   if (!valid) {
     field.classList.add("mn-field--error");
-    if (errorEl) errorEl.textContent = errorMsg;
-  } else if (value.length > 0) {
-    field.classList.add("mn-field--success");
+    input.setAttribute("aria-invalid", "true");
+    if (errorEl) {
+      if (!errorEl.id) {
+        errorEl.id = "mn-err-" + Date.now() + "-" + Math.random().toString(36).slice(2, 6);
+      }
+      errorEl.setAttribute("aria-live", "assertive");
+      errorEl.textContent = errorMsg;
+      const existing = (input.getAttribute("aria-describedby") ?? "").split(/\s+/).filter(Boolean);
+      if (!existing.includes(errorEl.id)) {
+        input.setAttribute("aria-describedby", [...existing, errorEl.id].join(" "));
+      }
+    }
+  } else {
+    input.removeAttribute("aria-invalid");
+    if (errorEl) {
+      const tokens = (input.getAttribute("aria-describedby") ?? "").split(/\s+/).filter(
+        (t) => t && t !== errorEl.id
+      );
+      if (tokens.length > 0) {
+        input.setAttribute("aria-describedby", tokens.join(" "));
+      } else {
+        input.removeAttribute("aria-describedby");
+      }
+      errorEl.textContent = "";
+    }
+    if (value.length > 0) field.classList.add("mn-field--success");
   }
-  if (errorEl && valid) errorEl.textContent = "";
   return valid;
 }
 function validateForm(formEl) {
@@ -213,10 +235,14 @@ function initAutoResize(el) {
   resize();
 }
 function initTagInput(container) {
-  if (!container) return null;
+  if (!container) {
+    console.warn("[Maranello] initTagInput: container element is null");
+    return null;
+  }
   const root = container;
   const field = root.querySelector(".mn-tag-input__field");
   if (!field) return null;
+  if (!field.hasAttribute("aria-label")) field.setAttribute("aria-label", "Type to add tags");
   let tags = [];
   function addTag(text) {
     const t = text.trim();
@@ -274,7 +300,10 @@ function initPasswordToggle(wrap) {
   });
 }
 function initFileUpload(container) {
-  if (!container) return null;
+  if (!container) {
+    console.warn("[Maranello] initFileUpload: container element is null");
+    return null;
+  }
   const root = container;
   const input = root.querySelector('input[type="file"]');
   if (!input) return null;
@@ -297,11 +326,21 @@ function initFileUpload(container) {
     eventBus.emit("file-upload", { files, container: root });
     updateLabel();
   });
+  const liveRegion = root.querySelector(".mn-file-upload__live") ?? Object.assign(document.createElement("span"), { className: "mn-file-upload__live" });
+  liveRegion.setAttribute("aria-live", "polite");
+  liveRegion.setAttribute("role", "status");
+  liveRegion.style.cssText = "position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)";
+  if (!liveRegion.parentNode) root.appendChild(liveRegion);
   function updateLabel() {
     const textEl = root.querySelector(".mn-file-upload__text");
-    if (textEl && files.length > 0) {
-      textEl.innerHTML = files.length === 1 ? "<strong>" + files[0].name + "</strong>" : "<strong>" + files.length + " files</strong> selected";
-    }
+    if (!textEl || files.length === 0) return;
+    textEl.textContent = "";
+    const strong = document.createElement("strong");
+    const msg = files.length === 1 ? files[0].name : files.length + " files selected";
+    strong.textContent = files.length === 1 ? files[0].name : files.length + " files";
+    textEl.appendChild(strong);
+    if (files.length > 1) textEl.appendChild(document.createTextNode(" selected"));
+    liveRegion.textContent = msg;
   }
   return {
     getFiles: () => files,
@@ -314,15 +353,24 @@ function initFileUpload(container) {
   };
 }
 function initFormSteps(container) {
-  if (!container) return null;
+  if (!container) {
+    console.warn("[Maranello] initFormSteps: container element is null");
+    return null;
+  }
+  container.setAttribute("role", "group");
+  if (!container.getAttribute("aria-label")) container.setAttribute("aria-label", "Form steps");
   const steps = container.querySelectorAll(".mn-form-step");
   let current = 0;
   function setStep(index) {
     current = Math.max(0, Math.min(index, steps.length - 1));
     steps.forEach((step, i) => {
       step.classList.remove("mn-form-step--active", "mn-form-step--complete");
+      step.removeAttribute("aria-current");
       if (i < current) step.classList.add("mn-form-step--complete");
-      if (i === current) step.classList.add("mn-form-step--active");
+      if (i === current) {
+        step.classList.add("mn-form-step--active");
+        step.setAttribute("aria-current", "step");
+      }
     });
     eventBus.emit("form-step-change", { step: current, total: steps.length });
   }
@@ -385,7 +433,10 @@ function initCharCounter(field) {
   update();
 }
 function initSearchClear(wrap) {
-  if (!wrap) return;
+  if (!wrap) {
+    console.warn("[Maranello] initSearchClear: wrapper element is null");
+    return;
+  }
   const input = wrap.querySelector(".mn-form-input");
   const clearBtn = wrap.querySelector(".mn-search-input__clear");
   if (!input || !clearBtn) return;
@@ -406,7 +457,28 @@ function initSearchClear(wrap) {
 function qsa(root, ...sels) {
   return root.querySelectorAll(sels.join(","));
 }
+function applyFieldA11y(root) {
+  const fields = root.querySelectorAll ? root.querySelectorAll(".mn-field") : document.querySelectorAll(".mn-field");
+  fields.forEach((field) => {
+    const input = getFieldInput(field);
+    if (!input) return;
+    if (input.hasAttribute("required") || input.getAttribute("data-validate")?.includes("required")) {
+      input.setAttribute("aria-required", "true");
+    }
+    const hint = field.querySelector(".mn-field__hint");
+    if (hint) {
+      if (!hint.id) {
+        hint.id = "mn-hint-" + Date.now() + "-" + Math.random().toString(36).slice(2, 6);
+      }
+      const existing = input.getAttribute("aria-describedby");
+      if (!existing?.includes(hint.id)) {
+        input.setAttribute("aria-describedby", existing ? existing + " " + hint.id : hint.id);
+      }
+    }
+  });
+}
 function initForms(root = document) {
+  applyFieldA11y(root);
   qsa(root, "[data-mn-validate]", ".mn-form[data-live-validate]").forEach(
     (form) => initLiveValidation(form)
   );

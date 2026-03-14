@@ -5,7 +5,42 @@
  * (c) Roberdan 2026 — MIT License
  */
 
-declare const mapboxgl: any;
+import { escapeHtml, isValidColor } from './core/sanitize';
+
+/** Minimal Mapbox GL type surface — mapbox-gl is a peer dependency. */
+interface MapboxMap {
+  addControl: (ctrl: unknown, pos?: string) => void;
+  addSource: (id: string, src: unknown) => void;
+  addLayer: (layer: unknown, before?: string) => void;
+  on: (event: string, cb: () => void) => void;
+  flyTo: (opts: unknown) => void;
+  setStyle: (style: string) => void;
+  resize: () => void;
+  remove: () => void;
+  getZoom: () => number;
+}
+
+interface MapboxPopup {
+  setHTML: (html: string) => MapboxPopup;
+}
+
+interface MapboxMapMarker {
+  setLngLat: (lnglat: [number, number]) => MapboxMapMarker;
+  setPopup: (popup: MapboxPopup) => MapboxMapMarker;
+  addTo: (map: MapboxMap) => MapboxMapMarker;
+  remove: () => void;
+}
+
+interface MapboxGL {
+  accessToken: string;
+  Map: new (opts: unknown) => MapboxMap;
+  Popup: new (opts: unknown) => MapboxPopup;
+  Marker: new (opts: { element: HTMLElement }) => MapboxMapMarker;
+  NavigationControl: new (opts?: unknown) => unknown;
+  AttributionControl: new (opts?: unknown) => unknown;
+}
+
+declare const mapboxgl: MapboxGL | undefined;
 
 export interface MapboxMarker {
   id: string | number;
@@ -44,7 +79,7 @@ export interface MapboxViewController {
   setStyle: (style: string) => void;
   resize: () => void;
   destroy: () => void;
-  getMap: () => any;
+  getMap: () => MapboxMap;
 }
 
 const DARK_STYLE = 'mapbox://styles/mapbox/dark-v11';
@@ -58,10 +93,17 @@ const DEFAULT_STAGES = [
   { id: 'on-hold', label: 'On Hold', color: '#DC0000' },
 ];
 
-function getMapboxGL(): any {
-  if (typeof mapboxgl !== 'undefined') return mapboxgl;
-  if (typeof window !== 'undefined' && (window as any).mapboxgl) return (window as any).mapboxgl;
+function getMapboxGL(): MapboxGL | null {
+  if (typeof mapboxgl !== 'undefined' && mapboxgl) return mapboxgl;
+  if (typeof window !== 'undefined') {
+    const win = window as unknown as Record<string, unknown>;
+    if (win.mapboxgl) return win.mapboxgl as MapboxGL;
+  }
   return null;
+}
+
+function safeColor(c: string | undefined, fallback: string): string {
+  return c && isValidColor(c) ? c : fallback;
 }
 
 export function mapboxView(
@@ -75,11 +117,13 @@ export function mapboxView(
   const host = target;
   const root = target;
 
-  const mb = getMapboxGL();
-  if (!mb) {
+  const mbRaw = getMapboxGL();
+  if (!mbRaw) {
     host.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:200px;color:var(--text-dim,#666);font-size:0.8rem">mapbox-gl not loaded. Add &lt;script src="mapbox-gl.js"&gt; to use this component.</div>';
     return null;
   }
+  /* Non-null after guard — captured safely in closures below. */
+  const mb: MapboxGL = mbRaw;
 
   const o = {
     accessToken: '',
@@ -119,12 +163,12 @@ export function mapboxView(
   o.stages.forEach((s) => { stageColors[s.id] = s.color; });
 
   function markerColor(m: MapboxMarker): string {
-    if (m.color) return m.color;
-    if (m.stage && stageColors[m.stage]) return stageColors[m.stage];
+    if (m.color) return safeColor(m.color, '#FFC72C');
+    if (m.stage && stageColors[m.stage]) return safeColor(stageColors[m.stage], '#FFC72C');
     return '#FFC72C';
   }
 
-  let markerInstances: any[] = [];
+  let markerInstances: MapboxMapMarker[] = [];
 
   function renderMarkers(markers: MapboxMarker[]): void {
     markerInstances.forEach((m) => m.remove());
@@ -143,7 +187,7 @@ export function mapboxView(
       el.addEventListener('mouseleave', () => { el.style.transform = ''; });
 
       const popup = new mb.Popup({ offset: 20, closeButton: false, className: 'mn-mapbox-popup' })
-        .setHTML(`<div style="font-weight:600;margin-bottom:2px">${m.label}</div>${m.detail ? `<div style="font-size:0.75rem;opacity:0.7">${m.detail}</div>` : ''}`);
+        .setHTML(`<div style="font-weight:600;margin-bottom:2px">${escapeHtml(m.label)}</div>${m.detail ? `<div style="font-size:0.75rem;opacity:0.7">${escapeHtml(m.detail)}</div>` : ''}`);
 
       const marker = new mb.Marker({ element: el })
         .setLngLat([m.lon, m.lat])
@@ -164,7 +208,8 @@ export function mapboxView(
     legend.className = 'mn-mapbox-legend';
     legend.style.cssText = 'position:absolute;bottom:8px;left:8px;display:flex;gap:10px;padding:6px 10px;background:rgba(0,0,0,0.7);border-radius:6px;font-size:0.65rem;z-index:1';
     o.stages.forEach((s) => {
-      legend.innerHTML += `<span style="display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:${s.color};display:inline-block"></span><span style="color:var(--text-dim,#999)">${s.label}</span></span>`;
+      const c = safeColor(s.color, '#999');
+      legend.innerHTML += `<span style="display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:${c};display:inline-block"></span><span style="color:var(--text-dim,#999)">${escapeHtml(s.label)}</span></span>`;
     });
     root.style.position = 'relative';
     root.appendChild(legend);

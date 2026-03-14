@@ -3,7 +3,7 @@
  */
 import type { HalfGaugeOptions } from './core/types';
 import { cssVar } from './core/utils';
-import { chartHiDpi, getCanvasSize } from './charts-helpers';
+import { chartHiDpi, getCanvasSize, applyChartA11y } from './charts-helpers';
 
 /** Render a half-gauge (semicircular gauge) on a canvas element. */
 export function halfGauge(
@@ -72,6 +72,9 @@ export function halfGauge(
   ctx.textAlign = 'center';
   ctx.fillText(String(o.min), cx - radius + lineW / 2, cy + radius * 0.18);
   ctx.fillText(String(o.max), cx + radius - lineW / 2, cy + radius * 0.18);
+
+  const unitSuffix = o.unit ? ' ' + o.unit : '';
+  applyChartA11y(canvas, `Gauge: ${o.value} of ${o.max}${unitSuffix}`);
 
   return canvas;
 }

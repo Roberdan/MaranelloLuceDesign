@@ -13,8 +13,7 @@
 }
 
 /* ── STRIP ROW (full width, toggleable) ──────────────────── */
-.mn-layout > .mn-strip { flex-shrink: 0; }
-.mn-layout > .mn-strip[hidden] { display: none !important; }
+.mn-layout > .mn-strip:not([hidden]) { flex-shrink: 0; }
 
 /* ── COLUMNS ROW (horizontal flex: left + center + right) ── */
 .mn-layout__columns {
@@ -25,7 +24,7 @@
 }
 
 /* ── LEFT: Funnel Sidebar (25%) ──────────────────────────── */
-.mn-layout__left {
+.mn-layout__left:not([hidden]) {
   width: 25%;
   max-width: 360px;
   min-width: 240px;
@@ -33,7 +32,6 @@
   overflow-y: auto;
   border-right: 1px solid var(--bordo, #333);
 }
-.mn-layout__left[hidden] { display: none !important; }
 body.mn-avorio .mn-layout__left { border-right-color: var(--grigio-alluminio); }
 
 /* ── CENTER: Stacked Views (flex-grow) ───────────────────── */
@@ -53,7 +51,6 @@ body.mn-avorio .mn-layout__left { border-right-color: var(--grigio-alluminio); }
   width: 100%;
   overflow-y: auto;
 }
-.mn-layout__center .mn-app-gantt[hidden] { display: none !important; }
 
 .mn-layout__center > .mn-app-view:not([hidden]) {
   flex: 1;
@@ -63,10 +60,9 @@ body.mn-avorio .mn-layout__left { border-right-color: var(--grigio-alluminio); }
   container-type: inline-size;
   container-name: viewpane;
 }
-.mn-layout__center .mn-app-view[hidden] { display: none !important; }
 
 /* ── RIGHT: Detail Panel Column (25%) ────────────────────── */
-.mn-layout__right {
+.mn-layout__right:not([hidden]) {
   width: 25%;
   max-width: 420px;
   min-width: 280px;
@@ -74,7 +70,6 @@ body.mn-avorio .mn-layout__left { border-right-color: var(--grigio-alluminio); }
   overflow-y: auto;
   border-left: 1px solid var(--bordo, #333);
 }
-.mn-layout__right[hidden] { display: none !important; }
 body.mn-avorio .mn-layout__right { border-left-color: var(--grigio-alluminio); }
 
 /* ── BOTTOM: Simulator Zone ──────────────────────────────── */

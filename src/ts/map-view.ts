@@ -128,8 +128,13 @@ export function mapView(
     tip.style.left = left + 'px'; tip.style.top = top + 'px';
   }
 
-  if (window.ResizeObserver) new ResizeObserver(() => render()).observe(container);
-  new MutationObserver(() => render()).observe(document.body, { attributes: true, attributeFilter: ['class'] });
+  let resizeObs: ResizeObserver | null = null;
+  if (window.ResizeObserver) {
+    resizeObs = new ResizeObserver(() => render());
+    resizeObs.observe(container);
+  }
+  const mutationObs = new MutationObserver(() => render());
+  mutationObs.observe(document.body, { attributes: true, attributeFilter: ['class'] });
   render();
 
   return {
@@ -138,8 +143,12 @@ export function mapView(
     removeMarker: (id) => { markers = markers.filter((m) => m.id !== id); render(); },
     highlight: (id) => { highlighted = id as string | null; render(); },
     setZoom: (z) => { viewState.zoom = z; render(); },
-    panTo: (lat, lon) => { /* pan via viewState */ render(); },
+    panTo: (_lat, _lon) => { /* pan via viewState */ render(); },
     fitBounds: () => { viewState.zoom = 1; viewState.panX = 0; viewState.panY = 0; render(); },
-    destroy: () => { container!.innerHTML = ''; },
+    destroy: () => {
+      resizeObs?.disconnect();
+      mutationObs.disconnect();
+      container!.innerHTML = '';
+    },
   };
 }

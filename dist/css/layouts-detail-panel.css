@@ -118,9 +118,10 @@
 .mn-detail-panel__field--block {
   flex-wrap: wrap;
 }
-.mn-detail-panel__field--error .mn-detail-panel__edit-input,
-.mn-detail-panel__field--error .mn-detail-panel__edit-textarea {
-  border-color: var(--rosso-corsa, #DC0000) !important;
+/* Error state beats the doubled-class form overrides via descendant specificity */
+.mn-detail-panel__field--error .mn-detail-panel__edit-input.mn-detail-panel__edit-input,
+.mn-detail-panel__field--error .mn-detail-panel__edit-textarea.mn-detail-panel__edit-textarea {
+  border-color: var(--rosso-corsa, #DC0000);
 }
 .mn-detail-panel__field-error {
   width: 100%;
@@ -143,9 +144,10 @@
 }
 
 /* ── External Link Button (Maranello Gold) ───────────────── */
-.mn-detail-panel__ado-btn {
-  background: var(--mn-accent, #FFC72C) !important;
-  color: var(--nero-1, #0d0d0d) !important;
+/* Double-class specificity beats generic link/button resets */
+.mn-detail-panel__ado-btn.mn-detail-panel__ado-btn {
+  background: var(--mn-accent, #FFC72C);
+  color: var(--nero-1, #0d0d0d);
   font-size: 0.7rem;
   font-weight: 700;
   padding: 4px 10px;

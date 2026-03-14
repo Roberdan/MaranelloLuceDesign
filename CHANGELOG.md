@@ -5,6 +5,56 @@ All notable changes to this project will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.2.1] - 14 Mar 2026
+
+### Security
+- **XSS hardening** — `sanitize.ts` module: `escapeHtml`, `sanitizeHtml`, `isValidColor`, `sanitizeAttr`, `sanitizeSvg`, `ALLOWED_BIND_PROPERTIES`
+- All innerHTML/setHTML paths sanitized across 15 modules (map, charts, chat, table, forms, icons, gantt, okr, funnel, login, profile, system-status)
+- SVG injection blocked via `sanitizeSvg()` (strips `<script>`, event handlers, external `<use>` href)
+- Color values validated with `isValidColor()` before inline styles
+- Data binding property whitelist (`ALLOWED_BIND_PROPERTIES`) with warn on non-whitelisted
+
+### Accessibility
+- Canvas charts: text alternatives with `role="img"`, `aria-label`, `mn-sr-only` fallback (11 chart modules + gauge + speedometer)
+- Forms: `aria-invalid`, `aria-describedby`, `aria-required`, `aria-live="assertive"` on validation
+- Keyboard navigation: date picker (arrows/Home/End/PgUp/PgDn), command palette (combobox pattern), detail panel (focus trap), drawer (Escape/focus trap), tabs (Home/End), org tree (arrow keys)
+- Data table: `role="row"`, `scope="col"`, `aria-current="page"`, live region for sort/filter/pagination
+- Binding: `aria-label` updated on gauge/chart after value change
+
+### Themes
+- **CRITICAL** Avorio gauge contrast fix — dark text on light backgrounds (was 1.2:1, now >4.5:1)
+- Colorblind overrides for climate controls, live/donut/bar charts, gauge/temp badges (Okabe-Ito palette)
+- 29 hardcoded hex colors tokenized with `var(--token, fallback)` pattern across 5 CSS files
+
+### Performance
+- Scroll handler throttled (100ms) in `initNavTracking`
+- Resize handler throttled (300ms) in `profileMenu`
+- Observer cleanup: `ResizeObserver`/`MutationObserver` disconnect in `mapView.destroy()`
+
+### Quality
+- Version synced to 3.2.1 across package.json, index.ts, esbuild banner
+- CSS `!important` reduced from 48 to 26 (remaining are a11y/utility, documented)
+- 6 silent failures fixed with `console.warn('[Maranello] ...')`
+- Files >250 lines split: `tokens.css`, `layouts-data-table-compact-2.css`
+- `any` types removed from `map-mapbox.ts`
+- CLAUDE.md aligned: 25 WC, sanitize module, v3.2.1
+
+### Testing
+- 354 unit tests (sanitize, data-binding, forms-validate, map-view, ai-chat, detail-panel, wc-lifecycle)
+- 4 E2E spec files (a11y with axe-core, keyboard, security XSS payloads, themes)
+
+### Demo
+- Overlays section (modal, toast, drawer, command palette)
+- Org tree section with expand/collapse and keyboard nav
+- Keyboard chart access (tabindex + Enter/Space on 15 canvases)
+- Theme switcher shows active theme name
+- Form validation demo with visible error states
+- Data binding section with sliders → gauges + event bus log
+
+### Migration Notes
+- `data-binding.ts`: property whitelist is warn-only (non-blocking for backward compat)
+- `escapeHtml` re-exported from `core/utils.ts` for backward compat
+
 ## [3.2.0] - 13 Mar 2026
 
 ### Added

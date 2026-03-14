@@ -32,6 +32,9 @@ import { createWebComponentsSection } from './sections/web-components.js';
 import { createLaunchSection } from './sections/launch.js';
 import { createAccessibilitySection } from './sections/accessibility.js';
 import { createApiReferenceSection } from './sections/api-reference.js';
+import { createDataBindingSection } from './sections/data-binding.js';
+import { createOverlaysSection } from './sections/overlays.js';
+import { createOrgTreeSection } from './sections/org-tree.js';
 
 const root = document.getElementById('demo-root');
 if (!root) throw new Error('Missing #demo-root');
@@ -67,6 +70,9 @@ const sections = [
   createLaunchSection(),
   createAccessibilitySection(),
   createApiReferenceSection(),
+  createDataBindingSection(),
+  createOverlaysSection(),
+  createOrgTreeSection(),
   createFooter(),
 ];
 
@@ -82,6 +88,15 @@ document.querySelectorAll('.demo-nav__links a').forEach((link) => {
   });
 });
 
+/** Sync theme label next to the theme toggle. */
+function updateThemeLabel() {
+  const label = document.getElementById('demo-theme-label');
+  if (!label) return;
+  const theme = window.Maranello?.getTheme?.() ?? 'nero';
+  const names = { nero: 'Nero', avorio: 'Avorio', colorblind: 'Colorblind', editorial: 'Editorial' };
+  label.textContent = `Current: ${names[theme] ?? theme}`;
+}
+
 document.addEventListener('mn-theme-change', (event) => {
   const nav = document.querySelector('.demo-nav');
   if (!nav) return;
@@ -92,7 +107,11 @@ document.addEventListener('mn-theme-change', (event) => {
     nav.style.background = 'rgba(10,10,10,0.92)';
     nav.style.borderBottomColor = 'var(--grigio-scuro)';
   }
+  updateThemeLabel();
 });
+
+// Set initial label once the IIFE is ready (runs synchronously before module).
+requestAnimationFrame(updateThemeLabel);
 
 function createFooter() {
   const footer = document.createElement('footer');

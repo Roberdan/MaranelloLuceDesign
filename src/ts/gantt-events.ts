@@ -127,10 +127,13 @@ export function attachGanttEvents(s: GanttState): void {
   (s.btnZI as HTMLButtonElement).addEventListener('click', () => { s.zoom = Math.max(o.minZoom as number, (s.zoom as number) - (o.zoomStep as number) * 2); render(); });
   (s.btnZO as HTMLButtonElement).addEventListener('click', () => { s.zoom = Math.min(o.maxZoom as number, (s.zoom as number) + (o.zoomStep as number) * 2); render(); });
   (s.btnFit as HTMLButtonElement).addEventListener('click', () => { if (typeof s._fitView === 'function') (s._fitView as (w: number) => void)((s.wrap as HTMLDivElement).getBoundingClientRect().width || 800); render(); });
+  const SCROLL_STEP = 40;
   canvas.addEventListener('keydown', (e) => {
     const rows = s.rows as GanttRow[]; let idx: number;
     if (e.key === 'ArrowDown') { e.preventDefault(); idx = rowIdx(rows, s.selected); if (idx < rows.length - 1) { s.selected = (rows[idx + 1].task as Record<string, unknown>).id; render(); } }
     else if (e.key === 'ArrowUp') { e.preventDefault(); idx = rowIdx(rows, s.selected); if (idx > 0) { s.selected = (rows[idx - 1].task as Record<string, unknown>).id; render(); } }
+    else if (e.key === 'ArrowLeft') { e.preventDefault(); s.scrollX = Math.max(0, (s.scrollX as number) - SCROLL_STEP); render(); }
+    else if (e.key === 'ArrowRight') { e.preventDefault(); s.scrollX = (s.scrollX as number) + SCROLL_STEP; render(); }
     else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); const r = rows.find((r) => (r.task as Record<string, unknown>).id === s.selected); if (r && r.type === 'parent' && r.hasChildren) { const exp = s.expanded as Record<string, boolean>; const sid = s.selected as string; if (exp[sid]) delete exp[sid]; else exp[sid] = true; s.rows = buildRows(s.tasks as unknown[], exp); render(); } }
     else if (e.key === 'Escape') { s.selected = null; render(); }
   });

@@ -38,7 +38,10 @@ export function gridLayout(
   const target = typeof container === 'string'
     ? document.querySelector<HTMLElement>(container)
     : container;
-  if (!target) return null;
+  if (!target) {
+    console.warn('[Maranello] gridLayout: container not found');
+    return null;
+  }
   const host = target;
   const opts = { gap: '', padding: '', animate: true, ...options };
   let current = template;

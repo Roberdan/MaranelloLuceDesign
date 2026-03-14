@@ -170,12 +170,5 @@ export function hiDpiCanvas(
   return dpr;
 }
 
-/** Escape HTML special characters to prevent XSS injection. */
-export function escapeHtml(str: string): string {
-  return str
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
+/* Re-export escapeHtml from sanitize module for backward compatibility. */
+export { escapeHtml } from './sanitize';

@@ -23,6 +23,8 @@ export class FerrariGauge {
   radius!: number;
   density!: 'sm' | 'md' | 'lg';
 
+  private srSpan: HTMLSpanElement | null = null;
+
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
@@ -56,11 +58,46 @@ export class FerrariGauge {
     this.cy = size / 2;
     this.radius = size * 0.40;
     this.density = size <= 140 ? 'sm' : size <= 260 ? 'md' : 'lg';
+    this.initA11y();
     this.animate();
   }
 
+  /** Set up ARIA attributes and screen-reader helpers on the canvas. */
+  private initA11y(): void {
+    this.canvas.setAttribute('role', 'img');
+    const label = this.buildA11yLabel();
+    this.canvas.setAttribute('aria-label', label);
+    this.canvas.textContent = label;
+
+    // Insert sr-only span after canvas for assistive tech
+    if (!this.srSpan) {
+      this.srSpan = document.createElement('span');
+      this.srSpan.className = 'mn-sr-only';
+      this.canvas.parentElement?.insertBefore(this.srSpan, this.canvas.nextSibling);
+    }
+    this.srSpan.textContent = label;
+  }
+
+  /** Build an accessible label from gauge config values. */
+  private buildA11yLabel(): string {
+    const c = this.config;
+    const value = c.value ?? 0;
+    const unit = (c.unit as string) || '';
+    const label = (c.label as string) || '';
+    const suffix = unit ? `${value}${unit}` : String(value);
+    return label ? `Gauge: ${suffix}, ${label}` : `Gauge: ${suffix}`;
+  }
+
+  /** Sync aria-label and sr-only span with current config. */
+  private updateA11y(): void {
+    const label = this.buildA11yLabel();
+    this.canvas.setAttribute('aria-label', label);
+    this.canvas.textContent = label;
+    if (this.srSpan) this.srSpan.textContent = label;
+  }
+
   /** Redraw at full progress. */
-  redraw(): void { this.draw(1); }
+  redraw(): void { this.updateA11y(); this.draw(1); }
 
   /** Animate from 0 to full with ease-in-out-cubic. */
   animate(): void {

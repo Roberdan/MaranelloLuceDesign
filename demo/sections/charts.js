@@ -155,4 +155,47 @@ function initCharts(section) {
     bind('bubble-demo', { type: 'bubble', data: bubbleData, points: bubbleData.map(({ x, y, z }) => ({ x: bubbleGx(x), y: bubbleGy(y), r: bubbleGr(z) })) }, bubbleData.map(({ color }) => color));
   }
   if (M.sparklineInteract) [['spark-1', sparkData], ['spark-2', [320,360,410,480,530,610]], ['spark-3', [80,92,88,104,110,118,126,134]], ['spark-4', [4200,5100,6200,7400,8900,10400,11800,14560]]].forEach(([id, data]) => { const el = g(id); if (el) M.sparklineInteract(el, data, { color: '#FFC72C' }); });
+  addKeyboardAccess(section);
+}
+
+/**
+ * Make chart canvases keyboard-accessible.
+ * tabindex="0" allows focus via Tab; Enter/Space synthesise a click so
+ * chartInteract / sparklineInteract tooltip handlers fire on keyboard.
+ * Role "img" + aria-label give screen readers a meaningful description.
+ */
+const CHART_A11Y = [
+  ['spark-1', 'Sparkline: monthly token spend'],
+  ['spark-2', 'Sparkline: inference runs'],
+  ['spark-3', 'Sparkline: agent handoffs'],
+  ['spark-4', 'Sparkline: tasks completed'],
+  ['donut-sm', 'Donut chart: budget mix by category'],
+  ['donut-md', 'Donut chart: accuracy completed vs remaining'],
+  ['bar-chart-demo', 'Bar chart: token spend by region'],
+  ['area-chart-demo', 'Area chart: inference runs over 12 months'],
+  ['radar-demo', 'Radar chart: pipeline effectiveness across 6 axes'],
+  ['bubble-demo', 'Bubble chart: region accuracy vs load'],
+  ['hg-sm', 'Half gauge: route saturation 68%'],
+  ['hg-md', 'Half gauge: accuracy 96%'],
+  ['hg-lg', 'Half gauge: tokens 84%'],
+  ['trend-1', 'Sparkline trend: token spend 15 months'],
+  ['trend-2', 'Sparkline trend: inference runs 15 months'],
+];
+
+function addKeyboardAccess(section) {
+  CHART_A11Y.forEach(([id, label]) => {
+    const el = section.querySelector(`#${id}`);
+    if (!el) return;
+    el.setAttribute('tabindex', '0');
+    el.setAttribute('role', 'img');
+    el.setAttribute('aria-label', label);
+    // Enter or Space fires a click at the canvas centre so tooltip handlers activate
+    el.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      e.preventDefault();
+      const rect = el.getBoundingClientRect();
+      el.dispatchEvent(new MouseEvent('mousemove', { bubbles: true, clientX: rect.left + rect.width / 2, clientY: rect.top + rect.height / 2 }));
+      el.dispatchEvent(new MouseEvent('click', { bubbles: true, clientX: rect.left + rect.width / 2, clientY: rect.top + rect.height / 2 }));
+    });
+  });
 }

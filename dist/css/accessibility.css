@@ -136,6 +136,8 @@ body.mn-avorio .mn-text-subtle {
 
 
 /* ── REDUCED MOTION (runtime toggle via a11y panel) ── */
+/* a11y: keep !important — must override all animation/transition rules
+   regardless of specificity to ensure accessible motion preferences */
 html.mn-reduced-motion *,
 html.mn-reduced-motion *::before,
 html.mn-reduced-motion *::after {
@@ -145,8 +147,9 @@ html.mn-reduced-motion *::after {
   scroll-behavior: auto !important;
 }
 
-/* Also respect prefers-reduced-motion */
+/* Also respect prefers-reduced-motion OS setting */
 @media (prefers-reduced-motion: reduce) {
+  /* a11y: keep !important — same rationale as above */
   *,
   *::before,
   *::after {
@@ -165,6 +168,8 @@ html.mn-high-contrast {
 }
 
 /* ── NO FOCUS RING (when toggled off in a11y panel) ── */
+/* a11y: keep !important — must defeat all :focus-visible rules site-wide
+   when user explicitly disables focus rings via the accessibility panel */
 html.mn-no-focus-ring *:focus-visible {
   outline: none !important;
   box-shadow: none !important;

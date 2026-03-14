@@ -3,6 +3,7 @@
  * Provides chartInteract (multi-type) and sparklineInteract (overlay canvas).
  */
 import { cssVar, escapeHtml } from './core/utils';
+import { isValidColor } from './core/sanitize';
 
 const DPR = window.devicePixelRatio || 1;
 let activeTooltip: HTMLDivElement | null = null;
@@ -26,6 +27,10 @@ function positionTooltip(tip: HTMLDivElement, x: number, y: number): void {
   tip.style.position = 'fixed'; tip.style.left = left + 'px'; tip.style.top = top + 'px';
 }
 
+function safeColor(c: string, fallback: string): string {
+  return isValidColor(c) ? c : fallback;
+}
+
 interface ChartMeta {
   type: string;
   [key: string]: unknown;
@@ -38,13 +43,13 @@ function buildTooltipHTML(meta: ChartMeta, index: number, series: string[]): str
     let html = '<div class="mn-chart-tooltip__label">' + esc(meta.labels && (meta.labels as string[])[index] ? (meta.labels as string[])[index] : 'Point ' + (index + 1)) + '</div>';
     datasets.forEach((ds, i) => {
       if (index < ds.data.length) {
-        const color = ds.color || series[i % series.length];
+        const color = safeColor(ds.color || series[i % series.length], '#999');
         html += '<div style="display:flex;align-items:center;gap:6px;margin-top:3px;"><span class="mn-chart-tooltip__dot" style="background:' + color + ';"></span><span style="color:var(--chart-label,#9e9e9e);font-size:0.65rem;">' + esc(ds.label || 'Series ' + (i + 1)) + '</span><span class="mn-chart-tooltip__value" style="margin-left:auto;color:' + color + ';">' + ds.data[index].toFixed(1) + '</span></div>';
       }
     });
     return html;
   }
-  if (meta.type === 'bar') { const d = (meta.data as Array<{ label?: string; value: number; color?: string }>)[index]; const color = d.color || series[index % series.length]; return '<div class="mn-chart-tooltip__label">' + esc(d.label || 'Bar ' + (index + 1)) + '</div><div class="mn-chart-tooltip__value" style="color:' + color + ';">' + d.value + '</div>'; }
+  if (meta.type === 'bar') { const d = (meta.data as Array<{ label?: string; value: number; color?: string }>)[index]; const color = safeColor(d.color || series[index % series.length], '#999'); return '<div class="mn-chart-tooltip__label">' + esc(d.label || 'Bar ' + (index + 1)) + '</div><div class="mn-chart-tooltip__value" style="color:' + color + ';">' + d.value + '</div>'; }
   if (meta.type === 'donut') { const seg = (meta.segments as Array<{ color: string; value: number; label?: string; pct: number }>)[index]; return '<div style="display:flex;align-items:center;gap:6px;"><span class="mn-chart-tooltip__dot" style="background:' + seg.color + ';"></span><span class="mn-chart-tooltip__value">' + seg.value + '</span></div>' + (seg.label ? '<div class="mn-chart-tooltip__label">' + esc(seg.label) + '</div>' : '') + '<div style="color:var(--chart-label,#9e9e9e);font-size:0.6rem;">' + seg.pct + '%</div>'; }
   if (meta.type === 'bubble') { const b = (meta.data as Array<{ label?: string; x: number; y: number; z?: number; r?: number }>)[index]; const size = b.z ?? b.r; return '<div class="mn-chart-tooltip__label">' + esc(b.label || 'Point') + '</div><div style="font-size:0.65rem;color:var(--chart-label,#9e9e9e);">x: ' + b.x + ' \u00B7 y: ' + b.y + (size ? ' \u00B7 size: ' + size : '') + '</div>'; }
   if (meta.type === 'radar') { const r = (meta.data as Array<{ label: string; value: number }>)[index]; return '<div class="mn-chart-tooltip__label">' + esc(r.label) + '</div><div class="mn-chart-tooltip__value" style="color:var(--chart-default,#FFC72C);">' + r.value + '<span style="color:var(--chart-axis,#616161);font-size:0.6rem;">/' + meta.max + '</span></div>'; }
@@ -202,7 +207,8 @@ export function sparklineInteract(
     ctx.beginPath(); ctx.arc(px, py, 10, 0, Math.PI * 2); ctx.fillStyle = `rgba(${cr},${cg},${cb},0.25)`; ctx.fill();
     ctx.beginPath(); ctx.arc(px, py, 5, 0, Math.PI * 2); ctx.fillStyle = color; ctx.fill(); ctx.strokeStyle = '#000'; ctx.lineWidth = 1.5; ctx.stroke(); ctx.restore();
     const label = (opts!.labels as string[]) ? (opts!.labels as string[])[idx] : 'Point ' + (idx + 1);
-    tip.innerHTML = '<div class="mn-chart-tooltip__label">' + label + '</div><div class="mn-chart-tooltip__value" style="color:' + color + ';">' + data[idx] + '</div>';
+    const safeC = safeColor(color, '#FFC72C');
+    tip.innerHTML = '<div class="mn-chart-tooltip__label">' + escapeHtml(label) + '</div><div class="mn-chart-tooltip__value" style="color:' + safeC + ';">' + data[idx] + '</div>';
     tip.classList.add('mn-chart-tooltip--visible'); positionTooltip(tip, e.clientX, e.clientY);
   });
 

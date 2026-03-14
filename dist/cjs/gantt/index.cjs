@@ -1,4 +1,4 @@
-/* Maranello Luce Design v3.0.0 | MIT | github.com/Roberdan/MaranelloLuceDesign */
+/* Maranello Luce Design v3.2.1 | MPL-2.0 | github.com/Roberdan/MaranelloLuceDesign */
 "use strict";
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -25,12 +25,193 @@ __export(index_exports, {
 });
 module.exports = __toCommonJS(index_exports);
 
+// src/ts/core/sanitize.ts
+function escapeHtml(str) {
+  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+var HEX_RE = /^#(?:[0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})$/i;
+var RGB_RE = /^rgba?\(\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}\s*(?:,\s*(?:0|1|0?\.\d+))?\s*\)$/;
+var HSL_RE = /^hsla?\(\s*\d{1,3}\s*,\s*\d{1,3}%\s*,\s*\d{1,3}%\s*(?:,\s*(?:0|1|0?\.\d+))?\s*\)$/;
+var CSS_VAR_RE = /^var\(--[\w-]+(?:\s*,\s*[^)]+)?\)$/;
+var CSS_KEYWORDS = /* @__PURE__ */ new Set([
+  "transparent",
+  "currentColor",
+  "currentcolor",
+  "inherit",
+  "initial",
+  "unset",
+  "revert"
+]);
+var NAMED_COLORS = /* @__PURE__ */ new Set([
+  "aliceblue",
+  "antiquewhite",
+  "aqua",
+  "aquamarine",
+  "azure",
+  "beige",
+  "bisque",
+  "black",
+  "blanchedalmond",
+  "blue",
+  "blueviolet",
+  "brown",
+  "burlywood",
+  "cadetblue",
+  "chartreuse",
+  "chocolate",
+  "coral",
+  "cornflowerblue",
+  "cornsilk",
+  "crimson",
+  "cyan",
+  "darkblue",
+  "darkcyan",
+  "darkgoldenrod",
+  "darkgray",
+  "darkgreen",
+  "darkgrey",
+  "darkkhaki",
+  "darkmagenta",
+  "darkolivegreen",
+  "darkorange",
+  "darkorchid",
+  "darkred",
+  "darksalmon",
+  "darkseagreen",
+  "darkslateblue",
+  "darkslategray",
+  "darkslategrey",
+  "darkturquoise",
+  "darkviolet",
+  "deeppink",
+  "deepskyblue",
+  "dimgray",
+  "dimgrey",
+  "dodgerblue",
+  "firebrick",
+  "floralwhite",
+  "forestgreen",
+  "fuchsia",
+  "gainsboro",
+  "ghostwhite",
+  "gold",
+  "goldenrod",
+  "gray",
+  "green",
+  "greenyellow",
+  "grey",
+  "honeydew",
+  "hotpink",
+  "indianred",
+  "indigo",
+  "ivory",
+  "khaki",
+  "lavender",
+  "lavenderblush",
+  "lawngreen",
+  "lemonchiffon",
+  "lightblue",
+  "lightcoral",
+  "lightcyan",
+  "lightgoldenrodyellow",
+  "lightgray",
+  "lightgreen",
+  "lightgrey",
+  "lightpink",
+  "lightsalmon",
+  "lightseagreen",
+  "lightskyblue",
+  "lightslategray",
+  "lightslategrey",
+  "lightsteelblue",
+  "lightyellow",
+  "lime",
+  "limegreen",
+  "linen",
+  "magenta",
+  "maroon",
+  "mediumaquamarine",
+  "mediumblue",
+  "mediumorchid",
+  "mediumpurple",
+  "mediumseagreen",
+  "mediumslateblue",
+  "mediumspringgreen",
+  "mediumturquoise",
+  "mediumvioletred",
+  "midnightblue",
+  "mintcream",
+  "mistyrose",
+  "moccasin",
+  "navajowhite",
+  "navy",
+  "oldlace",
+  "olive",
+  "olivedrab",
+  "orange",
+  "orangered",
+  "orchid",
+  "palegoldenrod",
+  "palegreen",
+  "paleturquoise",
+  "palevioletred",
+  "papayawhip",
+  "peachpuff",
+  "peru",
+  "pink",
+  "plum",
+  "powderblue",
+  "purple",
+  "rebeccapurple",
+  "red",
+  "rosybrown",
+  "royalblue",
+  "saddlebrown",
+  "salmon",
+  "sandybrown",
+  "seagreen",
+  "seashell",
+  "sienna",
+  "silver",
+  "skyblue",
+  "slateblue",
+  "slategray",
+  "slategrey",
+  "snow",
+  "springgreen",
+  "steelblue",
+  "tan",
+  "teal",
+  "thistle",
+  "tomato",
+  "turquoise",
+  "violet",
+  "wheat",
+  "white",
+  "whitesmoke",
+  "yellow",
+  "yellowgreen"
+]);
+function isValidColor(val) {
+  const trimmed = val.trim();
+  if (!trimmed) return false;
+  const lower = trimmed.toLowerCase();
+  if (lower.includes("javascript:")) return false;
+  if (lower.includes("expression(")) return false;
+  if (lower.includes(";")) return false;
+  if (lower.includes("url(")) return false;
+  if (HEX_RE.test(trimmed)) return true;
+  if (RGB_RE.test(trimmed)) return true;
+  if (HSL_RE.test(trimmed)) return true;
+  if (CSS_VAR_RE.test(trimmed)) return true;
+  if (CSS_KEYWORDS.has(lower)) return true;
+  if (NAMED_COLORS.has(lower)) return true;
+  return false;
+}
+
 // src/ts/core/utils.ts
 function cssVar(name, fallback = "") {
   return getComputedStyle(document.documentElement).getPropertyValue(name).trim() || fallback;
-}
-function escapeHtml(str) {
-  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 }
 
 // src/ts/gantt-defaults.ts
@@ -821,6 +1002,7 @@ function attachGanttEvents(s) {
     if (typeof s._fitView === "function") s._fitView(s.wrap.getBoundingClientRect().width || 800);
     render();
   });
+  const SCROLL_STEP = 40;
   canvas.addEventListener("keydown", (e) => {
     const rows = s.rows;
     let idx;
@@ -838,6 +1020,14 @@ function attachGanttEvents(s) {
         s.selected = rows[idx - 1].task.id;
         render();
       }
+    } else if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      s.scrollX = Math.max(0, s.scrollX - SCROLL_STEP);
+      render();
+    } else if (e.key === "ArrowRight") {
+      e.preventDefault();
+      s.scrollX = s.scrollX + SCROLL_STEP;
+      render();
     } else if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
       const r = rows.find((r2) => r2.task.id === s.selected);
@@ -944,7 +1134,8 @@ function gantt(container, tasks, userOpts) {
   Object.keys(pal).forEach((st) => {
     const span = document.createElement("span");
     span.className = "mn-gantt-timeline__legend-item";
-    span.innerHTML = '<span class="mn-gantt-timeline__legend-swatch" style="background:' + pal[st] + ';"></span>' + st;
+    const safeCol = isValidColor(pal[st]) ? pal[st] : "var(--grigio-alluminio)";
+    span.innerHTML = '<span class="mn-gantt-timeline__legend-swatch" style="background:' + safeCol + ';"></span>' + escapeHtml(st);
     leg.appendChild(span);
   });
   const todayLeg = document.createElement("span");
@@ -959,8 +1150,9 @@ function gantt(container, tasks, userOpts) {
   container.appendChild(wrap);
   s.wrap = wrap;
   const canvas = document.createElement("canvas");
-  canvas.setAttribute("role", "img");
+  canvas.setAttribute("role", "grid");
   canvas.setAttribute("aria-label", "Interactive Gantt timeline. Use arrow keys to navigate, Enter to expand rows.");
+  canvas.setAttribute("aria-roledescription", "gantt chart");
   canvas.setAttribute("tabindex", "0");
   wrap.appendChild(canvas);
   s.canvas = canvas;

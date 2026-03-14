@@ -19,6 +19,8 @@
   transition: transform .3s cubic-bezier(.4,0,.2,1), opacity .3s ease;
 }
 .mn-layout__sidebar[hidden] {
+  /* utility: keep !important — overrides UA [hidden]=display:none so CSS
+     slide animation can control visibility via transform+opacity instead */
   display: block !important;
   transform: translateX(-100%);
   opacity: 0;
@@ -70,16 +72,15 @@
 }
 
 /* ── Reduce motion preference ────────────────────────────────────────── */
+/* Reduced-motion !important overrides are consolidated in accessibility.css
+   which covers all elements via the universal selector. */
 @media (prefers-reduced-motion: reduce) {
-  .mn-app-view,
-  .mn-layout__sidebar,
-  .mn-sim-panel,
-  .mn-filter-chip,
-  .mn-card-animate,
-  .mn-heat-cell,
-  .mn-skeleton {
-    transition-duration: 0.01ms !important;
-    animation-duration: 0.01ms !important;
+  .mn-layout__sidebar[hidden] {
+    /* Remove the slide animation entirely when reduced motion is set */
+    /* a11y: keep !important — restores UA [hidden] semantics when the
+       CSS slide animation is disabled for reduced-motion users */
+    display: none !important;
+    transform: none;
   }
 }
 } /* end @layer layouts */

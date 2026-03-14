@@ -12,7 +12,9 @@ const NAV_ANCHORS = [
   '#hero', '#tokens', '#cards', '#dashboard', '#charts', '#network', '#controls',
   '#forms', '#tables', '#gauges', '#cockpit', '#telemetry', '#gantt', '#icons',
   '#animations', '#heatmap', '#treemap', '#layouts', '#detail-panel', '#interactive',
-  '#okr', '#map', '#advanced', '#web-components', '#launch', '#accessibility', '#api-reference',
+  '#okr', '#map', '#advanced', '#mesh-network', '#convergio', '#web-components',
+  '#launch', '#accessibility', '#social-graph', '#api-reference',
+  '#data-binding', '#overlays', '#org-tree',
 ];
 
 test.describe('Demo page', () => {

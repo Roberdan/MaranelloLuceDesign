@@ -14,5 +14,5 @@ interface GroupResult<RowT> {
     order: string[];
 }
 export declare function getGroupedData<RowT extends Record<string, unknown>>(rows: RowT[], groupBy?: string, groupOrder?: string[]): GroupResult<RowT> | null;
-export declare function render<RowT extends Record<string, unknown>>(state: DataTableState<RowT>, opts: DataTableOptions<RowT>, tbody: HTMLTableSectionElement, paginationEl: HTMLDivElement | null): void;
+export declare function render<RowT extends Record<string, unknown>>(state: DataTableState<RowT>, opts: DataTableOptions<RowT>, tbody: HTMLTableSectionElement, paginationEl: HTMLDivElement | null, liveRegion?: HTMLElement): void;
 export {};

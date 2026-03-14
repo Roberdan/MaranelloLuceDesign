@@ -33,6 +33,35 @@ Maranello.initForms();</code></pre>
         <div id="wizard-panel-3" class="mn-wizard-panel" style="display:none"><p class="mn-body" style="margin-bottom:var(--space-md)">Review your configuration and submit the runtime policy.</p><p class="mn-micro" style="color:var(--grigio-chiaro)">By submitting you agree to Maranello Luce platform terms.</p></div>
         <div style="display:flex;gap:var(--space-md);padding-top:var(--space-lg)"><button id="wizard-back" class="mn-btn mn-btn--ghost" disabled>Back</button><button id="wizard-next" class="mn-btn mn-btn--accent">Next</button></div>
       </div>
+      <div class="mn-card-dark mn-mb-2xl" style="padding:var(--space-xl)">
+        <h4 class="mn-label" style="margin-bottom:var(--space-lg);color:var(--mn-accent)">Validation States</h4>
+        <p class="mn-micro" style="color:var(--grigio-chiaro);margin-bottom:var(--space-lg)">Live validation using Maranello.validateField — try submitting with empty or malformed values.</p>
+        <form id="validation-demo-form" onsubmit="return false" novalidate style="display:flex;flex-direction:column;gap:var(--space-md)">
+          <div>
+            <label class="mn-label" for="vd-name" style="display:block;margin-bottom:var(--space-xs)">Agent Name <span style="color:var(--rosso-corsa)">*</span></label>
+            <input id="vd-name" class="mn-input" type="text" placeholder="router-agent-prod" required aria-required="true" style="width:100%">
+            <span id="vd-name-err" class="mn-field-error" role="alert" style="display:none;color:var(--rosso-corsa);font-size:var(--text-micro);margin-top:4px"></span>
+          </div>
+          <div>
+            <label class="mn-label" for="vd-email" style="display:block;margin-bottom:var(--space-xs)">Operator Email <span style="color:var(--rosso-corsa)">*</span></label>
+            <input id="vd-email" class="mn-input" type="email" placeholder="ops@maranelloluce.ai" required aria-required="true" style="width:100%">
+            <span id="vd-email-err" class="mn-field-error" role="alert" style="display:none;color:var(--rosso-corsa);font-size:var(--text-micro);margin-top:4px"></span>
+          </div>
+          <div>
+            <label class="mn-label" for="vd-model" style="display:block;margin-bottom:var(--space-xs)">Primary Model <span style="color:var(--rosso-corsa)">*</span></label>
+            <select id="vd-model" class="mn-select" required aria-required="true" style="width:100%">
+              <option value="">Select a model…</option>
+              <option>Claude Sonnet</option><option>GPT-5.1</option><option>Gemini 2.5</option>
+            </select>
+            <span id="vd-model-err" class="mn-field-error" role="alert" style="display:none;color:var(--rosso-corsa);font-size:var(--text-micro);margin-top:4px"></span>
+          </div>
+          <div style="display:flex;gap:var(--space-md);padding-top:var(--space-sm)">
+            <button id="vd-submit" class="mn-btn mn-btn--accent" type="submit">Validate &amp; Submit</button>
+            <button class="mn-btn mn-btn--ghost" type="reset">Reset</button>
+          </div>
+          <div id="vd-success" style="display:none;padding:var(--space-sm) var(--space-md);border-radius:6px;background:rgba(0,166,81,0.15);border:1px solid var(--verde-racing);color:var(--verde-racing)" role="status">Form valid — agent registered successfully.</div>
+        </form>
+      </div>
       <div class="mn-grid-2 mn-mb-2xl" style="gap:var(--space-xl)">
         <div style="display:flex;flex-direction:column;gap:var(--space-xl)">
           <div class="mn-card-dark" style="padding:var(--space-xl)"><h4 class="mn-label" style="margin-bottom:var(--space-lg);color:var(--mn-accent)">Tag Input</h4><div id="tag-input-wrap" class="mn-tag-input" style="display:flex;flex-wrap:wrap;gap:var(--space-xs);padding:var(--space-sm);border:1px solid var(--grigio-scuro);border-radius:6px;min-height:40px;align-items:center">${INITIAL_TAGS.map(t => tagChip(t)).join('')}<input id="tag-field" class="mn-tag-input__field" type="text" placeholder="Add tag…" style="border:none;background:transparent;color:inherit;outline:none;flex:1;min-width:80px;font-size:var(--font-sm)"></div></div>
@@ -83,4 +112,71 @@ function initForms(section) {
   searchField.addEventListener('blur', () => { setTimeout(() => { suggestions.style.display = 'none'; }, 150); });
   suggestions.querySelectorAll('.mn-search-bar__item').forEach(li => { li.addEventListener('mousedown', () => { searchField.value = li.textContent; suggestions.style.display = 'none'; }); li.addEventListener('mouseenter', () => { li.style.background = 'var(--grigio-scuro)'; }); li.addEventListener('mouseleave', () => { li.style.background = ''; }); });
   if (M && M.datePicker) ['dp-start', 'dp-end'].forEach(id => { const input = section.querySelector(`#${id}`); if (input) M.registerDatePicker(input, { value: '', onChange: (d) => { input.value = d; } }); });
+  initValidationDemo(M, section);
+}
+
+function setFieldError(input, errSpan, message) {
+  if (message) {
+    input.setAttribute('aria-invalid', 'true');
+    input.style.borderColor = 'var(--rosso-corsa)';
+    errSpan.textContent = message;
+    errSpan.style.display = 'block';
+  } else {
+    input.removeAttribute('aria-invalid');
+    input.style.borderColor = '';
+    errSpan.style.display = 'none';
+  }
+}
+
+function initValidationDemo(M, section) {
+  const form = section.querySelector('#validation-demo-form');
+  if (!form) return;
+  const nameInput = form.querySelector('#vd-name');
+  const emailInput = form.querySelector('#vd-email');
+  const modelSelect = form.querySelector('#vd-model');
+  const nameErr = form.querySelector('#vd-name-err');
+  const emailErr = form.querySelector('#vd-email-err');
+  const modelErr = form.querySelector('#vd-model-err');
+  const success = form.querySelector('#vd-success');
+
+  // Live validation on blur
+  nameInput.addEventListener('blur', () => {
+    const msg = nameInput.value.trim() === '' ? 'Agent name is required.' : '';
+    setFieldError(nameInput, nameErr, msg);
+  });
+  emailInput.addEventListener('blur', () => {
+    const val = emailInput.value.trim();
+    const msg = val === '' ? 'Email is required.' : !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val) ? 'Enter a valid email address.' : '';
+    setFieldError(emailInput, emailErr, msg);
+  });
+  modelSelect.addEventListener('change', () => {
+    const msg = modelSelect.value === '' ? 'Select a primary model.' : '';
+    setFieldError(modelSelect, modelErr, msg);
+  });
+
+  // Reset clears error states
+  form.addEventListener('reset', () => {
+    [nameInput, emailInput, modelSelect].forEach((el) => {
+      el.removeAttribute('aria-invalid');
+      el.style.borderColor = '';
+    });
+    [nameErr, emailErr, modelErr].forEach((el) => { el.style.display = 'none'; });
+    if (success) success.style.display = 'none';
+  });
+
+  form.querySelector('#vd-submit').addEventListener('click', () => {
+    const nameMsg = nameInput.value.trim() === '' ? 'Agent name is required.' : '';
+    const val = emailInput.value.trim();
+    const emailMsg = val === '' ? 'Email is required.' : !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val) ? 'Enter a valid email address.' : '';
+    const modelMsg = modelSelect.value === '' ? 'Select a primary model.' : '';
+    setFieldError(nameInput, nameErr, nameMsg);
+    setFieldError(emailInput, emailErr, emailMsg);
+    setFieldError(modelSelect, modelErr, modelMsg);
+    const valid = !nameMsg && !emailMsg && !modelMsg;
+    if (success) success.style.display = valid ? 'block' : 'none';
+    if (valid && M?.validateField) {
+      // Use Maranello API if available for enhanced validation feedback
+      try { M.validateField(nameInput); M.validateField(emailInput); } catch (_) { /* graceful fallback */ }
+    }
+  });
 }

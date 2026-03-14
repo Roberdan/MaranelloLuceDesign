@@ -1,4 +1,4 @@
-/* Maranello Luce Design v3.0.0 | MIT | github.com/Roberdan/MaranelloLuceDesign */
+/* Maranello Luce Design v3.2.1 | MPL-2.0 | github.com/Roberdan/MaranelloLuceDesign */
 "use strict";
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -710,6 +710,7 @@ function drawMultigraph(ctx, mg, cx, cy, radius, size, progress, P) {
 var SIZES = { sm: 120, md: 220, lg: 320 };
 var FerrariGauge = class {
   constructor(canvas) {
+    this.srSpan = null;
     this.canvas = canvas;
     this.ctx = canvas.getContext("2d");
     this.config = JSON.parse(canvas.dataset.gauge || "{}");
@@ -740,10 +741,41 @@ var FerrariGauge = class {
     this.cy = size / 2;
     this.radius = size * 0.4;
     this.density = size <= 140 ? "sm" : size <= 260 ? "md" : "lg";
+    this.initA11y();
     this.animate();
+  }
+  /** Set up ARIA attributes and screen-reader helpers on the canvas. */
+  initA11y() {
+    this.canvas.setAttribute("role", "img");
+    const label = this.buildA11yLabel();
+    this.canvas.setAttribute("aria-label", label);
+    this.canvas.textContent = label;
+    if (!this.srSpan) {
+      this.srSpan = document.createElement("span");
+      this.srSpan.className = "mn-sr-only";
+      this.canvas.parentElement?.insertBefore(this.srSpan, this.canvas.nextSibling);
+    }
+    this.srSpan.textContent = label;
+  }
+  /** Build an accessible label from gauge config values. */
+  buildA11yLabel() {
+    const c = this.config;
+    const value = c.value ?? 0;
+    const unit = c.unit || "";
+    const label = c.label || "";
+    const suffix = unit ? `${value}${unit}` : String(value);
+    return label ? `Gauge: ${suffix}, ${label}` : `Gauge: ${suffix}`;
+  }
+  /** Sync aria-label and sr-only span with current config. */
+  updateA11y() {
+    const label = this.buildA11yLabel();
+    this.canvas.setAttribute("aria-label", label);
+    this.canvas.textContent = label;
+    if (this.srSpan) this.srSpan.textContent = label;
   }
   /** Redraw at full progress. */
   redraw() {
+    this.updateA11y();
     this.draw(1);
   }
   /** Animate from 0 to full with ease-in-out-cubic. */
@@ -996,7 +1028,27 @@ function speedometer(canvas, opts) {
   ctx.scale(dpr, dpr);
   const s = dim / 220;
   const cx = dim / 2, cy = dim / 2, R = dim * 0.4;
-  let curAngle = v2a(options.value, options.max);
+  const max = options.max;
+  const unit = options.unit || "";
+  function buildLabel(v) {
+    const suffix = unit ? `${Math.round(v)}${unit}` : String(Math.round(v));
+    return `Speedometer: ${suffix} of ${max}`;
+  }
+  canvas.setAttribute("role", "img");
+  const initLabel = buildLabel(options.value);
+  canvas.setAttribute("aria-label", initLabel);
+  canvas.textContent = initLabel;
+  const srSpan = document.createElement("span");
+  srSpan.className = "mn-sr-only";
+  srSpan.textContent = initLabel;
+  canvas.parentElement?.insertBefore(srSpan, canvas.nextSibling);
+  function updateA11y(v) {
+    const l = buildLabel(v);
+    canvas.setAttribute("aria-label", l);
+    canvas.textContent = l;
+    srSpan.textContent = l;
+  }
+  let curAngle = v2a(options.value, max);
   let curVal = options.value;
   let barVal = options.bar ? options.bar.value || 0 : 0;
   let animId = null;
@@ -1014,25 +1066,29 @@ function speedometer(canvas, opts) {
       curVal = fromV + (toVal - fromV) * ep;
       draw();
       if (p < 1) animId = requestAnimationFrame(tick);
-      else animId = null;
+      else {
+        animId = null;
+        updateA11y(toVal);
+      }
     };
     tick(performance.now());
   }
   if (options.animate) {
     curAngle = START;
     curVal = 0;
-    animateTo(v2a(options.value, options.max), options.value);
+    animateTo(v2a(options.value, max), options.value);
   } else {
     draw();
   }
   return {
     setValue(v) {
-      const ta = v2a(v, options.max);
+      const ta = v2a(v, max);
       if (options.animate) animateTo(ta, v);
       else {
         curAngle = ta;
         curVal = v;
         draw();
+        updateA11y(v);
       }
     },
     setBar(v) {

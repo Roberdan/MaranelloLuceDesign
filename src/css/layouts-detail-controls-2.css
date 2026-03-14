@@ -102,9 +102,11 @@
   border: 1.5px solid var(--rosso-corsa, #DC0000);
   font-weight: 700;
 }
-.mn-date-picker__day--selected {
-  background: var(--mn-accent) !important;
-  color: var(--nero-assoluto) !important;
+/* Double-class specificity ensures selected state overrides :hover and
+   other day state rules without !important */
+.mn-date-picker__day--selected.mn-date-picker__day--selected {
+  background: var(--mn-accent);
+  color: var(--nero-assoluto);
   font-weight: 700;
 }
 .mn-date-picker__day--disabled {
@@ -142,7 +144,8 @@ body.mn-avorio .mn-date-picker { background: var(--avorio-chiaro, #faf8f2); bord
 body.mn-avorio .mn-date-picker__month-title { color: var(--nero-assoluto); }
 body.mn-avorio .mn-date-picker__day { color: var(--nero-assoluto); }
 body.mn-avorio .mn-date-picker__day:hover:not(.mn-date-picker__day--disabled):not(.mn-date-picker__day--empty) { background: rgba(220,0,0,0.08); color: var(--rosso-corsa); }
-body.mn-avorio .mn-date-picker__day--selected { background: var(--rosso-corsa) !important; color: #fff !important; }
+/* body + class + double-class = 0,3,0 — beats all day state variants */
+body.mn-avorio .mn-date-picker__day--selected.mn-date-picker__day--selected { background: var(--rosso-corsa); color: #fff; }
 body.mn-avorio .mn-detail-panel__person-results { background: var(--avorio-chiaro); border-color: var(--avorio-scuro); }
 body.mn-avorio .mn-detail-panel__person-result { color: var(--nero-assoluto); }
 body.mn-avorio .mn-detail-panel__person-result:hover { background: rgba(220,0,0,0.06); }

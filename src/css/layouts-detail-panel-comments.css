@@ -193,6 +193,8 @@
 
 /* ── Inline mode: detail panel inside right column ──────── */
 .mn-layout__right .mn-detail-panel__backdrop {
+  /* utility: keep !important — backdrop is fixed-position and must be
+     hidden when the panel is used inline inside a column layout */
   display: none !important;
 }
 .mn-layout__right .mn-detail-panel {

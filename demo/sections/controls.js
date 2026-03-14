@@ -22,7 +22,7 @@ export function createControlsSection() {
         <pre class="mn-card-dark" style="padding:var(--space-md);font-family:var(--font-mono);font-size:var(--text-micro);overflow-x:auto;margin-bottom:var(--space-lg);border-left:3px solid var(--mn-accent)"><code>Maranello.manettino(el, { positions: ['Wet', 'Sport', 'Race'] });
 Maranello.initSlider(el);</code></pre>
       </details>
-      <div class="demo-section-label mn-mt-2xl">Machined Aluminum Buttons</div>
+      <div class="mn-demo-section-label mn-mt-2xl">Machined Aluminum Buttons</div>
       <div class="mn-flex-wrap mn-gap-md mn-mb-lg" style="align-items:center">
         <button class="mn-machined-btn"><span class="mn-machined-btn__indicator"></span>Engine Start</button>
         <button class="mn-machined-btn mn-machined-btn--amber"><span class="mn-machined-btn__indicator"></span>Launch Control</button>
@@ -30,19 +30,19 @@ Maranello.initSlider(el);</code></pre>
         <button class="mn-machined-btn mn-machined-btn--pressed"><span class="mn-machined-btn__indicator"></span>Pressed</button>
         <button class="mn-machined-btn" disabled><span class="mn-machined-btn__indicator"></span>Disabled</button>
       </div>
-      <div class="demo-section-label">Toggle Switches</div>
+      <div class="mn-demo-section-label">Toggle Switches</div>
       <div class="mn-flex-wrap mn-gap-xl mn-mb-2xl" style="align-items:center">
         ${toggle('Auto-refresh', true)}${toggle('Night Mode', false)}${toggle('Alerts', true)}
       </div>
-      <div class="demo-section-label">LED Indicators</div>
+      <div class="mn-demo-section-label">LED Indicators</div>
       <div class="mn-flex-wrap mn-gap-xl mn-mb-2xl" style="align-items:center">
         ${led('green', 'System Online')}${led('amber', 'Processing')}${led('red mn-anim-blink', 'Critical Alert')}${led('off', 'Offline')}
       </div>
-      <div class="demo-section-label">Temperature Badges</div>
+      <div class="mn-demo-section-label">Temperature Badges</div>
       <div class="mn-mb-2xl" style="display:flex;gap:var(--space-lg);flex-wrap:wrap">${TEMP_BADGES.map(([label, color, mod]) => `<span class="mn-temp-badge${mod}" style="--temp-color:${color}">${label}</span>`).join('')}</div>
-      <div class="demo-section-label">Slider Controls</div>
+      <div class="mn-demo-section-label">Slider Controls</div>
       <div class="mn-flex-col mn-gap-lg mn-mb-2xl" style="max-width:420px">${slider('ctrl-slider-1', 'Routing Intensity', 72)}${slider('ctrl-slider-2', 'Agent Capacity', 45)}</div>
-      <div class="demo-section-label">Rotary Selectors</div>
+      <div class="mn-demo-section-label">Rotary Selectors</div>
       <div class="mn-flex-center mn-gap-2xl mn-flex-wrap mn-mb-2xl"><div id="ctrl-rotary-1"></div><div id="ctrl-rotary-2"></div></div>
       <div class="mn-divider-gold mn-my-2xl"></div>
       <h3 class="mn-title-sub mn-mb-sm">Advanced Cockpit Controls</h3>
@@ -50,11 +50,11 @@ Maranello.initSlider(el);</code></pre>
       <div class="mn-flex-wrap mn-gap-2xl mn-mb-2xl" style="align-items:flex-end">
         ${controlSlot('Manettino', 'ctrl-manettino')}${controlSlot('Cruise Lever', 'ctrl-cruise')}${controlSlot('Toggle Lever (On)', 'ctrl-lever-on')}${controlSlot('Toggle Lever (Off)', 'ctrl-lever-off')}${controlSlot('Stepped Rotary', 'ctrl-stepped')}
       </div>
-      <div class="demo-section-label">Button Cluster (Steering Style)</div>
+      <div class="mn-demo-section-label">Button Cluster (Steering Style)</div>
       <div class="mn-mb-2xl"><div class="mn-btn-cluster" style="--cluster-cols:4">${clusterButton('dashboard', true)}${clusterButton('chart')}${clusterButton('users')}${clusterButton('settings')}</div></div>
-      <div class="demo-section-label">Segmented Control</div>
+      <div class="mn-demo-section-label">Segmented Control</div>
       <div class="mn-mb-2xl"><div class="mn-segmented" role="tablist" aria-label="View mode"><button class="mn-segmented__item" role="tab">Day</button><button class="mn-segmented__item mn-segmented__item--active" role="tab" aria-selected="true">Week</button><button class="mn-segmented__item" role="tab">Month</button><button class="mn-segmented__item" role="tab">Quarter</button></div></div>
-      <div class="demo-section-label">Drag Rotary</div>
+      <div class="mn-demo-section-label">Drag Rotary</div>
       <div class="mn-flex-center mn-gap-2xl mn-mb-2xl">
         <div id="ctrl-drag-rotary" class="mn-rotary" style="width:140px">
           <div class="mn-rotary__housing" style="width:120px;height:120px;border-radius:50%;background:var(--nero-2);border:2px solid var(--grigio-scuro);position:relative;margin:0 auto">
@@ -97,5 +97,5 @@ function activate(section, selector, activeClass, onSet = () => {}, onUnset = ()
 function toggle(label, checked) { return `<label class="mn-toggle${checked ? ' mn-toggle--on' : ''}"><input type="checkbox"${checked ? ' checked' : ''}><span class="mn-toggle__track"><span class="mn-toggle__thumb"></span></span><span class="mn-toggle__label">${label}</span></label>`; }
 function led(tone, text) { return `<span class="mn-led mn-led--${tone}"><span class="mn-led__housing"><span class="mn-led__bulb"></span></span><span class="mn-led__text">${text}</span></span>`; }
 function slider(id, label, value) { return `<div><span class="mn-micro" style="color:var(--grigio-chiaro);display:block;margin-bottom:var(--space-xs)">${label}</span><div id="${id}" class="mn-slider" style="height:8px;border-radius:4px;background:var(--grigio-scuro);cursor:pointer;position:relative"><div class="mn-slider__track" style="position:absolute;inset:0;border-radius:4px"></div></div><div class="mn-micro" style="color:var(--grigio-medio);margin-top:var(--space-xs)"><span id="${id.replace('ctrl-', '')}-val">${value}</span>%</div></div>`; }
-function controlSlot(label, id) { return `<div><div class="demo-section-label mn-mb-sm">${label}</div><div id="${id}"></div></div>`; }
+function controlSlot(label, id) { return `<div><div class="mn-demo-section-label mn-mb-sm">${label}</div><div id="${id}"></div></div>`; }
 function clusterButton(id, active = false) { return `<button class="mn-btn-cluster__item${active ? ' mn-btn-cluster__item--active' : ''}" aria-label="${id}"><span class="mn-icon mn-icon--sm" id="ic-cluster-${id}"></span></button>`; }

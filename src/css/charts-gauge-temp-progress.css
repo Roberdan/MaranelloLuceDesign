@@ -25,7 +25,7 @@
 }
 .mn-half-gauge__unit {
   font-size: 0.65rem;
-  color: #9e9e9e;
+  color: var(--grigio-chiaro, #9e9e9e);
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
@@ -57,16 +57,16 @@
   box-shadow: 0 0 12px rgba(220,0,0,0.3);
 }
 .mn-temp-badge--cool {
-  border-color: #4EA8DE;
+  border-color: var(--today-line, #4EA8DE);
 }
 .mn-temp-badge--cool:hover {
   box-shadow: 0 0 12px rgba(78,168,222,0.3);
 }
 .mn-temp-badge--warm {
-  border-color: #E8A838;
+  border-color: var(--status-warning, #E8A838);
 }
 .mn-temp-badge--neutral {
-  border-color: #616161;
+  border-color: var(--grigio-medio, #616161);
 }
 .mn-temp-badge--lg {
   width: 56px;
@@ -115,6 +115,31 @@
   width: 100%;
 }
 .mn-bubble-chart canvas { display: block; }
+
+
+
+/* ── COLORBLIND OVERRIDES (Okabe-Ito palette) ── */
+body.mn-colorblind .mn-temp-badge {
+  border-color: #D55E00;
+}
+body.mn-colorblind .mn-temp-badge:hover {
+  box-shadow: 0 0 12px rgba(213,94,0,0.3);
+}
+body.mn-colorblind .mn-temp-badge--cool {
+  border-color: #0072B2;
+}
+body.mn-colorblind .mn-temp-badge--cool:hover {
+  box-shadow: 0 0 12px rgba(0,114,178,0.3);
+}
+body.mn-colorblind .mn-temp-badge--warm {
+  border-color: #D55E00;
+}
+body.mn-colorblind .mn-temp-badge--neutral {
+  border-color: #999999;
+}
+body.mn-colorblind .mn-progress-ring__fill {
+  stroke: #0072B2;
+}
 
 
 } /* end @layer charts */

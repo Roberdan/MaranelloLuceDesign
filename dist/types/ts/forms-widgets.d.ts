@@ -1,8 +1,5 @@
-/**
- * Maranello Luce Design - Form widgets
- * Auto-resize, tag input, password toggle, file upload,
- * form steps, inline edit, char counter, search clear.
- */
+/** Maranello Luce Design - Form widgets: auto-resize, tag input, password toggle,
+ * file upload, form steps, inline edit, char counter, search clear. */
 export interface TagInputApi {
     getTags: () => string[];
     addTag: (text: string) => void;

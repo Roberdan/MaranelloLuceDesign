@@ -75,11 +75,35 @@ export function validateField(field: Element): boolean {
   const errorEl = field.querySelector('.mn-field__error') as HTMLElement | null;
   if (!valid) {
     field.classList.add('mn-field--error');
-    if (errorEl) errorEl.textContent = errorMsg;
-  } else if (value.length > 0) {
-    field.classList.add('mn-field--success');
+    input.setAttribute('aria-invalid', 'true');
+    if (errorEl) {
+      if (!errorEl.id) {
+        errorEl.id = 'mn-err-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6);
+      }
+      errorEl.setAttribute('aria-live', 'assertive');
+      errorEl.textContent = errorMsg;
+      // Append error id while preserving other aria-describedby tokens
+      const existing = (input.getAttribute('aria-describedby') ?? '').split(/\s+/).filter(Boolean);
+      if (!existing.includes(errorEl.id)) {
+        input.setAttribute('aria-describedby', [...existing, errorEl.id].join(' '));
+      }
+    }
+  } else {
+    input.removeAttribute('aria-invalid');
+    if (errorEl) {
+      // Remove only the error id token, preserving any other aria-describedby values
+      const tokens = (input.getAttribute('aria-describedby') ?? '').split(/\s+/).filter(
+        (t) => t && t !== errorEl.id,
+      );
+      if (tokens.length > 0) {
+        input.setAttribute('aria-describedby', tokens.join(' '));
+      } else {
+        input.removeAttribute('aria-describedby');
+      }
+      errorEl.textContent = '';
+    }
+    if (value.length > 0) field.classList.add('mn-field--success');
   }
-  if (errorEl && valid) errorEl.textContent = '';
   return valid;
 }
 

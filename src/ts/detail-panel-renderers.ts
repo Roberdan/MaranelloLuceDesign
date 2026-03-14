@@ -5,6 +5,7 @@
 
 import type { DetailField, DetailRenderer, DetailPersonItem } from './core/types';
 import { createElement } from './core/utils';
+import { isValidColor } from './core/sanitize';
 
 const DASH = '\u2014';
 
@@ -110,7 +111,7 @@ const renderers: Record<string, DetailRenderer> = {
   badge(val, field) {
     const span = createElement('span', 'mn-tag mn-tag--sm');
     const color = field.badgeColors?.[String(val)] ?? '';
-    if (color) span.style.background = color;
+    if (color && isValidColor(color)) span.style.background = color;
     span.textContent = val ? String(val) : DASH;
     return span;
   },
@@ -119,7 +120,7 @@ const renderers: Record<string, DetailRenderer> = {
     const span = createElement('span', 'mn-tag mn-tag--sm');
     const colors = field.statusColors ?? {};
     const c = colors[String(val)];
-    if (c) {
+    if (c && isValidColor(c)) {
       span.style.background = c;
       span.style.color = '#fff';
     }

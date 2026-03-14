@@ -13,6 +13,17 @@
 | Canvas charts blank | HiDPI not handled | Use `chartHiDpi(canvas)` or let chart functions handle it (they do by default) |
 | Gauge not rendering | Canvas not in DOM yet | Call `FerrariGauge` or `createGauge` after DOM ready, or use `initGauges()` observer |
 
+## v3.2.1 Issues
+
+| Problem | Cause | Fix |
+|---|---|---|
+| Custom table cell renderer XSS | Raw HTML in cell renderer | Use `escapeHtml()` from `core/sanitize` on user content before innerHTML |
+| Data binding warn on property | Property not in `ALLOWED_BIND_PROPERTIES` | Add property to whitelist or use `textContent`/`value` instead |
+| CSS `!important` override needed | Theme rule in lower `@layer` | Move override to higher layer or increase specificity with doubled class |
+| Avorio gauge unreadable | Light text on light background | Fixed in v3.2.1 — gauge text uses `var(--nero-assoluto)` in Avorio theme |
+| Colorblind palette not applied | Missing `body.mn-colorblind` class | Add `mn-colorblind` class to body element via theme toggle |
+| Chart canvas not keyboard accessible | Missing tabindex | Add `tabindex="0"` and handle Enter/Space for tooltip activation |
+
 ## TS Resolution Fix
 
 ```json

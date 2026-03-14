@@ -9,10 +9,17 @@ export declare class FerrariGauge {
     cy: number;
     radius: number;
     density: 'sm' | 'md' | 'lg';
+    private srSpan;
     constructor(canvas: HTMLCanvasElement);
     get palette(): import("./gauge-engine-palette").GaugeRenderPalette;
     /** Initialize canvas size from data attribute or parent bounds. */
     init(): void;
+    /** Set up ARIA attributes and screen-reader helpers on the canvas. */
+    private initA11y;
+    /** Build an accessible label from gauge config values. */
+    private buildA11yLabel;
+    /** Sync aria-label and sr-only span with current config. */
+    private updateA11y;
     /** Redraw at full progress. */
     redraw(): void;
     /** Animate from 0 to full with ease-in-out-cubic. */

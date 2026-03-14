@@ -97,7 +97,7 @@
   background: rgba(220,0,0,0.12);
   border: 1px solid rgba(220,0,0,0.3);
   border-radius: var(--radius-sm);
-  color: #FF6B6B;
+  color: var(--rosso-corsa, #FF6B6B);
   font-family: var(--font-body);
   font-size: var(--text-caption);
   text-align: center;
@@ -144,9 +144,9 @@
   font-weight: 700;
   letter-spacing: 0.1em;
 }
-.mn-login__service-status--healthy { color: #00A651; }
-.mn-login__service-status--degraded { color: #FFC72C; }
-.mn-login__service-status--unhealthy { color: #DC0000; }
+.mn-login__service-status--healthy { color: var(--verde-racing, #00A651); }
+.mn-login__service-status--degraded { color: var(--giallo-ferrari, #FFC72C); }
+.mn-login__service-status--unhealthy { color: var(--rosso-corsa, #DC0000); }
 .mn-login__overall {
   font-family: var(--font-mono);
   font-size: var(--text-micro);
@@ -155,9 +155,9 @@
   border-radius: var(--radius-pill);
   border: 1px solid;
 }
-.mn-login__overall--healthy { color: #00A651; border-color: rgba(0,166,81,0.3); background: rgba(0,166,81,0.06); }
-.mn-login__overall--degraded { color: #FFC72C; border-color: rgba(255,199,44,0.3); background: rgba(255,199,44,0.06); }
-.mn-login__overall--unhealthy { color: #DC0000; border-color: rgba(220,0,0,0.3); background: rgba(220,0,0,0.06); }
+.mn-login__overall--healthy { color: var(--verde-racing, #00A651); border-color: rgba(0,166,81,0.3); background: rgba(0,166,81,0.06); }
+.mn-login__overall--degraded { color: var(--giallo-ferrari, #FFC72C); border-color: rgba(255,199,44,0.3); background: rgba(255,199,44,0.06); }
+.mn-login__overall--unhealthy { color: var(--rosso-corsa, #DC0000); border-color: rgba(220,0,0,0.3); background: rgba(220,0,0,0.06); }
 .mn-login__footer {
   display: flex;
   align-items: center;
@@ -179,9 +179,9 @@
   padding: 2px 8px;
   border-radius: var(--radius-pill);
 }
-.mn-login__env--production { color: #00A651; background: rgba(0,166,81,0.12); }
-.mn-login__env--staging { color: #FFC72C; background: rgba(255,199,44,0.12); }
-.mn-login__env--development { color: #4EA8DE; background: rgba(78,168,222,0.12); }
+.mn-login__env--production { color: var(--verde-racing, #00A651); background: rgba(0,166,81,0.12); }
+.mn-login__env--staging { color: var(--giallo-ferrari, #FFC72C); background: rgba(255,199,44,0.12); }
+.mn-login__env--development { color: var(--today-line, #4EA8DE); background: rgba(78,168,222,0.12); }
 
 /* Avorio theme */
 body.mn-avorio .mn-login { background: var(--bianco-caldo); }

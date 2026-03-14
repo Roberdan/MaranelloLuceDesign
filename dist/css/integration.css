@@ -1,0 +1,7 @@
+/* Maranello Luce Design — Integration Layer v3.2.0
+ * Import this file to activate Maranello theming in any SPA.
+ * (c) Roberdan 2026 — MIT License */
+@import './integration-theme-bridge.css';
+@import './integration-reset.css';
+@import './integration-utilities.css';
+@import './integration-status.css';

@@ -1,0 +1,19 @@
+@layer integration {
+  .mn-status-done { color: var(--success, #00A651); }
+  .mn-status-done::before { content: ''; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--success); margin-right: 6px; }
+  .mn-status-in-progress { color: var(--accent, #FFC72C); }
+  .mn-status-in-progress::before { content: ''; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); margin-right: 6px; animation: mn-pulse-dot 2s infinite; }
+  .mn-status-pending { color: var(--text-dim, #666); }
+  .mn-status-pending::before { content: ''; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--text-dim); margin-right: 6px; }
+  .mn-status-blocked { color: var(--danger, #DC0000); }
+  .mn-status-blocked::before { content: ''; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--danger); margin-right: 6px; }
+  .mn-status-merging { color: var(--info, #4EA8DE); }
+  .mn-status-merging::before { content: ''; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--info); margin-right: 6px; }
+
+  /* Row-level status backgrounds */
+  .mn-row-done { background: rgba(0,166,81,0.06); }
+  .mn-row-in-progress { background: rgba(255,199,44,0.06); }
+  .mn-row-blocked { background: rgba(220,0,0,0.06); }
+  .mn-row-pending { background: transparent; }
+  .mn-row-merging { background: rgba(78,168,222,0.06); }
+}
