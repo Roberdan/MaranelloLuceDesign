@@ -20,7 +20,6 @@ export declare function getAccent(fallback?: string): string;
  * Resolves against `el` if provided (useful for shadow DOM contexts).
  *
  * @example
- * // VirtualBPM usage: replace hardcoded GROUP_COLORS with live tokens
  * const { giallo, rosso, verde, accent } = Maranello.palette();
  */
 export declare function palette(el?: Element): Record<string, string>;

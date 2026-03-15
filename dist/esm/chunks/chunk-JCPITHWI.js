@@ -3,7 +3,7 @@ import {
   cssVar,
   debounce,
   getAccent
-} from "./chunk-VSD2P37H.js";
+} from "./chunk-ZRJ72P3I.js";
 
 // src/ts/gauge-engine-palette.ts
 function buildGaugePalette(accent) {
@@ -1138,4 +1138,4 @@ export {
   FerrariGauge,
   speedometer
 };
-//# sourceMappingURL=chunk-XG6NKGGI.js.map
+//# sourceMappingURL=chunk-JCPITHWI.js.map

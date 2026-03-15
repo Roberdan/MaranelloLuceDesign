@@ -3,7 +3,7 @@ import {
   cssVar,
   escapeHtml,
   isValidColor
-} from "./chunk-VSD2P37H.js";
+} from "./chunk-ZRJ72P3I.js";
 
 // src/ts/gantt-defaults.ts
 var DPR = window.devicePixelRatio || 1;
@@ -1071,4 +1071,4 @@ function gantt(container, tasks, userOpts) {
 export {
   gantt
 };
-//# sourceMappingURL=chunk-SEQIKKIU.js.map
+//# sourceMappingURL=chunk-LYY5H4LB.js.map

@@ -3,7 +3,7 @@ import {
   cssVar,
   escapeHtml,
   isValidColor
-} from "./chunk-VSD2P37H.js";
+} from "./chunk-ZRJ72P3I.js";
 
 // src/ts/charts-helpers.ts
 var dpr = window.devicePixelRatio || 1;
@@ -1189,4 +1189,4 @@ export {
   chartInteract,
   sparklineInteract
 };
-//# sourceMappingURL=chunk-WYKJSSG3.js.map
+//# sourceMappingURL=chunk-SRJ5MNCA.js.map
