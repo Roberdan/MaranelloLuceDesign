@@ -15,6 +15,7 @@ export const DEFAULTS: Readonly<A11ySettings> = {
   highContrast: false,
   focusVisible: true,
   lineSpacing: 'normal',
+  dyslexiaFont: false,
 };
 
 interface SizeEntry { label: string; scale: number }
@@ -54,6 +55,24 @@ export function saveSettings(s: A11ySettings): void {
   catch { /* ignore */ }
 }
 
+let _dyslexicFontLoaded = false;
+
+function loadDyslexicFont(): void {
+  if (_dyslexicFontLoaded || document.fonts.check('12px OpenDyslexic')) { _dyslexicFontLoaded = true; return; }
+  _dyslexicFontLoaded = true;
+  // Try local dist font first, fall back to CDN for non-bundled consumers
+  const style = document.createElement('style');
+  style.textContent = [
+    "@font-face{font-family:'OpenDyslexic';font-weight:400;font-display:swap;",
+    "src:url('dist/fonts/opendyslexic-regular.woff2') format('woff2'),",
+    "url('https://cdn.jsdelivr.net/gh/antijingoist/opendyslexic@master/compiled/OpenDyslexic-Regular.woff2') format('woff2')}",
+    "@font-face{font-family:'OpenDyslexic';font-weight:700;font-display:swap;",
+    "src:url('dist/fonts/opendyslexic-bold.woff2') format('woff2'),",
+    "url('https://cdn.jsdelivr.net/gh/antijingoist/opendyslexic@master/compiled/OpenDyslexic-Bold.woff2') format('woff2')}",
+  ].join('');
+  document.head.appendChild(style);
+}
+
 export function applySettings(settings: A11ySettings): void {
   const root = document.documentElement;
   const sz = SIZES[settings.fontSize] ?? SIZES.md;
@@ -61,6 +80,9 @@ export function applySettings(settings: A11ySettings): void {
   root.classList.toggle('mn-reduced-motion', settings.reducedMotion);
   root.classList.toggle('mn-high-contrast', settings.highContrast);
   root.classList.toggle('mn-no-focus-ring', !settings.focusVisible);
+
+  if (settings.dyslexiaFont) loadDyslexicFont();
+  document.body.classList.toggle('mn-a11y-dyslexia-font', settings.dyslexiaFont);
 
   const ls = LINE_SPACINGS[settings.lineSpacing] ?? LINE_SPACINGS.normal;
   if (ls.value === 'normal') {
@@ -76,7 +98,7 @@ function slidersIcon(): string {
   return icons.sliders ? icons.sliders() : '';
 }
 
-type BooleanSettingKey = 'reducedMotion' | 'highContrast' | 'focusVisible';
+type BooleanSettingKey = 'reducedMotion' | 'highContrast' | 'focusVisible' | 'dyslexiaFont';
 
 function makeToggle(
   settings: A11ySettings,
@@ -176,6 +198,7 @@ export function buildPanel(settings: A11ySettings): A11yPanelRefs {
   panel.appendChild(lsGroup);
 
   panel.appendChild(createElement('div', 'mn-a11y-panel__divider'));
+  panel.appendChild(makeToggle(settings, 'Dyslexia Font', 'dyslexiaFont'));
   panel.appendChild(makeToggle(settings, 'Reduced Motion', 'reducedMotion'));
   panel.appendChild(makeToggle(settings, 'High Contrast', 'highContrast'));
   panel.appendChild(makeToggle(settings, 'Focus Indicators', 'focusVisible'));

@@ -5,8 +5,9 @@
  */
 
 const STORAGE = 'mn-a11y';
-const DEFAULTS = { fontSize: 'md', reducedMotion: false, highContrast: false, focusVisible: true };
+const DEFAULTS = { fontSize: 'md', reducedMotion: false, highContrast: false, focusVisible: true, dyslexiaFont: false };
 const SIZES = { sm: 0.875, md: 1.0, lg: 1.125, xl: 1.25 };
+let _dyslexicLoaded = false;
 
 function loadSettings() {
   try { return { ...DEFAULTS, ...JSON.parse(localStorage.getItem(STORAGE)) }; }
@@ -19,6 +20,14 @@ function applySettings(s) {
   root.classList.toggle('mn-reduced-motion', s.reducedMotion);
   root.classList.toggle('mn-high-contrast', s.highContrast);
   root.classList.toggle('mn-no-focus-ring', !s.focusVisible);
+  if (s.dyslexiaFont && !_dyslexicLoaded) {
+    _dyslexicLoaded = true;
+    const lnk = document.createElement('link');
+    lnk.rel = 'stylesheet';
+    lnk.href = '../fonts/opendyslexic.css';
+    document.head.appendChild(lnk);
+  }
+  document.body.classList.toggle('mn-a11y-dyslexia-font', s.dyslexiaFont);
   try { localStorage.setItem(STORAGE, JSON.stringify(s)); } catch { /* noop */ }
 }
 
@@ -99,6 +108,7 @@ export function buildA11yFallback(shadowRoot) {
 
   const divider = () => { const d = mkDiv('mn-a11y-panel__divider'); return d; };
   panel.appendChild(divider());
+  panel.appendChild(buildToggle('Dyslexia Font', 'dyslexiaFont', s, apply));
   panel.appendChild(buildToggle('Reduced Motion', 'reducedMotion', s, apply));
   panel.appendChild(buildToggle('High Contrast', 'highContrast', s, apply));
   panel.appendChild(buildToggle('Focus Indicators', 'focusVisible', s, apply));

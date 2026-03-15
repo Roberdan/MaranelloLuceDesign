@@ -27,6 +27,7 @@ export function a11yPanel(): A11yPanelController {
     settings.highContrast = DEFAULTS.highContrast;
     settings.focusVisible = DEFAULTS.focusVisible;
     settings.lineSpacing = DEFAULTS.lineSpacing;
+    settings.dyslexiaFont = DEFAULTS.dyslexiaFont;
     saveSettings(settings);
     applySettings(settings);
 

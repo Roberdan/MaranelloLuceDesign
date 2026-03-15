@@ -1,5 +1,5 @@
-/* Maranello Luce Design — Local Fonts v2.0.0
-   Outfit (display), Inter (body), Barlow Condensed (mono/tabular)
+/* Maranello Luce Design — Local Fonts v2.1.0
+   Outfit (display), Inter (body), Barlow Condensed (mono/tabular), OpenDyslexic (a11y)
    All OFL-licensed, self-hosted woff2. */
 
 /* ── Outfit (variable weight 300–900) ── */
@@ -16,6 +16,10 @@
 @font-face { font-family:'Inter'; font-style:normal; font-weight:400; font-display:swap; src:url(inter-variable.woff2) format('woff2'); }
 @font-face { font-family:'Inter'; font-style:normal; font-weight:500; font-display:swap; src:url(inter-variable.woff2) format('woff2'); }
 @font-face { font-family:'Inter'; font-style:normal; font-weight:600; font-display:swap; src:url(inter-variable.woff2) format('woff2'); }
+
+/* ── OpenDyslexic (a11y — loaded on demand by mn-a11y panel) ── */
+@font-face { font-family:'OpenDyslexic'; font-style:normal; font-weight:400; font-display:swap; src:url(opendyslexic-regular.woff2) format('woff2'); }
+@font-face { font-family:'OpenDyslexic'; font-style:normal; font-weight:700; font-display:swap; src:url(opendyslexic-bold.woff2) format('woff2'); }
 
 /* ── Barlow Condensed (per-weight files) ── */
 @font-face { font-family:'Barlow Condensed'; font-style:normal; font-weight:300; font-display:swap; src:url(barlow-condensed-300.woff2) format('woff2'); }

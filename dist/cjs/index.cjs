@@ -10581,7 +10581,8 @@ var DEFAULTS2 = {
   reducedMotion: false,
   highContrast: false,
   focusVisible: true,
-  lineSpacing: "normal"
+  lineSpacing: "normal",
+  dyslexiaFont: false
 };
 var SIZES3 = {
   sm: { label: "S", scale: 0.875 },
@@ -10608,6 +10609,24 @@ function saveSettings(s) {
   } catch {
   }
 }
+var _dyslexicFontLoaded = false;
+function loadDyslexicFont() {
+  if (_dyslexicFontLoaded || document.fonts.check("12px OpenDyslexic")) {
+    _dyslexicFontLoaded = true;
+    return;
+  }
+  _dyslexicFontLoaded = true;
+  const style = document.createElement("style");
+  style.textContent = [
+    "@font-face{font-family:'OpenDyslexic';font-weight:400;font-display:swap;",
+    "src:url('dist/fonts/opendyslexic-regular.woff2') format('woff2'),",
+    "url('https://cdn.jsdelivr.net/gh/antijingoist/opendyslexic@master/compiled/OpenDyslexic-Regular.woff2') format('woff2')}",
+    "@font-face{font-family:'OpenDyslexic';font-weight:700;font-display:swap;",
+    "src:url('dist/fonts/opendyslexic-bold.woff2') format('woff2'),",
+    "url('https://cdn.jsdelivr.net/gh/antijingoist/opendyslexic@master/compiled/OpenDyslexic-Bold.woff2') format('woff2')}"
+  ].join("");
+  document.head.appendChild(style);
+}
 function applySettings(settings) {
   const root = document.documentElement;
   const sz = SIZES3[settings.fontSize] ?? SIZES3.md;
@@ -10615,6 +10634,8 @@ function applySettings(settings) {
   root.classList.toggle("mn-reduced-motion", settings.reducedMotion);
   root.classList.toggle("mn-high-contrast", settings.highContrast);
   root.classList.toggle("mn-no-focus-ring", !settings.focusVisible);
+  if (settings.dyslexiaFont) loadDyslexicFont();
+  document.body.classList.toggle("mn-a11y-dyslexia-font", settings.dyslexiaFont);
   const ls = LINE_SPACINGS[settings.lineSpacing] ?? LINE_SPACINGS.normal;
   if (ls.value === "normal") {
     root.style.removeProperty("--mn-line-height");
@@ -10708,6 +10729,7 @@ function buildPanel(settings) {
   lsGroup.appendChild(lsRow);
   panel.appendChild(lsGroup);
   panel.appendChild(createElement("div", "mn-a11y-panel__divider"));
+  panel.appendChild(makeToggle(settings, "Dyslexia Font", "dyslexiaFont"));
   panel.appendChild(makeToggle(settings, "Reduced Motion", "reducedMotion"));
   panel.appendChild(makeToggle(settings, "High Contrast", "highContrast"));
   panel.appendChild(makeToggle(settings, "Focus Indicators", "focusVisible"));
@@ -10728,6 +10750,7 @@ function a11yPanel() {
     settings.highContrast = DEFAULTS2.highContrast;
     settings.focusVisible = DEFAULTS2.focusVisible;
     settings.lineSpacing = DEFAULTS2.lineSpacing;
+    settings.dyslexiaFont = DEFAULTS2.dyslexiaFont;
     saveSettings(settings);
     applySettings(settings);
     for (const k of Object.keys(refs.sizeButtons)) {
