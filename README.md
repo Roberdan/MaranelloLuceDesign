@@ -100,13 +100,13 @@ It ships as **three independent layers** that you can use together or separately
 ## Install
 
 ```bash
-npm install github:Roberdan/MaranelloLuceDesign#v4.1.0
+npm install github:Roberdan/MaranelloLuceDesign#v4.2.0
 ```
 
 Or CDN:
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v4.1.0/dist/css/index.css">
-<script src="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v4.1.0/dist/iife/maranello.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v4.2.0/dist/css/index.css">
+<script src="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v4.2.0/dist/iife/maranello.min.js"></script>
 ```
 
 > **Breaking change (v4.0.0):** Glass theme removed. Themes are now **editorial · nero · avorio · colorblind**. See [CHANGELOG.md](CHANGELOG.md).
