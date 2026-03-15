@@ -1,0 +1,200 @@
+@layer layouts {
+/* ══════════════════════════════════════════════════════════════
+   layouts-sim-panel-2.css — Guided Simulator: Cards, Steps, KPI
+   Maranello Design System · Maranello Luce
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── Scenario card (icon + title + description) ── */
+.mn-sim-card {
+  display:flex; align-items:flex-start; gap:12px;
+  padding:14px 16px; margin-bottom:8px;
+  background:var(--superficie-1); border:1px solid var(--bordo);
+  border-radius:var(--radius-sm,8px); cursor:pointer;
+  transition:border-color 0.15s, background 0.15s;
+}
+.mn-sim-card:hover { border-color:var(--mn-accent); background:var(--superficie-2); }
+.mn-sim-card__icon { font-size:1.5rem; flex-shrink:0; line-height:1; }
+.mn-sim-card__text { flex:1; }
+.mn-sim-card__title { font-weight:600; font-size:0.9rem; color:var(--mn-text); }
+.mn-sim-card__desc { font-size:0.78rem; color:var(--grigio-medio); margin-top:2px; }
+
+/* ── Step header (number + title + back) ── */
+.mn-sim-step-header {
+  display:flex; align-items:center; gap:8px;
+  padding-bottom:12px; margin-bottom:12px; border-bottom:1px solid var(--bordo);
+}
+.mn-sim-step-header__icon { font-size:1.3rem; }
+.mn-sim-step-header__title { font-weight:700; font-size:1rem; flex:1; color:var(--mn-text); }
+.mn-sim-back {
+  background:none; border:none; color:var(--mn-text-muted); cursor:pointer;
+  font-size:0.85rem; padding:4px 8px; border-radius:4px;
+}
+.mn-sim-back:hover { color:var(--mn-accent); background:var(--superficie-2); }
+.mn-sim-desc { font-size:0.85rem; color:var(--grigio-medio); margin-bottom:16px; }
+
+/* ── KPI delta card (value + delta arrow + severity) ── */
+.mn-sim-kpi-delta {
+  display:flex; flex-direction:column; align-items:center; padding:10px 8px;
+  background:var(--superficie-1); border-radius:var(--radius-sm,6px);
+  border:1px solid var(--bordo); gap:4px;
+}
+.mn-sim-kpi-delta__value {
+  font-family:var(--font-mono,'Barlow Condensed',sans-serif);
+  font-size:1.2rem; font-weight:700; color:var(--mn-text);
+}
+.mn-sim-kpi-delta__arrow { font-size:0.75rem; font-weight:700; }
+.mn-sim-kpi-delta__arrow--up { color:var(--verde-racing); }
+.mn-sim-kpi-delta__arrow--down { color:var(--rosso-corsa); }
+.mn-sim-kpi-delta__label {
+  font-size:0.6rem; color:var(--grigio-medio); text-transform:uppercase;
+  letter-spacing:0.04em;
+}
+
+/* ── Stepper (3-step progress: active/done/pending) ── */
+.mn-sim-stepper {
+  display:flex; align-items:center; gap:0; margin-bottom:16px;
+}
+.mn-sim-stepper__step {
+  display:flex; align-items:center; gap:6px; padding:6px 12px;
+  font-size:0.72rem; font-weight:600; color:var(--grigio-medio);
+  font-family:var(--font-mono,'Barlow Condensed',sans-serif);
+  text-transform:uppercase; letter-spacing:0.04em; position:relative;
+}
+.mn-sim-stepper__step--done { color:var(--verde-racing); }
+.mn-sim-stepper__step--active { color:var(--mn-accent); }
+.mn-sim-stepper__step--pending { color:var(--grigio-medio); opacity:0.5; }
+.mn-sim-stepper__num {
+  width:22px; height:22px; border-radius:50%; display:flex;
+  align-items:center; justify-content:center; font-size:0.65rem;
+  border:1.5px solid currentColor; font-weight:700;
+}
+.mn-sim-stepper__step--done .mn-sim-stepper__num { background:var(--verde-racing); color:var(--nero-profondo); border-color:var(--verde-racing); }
+.mn-sim-stepper__step--active .mn-sim-stepper__num { background:var(--mn-accent); color:var(--nero-profondo); border-color:var(--mn-accent); }
+.mn-sim-stepper__connector { width:24px; height:2px; background:var(--bordo); flex-shrink:0; }
+.mn-sim-stepper__step--done + .mn-sim-stepper__connector { background:var(--verde-racing); }
+
+/* ── Mutation card ── */
+.mn-sim-mutation {
+  background:var(--superficie-2); border:1px solid var(--bordo);
+  border-radius:8px; padding:12px; transition:border-color 0.15s;
+}
+.mn-sim-mutation:hover { border-color:var(--grigio-medio); }
+.mn-sim-mutation__header { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+.mn-sim-mutation__remove {
+  background:none; border:none; color:var(--grigio-medio); font-size:0.9rem;
+  cursor:pointer; padding:2px 6px; line-height:1; border-radius:4px; transition:all 0.15s;
+}
+.mn-sim-mutation__remove:hover { color:var(--rosso-corsa); background:var(--signal-danger-bg); }
+.mn-sim-mutation__fields { display:flex; flex-direction:column; gap:6px; }
+
+/* ── Label input ── */
+.mn-sim-label-input {
+  width:100%; padding:8px 12px; background:var(--superficie-2);
+  border:1px solid var(--bordo); border-radius:6px; color:var(--mn-text);
+  font-family:var(--font-body,'Inter',sans-serif); font-size:0.85rem;
+  outline:none; transition:border-color 0.15s; box-sizing:border-box;
+}
+.mn-sim-label-input:focus { border-color:var(--mn-accent); }
+.mn-sim-label-input::placeholder { color:var(--grigio-medio); }
+
+/* ── Evaluate & Apply buttons ── */
+.mn-sim-evaluate-btn {
+  width:100%; padding:10px 16px; border:none; border-radius:8px;
+  background:var(--mn-accent); color:var(--mn-accent-text);
+  font-family:var(--font-mono,'Barlow Condensed',sans-serif);
+  font-weight:700; font-size:0.9rem; text-transform:uppercase;
+  letter-spacing:0.05em; cursor:pointer; transition:opacity 0.15s; margin-top:8px;
+}
+.mn-sim-evaluate-btn:hover:not(:disabled) { opacity:0.85; }
+.mn-sim-evaluate-btn:disabled { opacity:0.4; cursor:not-allowed; }
+.mn-sim-apply-btn {
+  flex:1; padding:10px 16px; border:none; border-radius:8px;
+  background:var(--verde-racing); color:var(--mn-accent-text);
+  font-family:var(--font-mono,'Barlow Condensed',sans-serif);
+  font-weight:700; font-size:0.85rem; text-transform:uppercase;
+  letter-spacing:0.05em; cursor:pointer; transition:opacity 0.15s;
+}
+.mn-sim-apply-btn:hover { opacity:0.85; }
+
+/* ── Impact section ── */
+.mn-sim-impact {
+  margin-top:16px; padding-top:16px; border-top:1px solid var(--bordo);
+  display:flex; flex-direction:column; gap:8px;
+}
+
+/* ── AI suggestion card ── */
+.mn-sim-suggestion {
+  background:var(--mn-accent-bg); border:1px solid var(--mn-accent-border);
+  border-radius:8px; padding:12px; margin-top:8px;
+}
+.mn-sim-suggestion p { font-size:0.82rem; color:var(--mn-text-muted); margin:6px 0 0; line-height:1.45; }
+
+/* ── Action row (Discard + Apply) ── */
+.mn-sim-actions {
+  display:flex; gap:10px; margin-top:12px; padding-top:12px;
+  border-top:1px solid var(--bordo);
+}
+
+/* ── Sim toggle bar ── */
+.mn-sim-bar {
+  display:flex; align-items:center; gap:12px; padding:6px 16px;
+  background:var(--superficie-2); border-bottom:1px solid var(--mn-accent);
+  font-size:0.8rem; color:var(--mn-accent); flex-shrink:0;
+}
+.mn-sim-bar__label { font-family:var(--font-mono); text-transform:uppercase; letter-spacing:0.05em; }
+.mn-sim-bar__toggle {
+  background:var(--superficie-1); border:1px solid var(--bordo);
+  color:var(--mn-text-muted); padding:3px 10px; border-radius:4px;
+  cursor:pointer; font-size:0.75rem;
+}
+.mn-sim-bar__toggle--active { background:var(--mn-accent); color:var(--mn-accent-text); border-color:var(--mn-accent); }
+
+/* ── Insight & preview cards ── */
+.mn-sim-eng-preview {
+  padding:10px 12px; margin:8px 0; background:var(--superficie-2);
+  border-left:3px solid var(--mn-accent); border-radius:0 6px 6px 0;
+}
+.mn-sim-talent-card {
+  padding:12px; margin-bottom:8px; background:var(--superficie-1);
+  border:1px solid var(--bordo); border-radius:8px; border-left:3px solid var(--bordo);
+}
+.mn-sim-insight {
+  padding:12px 16px; margin:12px 0; background:var(--mn-accent-bg);
+  border:1px solid var(--mn-accent); border-radius:8px;
+  font-size:0.85rem; color:var(--mn-text-muted);
+}
+.mn-sim-insight__title { font-weight:600; color:var(--mn-accent); margin-bottom:6px; font-size:0.8rem; }
+.mn-sim-ado-preview {
+  padding:12px; margin:12px 0; background:var(--superficie-2);
+  border-radius:8px; font-size:0.8rem; color:var(--mn-text-muted);
+}
+.mn-sim-ado-preview ul { color:var(--grigio-medio); }
+.mn-sim-saved-list { margin-top:8px; }
+
+/* ── Nav sim button ── */
+.mn-nav__sim-btn {
+  background:none; border:1px solid var(--bordo); color:var(--mn-text-muted);
+  cursor:pointer; font-size:1rem; padding:4px 8px; border-radius:6px;
+  line-height:1; transition:all 0.15s;
+}
+.mn-nav__sim-btn:hover { border-color:var(--mn-accent); color:var(--mn-accent); }
+
+/* ═══ Avorio theme ═══ */
+body.mn-avorio .mn-sim-card { background:var(--superficie-1); border-color:var(--bordo); }
+body.mn-avorio .mn-sim-card:hover { background:var(--superficie-2); }
+body.mn-avorio .mn-sim-card__title { color:var(--nero-assoluto); }
+body.mn-avorio .mn-sim-step-header__title { color:var(--nero-assoluto); }
+body.mn-avorio .mn-sim-eng-preview { background:var(--superficie-1); }
+body.mn-avorio .mn-sim-talent-card { background:var(--superficie-1); border-color:var(--bordo); }
+body.mn-avorio .mn-sim-insight { background:var(--mn-accent-bg); }
+body.mn-avorio .mn-sim-ado-preview { background:var(--superficie-1); }
+body.mn-avorio .mn-sim-mutation { background:var(--superficie-1); border-color:var(--bordo); }
+body.mn-avorio .mn-sim-label-input { background:var(--superficie-1); color:var(--nero-assoluto); border-color:var(--bordo); }
+body.mn-avorio .mn-sim-suggestion { background:var(--mn-accent-bg); }
+body.mn-avorio .mn-nav__sim-btn { color:var(--grigio-medio); border-color:var(--bordo); }
+body.mn-avorio .mn-nav__sim-btn:hover { color:var(--mn-accent); border-color:var(--mn-accent); }
+body.mn-avorio .mn-sim-bar { background:var(--superficie-1); }
+body.mn-avorio .mn-sim-bar__toggle { background:var(--superficie-2); }
+body.mn-avorio .mn-sim-kpi-delta { background:var(--superficie-1); border-color:var(--bordo); }
+body.mn-avorio .mn-sim-kpi-delta__value { color:var(--nero-assoluto); }
+} /* end @layer layouts */

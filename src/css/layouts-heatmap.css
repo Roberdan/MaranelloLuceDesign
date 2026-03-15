@@ -116,4 +116,56 @@ body.mn-colorblind .mn-heatmap__bar--danger { background:var(--rosso-corsa); bac
   repeating-linear-gradient(-45deg,transparent,transparent 3px,rgba(255,255,255,.2) 3px,rgba(255,255,255,.2) 5px); }
 body.mn-colorblind .mn-heatmap__delta--positive::before { content:"▲ "; }
 body.mn-colorblind .mn-heatmap__delta--negative::before { content:"▼ "; }
+
+/* ═══ Grid cell with tooltip ═══ */
+.mn-heatmap__cell {
+  min-width:44px; height:28px; border-radius:2px;
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--font-mono,'Barlow Condensed',sans-serif); font-size:0.65rem;
+  color:var(--mn-text); cursor:default; transition:background 0.2s, transform 0.1s;
+  position:relative;
+}
+.mn-heatmap__cell:hover { transform:scale(1.15); z-index:5; }
+.mn-heatmap__cell[data-tooltip]:hover::after {
+  content:attr(data-tooltip); position:absolute; bottom:calc(100% + 6px); left:50%;
+  transform:translateX(-50%); padding:4px 8px; border-radius:var(--radius-sm);
+  background:var(--superficie-3,#222); border:1px solid var(--bordo,#333);
+  color:var(--mn-text); font-size:0.6rem; white-space:nowrap; z-index:10;
+  pointer-events:none;
+}
+
+/* ═══ Filter bar ═══ */
+.mn-heatmap__filter-bar {
+  display:flex; align-items:center; gap:10px; padding:6px 8px;
+  flex-wrap:wrap; border-bottom:1px solid var(--mn-border-subtle);
+}
+
+/* ═══ Legend with gradient ═══ */
+.mn-heatmap__legend {
+  display:flex; align-items:center; gap:6px; font-size:0.6rem; color:var(--mn-text-muted);
+}
+.mn-heatmap__legend-bar {
+  width:100px; height:8px; border-radius:4px;
+  background:linear-gradient(90deg, var(--mn-surface-sunken) 0%, var(--verde-racing) 40%, var(--mn-accent) 65%, var(--rosso-corsa) 100%);
+}
+
+/* ═══ Header with month columns ═══ */
+.mn-heatmap__header {
+  display:flex; justify-content:space-between; align-items:center; padding:0 4px;
+}
+.mn-heatmap__header-month {
+  text-align:center; font-family:var(--font-mono,'Barlow Condensed',sans-serif);
+  font-size:0.6rem; color:var(--mn-text-muted); text-transform:uppercase; letter-spacing:0.04em;
+}
+
+/* ═══ Avorio: new elements ═══ */
+body.mn-avorio .mn-heatmap__cell { color:var(--nero-assoluto); }
+body.mn-avorio .mn-heatmap__cell[data-tooltip]:hover::after { background:var(--bianco-caldo); border-color:var(--grigio-alluminio); color:var(--nero-assoluto); }
+body.mn-avorio .mn-heatmap__filter-bar { border-bottom-color:var(--grigio-alluminio); }
+body.mn-avorio .mn-heatmap__legend { color:var(--grigio-medio); }
+
+/* ═══ Colorblind: new elements ═══ */
+body.mn-colorblind .mn-heatmap__legend-bar {
+  background:linear-gradient(90deg, var(--mn-surface-sunken) 0%, var(--mn-cb-green) 40%, var(--mn-cb-yellow) 65%, var(--mn-cb-orange) 100%);
+}
 } /* end @layer layouts */
