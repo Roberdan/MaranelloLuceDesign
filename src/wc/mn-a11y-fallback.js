@@ -46,6 +46,7 @@ function buildToggle(label, key, s, onApply) {
   t.className = 'mn-a11y-toggle' + (s[key] ? ' mn-a11y-toggle--on' : '');
   t.setAttribute('role', 'switch');
   t.setAttribute('aria-checked', String(!!s[key]));
+  t.dataset.a11yKey = key;
   const thumb = document.createElement('span');
   thumb.className = 'mn-a11y-toggle__thumb';
   t.appendChild(thumb);
@@ -70,7 +71,7 @@ export function buildA11yFallback(shadowRoot) {
 
   const fab = document.createElement('button');
   fab.className = 'mn-a11y-fab';
-  fab.innerHTML = '\u2699';
+  fab.innerHTML = '<svg width="22" height="22" viewBox="0 0 22 22" fill="currentColor" aria-hidden="true"><rect x="2" y="4" width="18" height="2" rx="1"/><rect x="2" y="10" width="18" height="2" rx="1"/><rect x="2" y="16" width="18" height="2" rx="1"/><circle cx="7" cy="5" r="3"/><circle cx="15" cy="11" r="3"/><circle cx="9" cy="17" r="3"/></svg>';
   fab.setAttribute('aria-label', 'Display settings');
   fab.setAttribute('aria-expanded', 'false');
   fab.setAttribute('aria-controls', 'mn-a11y-panel');
@@ -122,6 +123,11 @@ export function buildA11yFallback(shadowRoot) {
     apply();
     panel.querySelectorAll('.mn-a11y-panel__size-btn').forEach((b) =>
       b.classList.toggle('mn-a11y-panel__size-btn--active', b.textContent === 'MD'));
+    panel.querySelectorAll('[data-a11y-key]').forEach((t) => {
+      const isOn = !!DEFAULTS[t.dataset.a11yKey];
+      t.classList.toggle('mn-a11y-toggle--on', isOn);
+      t.setAttribute('aria-checked', String(isOn));
+    });
   });
   panel.appendChild(resetBtn);
 
@@ -132,12 +138,26 @@ export function buildA11yFallback(shadowRoot) {
     fab.setAttribute('aria-expanded', String(isOpen));
   });
 
+  const onKeydown = (e) => {
+    if (e.key === 'Escape' && isOpen) {
+      isOpen = false;
+      panel.classList.remove('mn-a11y-panel--open');
+      fab.setAttribute('aria-expanded', 'false');
+      fab.focus();
+    }
+  };
+  document.addEventListener('keydown', onKeydown);
+
   shadowRoot.append(fab, panel);
   apply();
 
   return {
     getSettings: () => ({ ...s }),
     reset: () => resetBtn.click(),
-    destroy: () => { fab.remove(); panel.remove(); },
+    destroy: () => {
+      document.removeEventListener('keydown', onKeydown);
+      fab.remove();
+      panel.remove();
+    },
   };
 }
