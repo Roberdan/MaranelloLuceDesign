@@ -1,4 +1,4 @@
-<!-- v3.1.0 | 2025-07-21 -->
+<!-- v3.4.0 | 2026-03-15 -->
 # Theming
 
 ## Themes
@@ -40,15 +40,38 @@ setTheme('nero');
 
 ## Semantic Tokens
 
-| Token | Usage |
-|---|---|
-| `--mn-accent` | Primary interactive color |
-| `--mn-accent-hover` | Hover state |
-| `--mn-accent-text` | Text on accent bg |
-| `--status-active` | Success indicator |
-| `--status-warning` | Warning indicator |
-| `--status-danger` | Error indicator |
-| `--status-info` | Info indicator |
+These 7 tokens redefine per-theme and cascade into shadow DOM — use them in components instead of hardcoded primitives.
+
+| Token | Nero default | Avorio override | Usage |
+|---|---|---|---|
+| `--mn-surface` | `--nero-carbon` | `--bianco-puro` | Card / panel background |
+| `--mn-surface-raised` | `--nero-soft` | `--avorio-chiaro` | Modal / dropdown / overlay |
+| `--mn-surface-sunken` | `--nero-profondo` | `--avorio-medio` | Code blocks / inset areas |
+| `--mn-text` | `--bianco-caldo` | `--nero-assoluto` | Primary body text |
+| `--mn-text-muted` | `--grigio-chiaro` | `--grigio-medio` | Secondary / muted text |
+| `--mn-border` | `--grigio-scuro` | `--avorio-scuro` | Default borders |
+| `--mn-border-subtle` | `rgba(255,255,255,0.07)` | `rgba(0,0,0,0.06)` | Hairline dividers |
+| `--mn-accent` | `--giallo-ferrari` | `--rosso-corsa` | Primary interactive color |
+| `--mn-accent-hover` | `--giallo-hover` | `#b30000` | Hover state |
+| `--mn-accent-text` | `#111` | `#fff` | Text on accent bg |
+| `--status-ok` / `--status-warn` / `--status-error` / `--status-info` | — | — | Status indicators |
+
+### `Maranello.palette()` — Live Token Reader
+
+Call inside render functions (never at module load) so colors reflect the current theme:
+
+```js
+// Wrong: captured once at IIFE load — doesn't update on theme change
+const COLORS = [Maranello.cssVar('--giallo-ferrari'), ...];
+
+// Correct: read on every render call
+function renderChart(canvas, data) {
+  const p = Maranello.palette();
+  // p.giallo, p.rosso, p.verde, p.accent, p.text, p.surface, p.statusOk …
+}
+```
+
+Returns `{ surface, surfaceRaised, surfaceSunken, text, textMuted, border, accent, giallo, rosso, verde, azzurro, biancoCaldo, grigioChiaro, grigioMedio, neroAssoluto, statusOk, statusWarn, statusError, statusInfo }`.
 
 ## Section Classes
 
