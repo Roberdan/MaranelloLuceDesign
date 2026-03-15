@@ -159,6 +159,8 @@ function initLiveValidation(formOrSelector) {
     const input = inputEl;
     const field = input.closest(".mn-field");
     if (!field) return;
+    const rules = input.getAttribute("data-validate") ?? "";
+    if (rules.includes("required")) input.setAttribute("aria-required", "true");
     input.addEventListener("blur", () => validateField(field));
     input.addEventListener("input", () => {
       if (field.classList.contains("mn-field--error")) validateField(field);

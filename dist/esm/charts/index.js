@@ -17,7 +17,7 @@ import {
   radar,
   sparkline,
   sparklineInteract
-} from "../chunks/chunk-VMMVTACT.js";
+} from "../chunks/chunk-ID5YWH4M.js";
 import "../chunks/chunk-KU7IG4OX.js";
 export {
   SERIES,

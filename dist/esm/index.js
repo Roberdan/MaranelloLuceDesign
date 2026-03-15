@@ -17,7 +17,7 @@ import {
   radar,
   sparkline,
   sparklineInteract
-} from "./chunks/chunk-VMMVTACT.js";
+} from "./chunks/chunk-ID5YWH4M.js";
 import {
   FerrariGauge,
   buildGaugePalette,
@@ -38,7 +38,7 @@ import {
   steppedRotary,
   toggleLever,
   toggleNotifications
-} from "./chunks/chunk-K2VEKO63.js";
+} from "./chunks/chunk-LI7BBD4V.js";
 import {
   ALLOWED_BIND_PROPERTIES,
   clamp,
@@ -79,7 +79,7 @@ import {
   validateField,
   validateForm,
   validators
-} from "./chunks/chunk-YZDPMMKC.js";
+} from "./chunks/chunk-RRQQA6OJ.js";
 import {
   EventBus,
   eventBus
@@ -334,15 +334,9 @@ function neuralNodes(container, opts = {}) {
   };
   const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d");
-  let nodes = [];
-  let connections = [];
-  let particles = [];
-  const waves = [];
-  const activations = [];
-  let activity = 0.55;
-  let hovered = -1;
-  let raf = 0;
-  let frame = 0;
+  let nodes = [], connections = [], particles = [];
+  const waves = [], activations = [];
+  let activity = 0.55, hovered = -1, raf = 0, frame = 0;
   let last = performance.now();
   host.innerHTML = "";
   host.style.position = "relative";
@@ -394,6 +388,7 @@ function neuralNodes(container, opts = {}) {
       t: Math.random(),
       speed: 12e-5 + Math.random() * 18e-5
     })));
+    canvas.setAttribute("aria-label", `Neural nodes: ${nodes.length} nodes, ${connections.length} connections`);
   }
   function triggerPulse(nodeIndex = Math.floor(Math.random() * nodes.length)) {
     if (!nodes[nodeIndex]) return;
@@ -916,6 +911,45 @@ function themeRotary(opts) {
   centerBtn.innerHTML = '<svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="3" fill="var(--mn-accent,#FFC72C)" opacity="0.7"/></svg>';
   dial.appendChild(centerBtn);
   container.appendChild(root);
+  root.setAttribute("role", "radiogroup");
+  root.setAttribute("aria-label", "Theme selector");
+  root.setAttribute("tabindex", "0");
+  for (const [mode, el4] of labels) {
+    el4.setAttribute("role", "radio");
+    el4.setAttribute("aria-checked", String(mode === getTheme()));
+  }
+  root.addEventListener("keydown", (e) => {
+    const current = getTheme();
+    const idx = THEME_POSITIONS.findIndex((p) => p.mode === current);
+    let next = idx;
+    switch (e.key) {
+      case "ArrowRight":
+      case "ArrowDown":
+        e.preventDefault();
+        next = (idx + 1) % THEME_POSITIONS.length;
+        break;
+      case "ArrowLeft":
+      case "ArrowUp":
+        e.preventDefault();
+        next = (idx - 1 + THEME_POSITIONS.length) % THEME_POSITIONS.length;
+        break;
+      case "Home":
+        e.preventDefault();
+        next = 0;
+        break;
+      case "End":
+        e.preventDefault();
+        next = THEME_POSITIONS.length - 1;
+        break;
+      case " ":
+      case "Enter":
+        e.preventDefault();
+        return;
+      default:
+        return;
+    }
+    applyTheme(THEME_POSITIONS[next].mode);
+  });
   function applyTheme(mode) {
     setTheme(mode);
     updateVisual();
@@ -927,7 +961,9 @@ function themeRotary(opts) {
     const angle = angleForTheme(current);
     pointer.style.transform = `translateX(-50%) rotate(${angle}deg)`;
     for (const [mode, el4] of labels) {
-      el4.classList.toggle("mn-theme-rotary__pos--active", mode === current);
+      const active = mode === current;
+      el4.classList.toggle("mn-theme-rotary__pos--active", active);
+      el4.setAttribute("aria-checked", String(active));
     }
   }
   updateVisual();
@@ -959,7 +995,9 @@ function toast(options) {
   }
   const toastEl = document.createElement("div");
   toastEl.className = `mn-toast mn-toast--${opts.type}`;
-  toastEl.setAttribute("role", "alert");
+  const isUrgent = opts.type === "error" || opts.type === "warning";
+  toastEl.setAttribute("role", isUrgent ? "alert" : "status");
+  toastEl.setAttribute("aria-live", isUrgent ? "assertive" : "polite");
   const msgWrap = document.createElement("div");
   msgWrap.className = "mn-toast__message";
   if (opts.title) {
@@ -2612,15 +2650,14 @@ function socialGraph(container, opts = { nodes: [], edges: [] }) {
   const canvas = document.createElement("canvas");
   canvas.style.cssText = "display:block;width:100%;height:100%;touch-action:none;";
   canvas.setAttribute("role", "img");
-  canvas.setAttribute("aria-label", "Interactive social graph visualization");
+  canvas.setAttribute("aria-label", "Social graph");
   canvas.setAttribute("tabindex", "0");
   const tip = document.createElement("div");
   tip.className = "mn-chart-tooltip";
   tip.style.cssText = "position:absolute;pointer-events:none;opacity:0;transition:opacity .12s ease;max-width:220px;";
   hostEl.append(canvas, tip);
   let width = 0, height = 0, raf = 0, frame = 0;
-  let nodes = [], edges = [];
-  let nodeMap = /* @__PURE__ */ new Map(), linked = /* @__PURE__ */ new Map();
+  let nodes = [], edges = [], nodeMap = /* @__PURE__ */ new Map(), linked = /* @__PURE__ */ new Map();
   let running = opts.animate !== false, hoveredId = null, highlightedId = null;
   let dragging = null, dragMoved = false, resizeObs = null;
   const dpr = () => window.devicePixelRatio || 1;
@@ -2683,6 +2720,7 @@ function socialGraph(container, opts = { nodes: [], edges: [] }) {
     });
     frame = 0;
     running = opts.animate !== false && nodes.length > 1;
+    canvas.setAttribute("aria-label", `Social graph: ${nodes.length} nodes, ${edges.length} connections`);
     loop();
     draw();
   }

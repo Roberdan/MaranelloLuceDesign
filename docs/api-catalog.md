@@ -1,5 +1,5 @@
 <!-- Reference catalog — not loaded in context, use for lookup -->
-# API Catalog — v4.0.0
+# API Catalog — v4.1.0
 
 ## IIFE Exports (85 on `window.Maranello`)
 
@@ -53,6 +53,20 @@ Map (2): `mapView` · `attachEvents`
 | `mn-theme-rotary` | `size` |
 | `mn-tabs` / `mn-tab` | `active` / `label` |
 | `mn-a11y` | (FAB + settings panel) |
+
+## Accessibility Helpers
+
+### `applyChartA11y(canvas, label, data?)`
+
+| Param | Type | Description |
+|---|---|---|
+| `canvas` | `HTMLCanvasElement` | Target canvas |
+| `label` | `string` | Accessible label (also used for sr-only caption) |
+| `data` | `A11yDataRow[]` | Optional data rows. When provided, injects sr-only `<table>` with `<caption>` |
+
+`A11yDataRow`: `{ label: string; value: string | number }`
+
+Backward compatible: omitting `data` uses text-only sr-only span (v4.0 behavior).
 
 ## CSS Class Families
 

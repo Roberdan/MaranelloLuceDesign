@@ -76,7 +76,31 @@ export function liveGraph(
   ctx.stroke();
   ctx.shadowBlur = 0;
 
-  applyChartA11y(canvas, `Live chart: ${o.unitLabel || 'real-time data'}`);
+  const liveLabel = `Live chart: ${o.unitLabel || 'real-time data'}`;
+  const last5 = data.slice(-5);
+  const a11yData = last5.map((v, i) => ({ label: `T-${last5.length - 1 - i}`, value: v }));
+  applyChartA11y(canvas, liveLabel, a11yData);
+
+  // Throttled aria-live announcement (max 1 per 5s)
+  if (canvas.parentElement) {
+    let liveEl = canvas.parentElement.querySelector<HTMLElement>('.mn-sr-live');
+    if (!liveEl) {
+      liveEl = document.createElement('span');
+      liveEl.className = 'mn-sr-only mn-sr-live';
+      liveEl.setAttribute('aria-live', 'polite');
+      liveEl.setAttribute('aria-atomic', 'true');
+      canvas.parentElement.appendChild(liveEl);
+    }
+    const now = Date.now();
+    const lastTs = Number(liveEl.dataset.ts || '0');
+    if (now - lastTs >= 5000) {
+      const latest = data[data.length - 1];
+      const prev = data.length > 1 ? data[data.length - 2] : latest;
+      const trend = latest > prev ? 'rising' : latest < prev ? 'falling' : 'steady';
+      liveEl.textContent = `${o.unitLabel || 'Value'}: ${latest}, ${trend}`;
+      liveEl.dataset.ts = String(now);
+    }
+  }
 
   return canvas;
 }

@@ -119,6 +119,10 @@ function buildA11yFallback(shadowRoot) {
     isOpen = !isOpen;
     panel.classList.toggle("mn-a11y-panel--open", isOpen);
     fab.setAttribute("aria-expanded", String(isOpen));
+    if (isOpen) {
+      const first = panel.querySelector("button, [tabindex]");
+      if (first) first.focus();
+    }
   });
   const onKeydown = (e) => {
     if (e.key === "Escape" && isOpen) {
@@ -126,6 +130,23 @@ function buildA11yFallback(shadowRoot) {
       panel.classList.remove("mn-a11y-panel--open");
       fab.setAttribute("aria-expanded", "false");
       fab.focus();
+      return;
+    }
+    if (e.key === "Tab" && isOpen) {
+      const focusable = panel.querySelectorAll(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      const active = shadowRoot.activeElement || document.activeElement;
+      if (e.shiftKey && active === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && active === last) {
+        e.preventDefault();
+        first.focus();
+      }
     }
   };
   document.addEventListener("keydown", onKeydown);

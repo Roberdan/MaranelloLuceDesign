@@ -36,7 +36,9 @@ export function toast(options?: ToastOptions): HTMLElement {
 
   const toastEl = document.createElement('div');
   toastEl.className = `mn-toast mn-toast--${opts.type}`;
-  toastEl.setAttribute('role', 'alert');
+  const isUrgent = opts.type === 'error' || opts.type === 'warning';
+  toastEl.setAttribute('role', isUrgent ? 'alert' : 'status');
+  toastEl.setAttribute('aria-live', isUrgent ? 'assertive' : 'polite');
 
   const msgWrap = document.createElement('div');
   msgWrap.className = 'mn-toast__message';

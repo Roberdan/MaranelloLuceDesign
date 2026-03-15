@@ -68,7 +68,9 @@ export function sparkline(
   }
 
   const last = data[data.length - 1];
-  applyChartA11y(canvas, `Sparkline: values from ${mn} to ${mx}, latest ${last}`);
+  const a11yLabel = `Sparkline: values from ${mn} to ${mx}, latest ${last}`;
+  const a11yData = data.map((v, i) => ({ label: `Point ${i + 1}`, value: v }));
+  applyChartA11y(canvas, a11yLabel, a11yData);
 
   return canvas;
 }

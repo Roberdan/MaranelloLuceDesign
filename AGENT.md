@@ -354,6 +354,10 @@ Sizes: `xs` (12px), `sm` (16px), `md` (20px), `lg` (24px), `xl` (32px), `2xl` (4
 | Night job card | `mn-night-agent` + `mn-night-agent__header/schedule/actions` |
 | Command palette | `<mn-command-palette>` or `Maranello.commandPalette(opts)` |
 | Accessibility | `<mn-a11y>` — adds font/contrast/motion controls |
+| A11y focus trap | `openDrawer()`, `<mn-modal>`, `<mn-a11y>` — Tab traps, Escape closes |
+| Chart SR data | `applyChartA11y(canvas, label, data?)` — sr-only table for screen readers |
+| Keyboard nav | Theme rotary (Arrow), Ferrari controls (Arrow/Home/End), command palette |
+| Contrast CI | `node scripts/check-contrast.mjs` — WCAG AA ratio check in CI |
 | Controls (Ferrari) | `<mn-ferrari-control type="rotary" value="65">` |
 | Funnel chart | `<mn-funnel data="[...]">` or `Maranello.funnel(el, data)` |
 | Org tree | `Maranello.initOrgTree(container)` |

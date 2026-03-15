@@ -41,6 +41,8 @@ export function openDrawer(id: string, triggerEl?: HTMLElement): void {
   const drawer = document.getElementById(id);
   if (!drawer) return;
   drawer.classList.add('mn-drawer--open');
+  drawer.setAttribute('role', 'dialog');
+  drawer.setAttribute('aria-modal', 'true');
   const trigger = triggerEl ?? (document.activeElement as HTMLElement | null);
   const backdrop = drawer.previousElementSibling;
   if (backdrop && backdrop.classList.contains('mn-drawer__backdrop')) {
@@ -74,6 +76,8 @@ export function closeDrawer(id: string, triggerEl?: HTMLElement | null): void {
   const drawer = document.getElementById(id);
   if (!drawer) return;
   drawer.classList.remove('mn-drawer--open');
+  drawer.removeAttribute('role');
+  drawer.removeAttribute('aria-modal');
   const backdrop = drawer.previousElementSibling;
   if (backdrop && backdrop.classList.contains('mn-drawer__backdrop')) {
     backdrop.classList.remove('mn-drawer__backdrop--visible');

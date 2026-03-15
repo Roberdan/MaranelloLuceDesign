@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.1.0] - 15 Mar 2026
+
+### Added
+- **WCAG 2.2 AA compliance** — full accessibility overhaul
+- `scripts/check-contrast.mjs` — CI Constitution step validates contrast ratios across all 4 themes
+- `applyChartA11y(canvas, label, data?)` — optional data param injects sr-only table for screen readers
+- Focus trap on `<mn-a11y>` panel (Tab/Shift+Tab cycle when open)
+- Theme rotary: `role=radiogroup`, Arrow/Home/End keyboard navigation
+- Cruise lever: `role=slider`, `aria-value*`, Arrow/Home/End keyboard
+- Drawer: `role=dialog`, `aria-modal` on open
+- liveGraph: `aria-live=polite` region with throttled 5s trend announcements
+- Toast: differentiated `role=alert`/`role=status` based on severity
+- `<mn-chart>`: `aria-busy` during render
+- Dynamic `aria-label` with node/edge counts on social-graph and neural-nodes
+- `aria-required` on form fields with `data-validate="required"`
+- 58 new accessibility unit tests (contrast, keyboard-nav, charts-a11y, forms-a11y, live-regions)
+
+### Changed
+- All 8 chart types pass meaningful data summaries to `applyChartA11y`
+
 ## [4.0.3] - 15 Mar 2026
 
 ### Fixed

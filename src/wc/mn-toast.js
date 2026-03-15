@@ -98,6 +98,9 @@ class MnToast extends HTMLElement {
   _render() {
     const type = this.getAttribute('type') || 'info';
     this._toast.className = `mn-toast mn-toast--${type}`;
+    const isUrgent = type === 'danger' || type === 'warning';
+    this._toast.setAttribute('role', isUrgent ? 'alert' : 'status');
+    this._toast.setAttribute('aria-live', isUrgent ? 'assertive' : 'polite');
     this._titleEl.textContent = this.getAttribute('title') || '';
     this._titleEl.style.display = this.getAttribute('title') ? '' : 'none';
     this._textEl.textContent = this.getAttribute('message') || '';

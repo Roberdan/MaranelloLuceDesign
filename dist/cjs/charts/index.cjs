@@ -284,20 +284,24 @@ function hexFillGradient(ctx, hex, h, opacity) {
   grad.addColorStop(1, `rgba(${r},${g},${b},0)`);
   return grad;
 }
-function applyChartA11y(canvas, label) {
+function applyChartA11y(canvas, label, data) {
   canvas.setAttribute("role", "img");
   canvas.setAttribute("aria-label", label);
   canvas.textContent = label;
-  if (canvas.parentElement) {
-    const existing = canvas.nextElementSibling;
-    if (existing && existing.classList.contains("mn-sr-only")) {
-      existing.textContent = label;
-    } else {
-      const srSpan = document.createElement("span");
-      srSpan.className = "mn-sr-only";
-      srSpan.textContent = label;
-      canvas.parentElement.insertBefore(srSpan, canvas.nextSibling);
-    }
+  if (!canvas.parentElement) return;
+  let srEl = canvas.nextElementSibling;
+  if (!srEl || !srEl.classList.contains("mn-sr-only")) {
+    srEl = document.createElement("span");
+    srEl.className = "mn-sr-only";
+    canvas.parentElement.insertBefore(srEl, canvas.nextSibling);
+  }
+  if (data && data.length > 0) {
+    const rows = data.map(
+      (r) => `<tr><td>${r.label}</td><td>${r.value}</td></tr>`
+    ).join("");
+    srEl.innerHTML = `<table><caption>${label}</caption><tbody>${rows}</tbody></table>`;
+  } else {
+    srEl.textContent = label;
   }
 }
 function drawSmoothLine(ctx, data, getX, getY, smooth) {
@@ -362,7 +366,9 @@ function sparkline(canvas, data, opts) {
     ctx.stroke();
   }
   const last = data[data.length - 1];
-  applyChartA11y(canvas, `Sparkline: values from ${mn} to ${mx}, latest ${last}`);
+  const a11yLabel = `Sparkline: values from ${mn} to ${mx}, latest ${last}`;
+  const a11yData = data.map((v, i) => ({ label: `Point ${i + 1}`, value: v }));
+  applyChartA11y(canvas, a11yLabel, a11yData);
   return canvas;
 }
 
@@ -407,7 +413,12 @@ function donut(canvas, segments, opts) {
     const pct = total > 0 ? Math.round(s2.value / total * 100) : 0;
     return `segment ${i + 1} ${pct}%`;
   }).join(", ");
-  applyChartA11y(canvas, `Donut chart: ${segDesc}`);
+  const a11yLabel = `Donut chart: ${segDesc}`;
+  const a11yData = segments.map((s2, i) => {
+    const segPct = total > 0 ? Math.round(s2.value / total * 100) : 0;
+    return { label: `Segment ${i + 1}`, value: `${segPct}%` };
+  });
+  applyChartA11y(canvas, a11yLabel, a11yData);
   return canvas;
 }
 
@@ -468,7 +479,14 @@ function halfGauge(canvas, opts) {
   ctx.fillText(String(o.min), cx - radius + lineW / 2, cy + radius * 0.18);
   ctx.fillText(String(o.max), cx + radius - lineW / 2, cy + radius * 0.18);
   const unitSuffix = o.unit ? " " + o.unit : "";
-  applyChartA11y(canvas, `Gauge: ${o.value} of ${o.max}${unitSuffix}`);
+  const a11yLabel = `Gauge: ${o.value} of ${o.max}${unitSuffix}`;
+  const fillPct = Math.round((o.value - o.min) / (o.max - o.min) * 100);
+  const a11yData = [
+    { label: "Value", value: `${o.value}${unitSuffix}` },
+    { label: "Range", value: `${o.min} \u2013 ${o.max}` },
+    { label: "Fill", value: `${fillPct}%` }
+  ];
+  applyChartA11y(canvas, a11yLabel, a11yData);
   return canvas;
 }
 
@@ -527,10 +545,9 @@ function barChart(canvas, data, opts) {
     }
   });
   const highest = data.reduce((a, b) => b.value > a.value ? b : a, data[0]);
-  applyChartA11y(
-    canvas,
-    `Bar chart: ${data.length} categories, highest ${highest.label || "item"} at ${highest.value}`
-  );
+  const a11yLabel = `Bar chart: ${data.length} categories, highest ${highest.label || "item"} at ${highest.value}`;
+  const a11yData = data.map((d) => ({ label: d.label || "item", value: d.value }));
+  applyChartA11y(canvas, a11yLabel, a11yData);
   return canvas;
 }
 
@@ -588,7 +605,29 @@ function liveGraph(canvas, data, opts) {
   ctx.shadowBlur = 6;
   ctx.stroke();
   ctx.shadowBlur = 0;
-  applyChartA11y(canvas, `Live chart: ${o.unitLabel || "real-time data"}`);
+  const liveLabel = `Live chart: ${o.unitLabel || "real-time data"}`;
+  const last5 = data.slice(-5);
+  const a11yData = last5.map((v, i) => ({ label: `T-${last5.length - 1 - i}`, value: v }));
+  applyChartA11y(canvas, liveLabel, a11yData);
+  if (canvas.parentElement) {
+    let liveEl = canvas.parentElement.querySelector(".mn-sr-live");
+    if (!liveEl) {
+      liveEl = document.createElement("span");
+      liveEl.className = "mn-sr-only mn-sr-live";
+      liveEl.setAttribute("aria-live", "polite");
+      liveEl.setAttribute("aria-atomic", "true");
+      canvas.parentElement.appendChild(liveEl);
+    }
+    const now = Date.now();
+    const lastTs = Number(liveEl.dataset.ts || "0");
+    if (now - lastTs >= 5e3) {
+      const latest = data[data.length - 1];
+      const prev = data.length > 1 ? data[data.length - 2] : latest;
+      const trend = latest > prev ? "rising" : latest < prev ? "falling" : "steady";
+      liveEl.textContent = `${o.unitLabel || "Value"}: ${latest}, ${trend}`;
+      liveEl.dataset.ts = String(now);
+    }
+  }
   return canvas;
 }
 
@@ -651,7 +690,12 @@ function areaChart(canvas, datasets, opts) {
     ctx.fill();
   });
   const maxPts = Math.max(...datasets.map((ds) => ds.data.length));
-  applyChartA11y(canvas, `Area chart: ${datasets.length} series, ${maxPts} points`);
+  const a11yLabel = `Area chart: ${datasets.length} series, ${maxPts} points`;
+  const a11yData = datasets.map((ds, i) => ({
+    label: `Series ${i + 1}`,
+    value: `${ds.data.length} points, last ${ds.data[ds.data.length - 1] ?? 0}`
+  }));
+  applyChartA11y(canvas, a11yLabel, a11yData);
   return canvas;
 }
 
@@ -857,7 +901,8 @@ function radar(canvas, data, opts) {
     ctx.fillStyle = o.color;
     ctx.fill();
   });
-  applyChartA11y(canvas, `Radar chart: ${n} dimensions`);
+  const a11yData = data.map((d) => ({ label: d.label, value: d.value }));
+  applyChartA11y(canvas, `Radar chart: ${n} dimensions`, a11yData);
   return canvas;
 }
 
@@ -914,7 +959,11 @@ function bubble(canvas, data, opts) {
       ctx.fillText(d.label, bx, by + br + 12);
     }
   });
-  applyChartA11y(canvas, `Bubble chart: ${data.length} data points`);
+  const a11yData = data.map((d) => ({
+    label: d.label || `(${d.x}, ${d.y})`,
+    value: `z ${d.z ?? 1}`
+  }));
+  applyChartA11y(canvas, `Bubble chart: ${data.length} data points`, a11yData);
   return canvas;
 }
 

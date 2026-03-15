@@ -37,6 +37,8 @@ function openDrawer(id, triggerEl) {
   const drawer = document.getElementById(id);
   if (!drawer) return;
   drawer.classList.add("mn-drawer--open");
+  drawer.setAttribute("role", "dialog");
+  drawer.setAttribute("aria-modal", "true");
   const trigger = triggerEl ?? document.activeElement;
   const backdrop = drawer.previousElementSibling;
   if (backdrop && backdrop.classList.contains("mn-drawer__backdrop")) {
@@ -77,6 +79,8 @@ function closeDrawer(id, triggerEl) {
   const drawer = document.getElementById(id);
   if (!drawer) return;
   drawer.classList.remove("mn-drawer--open");
+  drawer.removeAttribute("role");
+  drawer.removeAttribute("aria-modal");
   const backdrop = drawer.previousElementSibling;
   if (backdrop && backdrop.classList.contains("mn-drawer__backdrop")) {
     backdrop.classList.remove("mn-drawer__backdrop--visible");
@@ -225,8 +229,37 @@ function cruiseLever(container, opts) {
     posEls.forEach(
       (pe, i) => pe.classList.toggle("mn-ctrl-lever__pos--active", i === current)
     );
+    root.setAttribute("aria-valuenow", String(current));
+    root.setAttribute("aria-valuetext", positions[current]);
     if (onChange) onChange(current, positions[current]);
   }
+  root.setAttribute("tabindex", "0");
+  root.setAttribute("role", "slider");
+  root.setAttribute("aria-label", opts?.label ?? "Cruise lever");
+  root.setAttribute("aria-valuemin", "0");
+  root.setAttribute("aria-valuemax", String(total - 1));
+  root.addEventListener("keydown", (e) => {
+    switch (e.key) {
+      case "ArrowUp":
+      case "ArrowRight":
+        e.preventDefault();
+        setPos(current + 1);
+        break;
+      case "ArrowDown":
+      case "ArrowLeft":
+        e.preventDefault();
+        setPos(current - 1);
+        break;
+      case "Home":
+        e.preventDefault();
+        setPos(0);
+        break;
+      case "End":
+        e.preventDefault();
+        setPos(total - 1);
+        break;
+    }
+  });
   setPos(current);
   posEls.forEach(
     (pe) => pe.addEventListener("click", () => setPos(Number(pe.dataset.index)))
@@ -518,4 +551,4 @@ export {
   manettino,
   steppedRotary
 };
-//# sourceMappingURL=chunk-K2VEKO63.js.map
+//# sourceMappingURL=chunk-LI7BBD4V.js.map

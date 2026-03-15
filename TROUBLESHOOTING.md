@@ -36,3 +36,13 @@
 <link rel="stylesheet" href="maranello…/dist/css/index.css" />
 <link rel="stylesheet" href="./my-overrides.css" />
 ```
+
+## Accessibility
+
+| Issue | Fix |
+|---|---|
+| Contrast check fails in CI | Run `node scripts/check-contrast.mjs` locally. Fix token values in `tokens-color.css` or `themes-base.css`. |
+| Focus trap not working | Ensure `<mn-a11y>` panel, `<mn-modal>`, or drawer is using the built-in focus trap. Check shadow DOM boundary. |
+| Screen reader ignores chart data | Pass `data` param to `applyChartA11y()`. Check sr-only span exists after canvas. |
+| Toast not announced | Error/warning use `role=alert`. Info/success use `role=status`. Check `aria-live` attribute. |
+| Theme rotary not keyboard-accessible | Ensure container has `tabindex="0"`. Arrow keys cycle themes. |

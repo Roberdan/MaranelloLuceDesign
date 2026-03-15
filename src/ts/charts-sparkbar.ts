@@ -74,8 +74,9 @@ export function barChart(
   });
 
   const highest = data.reduce((a, b) => (b.value > a.value ? b : a), data[0]);
-  applyChartA11y(canvas,
-    `Bar chart: ${data.length} categories, highest ${highest.label || 'item'} at ${highest.value}`);
+  const a11yLabel = `Bar chart: ${data.length} categories, highest ${highest.label || 'item'} at ${highest.value}`;
+  const a11yData = data.map((d) => ({ label: d.label || 'item', value: d.value }));
+  applyChartA11y(canvas, a11yLabel, a11yData);
 
   return canvas;
 }

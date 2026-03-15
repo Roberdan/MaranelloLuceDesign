@@ -87,6 +87,7 @@ class MnChart extends HTMLElement {
     }
   }
   async _init() {
+    this.setAttribute("aria-busy", "true");
     let charts = await resolveCharts();
     while (!charts && ++this._initAttempts < 60) {
       await new Promise((r) => requestAnimationFrame(r));
@@ -94,6 +95,7 @@ class MnChart extends HTMLElement {
     }
     if (!charts) {
       console.warn("<mn-chart>: chart library not available (ESM or window.Maranello)");
+      this.removeAttribute("aria-busy");
       return;
     }
     this._charts = charts;
@@ -101,6 +103,7 @@ class MnChart extends HTMLElement {
     const factory = charts[type];
     if (typeof factory !== "function") {
       console.warn(`<mn-chart>: unknown chart type "${type}"`);
+      this.removeAttribute("aria-busy");
       return;
     }
     const hasExplicitSize = this.hasAttribute("width") || this.hasAttribute("height");
@@ -128,6 +131,7 @@ class MnChart extends HTMLElement {
       this._attachResizeObserver(factory);
     }
     this.dispatchEvent(new CustomEvent("mn-chart-ready", { bubbles: true, composed: true }));
+    this.removeAttribute("aria-busy");
   }
   _attachResizeObserver(factory) {
     let tid = null;

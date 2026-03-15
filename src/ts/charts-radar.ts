@@ -96,7 +96,8 @@ export function radar(
     ctx.fill();
   });
 
-  applyChartA11y(canvas, `Radar chart: ${n} dimensions`);
+  const a11yData = data.map((d) => ({ label: d.label, value: d.value }));
+  applyChartA11y(canvas, `Radar chart: ${n} dimensions`, a11yData);
 
   return canvas;
 }

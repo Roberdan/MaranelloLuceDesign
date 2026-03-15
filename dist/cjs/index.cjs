@@ -920,15 +920,9 @@ function neuralNodes(container, opts = {}) {
   };
   const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d");
-  let nodes = [];
-  let connections = [];
-  let particles = [];
-  const waves = [];
-  const activations = [];
-  let activity = 0.55;
-  let hovered = -1;
-  let raf = 0;
-  let frame = 0;
+  let nodes = [], connections = [], particles = [];
+  const waves = [], activations = [];
+  let activity = 0.55, hovered = -1, raf = 0, frame = 0;
   let last = performance.now();
   host.innerHTML = "";
   host.style.position = "relative";
@@ -980,6 +974,7 @@ function neuralNodes(container, opts = {}) {
       t: Math.random(),
       speed: 12e-5 + Math.random() * 18e-5
     })));
+    canvas.setAttribute("aria-label", `Neural nodes: ${nodes.length} nodes, ${connections.length} connections`);
   }
   function triggerPulse(nodeIndex = Math.floor(Math.random() * nodes.length)) {
     if (!nodes[nodeIndex]) return;
@@ -1502,6 +1497,45 @@ function themeRotary(opts) {
   centerBtn.innerHTML = '<svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="3" fill="var(--mn-accent,#FFC72C)" opacity="0.7"/></svg>';
   dial.appendChild(centerBtn);
   container.appendChild(root);
+  root.setAttribute("role", "radiogroup");
+  root.setAttribute("aria-label", "Theme selector");
+  root.setAttribute("tabindex", "0");
+  for (const [mode, el4] of labels) {
+    el4.setAttribute("role", "radio");
+    el4.setAttribute("aria-checked", String(mode === getTheme()));
+  }
+  root.addEventListener("keydown", (e) => {
+    const current = getTheme();
+    const idx = THEME_POSITIONS.findIndex((p) => p.mode === current);
+    let next = idx;
+    switch (e.key) {
+      case "ArrowRight":
+      case "ArrowDown":
+        e.preventDefault();
+        next = (idx + 1) % THEME_POSITIONS.length;
+        break;
+      case "ArrowLeft":
+      case "ArrowUp":
+        e.preventDefault();
+        next = (idx - 1 + THEME_POSITIONS.length) % THEME_POSITIONS.length;
+        break;
+      case "Home":
+        e.preventDefault();
+        next = 0;
+        break;
+      case "End":
+        e.preventDefault();
+        next = THEME_POSITIONS.length - 1;
+        break;
+      case " ":
+      case "Enter":
+        e.preventDefault();
+        return;
+      default:
+        return;
+    }
+    applyTheme(THEME_POSITIONS[next].mode);
+  });
   function applyTheme(mode) {
     setTheme(mode);
     updateVisual();
@@ -1513,7 +1547,9 @@ function themeRotary(opts) {
     const angle = angleForTheme(current);
     pointer.style.transform = `translateX(-50%) rotate(${angle}deg)`;
     for (const [mode, el4] of labels) {
-      el4.classList.toggle("mn-theme-rotary__pos--active", mode === current);
+      const active = mode === current;
+      el4.classList.toggle("mn-theme-rotary__pos--active", active);
+      el4.setAttribute("aria-checked", String(active));
     }
   }
   updateVisual();
@@ -1545,7 +1581,9 @@ function toast(options) {
   }
   const toastEl = document.createElement("div");
   toastEl.className = `mn-toast mn-toast--${opts.type}`;
-  toastEl.setAttribute("role", "alert");
+  const isUrgent = opts.type === "error" || opts.type === "warning";
+  toastEl.setAttribute("role", isUrgent ? "alert" : "status");
+  toastEl.setAttribute("aria-live", isUrgent ? "assertive" : "polite");
   const msgWrap = document.createElement("div");
   msgWrap.className = "mn-toast__message";
   if (opts.title) {
@@ -2694,20 +2732,24 @@ function hexFillGradient(ctx, hex, h, opacity) {
   grad.addColorStop(1, `rgba(${r},${g},${b},0)`);
   return grad;
 }
-function applyChartA11y(canvas, label) {
+function applyChartA11y(canvas, label, data) {
   canvas.setAttribute("role", "img");
   canvas.setAttribute("aria-label", label);
   canvas.textContent = label;
-  if (canvas.parentElement) {
-    const existing = canvas.nextElementSibling;
-    if (existing && existing.classList.contains("mn-sr-only")) {
-      existing.textContent = label;
-    } else {
-      const srSpan = document.createElement("span");
-      srSpan.className = "mn-sr-only";
-      srSpan.textContent = label;
-      canvas.parentElement.insertBefore(srSpan, canvas.nextSibling);
-    }
+  if (!canvas.parentElement) return;
+  let srEl = canvas.nextElementSibling;
+  if (!srEl || !srEl.classList.contains("mn-sr-only")) {
+    srEl = document.createElement("span");
+    srEl.className = "mn-sr-only";
+    canvas.parentElement.insertBefore(srEl, canvas.nextSibling);
+  }
+  if (data && data.length > 0) {
+    const rows = data.map(
+      (r) => `<tr><td>${r.label}</td><td>${r.value}</td></tr>`
+    ).join("");
+    srEl.innerHTML = `<table><caption>${label}</caption><tbody>${rows}</tbody></table>`;
+  } else {
+    srEl.textContent = label;
   }
 }
 function drawSmoothLine(ctx, data, getX, getY, smooth) {
@@ -2772,7 +2814,9 @@ function sparkline(canvas, data, opts) {
     ctx.stroke();
   }
   const last = data[data.length - 1];
-  applyChartA11y(canvas, `Sparkline: values from ${mn} to ${mx}, latest ${last}`);
+  const a11yLabel = `Sparkline: values from ${mn} to ${mx}, latest ${last}`;
+  const a11yData = data.map((v, i) => ({ label: `Point ${i + 1}`, value: v }));
+  applyChartA11y(canvas, a11yLabel, a11yData);
   return canvas;
 }
 
@@ -2817,7 +2861,12 @@ function donut(canvas, segments, opts) {
     const pct2 = total > 0 ? Math.round(s2.value / total * 100) : 0;
     return `segment ${i + 1} ${pct2}%`;
   }).join(", ");
-  applyChartA11y(canvas, `Donut chart: ${segDesc}`);
+  const a11yLabel = `Donut chart: ${segDesc}`;
+  const a11yData = segments.map((s2, i) => {
+    const segPct = total > 0 ? Math.round(s2.value / total * 100) : 0;
+    return { label: `Segment ${i + 1}`, value: `${segPct}%` };
+  });
+  applyChartA11y(canvas, a11yLabel, a11yData);
   return canvas;
 }
 
@@ -2878,7 +2927,14 @@ function halfGauge(canvas, opts) {
   ctx.fillText(String(o.min), cx - radius + lineW / 2, cy + radius * 0.18);
   ctx.fillText(String(o.max), cx + radius - lineW / 2, cy + radius * 0.18);
   const unitSuffix = o.unit ? " " + o.unit : "";
-  applyChartA11y(canvas, `Gauge: ${o.value} of ${o.max}${unitSuffix}`);
+  const a11yLabel = `Gauge: ${o.value} of ${o.max}${unitSuffix}`;
+  const fillPct = Math.round((o.value - o.min) / (o.max - o.min) * 100);
+  const a11yData = [
+    { label: "Value", value: `${o.value}${unitSuffix}` },
+    { label: "Range", value: `${o.min} \u2013 ${o.max}` },
+    { label: "Fill", value: `${fillPct}%` }
+  ];
+  applyChartA11y(canvas, a11yLabel, a11yData);
   return canvas;
 }
 
@@ -2937,10 +2993,9 @@ function barChart(canvas, data, opts) {
     }
   });
   const highest = data.reduce((a, b) => b.value > a.value ? b : a, data[0]);
-  applyChartA11y(
-    canvas,
-    `Bar chart: ${data.length} categories, highest ${highest.label || "item"} at ${highest.value}`
-  );
+  const a11yLabel = `Bar chart: ${data.length} categories, highest ${highest.label || "item"} at ${highest.value}`;
+  const a11yData = data.map((d) => ({ label: d.label || "item", value: d.value }));
+  applyChartA11y(canvas, a11yLabel, a11yData);
   return canvas;
 }
 
@@ -2998,7 +3053,29 @@ function liveGraph(canvas, data, opts) {
   ctx.shadowBlur = 6;
   ctx.stroke();
   ctx.shadowBlur = 0;
-  applyChartA11y(canvas, `Live chart: ${o.unitLabel || "real-time data"}`);
+  const liveLabel = `Live chart: ${o.unitLabel || "real-time data"}`;
+  const last5 = data.slice(-5);
+  const a11yData = last5.map((v, i) => ({ label: `T-${last5.length - 1 - i}`, value: v }));
+  applyChartA11y(canvas, liveLabel, a11yData);
+  if (canvas.parentElement) {
+    let liveEl = canvas.parentElement.querySelector(".mn-sr-live");
+    if (!liveEl) {
+      liveEl = document.createElement("span");
+      liveEl.className = "mn-sr-only mn-sr-live";
+      liveEl.setAttribute("aria-live", "polite");
+      liveEl.setAttribute("aria-atomic", "true");
+      canvas.parentElement.appendChild(liveEl);
+    }
+    const now = Date.now();
+    const lastTs = Number(liveEl.dataset.ts || "0");
+    if (now - lastTs >= 5e3) {
+      const latest = data[data.length - 1];
+      const prev = data.length > 1 ? data[data.length - 2] : latest;
+      const trend = latest > prev ? "rising" : latest < prev ? "falling" : "steady";
+      liveEl.textContent = `${o.unitLabel || "Value"}: ${latest}, ${trend}`;
+      liveEl.dataset.ts = String(now);
+    }
+  }
   return canvas;
 }
 
@@ -3061,7 +3138,12 @@ function areaChart(canvas, datasets, opts) {
     ctx.fill();
   });
   const maxPts = Math.max(...datasets.map((ds) => ds.data.length));
-  applyChartA11y(canvas, `Area chart: ${datasets.length} series, ${maxPts} points`);
+  const a11yLabel = `Area chart: ${datasets.length} series, ${maxPts} points`;
+  const a11yData = datasets.map((ds, i) => ({
+    label: `Series ${i + 1}`,
+    value: `${ds.data.length} points, last ${ds.data[ds.data.length - 1] ?? 0}`
+  }));
+  applyChartA11y(canvas, a11yLabel, a11yData);
   return canvas;
 }
 
@@ -3267,7 +3349,8 @@ function radar(canvas, data, opts) {
     ctx.fillStyle = o.color;
     ctx.fill();
   });
-  applyChartA11y(canvas, `Radar chart: ${n} dimensions`);
+  const a11yData = data.map((d) => ({ label: d.label, value: d.value }));
+  applyChartA11y(canvas, `Radar chart: ${n} dimensions`, a11yData);
   return canvas;
 }
 
@@ -3324,7 +3407,11 @@ function bubble(canvas, data, opts) {
       ctx.fillText(d.label, bx, by + br + 12);
     }
   });
-  applyChartA11y(canvas, `Bubble chart: ${data.length} data points`);
+  const a11yData = data.map((d) => ({
+    label: d.label || `(${d.x}, ${d.y})`,
+    value: `z ${d.z ?? 1}`
+  }));
+  applyChartA11y(canvas, `Bubble chart: ${data.length} data points`, a11yData);
   return canvas;
 }
 
@@ -6555,15 +6642,14 @@ function socialGraph(container, opts = { nodes: [], edges: [] }) {
   const canvas = document.createElement("canvas");
   canvas.style.cssText = "display:block;width:100%;height:100%;touch-action:none;";
   canvas.setAttribute("role", "img");
-  canvas.setAttribute("aria-label", "Interactive social graph visualization");
+  canvas.setAttribute("aria-label", "Social graph");
   canvas.setAttribute("tabindex", "0");
   const tip = document.createElement("div");
   tip.className = "mn-chart-tooltip";
   tip.style.cssText = "position:absolute;pointer-events:none;opacity:0;transition:opacity .12s ease;max-width:220px;";
   hostEl.append(canvas, tip);
   let width = 0, height = 0, raf = 0, frame = 0;
-  let nodes = [], edges = [];
-  let nodeMap = /* @__PURE__ */ new Map(), linked = /* @__PURE__ */ new Map();
+  let nodes = [], edges = [], nodeMap = /* @__PURE__ */ new Map(), linked = /* @__PURE__ */ new Map();
   let running = opts.animate !== false, hoveredId = null, highlightedId = null;
   let dragging = null, dragMoved = false, resizeObs = null;
   const dpr2 = () => window.devicePixelRatio || 1;
@@ -6626,6 +6712,7 @@ function socialGraph(container, opts = { nodes: [], edges: [] }) {
     });
     frame = 0;
     running = opts.animate !== false && nodes.length > 1;
+    canvas.setAttribute("aria-label", `Social graph: ${nodes.length} nodes, ${edges.length} connections`);
     loop();
     draw();
   }
@@ -6851,6 +6938,8 @@ function openDrawer(id, triggerEl) {
   const drawer = document.getElementById(id);
   if (!drawer) return;
   drawer.classList.add("mn-drawer--open");
+  drawer.setAttribute("role", "dialog");
+  drawer.setAttribute("aria-modal", "true");
   const trigger = triggerEl ?? document.activeElement;
   const backdrop2 = drawer.previousElementSibling;
   if (backdrop2 && backdrop2.classList.contains("mn-drawer__backdrop")) {
@@ -6891,6 +6980,8 @@ function closeDrawer(id, triggerEl) {
   const drawer = document.getElementById(id);
   if (!drawer) return;
   drawer.classList.remove("mn-drawer--open");
+  drawer.removeAttribute("role");
+  drawer.removeAttribute("aria-modal");
   const backdrop2 = drawer.previousElementSibling;
   if (backdrop2 && backdrop2.classList.contains("mn-drawer__backdrop")) {
     backdrop2.classList.remove("mn-drawer__backdrop--visible");
@@ -7095,8 +7186,37 @@ function cruiseLever(container, opts) {
     posEls.forEach(
       (pe, i) => pe.classList.toggle("mn-ctrl-lever__pos--active", i === current)
     );
+    root.setAttribute("aria-valuenow", String(current));
+    root.setAttribute("aria-valuetext", positions[current]);
     if (onChange) onChange(current, positions[current]);
   }
+  root.setAttribute("tabindex", "0");
+  root.setAttribute("role", "slider");
+  root.setAttribute("aria-label", opts?.label ?? "Cruise lever");
+  root.setAttribute("aria-valuemin", "0");
+  root.setAttribute("aria-valuemax", String(total - 1));
+  root.addEventListener("keydown", (e) => {
+    switch (e.key) {
+      case "ArrowUp":
+      case "ArrowRight":
+        e.preventDefault();
+        setPos(current + 1);
+        break;
+      case "ArrowDown":
+      case "ArrowLeft":
+        e.preventDefault();
+        setPos(current - 1);
+        break;
+      case "Home":
+        e.preventDefault();
+        setPos(0);
+        break;
+      case "End":
+        e.preventDefault();
+        setPos(total - 1);
+        break;
+    }
+  });
   setPos(current);
   posEls.forEach(
     (pe) => pe.addEventListener("click", () => setPos(Number(pe.dataset.index)))
@@ -8570,6 +8690,8 @@ function initLiveValidation(formOrSelector) {
     const input = inputEl;
     const field = input.closest(".mn-field");
     if (!field) return;
+    const rules = input.getAttribute("data-validate") ?? "";
+    if (rules.includes("required")) input.setAttribute("aria-required", "true");
     input.addEventListener("blur", () => validateField(field));
     input.addEventListener("input", () => {
       if (field.classList.contains("mn-field--error")) validateField(field);

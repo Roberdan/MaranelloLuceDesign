@@ -44,15 +44,9 @@ export function neuralNodes(
   };
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d')!;
-  let nodes: NodeState[] = [];
-  let connections: Connection[] = [];
-  let particles: Particle[] = [];
-  const waves: Wave[] = [];
-  const activations: Activation[] = [];
-  let activity = 0.55;
-  let hovered = -1;
-  let raf = 0;
-  let frame = 0;
+  let nodes: NodeState[] = [], connections: Connection[] = [], particles: Particle[] = [];
+  const waves: Wave[] = [], activations: Activation[] = [];
+  let activity = 0.55, hovered = -1, raf = 0, frame = 0;
   let last = performance.now();
   host.innerHTML = '';
   host.style.position = 'relative'; host.style.overflow = 'hidden';
@@ -105,6 +99,7 @@ export function neuralNodes(
       t: Math.random(),
       speed: 0.00012 + Math.random() * 0.00018,
     })));
+    canvas.setAttribute('aria-label', `Neural nodes: ${nodes.length} nodes, ${connections.length} connections`);
   }
 
   function triggerPulse(nodeIndex = Math.floor(Math.random() * nodes.length)): void {

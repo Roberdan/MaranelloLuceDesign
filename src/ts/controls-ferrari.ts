@@ -83,8 +83,25 @@ export function cruiseLever(
     posEls.forEach((pe, i) =>
       pe.classList.toggle('mn-ctrl-lever__pos--active', i === current),
     );
+    root.setAttribute('aria-valuenow', String(current));
+    root.setAttribute('aria-valuetext', positions[current]);
     if (onChange) onChange(current, positions[current]);
   }
+
+  /* ARIA slider + keyboard */
+  root.setAttribute('tabindex', '0');
+  root.setAttribute('role', 'slider');
+  root.setAttribute('aria-label', opts?.label ?? 'Cruise lever');
+  root.setAttribute('aria-valuemin', '0');
+  root.setAttribute('aria-valuemax', String(total - 1));
+  root.addEventListener('keydown', (e: KeyboardEvent) => {
+    switch (e.key) {
+      case 'ArrowUp': case 'ArrowRight': e.preventDefault(); setPos(current + 1); break;
+      case 'ArrowDown': case 'ArrowLeft': e.preventDefault(); setPos(current - 1); break;
+      case 'Home': e.preventDefault(); setPos(0); break;
+      case 'End': e.preventDefault(); setPos(total - 1); break;
+    }
+  });
   setPos(current);
   posEls.forEach((pe) =>
     pe.addEventListener('click', () => setPos(Number(pe.dataset.index))),

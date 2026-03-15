@@ -51,15 +51,14 @@ export function socialGraph(
   hostEl.style.overflow = 'hidden';
   const canvas = document.createElement('canvas');
   canvas.style.cssText = 'display:block;width:100%;height:100%;touch-action:none;';
-  canvas.setAttribute('role', 'img'); canvas.setAttribute('aria-label', 'Interactive social graph'); canvas.setAttribute('tabindex', '0');
+  canvas.setAttribute('role', 'img'); canvas.setAttribute('aria-label', 'Social graph'); canvas.setAttribute('tabindex', '0');
   const tip = document.createElement('div');
   tip.className = 'mn-chart-tooltip';
   tip.style.cssText = 'position:absolute;pointer-events:none;opacity:0;transition:opacity .12s ease;max-width:220px;';
   hostEl.append(canvas, tip);
 
   let width = 0, height = 0, raf = 0, frame = 0;
-  let nodes: SimNode[] = [], edges: GraphEdge[] = [];
-  let nodeMap = new Map<string, SimNode>(), linked = new Map<string, Set<string>>();
+  let nodes: SimNode[] = [], edges: GraphEdge[] = [], nodeMap = new Map<string, SimNode>(), linked = new Map<string, Set<string>>();
   let running = opts.animate !== false, hoveredId: string | null = null, highlightedId: string | null = null;
   let dragging: SimNode | null = null, dragMoved = false, resizeObs: ResizeObserver | null = null;
 
@@ -121,6 +120,7 @@ export function socialGraph(
     edges.forEach((edge) => { linked.get(edge.source)?.add(edge.target); linked.get(edge.target)?.add(edge.source); });
     frame = 0;
     running = opts.animate !== false && nodes.length > 1;
+    canvas.setAttribute('aria-label', `Social graph: ${nodes.length} nodes, ${edges.length} connections`);
     loop();
     draw();
   }

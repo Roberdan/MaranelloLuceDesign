@@ -99,6 +99,38 @@ export function themeRotary(opts: ThemeRotaryOptions): ThemeRotaryController {
 
   container.appendChild(root);
 
+  /* ARIA: radiogroup pattern */
+  root.setAttribute('role', 'radiogroup');
+  root.setAttribute('aria-label', 'Theme selector');
+  root.setAttribute('tabindex', '0');
+
+  for (const [mode, el] of labels) {
+    el.setAttribute('role', 'radio');
+    el.setAttribute('aria-checked', String(mode === getTheme()));
+  }
+
+  root.addEventListener('keydown', (e: KeyboardEvent) => {
+    const current = getTheme();
+    const idx = THEME_POSITIONS.findIndex((p) => p.mode === current);
+    let next = idx;
+
+    switch (e.key) {
+      case 'ArrowRight': case 'ArrowDown':
+        e.preventDefault();
+        next = (idx + 1) % THEME_POSITIONS.length;
+        break;
+      case 'ArrowLeft': case 'ArrowUp':
+        e.preventDefault();
+        next = (idx - 1 + THEME_POSITIONS.length) % THEME_POSITIONS.length;
+        break;
+      case 'Home': e.preventDefault(); next = 0; break;
+      case 'End': e.preventDefault(); next = THEME_POSITIONS.length - 1; break;
+      case ' ': case 'Enter': e.preventDefault(); return;
+      default: return;
+    }
+    applyTheme(THEME_POSITIONS[next].mode);
+  });
+
   function applyTheme(mode: ThemeMode): void {
     setTheme(mode);
     updateVisual();
@@ -112,7 +144,9 @@ export function themeRotary(opts: ThemeRotaryOptions): ThemeRotaryController {
     pointer.style.transform = `translateX(-50%) rotate(${angle}deg)`;
 
     for (const [mode, el] of labels) {
-      el.classList.toggle('mn-theme-rotary__pos--active', mode === current);
+      const active = mode === current;
+      el.classList.toggle('mn-theme-rotary__pos--active', active);
+      el.setAttribute('aria-checked', String(active));
     }
   }
 

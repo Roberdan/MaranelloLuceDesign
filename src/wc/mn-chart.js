@@ -129,6 +129,7 @@ class MnChart extends HTMLElement {
   }
 
   async _init() {
+    this.setAttribute('aria-busy', 'true');
     // Resolve chart factories (ESM or CDN window.Maranello)
     let charts = await resolveCharts();
 
@@ -140,6 +141,7 @@ class MnChart extends HTMLElement {
 
     if (!charts) {
       console.warn('<mn-chart>: chart library not available (ESM or window.Maranello)');
+      this.removeAttribute('aria-busy');
       return;
     }
     this._charts = charts;
@@ -148,6 +150,7 @@ class MnChart extends HTMLElement {
     const factory = charts[type];
     if (typeof factory !== 'function') {
       console.warn(`<mn-chart>: unknown chart type "${type}"`);
+      this.removeAttribute('aria-busy');
       return;
     }
 
@@ -180,6 +183,7 @@ class MnChart extends HTMLElement {
     }
 
     this.dispatchEvent(new CustomEvent('mn-chart-ready', { bubbles: true, composed: true }));
+    this.removeAttribute('aria-busy');
   }
 
   _attachResizeObserver(factory) {
