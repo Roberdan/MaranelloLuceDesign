@@ -224,8 +224,7 @@ export function speedometer(
 
   if (options.animate) { curAngle = START; curVal = 0; animateTo(v2a(options.value as number, max), options.value as number); }
   else { draw(); }
-
-  // Fluid mode: ResizeObserver re-renders on parent resize
+  // Fluid: ResizeObserver re-renders on parent resize (passes numeric size to prevent recursion)
   let resizeObs: ResizeObserver | null = null;
   if (isFluid && window.ResizeObserver && canvas.parentElement) {
     const p = canvas.parentElement;
@@ -235,7 +234,6 @@ export function speedometer(
       if (nd <= 0 || nd === dim) return;
       if (animId) cancelAnimationFrame(animId);
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      // Pass numeric size, not 'fluid', to prevent recursive ResizeObserver creation
       speedometer(canvas, { ...(opts || {}), size: nd, value: curVal, animate: false });
     }, 150));
     resizeObs.observe(p);
