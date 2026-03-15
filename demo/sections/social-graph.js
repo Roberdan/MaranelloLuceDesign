@@ -155,44 +155,44 @@ function drawFallbackGraph(host, opts) {
     const w = canvas.width / dpr; const h = canvas.height / dpr;
     ctx.clearRect(0, 0, w, h);
     let edgeIdx = 0;
+    // Draw edges — straight lines with gradient, no blur (performance + clarity)
+    ctx.globalAlpha = 1;
+    ctx.lineCap = 'round';
     opts.edges.forEach((e) => {
       const a = nodeMap.get(e.source), b = nodeMap.get(e.target);
       if (!a || !b) return;
-      edgeIdx += 1;
-      const dx = b.x - a.x, dy = b.y - a.y;
-      const dist = Math.max(1, Math.hypot(dx, dy));
-      const nx = -dy / dist, ny = dx / dist;
-      const sign = edgeIdx % 2 === 0 ? 1 : -1;
-      const bend = sign * (dist * 0.35 + 20);
-      const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
-      const cp1x = a.x + dx * 0.25 + nx * bend * 0.8;
-      const cp1y = a.y + dy * 0.25 + ny * bend * 0.8;
-      const cp2x = a.x + dx * 0.75 + nx * bend * 0.8;
-      const cp2y = a.y + dy * 0.75 + ny * bend * 0.8;
       const colA = opts.groups[a.group] || '#FFC72C';
       const colB = opts.groups[b.group] || '#FFC72C';
       const grad = ctx.createLinearGradient(a.x, a.y, b.x, b.y);
-      grad.addColorStop(0, colA); grad.addColorStop(1, colB);
-      ctx.save();
-      ctx.globalAlpha = 0.12; ctx.strokeStyle = grad; ctx.lineWidth = e.weight + 4;
-      ctx.filter = 'blur(3px)';
-      ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, b.x, b.y); ctx.stroke();
-      ctx.restore();
-      ctx.globalAlpha = 0.4; ctx.strokeStyle = grad; ctx.lineWidth = e.weight;
-      ctx.lineCap = 'round';
-      ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, b.x, b.y); ctx.stroke();
+      grad.addColorStop(0, colA + '55'); grad.addColorStop(1, colB + '55');
+      ctx.strokeStyle = grad; ctx.lineWidth = Math.max(0.8, e.weight * 0.8);
+      ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
     });
+    // Draw nodes — ring glow via manual alpha ring, no blur filter
     nodes.forEach((n) => {
       const col = opts.groups[n.group] || '#FFC72C';
-      ctx.save();
-      ctx.globalAlpha = 0.25; ctx.fillStyle = col; ctx.filter = 'blur(8px)';
-      ctx.beginPath(); ctx.arc(n.x, n.y, n.size + 4, 0, Math.PI * 2); ctx.fill();
-      ctx.restore();
+      const r = n.size;
+      // Outer soft ring
+      ctx.globalAlpha = 0.18; ctx.fillStyle = col;
+      ctx.beginPath(); ctx.arc(n.x, n.y, r + 5, 0, Math.PI * 2); ctx.fill();
+      // Solid node
       ctx.globalAlpha = 1; ctx.fillStyle = col;
-      ctx.beginPath(); ctx.arc(n.x, n.y, n.size, 0, Math.PI * 2); ctx.fill();
-      ctx.strokeStyle = 'rgba(255,255,255,.5)'; ctx.lineWidth = 1.5; ctx.stroke();
-      ctx.fillStyle = '#0a0a0a'; ctx.font = `700 ${Math.max(9, n.size * 0.75)}px Inter, sans-serif`;
-      ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(n.avatar, n.x, n.y + 0.5);
+      ctx.beginPath(); ctx.arc(n.x, n.y, r, 0, Math.PI * 2); ctx.fill();
+      // White ring border
+      ctx.strokeStyle = 'rgba(255,255,255,0.45)'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.arc(n.x, n.y, r, 0, Math.PI * 2); ctx.stroke();
+      // Initials inside
+      ctx.fillStyle = '#0a0a0a';
+      ctx.font = `700 ${Math.max(9, Math.round(r * 0.72))}px 'Barlow Condensed',sans-serif`;
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(n.avatar, n.x, n.y + 0.5);
+      // Short label below node (first word only, leads get full first two words)
+      const shortLbl = n.lead
+        ? n.label.split(' ').slice(0, 2).join(' ')
+        : n.label.split(' ')[0];
+      ctx.fillStyle = n.lead ? col : 'rgba(200,200,200,0.55)';
+      ctx.font = `${n.lead ? '600' : '400'} ${n.lead ? 9 : 8}px 'Barlow Condensed',sans-serif`;
+      ctx.fillText(shortLbl, n.x, n.y + r + 10);
     });
   };
   const animate = () => {

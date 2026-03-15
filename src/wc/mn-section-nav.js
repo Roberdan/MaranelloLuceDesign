@@ -27,24 +27,30 @@ const CSS = `
 
 .nav {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 0 2rem; height: 56px;
-  background: #0d0d0d;
+  padding: 0 2rem; height: 52px;
+  background: rgba(28,28,32,0.98);
+  backdrop-filter: blur(8px);
   font-family: var(--font-display, 'Space Grotesk', sans-serif);
-  font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase;
+  font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase;
   font-weight: 500; gap: 1rem;
-  border-top: 1px solid rgba(200,200,200,0.07);
-  border-bottom: 1px solid rgba(200,200,200,0.07);
-  position: relative;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
 }
 
-/* Accent stripe — top bar gets it on bottom, bottom bar on top */
-:host([data-pos="top"]) .nav { border-bottom: 2px solid rgba(255,199,44,0.35); border-top: none; }
-:host([data-pos="bottom"]) .nav { border-top: 2px solid rgba(255,199,44,0.35); border-bottom: none; }
+/* Accent stripe */
+:host([data-pos="top"]) .nav {
+  border-bottom: 2px solid rgba(255,199,44,0.5);
+  border-top: none;
+}
+:host([data-pos="bottom"]) .nav {
+  border-top: 2px solid rgba(255,199,44,0.5);
+  border-bottom: none;
+}
 
 .btn {
   display: flex; align-items: center; gap: 0.55rem;
   background: none; border: none; cursor: pointer;
-  color: rgba(200,200,200,0.5);
+  color: rgba(220,220,220,0.7);
   font-family: inherit; font-size: inherit;
   letter-spacing: inherit; text-transform: inherit; font-weight: inherit;
   padding: 0.5rem 0; transition: color 0.18s;
@@ -71,12 +77,12 @@ const CSS = `
 
 .center {
   flex: 0 0 auto; text-align: center; white-space: nowrap;
-  color: rgba(200,200,200,0.38); font-size: 0.65rem;
+  color: rgba(220,220,220,0.55); font-size: 0.68rem;
   padding: 0 0.5rem; line-height: 1; user-select: none;
 }
-.pos { color: var(--mn-accent, #FFC72C); font-weight: 700; font-size: 0.8rem; }
-.sep { opacity: 0.3; margin: 0 0.3em; }
-.cur { color: rgba(200,200,200,0.6); }
+.pos { color: var(--mn-accent, #FFC72C); font-weight: 700; font-size: 0.85rem; }
+.sep { opacity: 0.35; margin: 0 0.3em; }
+.cur { color: rgba(220,220,220,0.8); }
 
 /* ── Avorio ── */
 :host([data-theme="avorio"]) .nav {
