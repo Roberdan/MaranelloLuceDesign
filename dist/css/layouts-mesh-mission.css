@@ -8,7 +8,7 @@
 }
 .mn-mesh-network__title {
   margin:0; font-family:var(--font-display); font-size:var(--text-caption); font-weight:700;
-  letter-spacing:.08em; text-transform:uppercase; color:var(--bianco-caldo);
+  letter-spacing:.08em; text-transform:uppercase; color:var(--mn-text);
 }
 .mn-mesh-network__legend,.mn-mesh-network__actions { display:inline-flex; flex-wrap:wrap; align-items:center; gap:var(--space-xs); }
 .mn-mesh-network__grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(16rem,1fr)); gap:var(--space-md); }
@@ -24,7 +24,7 @@
 .mn-mesh-node__header { display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:var(--space-sm); }
 .mn-mesh-node__name {
   margin:0; font-family:var(--font-display); font-size:var(--text-caption); font-weight:700;
-  letter-spacing:.08em; text-transform:uppercase; color:var(--bianco-caldo);
+  letter-spacing:.08em; text-transform:uppercase; color:var(--mn-text);
 }
 .mn-mesh-status { width:var(--space-sm); height:var(--space-sm); border-radius:var(--radius-full); background:var(--grigio-2); }
 .mn-mesh-status--on { background:var(--signal-ok); }
@@ -38,14 +38,14 @@
 .mn-mesh-badge {
   display:inline-flex; align-items:center; padding:var(--space-2xs) var(--space-sm); border:1px solid var(--bordo);
   border-radius:var(--radius-pill); background:var(--superficie-1); font-family:var(--font-display);
-  font-size:var(--text-nano); font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--bianco-caldo);
+  font-size:var(--text-nano); font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--mn-text);
 }
 .mn-mesh-badge--claude { color:var(--stage-3); border-color:var(--stage-3); }
 .mn-mesh-badge--copilot { color:var(--giallo); border-color:var(--giallo); }
 .mn-mesh-badge--ollama { color:var(--signal-ok); border-color:var(--signal-ok); }
-.mn-mesh-node__stats { margin:0; font-size:var(--text-nano); color:var(--grigio-1); }
+.mn-mesh-node__stats { margin:0; font-size:var(--text-nano); color:var(--mn-text-muted); }
 .mn-mesh-bar { display:grid; grid-template-columns:3.5rem 1fr 2.5rem; align-items:center; gap:var(--space-xs); }
-.mn-mesh-bar__label { font-size:var(--text-nano); letter-spacing:.08em; text-transform:uppercase; color:var(--grigio-1); }
+.mn-mesh-bar__label { font-size:var(--text-nano); letter-spacing:.08em; text-transform:uppercase; color:var(--mn-text-muted); }
 .mn-mesh-bar__track { height:var(--space-xs); border-radius:var(--radius-pill); background:var(--superficie-3); overflow:hidden; }
 .mn-mesh-bar__fill { width:var(--mn-mesh-bar-value,0%); height:100%; background:var(--mn-mesh-bar-color,var(--giallo)); }
 .mn-mesh-bar__fill--cpu { --mn-mesh-bar-color:var(--mn-mesh-bar-cpu); }
@@ -53,10 +53,10 @@
 .mn-mesh-node__actions { display:flex; flex-wrap:wrap; gap:var(--space-xs); }
 .mn-mesh-action,.mn-mesh-network__action {
   display:inline-flex; align-items:center; justify-content:center; min-height:1.75rem; padding:0 var(--space-sm);
-  border:1px solid var(--bordo); border-radius:var(--radius-sm); background:var(--superficie-1); color:var(--grigio-3);
+  border:1px solid var(--bordo); border-radius:var(--radius-sm); background:var(--superficie-1); color:var(--mn-text-muted);
   font-size:var(--text-nano); font-family:var(--font-display); text-transform:uppercase; letter-spacing:.06em;
 }
-.mn-mesh-action:hover,.mn-mesh-network__action:hover { border-color:var(--mn-accent); color:var(--bianco-caldo); }
+.mn-mesh-action:hover,.mn-mesh-network__action:hover { border-color:var(--mn-accent); color:var(--mn-text); }
 .mn-mesh-connector { height:0; margin:var(--space-xs) 0; border-top:1px dashed var(--bordo); }
 
 .mn-mission-card,.mn-night-agent {
@@ -67,12 +67,12 @@
 .mn-mission-card__number {
   margin:0; font-family:var(--font-display); font-size:var(--text-xl); font-weight:700; color:var(--mn-accent);
 }
-.mn-mission-card__title { margin:0; font-size:var(--text-small); font-weight:600; color:var(--bianco-caldo); }
+.mn-mission-card__title { margin:0; font-size:var(--text-small); font-weight:600; color:var(--mn-text); }
 .mn-mission-status {
   display:inline-flex; align-items:center; padding:var(--space-2xs) var(--space-sm); border:1px solid currentColor;
   border-radius:var(--radius-pill); font-size:var(--text-nano); font-weight:700; letter-spacing:.08em; text-transform:uppercase;
 }
-.mn-mission-status--unknown { color:var(--grigio-1); }
+.mn-mission-status--unknown { color:var(--mn-text-muted); }
 .mn-mission-status--progress { color:var(--signal-warning); }
 .mn-mission-status--done { color:var(--signal-ok); }
 .mn-mission-status--failed { color:var(--signal-danger); }
@@ -81,22 +81,22 @@
   --mn-mission-progress:0; width:2.5rem; height:2.5rem; border-radius:var(--radius-full);
   background:conic-gradient(var(--mn-accent) calc(var(--mn-mission-progress)*1%),var(--superficie-3) 0);
 }
-.mn-mission-progress-bar { display:grid; gap:var(--space-2xs); font-size:var(--text-nano); color:var(--grigio-1); }
+.mn-mission-progress-bar { display:grid; gap:var(--space-2xs); font-size:var(--text-nano); color:var(--mn-text-muted); }
 .mn-mission-progress-bar__track { height:var(--space-xs); border-radius:var(--radius-pill); background:var(--superficie-3); overflow:hidden; }
 .mn-mission-progress-bar__fill { width:var(--mn-mission-progress-value,0%); height:100%; background:var(--mn-accent); }
 .mn-mission-card__actions,.mn-night-agent__actions { display:flex; flex-wrap:wrap; gap:var(--space-xs); }
 .mn-mission-btn,.mn-night-agent__action {
   padding:var(--space-xs) var(--space-sm); border:1px solid var(--bordo); border-radius:var(--radius-sm);
-  background:var(--superficie-1); color:var(--bianco-caldo); font-size:var(--text-nano);
+  background:var(--superficie-1); color:var(--mn-text); font-size:var(--text-nano);
   font-family:var(--font-display); font-weight:600; letter-spacing:.06em; text-transform:uppercase;
 }
 .mn-mission-btn--delegate { border-color:var(--mn-accent); color:var(--mn-accent); }
 .mn-mission-btn--start { border-color:var(--signal-ok); color:var(--signal-ok); }
-.mn-mission-btn--reset { color:var(--grigio-1); }
+.mn-mission-btn--reset { color:var(--mn-text-muted); }
 .mn-mission-btn--cancel { border-color:var(--signal-danger); color:var(--signal-danger); }
-.mn-night-agent__schedule { display:grid; gap:var(--space-2xs); margin:0; font-size:var(--text-nano); color:var(--grigio-1); }
+.mn-night-agent__schedule { display:grid; gap:var(--space-2xs); margin:0; font-size:var(--text-nano); color:var(--mn-text-muted); }
 .mn-night-agent__toggle {
-  padding:var(--space-2xs) var(--space-sm); border:1px solid var(--bordo); border-radius:var(--radius-pill); color:var(--grigio-1);
+  padding:var(--space-2xs) var(--space-sm); border:1px solid var(--bordo); border-radius:var(--radius-pill); color:var(--mn-text-muted);
 }
 .mn-night-agent__toggle[data-on="true"] { border-color:var(--signal-ok); color:var(--signal-ok); }
 

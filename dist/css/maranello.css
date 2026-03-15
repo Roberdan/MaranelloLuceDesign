@@ -10916,7 +10916,7 @@
     font-size: var(--text-caption);
     letter-spacing: .08em;
     text-transform: uppercase;
-    color: var(--bianco-caldo);
+    color: var(--mn-text);
     margin: 0;
     font-weight: 700;
   }
@@ -10967,7 +10967,7 @@
     font-size: var(--text-caption);
     letter-spacing: .08em;
     text-transform: uppercase;
-    color: var(--bianco-caldo);
+    color: var(--mn-text);
     margin: 0;
     font-weight: 700;
   }
@@ -11015,7 +11015,7 @@
     font-size: var(--text-nano);
     letter-spacing: .06em;
     text-transform: uppercase;
-    color: var(--bianco-caldo);
+    color: var(--mn-text);
     align-items: center;
     font-weight: 600;
     display: inline-flex;
@@ -11038,7 +11038,7 @@
 
   .mn-mesh-node__stats {
     font-size: var(--text-nano);
-    color: var(--grigio-1);
+    color: var(--mn-text-muted);
     margin: 0;
   }
 
@@ -11053,7 +11053,7 @@
     font-size: var(--text-nano);
     letter-spacing: .08em;
     text-transform: uppercase;
-    color: var(--grigio-1);
+    color: var(--mn-text-muted);
   }
 
   .mn-mesh-bar__track {
@@ -11089,7 +11089,7 @@
     border: 1px solid var(--bordo);
     border-radius: var(--radius-sm);
     background: var(--superficie-1);
-    color: var(--grigio-3);
+    color: var(--mn-text-muted);
     font-size: var(--text-nano);
     font-family: var(--font-display);
     text-transform: uppercase;
@@ -11101,7 +11101,7 @@
 
   .mn-mesh-action:hover, .mn-mesh-network__action:hover {
     border-color: var(--mn-accent);
-    color: var(--bianco-caldo);
+    color: var(--mn-text);
   }
 
   .mn-mesh-connector {
@@ -11137,7 +11137,7 @@
 
   .mn-mission-card__title {
     font-size: var(--text-small);
-    color: var(--bianco-caldo);
+    color: var(--mn-text);
     margin: 0;
     font-weight: 600;
   }
@@ -11155,7 +11155,7 @@
   }
 
   .mn-mission-status--unknown {
-    color: var(--grigio-1);
+    color: var(--mn-text-muted);
   }
 
   .mn-mission-status--progress {
@@ -11188,7 +11188,7 @@
   .mn-mission-progress-bar {
     gap: var(--space-2xs);
     font-size: var(--text-nano);
-    color: var(--grigio-1);
+    color: var(--mn-text-muted);
     display: grid;
   }
 
@@ -11216,7 +11216,7 @@
     border: 1px solid var(--bordo);
     border-radius: var(--radius-sm);
     background: var(--superficie-1);
-    color: var(--bianco-caldo);
+    color: var(--mn-text);
     font-size: var(--text-nano);
     font-family: var(--font-display);
     letter-spacing: .06em;
@@ -11235,7 +11235,7 @@
   }
 
   .mn-mission-btn--reset {
-    color: var(--grigio-1);
+    color: var(--mn-text-muted);
   }
 
   .mn-mission-btn--cancel {
@@ -11246,7 +11246,7 @@
   .mn-night-agent__schedule {
     gap: var(--space-2xs);
     font-size: var(--text-nano);
-    color: var(--grigio-1);
+    color: var(--mn-text-muted);
     margin: 0;
     display: grid;
   }
@@ -11255,7 +11255,7 @@
     padding: var(--space-2xs) var(--space-sm);
     border: 1px solid var(--bordo);
     border-radius: var(--radius-pill);
-    color: var(--grigio-1);
+    color: var(--mn-text-muted);
   }
 
   .mn-night-agent__toggle[data-on="true"] {
