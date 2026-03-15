@@ -2,6 +2,7 @@
  * Maranello Luce Design - Chart helpers and shared chart utilities
  */
 import { cssVar } from './core/utils';
+import { escapeHtml } from './core/sanitize';
 
 const dpr = window.devicePixelRatio || 1;
 
@@ -98,10 +99,10 @@ export function applyChartA11y(
 
   if (data && data.length > 0) {
     const rows = data.map(
-      (r) => `<tr><td>${r.label}</td><td>${r.value}</td></tr>`,
+      (r) => `<tr><td>${escapeHtml(String(r.label))}</td><td>${escapeHtml(String(r.value))}</td></tr>`,
     ).join('');
     srEl.innerHTML =
-      `<table><caption>${label}</caption><tbody>${rows}</tbody></table>`;
+      `<table><caption>${escapeHtml(label)}</caption><tbody>${rows}</tbody></table>`;
   } else {
     srEl.textContent = label;
   }

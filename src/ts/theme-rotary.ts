@@ -99,15 +99,18 @@ export function themeRotary(opts: ThemeRotaryOptions): ThemeRotaryController {
 
   container.appendChild(root);
 
-  /* ARIA: radiogroup pattern */
+  /* ARIA: radiogroup pattern with aria-activedescendant */
+  const rotaryId = 'mn-rotary-' + Math.random().toString(36).slice(2, 7);
   root.setAttribute('role', 'radiogroup');
   root.setAttribute('aria-label', 'Theme selector');
   root.setAttribute('tabindex', '0');
 
   for (const [mode, el] of labels) {
+    el.id = `${rotaryId}-${mode}`;
     el.setAttribute('role', 'radio');
     el.setAttribute('aria-checked', String(mode === getTheme()));
   }
+  root.setAttribute('aria-activedescendant', `${rotaryId}-${getTheme()}`);
 
   root.addEventListener('keydown', (e: KeyboardEvent) => {
     const current = getTheme();
@@ -142,6 +145,7 @@ export function themeRotary(opts: ThemeRotaryOptions): ThemeRotaryController {
     const current = getTheme();
     const angle = angleForTheme(current);
     pointer.style.transform = `translateX(-50%) rotate(${angle}deg)`;
+    root.setAttribute('aria-activedescendant', `${rotaryId}-${current}`);
 
     for (const [mode, el] of labels) {
       const active = mode === current;

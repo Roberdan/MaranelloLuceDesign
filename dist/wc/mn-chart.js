@@ -126,12 +126,15 @@ class MnChart extends HTMLElement {
     const data = this._parseJSON("data", []);
     const opts = this._parseJSON("options", {});
     const cw = this._canvas.width, ch = this._canvas.height;
-    this._ctrl = factory(this._canvas, data, { ...opts, width: cw, height: ch });
-    if (!hasExplicitSize && window.ResizeObserver) {
-      this._attachResizeObserver(factory);
+    try {
+      this._ctrl = factory(this._canvas, data, { ...opts, width: cw, height: ch });
+      if (!hasExplicitSize && window.ResizeObserver) {
+        this._attachResizeObserver(factory);
+      }
+      this.dispatchEvent(new CustomEvent("mn-chart-ready", { bubbles: true, composed: true }));
+    } finally {
+      this.removeAttribute("aria-busy");
     }
-    this.dispatchEvent(new CustomEvent("mn-chart-ready", { bubbles: true, composed: true }));
-    this.removeAttribute("aria-busy");
   }
   _attachResizeObserver(factory) {
     let tid = null;

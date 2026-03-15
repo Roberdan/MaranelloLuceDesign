@@ -17,7 +17,7 @@ import {
   radar,
   sparkline,
   sparklineInteract
-} from "./chunks/chunk-ID5YWH4M.js";
+} from "./chunks/chunk-WNYNHGOB.js";
 import {
   FerrariGauge,
   buildGaugePalette,
@@ -911,13 +911,16 @@ function themeRotary(opts) {
   centerBtn.innerHTML = '<svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="3" fill="var(--mn-accent,#FFC72C)" opacity="0.7"/></svg>';
   dial.appendChild(centerBtn);
   container.appendChild(root);
+  const rotaryId = "mn-rotary-" + Math.random().toString(36).slice(2, 7);
   root.setAttribute("role", "radiogroup");
   root.setAttribute("aria-label", "Theme selector");
   root.setAttribute("tabindex", "0");
   for (const [mode, el4] of labels) {
+    el4.id = `${rotaryId}-${mode}`;
     el4.setAttribute("role", "radio");
     el4.setAttribute("aria-checked", String(mode === getTheme()));
   }
+  root.setAttribute("aria-activedescendant", `${rotaryId}-${getTheme()}`);
   root.addEventListener("keydown", (e) => {
     const current = getTheme();
     const idx = THEME_POSITIONS.findIndex((p) => p.mode === current);
@@ -960,6 +963,7 @@ function themeRotary(opts) {
     const current = getTheme();
     const angle = angleForTheme(current);
     pointer.style.transform = `translateX(-50%) rotate(${angle}deg)`;
+    root.setAttribute("aria-activedescendant", `${rotaryId}-${current}`);
     for (const [mode, el4] of labels) {
       const active = mode === current;
       el4.classList.toggle("mn-theme-rotary__pos--active", active);

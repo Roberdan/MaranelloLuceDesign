@@ -1,9 +1,10 @@
 /**
- * Unit tests for live regions: toast role/aria-live, chart aria-busy.
+ * Unit tests for live regions: toast role/aria-live, mn-chart aria-busy.
  * @vitest-environment happy-dom
  */
 import { describe, it, expect } from 'vitest';
 import { toast } from '../../src/ts/toast';
+import '../../src/wc/mn-chart.js';
 
 describe('toast aria-live roles', () => {
   it('error toast has role=alert and aria-live=assertive', () => {
@@ -39,5 +40,14 @@ describe('toast aria-live roles', () => {
     const btn = el.querySelector('.mn-toast__close');
     expect(btn?.getAttribute('aria-label')).toBe('Close');
     el.remove();
+  });
+});
+
+describe('mn-chart aria-busy', () => {
+  it('sets aria-busy=true immediately on connectedCallback', () => {
+    const el = document.createElement('mn-chart');
+    document.body.appendChild(el);
+    expect(el.getAttribute('aria-busy')).toBe('true');
+    document.body.removeChild(el);
   });
 });

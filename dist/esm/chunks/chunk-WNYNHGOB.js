@@ -72,9 +72,9 @@ function applyChartA11y(canvas, label, data) {
   }
   if (data && data.length > 0) {
     const rows = data.map(
-      (r) => `<tr><td>${r.label}</td><td>${r.value}</td></tr>`
+      (r) => `<tr><td>${escapeHtml(String(r.label))}</td><td>${escapeHtml(String(r.value))}</td></tr>`
     ).join("");
-    srEl.innerHTML = `<table><caption>${label}</caption><tbody>${rows}</tbody></table>`;
+    srEl.innerHTML = `<table><caption>${escapeHtml(label)}</caption><tbody>${rows}</tbody></table>`;
   } else {
     srEl.textContent = label;
   }
@@ -1238,4 +1238,4 @@ export {
   chartInteract,
   sparklineInteract
 };
-//# sourceMappingURL=chunk-ID5YWH4M.js.map
+//# sourceMappingURL=chunk-WNYNHGOB.js.map

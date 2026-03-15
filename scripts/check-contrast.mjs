@@ -21,12 +21,13 @@ function parseVars(css, selectorFilter) {
     if (selectorFilter && line.includes(selectorFilter)) inside = true;
     if (inside || !selectorFilter) {
       if (line.includes('{')) depth++;
-      if (line.includes('}')) { depth--; if (depth <= 0) inside = false; }
-    }
-    if ((inside || !selectorFilter) && line.includes('--')) {
-      for (const m of line.matchAll(/(--.+?):\s*(.+?)\s*;/g)) {
-        map[m[1].trim()] = m[2].trim();
+      // Capture vars before closing the block (handles one-line rules)
+      if (line.includes('--')) {
+        for (const m of line.matchAll(/(--.+?):\s*(.+?)\s*;/g)) {
+          map[m[1].trim()] = m[2].trim();
+        }
       }
+      if (line.includes('}')) { depth--; if (depth <= 0) inside = false; }
     }
   }
   return map;
