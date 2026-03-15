@@ -168,6 +168,8 @@ export function speedometer(
   if (isFluid) {
     const rect = (canvas.parentElement || canvas).getBoundingClientRect();
     dim = Math.min(rect.width, rect.height) || SIZES.md;
+  } else if (typeof options.size === 'number') {
+    dim = options.size;
   } else {
     dim = SIZES[(options.size as string)] || SIZES.md;
   }
@@ -233,7 +235,8 @@ export function speedometer(
       if (nd <= 0 || nd === dim) return;
       if (animId) cancelAnimationFrame(animId);
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      speedometer(canvas, { ...(opts || {}), size: 'fluid', value: curVal, animate: false });
+      // Pass numeric size, not 'fluid', to prevent recursive ResizeObserver creation
+      speedometer(canvas, { ...(opts || {}), size: nd, value: curVal, animate: false });
     }, 150));
     resizeObs.observe(p);
   }

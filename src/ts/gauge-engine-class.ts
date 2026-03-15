@@ -80,8 +80,8 @@ export function createGauge(
   if (opts.config) {
     canvas.dataset.gauge = JSON.stringify(opts.config);
   }
-  if (opts.size) {
-    canvas.dataset.size = opts.size;
+  if (opts.size !== undefined) {
+    canvas.dataset.size = String(opts.size);
   }
 
   return new FerrariGauge(canvas);

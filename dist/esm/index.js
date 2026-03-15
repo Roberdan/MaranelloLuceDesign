@@ -22,7 +22,7 @@ import {
   FerrariGauge,
   buildGaugePalette,
   speedometer
-} from "./chunks/chunk-HW4XUPKU.js";
+} from "./chunks/chunk-2XPRNUNT.js";
 import {
   gantt
 } from "./chunks/chunk-I2UNIBSH.js";
@@ -4575,8 +4575,8 @@ function createGauge(opts) {
   if (opts.config) {
     canvas.dataset.gauge = JSON.stringify(opts.config);
   }
-  if (opts.size) {
-    canvas.dataset.size = opts.size;
+  if (opts.size !== void 0) {
+    canvas.dataset.size = String(opts.size);
   }
   return new FerrariGauge(canvas);
 }
@@ -6606,7 +6606,7 @@ M.charts = {
 registerExtras(M);
 
 // src/ts/index.ts
-var VERSION = "3.3.0";
+var VERSION = "4.0.0";
 export {
   COLOR,
   CONTINENTS,

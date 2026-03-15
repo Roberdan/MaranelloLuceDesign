@@ -5,9 +5,15 @@ All notable changes to this project will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [3.4.0] - 14 Mar 2026
+## [4.0.0] - 15 Mar 2026
 
 ### Added
+- **Semantic CSS token system** — 7 `--mn-surface/text/border` tokens that cascade into shadow DOM, enabling automatic WC theming across all themes without per-component overrides
+- **`Maranello.palette()`** — live CSS token reader; returns 20 named tokens read from `getComputedStyle()` on each call so colors auto-adapt to runtime theme changes (replaces hardcoded `GROUP_COLORS`/`STAGE_COLORS` patterns)
+- **A11y scaling system** — `--mn-a11y-font-scale` / `--mn-a11y-space-scale` multipliers: all text/spacing tokens wrapped in `calc()`, single var scales entire design system including shadow DOM
+- **`--font-dyslexic`** token (`'OpenDyslexic'`, CDN-loaded on demand via a11y panel)
+- **A11y body class rules** in CSS — `body.mn-a11y-*` classes now produce real effects: large-text (×1.2 font), high-spacing (×1.3 spacing), dyslexia-font (OpenDyslexic), high-contrast (WCAG AAA black/white), focus (3px ring), reduced-motion
+- **Theme persistence** — `mn-theme-toggle` / `mn-theme-rotary` WCs save/restore theme via `localStorage`; inline early-restore script in demo prevents flash on reload
 - Responsive mobile adaptation: breakpoints at 640px (mobile) and 1024px (tablet)
 - `responsive-tokens.css` — spacing/layout token overrides per breakpoint
 - `responsive-layouts.css` — sidebar off-canvas, detail panel/chat/notification/login full-width on mobile
@@ -16,14 +22,25 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - `responsive-charts.css` — chart/gauge container max-width, gantt scroll constraint
 - `autoResize()` / `autoResizeAll()` — ResizeObserver wrapper for canvas charts
 - `initSidebarToggle()` / `initSidebarToggleAuto()` — mobile hamburger sidebar toggle
-- `size='fluid'` option for FerrariGauge and speedometer (parent-bound + ResizeObserver)
-- ResizeObserver in `mn-chart`, `mn-gauge`, `mn-speedometer` WCs (auto-resize when no explicit size)
 - 6 responsive utility classes: `mn-hide-mobile`, `mn-show-mobile`, `mn-hide-tablet`, `mn-hide-desktop`, `mn-stack-mobile`, `mn-full-mobile`
-- `demo/responsive.html` — iframe viewport simulator (375/768/1280) showcasing all responsive features
-- Responsive test fixtures in `demo/e2e.html`
-- E2E responsive viewport tests (Playwright at 375/768/1280)
-- Unit tests for responsive CSS and autoResize
-- ADR-0001: Responsive Mobile Adaptation
+- Footer copyright `© Roberdan 2026`
+
+### Changed
+- 47 CSS component files migrated from primitive tokens to semantic `--mn-*` tokens
+- `body.mn-avorio` redefines all 7 semantic surface tokens (light palette)
+- Demo uses hash-based SPA routing with lazy dynamic imports
+
+### Fixed
+- Avorio drawer background overridden by inline style (removed inline background)
+- Chart tooltips always dark in Avorio mode (added `--mn-chart-tooltip-*` token overrides)
+- Tooltip overflow on narrow screens (`white-space: nowrap` → `normal` + `max-width`)
+- `<mn-chart>` ResizeObserver leak on attribute change (disconnect before rebuild)
+- `speedometer` fluid mode creating recursive ResizeObserver on each resize
+
+### Breaking
+- **Glass theme removed** (`mn-glass`, `setGlass()`, `toggleGlass()`, `getGlass()`, all `themes-glass-*.css`)
+- **`<mn-theme-rotary>` simplified** — glass toggle center button removed; center is now decorative hub
+- **`mn-theme-change` event** no longer includes `glass` in detail payload
 
 ## [3.3.0] - 14 Mar 2026
 

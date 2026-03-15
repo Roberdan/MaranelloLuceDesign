@@ -66,10 +66,18 @@ test.describe('Responsive — Desktop (1280px)', () => {
 
   test('spacing tokens are full at desktop', async ({ page }) => {
     await page.goto('/demo/e2e.html');
-    const val = await page.evaluate(() =>
-      getComputedStyle(document.documentElement).getPropertyValue('--space-5xl').trim()
-    );
-    expect(val).toBe('8rem');
+    // Read resolved value via an element — token is calc() expression at desktop so
+    // getPropertyValue returns the raw calc string, not '8rem'. paddingTop gives px.
+    const val = await page.evaluate(() => {
+      const el = document.createElement('div');
+      el.style.paddingTop = 'var(--space-5xl)';
+      document.body.appendChild(el);
+      const px = getComputedStyle(el).paddingTop;
+      el.remove();
+      return px;
+    });
+    // 8rem at default 16px base font-size = 128px
+    expect(val).toBe('128px');
   });
 
   test('form grid has multiple columns at desktop', async ({ page }) => {

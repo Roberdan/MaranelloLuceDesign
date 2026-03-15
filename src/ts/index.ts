@@ -3,7 +3,7 @@
  * Re-exports the public API surface for library consumers.
  */
 
-export const VERSION = '3.3.0';
+export const VERSION = '4.0.0';
 
 // Core types (all shared interfaces)
 export * from './core/types';

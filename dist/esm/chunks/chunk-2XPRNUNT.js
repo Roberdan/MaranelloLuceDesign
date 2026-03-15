@@ -1,31 +1,79 @@
 /* Maranello Luce Design v3.3.0 | MPL-2.0 | github.com/Roberdan/MaranelloLuceDesign */
-"use strict";
-var __defProp = Object.defineProperty;
-var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
-var __getOwnPropNames = Object.getOwnPropertyNames;
-var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __export = (target, all) => {
-  for (var name in all)
-    __defProp(target, name, { get: all[name], enumerable: true });
-};
-var __copyProps = (to, from, except, desc) => {
-  if (from && typeof from === "object" || typeof from === "function") {
-    for (let key of __getOwnPropNames(from))
-      if (!__hasOwnProp.call(to, key) && key !== except)
-        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
-  }
-  return to;
-};
-var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+import {
+  cssVar,
+  debounce,
+  getAccent
+} from "./chunk-3NVT4YO4.js";
 
-// src/ts/gauge/index.ts
-var index_exports = {};
-__export(index_exports, {
-  FerrariGauge: () => FerrariGauge,
-  buildGaugePalette: () => buildGaugePalette,
-  speedometer: () => speedometer
-});
-module.exports = __toCommonJS(index_exports);
+// src/ts/gauge-engine-palette.ts
+function buildGaugePalette(accent) {
+  const D = {
+    numbers: "#c8c8c8",
+    centerValue: "#fafafa",
+    centerUnit: "#9e9e9e",
+    centerLabel: "#666",
+    muted: "#666",
+    dimmed: "#555",
+    subDialLabel: "#888",
+    tickMajor: "#D4A826",
+    tickHalf: "#9A7B1C",
+    tickMinor: "#5a4a14",
+    highlightRing: "rgba(255,255,255,0.04)",
+    trackAlpha: "rgba(255,255,255,0.06)",
+    arcDot: "#fff",
+    needleTail: "#555",
+    needleTip: "#fff",
+    capOuter: ["#888", "#555", "#333", "#1a1a1a"],
+    capInner: ["#aaa", "#666", "#2a2a2a"],
+    capCenter: "#444",
+    subDialBg: ["#222", "#111"],
+    subDialBorder: "#3a3a3a",
+    subDialTrack: "rgba(255,255,255,0.08)",
+    odometerBg: "#1a1a1a",
+    odometerBorder: "#333",
+    odometerText: "#fafafa",
+    ledLabel: null,
+    axisLabel: "#888",
+    axisTitle: "#9e9e9e",
+    gridScale: "#666",
+    sparkMonth: "#555",
+    sparkLabel: "#666",
+    quadrant: "#888",
+    quadrantDim: "#555",
+    quadrantHi: accent
+  };
+  const cl = document.body.classList;
+  if (cl.contains("mn-avorio")) {
+    return {
+      ...D,
+      subDialBg: ["#e8e4dc", "#ddd8ce"],
+      subDialBorder: "#c0b9ad",
+      odometerBg: "#f0ede6",
+      odometerBorder: "#ccc",
+      odometerText: "#1a1a1a"
+    };
+  }
+  if (cl.contains("mn-colorblind")) {
+    return {
+      ...D,
+      tickMajor: "#FFB000",
+      tickHalf: "#B87E00",
+      tickMinor: "#7A5400",
+      quadrantHi: "#0072B2"
+    };
+  }
+  if (cl.contains("mn-nero")) {
+    return {
+      ...D,
+      numbers: "#e0e0e0",
+      subDialBg: ["#1a1a1a", "#0a0a0a"],
+      subDialBorder: "#2a2a2a",
+      odometerBg: "#0a0a0a",
+      odometerBorder: "#222"
+    };
+  }
+  return D;
+}
 
 // src/ts/gauge-engine-draw-details.ts
 function drawNeedle(s, progress, sa, totalSweep, value, max, color) {
@@ -384,94 +432,6 @@ function drawArcBar(s, c, progress, sa, totalSweep) {
     s.ctx.textAlign = "right";
     s.ctx.fillText(ab.labelRight, s.cx + s.radius * 0.65, s.cy + s.radius * 0.92);
   }
-}
-
-// src/ts/gauge-engine-palette.ts
-function buildGaugePalette(accent) {
-  const D = {
-    numbers: "#c8c8c8",
-    centerValue: "#fafafa",
-    centerUnit: "#9e9e9e",
-    centerLabel: "#666",
-    muted: "#666",
-    dimmed: "#555",
-    subDialLabel: "#888",
-    tickMajor: "#D4A826",
-    tickHalf: "#9A7B1C",
-    tickMinor: "#5a4a14",
-    highlightRing: "rgba(255,255,255,0.04)",
-    trackAlpha: "rgba(255,255,255,0.06)",
-    arcDot: "#fff",
-    needleTail: "#555",
-    needleTip: "#fff",
-    capOuter: ["#888", "#555", "#333", "#1a1a1a"],
-    capInner: ["#aaa", "#666", "#2a2a2a"],
-    capCenter: "#444",
-    subDialBg: ["#222", "#111"],
-    subDialBorder: "#3a3a3a",
-    subDialTrack: "rgba(255,255,255,0.08)",
-    odometerBg: "#1a1a1a",
-    odometerBorder: "#333",
-    odometerText: "#fafafa",
-    ledLabel: null,
-    axisLabel: "#888",
-    axisTitle: "#9e9e9e",
-    gridScale: "#666",
-    sparkMonth: "#555",
-    sparkLabel: "#666",
-    quadrant: "#888",
-    quadrantDim: "#555",
-    quadrantHi: accent
-  };
-  const cl = document.body.classList;
-  if (cl.contains("mn-avorio")) {
-    return {
-      ...D,
-      subDialBg: ["#e8e4dc", "#ddd8ce"],
-      subDialBorder: "#c0b9ad",
-      odometerBg: "#f0ede6",
-      odometerBorder: "#ccc",
-      odometerText: "#1a1a1a"
-    };
-  }
-  if (cl.contains("mn-colorblind")) {
-    return {
-      ...D,
-      tickMajor: "#FFB000",
-      tickHalf: "#B87E00",
-      tickMinor: "#7A5400",
-      quadrantHi: "#0072B2"
-    };
-  }
-  if (cl.contains("mn-nero")) {
-    return {
-      ...D,
-      numbers: "#e0e0e0",
-      subDialBg: ["#1a1a1a", "#0a0a0a"],
-      subDialBorder: "#2a2a2a",
-      odometerBg: "#0a0a0a",
-      odometerBorder: "#222"
-    };
-  }
-  return D;
-}
-
-// src/ts/core/utils.ts
-function cssVar(name, fallback = "") {
-  return getComputedStyle(document.documentElement).getPropertyValue(name).trim() || fallback;
-}
-function getAccent(fallback = "#FFC72C") {
-  return cssVar("--giallo-ferrari", fallback);
-}
-function debounce(fn, ms) {
-  let timer = null;
-  return (...args) => {
-    if (timer !== null) clearTimeout(timer);
-    timer = setTimeout(() => {
-      timer = null;
-      fn(...args);
-    }, ms);
-  };
 }
 
 // src/ts/gauge-engine-complications.ts
@@ -1173,4 +1133,10 @@ function speedometer(canvas, opts) {
     }
   };
 }
-//# sourceMappingURL=index.cjs.map
+
+export {
+  buildGaugePalette,
+  FerrariGauge,
+  speedometer
+};
+//# sourceMappingURL=chunk-2XPRNUNT.js.map

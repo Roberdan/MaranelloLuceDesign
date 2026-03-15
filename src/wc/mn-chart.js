@@ -203,6 +203,8 @@ class MnChart extends HTMLElement {
   }
 
   _rebuild() {
+    this._resizeObs?.disconnect();
+    this._resizeObs = null;
     this._ctrl?.destroy?.();
     this._ctrl = null;
     this._canvas.getContext('2d')?.clearRect(0, 0, this._canvas.width, this._canvas.height);

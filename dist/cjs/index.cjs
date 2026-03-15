@@ -4899,6 +4899,8 @@ function speedometer(canvas, opts) {
   if (isFluid) {
     const rect = (canvas.parentElement || canvas).getBoundingClientRect();
     dim = Math.min(rect.width, rect.height) || SIZES2.md;
+  } else if (typeof options.size === "number") {
+    dim = options.size;
   } else {
     dim = SIZES2[options.size] || SIZES2.md;
   }
@@ -4969,7 +4971,7 @@ function speedometer(canvas, opts) {
       if (nd <= 0 || nd === dim) return;
       if (animId) cancelAnimationFrame(animId);
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      speedometer(canvas, { ...opts || {}, size: "fluid", value: curVal, animate: false });
+      speedometer(canvas, { ...opts || {}, size: nd, value: curVal, animate: false });
     }, 150));
     resizeObs.observe(p);
   }
@@ -9494,8 +9496,8 @@ function createGauge(opts) {
   if (opts.config) {
     canvas.dataset.gauge = JSON.stringify(opts.config);
   }
-  if (opts.size) {
-    canvas.dataset.size = opts.size;
+  if (opts.size !== void 0) {
+    canvas.dataset.size = String(opts.size);
   }
   return new FerrariGauge(canvas);
 }
@@ -11525,5 +11527,5 @@ M.charts = {
 registerExtras(M);
 
 // src/ts/index.ts
-var VERSION = "3.3.0";
+var VERSION = "4.0.0";
 //# sourceMappingURL=index.cjs.map
