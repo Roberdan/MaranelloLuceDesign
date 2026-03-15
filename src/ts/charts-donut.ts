@@ -53,7 +53,12 @@ export function donut(
     const pct = total > 0 ? Math.round((s.value / total) * 100) : 0;
     return `segment ${i + 1} ${pct}%`;
   }).join(', ');
-  applyChartA11y(canvas, `Donut chart: ${segDesc}`);
+  const a11yLabel = `Donut chart: ${segDesc}`;
+  const a11yData = segments.map((s, i) => {
+    const segPct = total > 0 ? Math.round((s.value / total) * 100) : 0;
+    return { label: `Segment ${i + 1}`, value: `${segPct}%` };
+  });
+  applyChartA11y(canvas, a11yLabel, a11yData);
 
   return canvas;
 }

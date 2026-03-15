@@ -74,7 +74,14 @@ export function halfGauge(
   ctx.fillText(String(o.max), cx + radius - lineW / 2, cy + radius * 0.18);
 
   const unitSuffix = o.unit ? ' ' + o.unit : '';
-  applyChartA11y(canvas, `Gauge: ${o.value} of ${o.max}${unitSuffix}`);
+  const a11yLabel = `Gauge: ${o.value} of ${o.max}${unitSuffix}`;
+  const fillPct = Math.round(((o.value - o.min) / (o.max - o.min)) * 100);
+  const a11yData = [
+    { label: 'Value', value: `${o.value}${unitSuffix}` },
+    { label: 'Range', value: `${o.min} – ${o.max}` },
+    { label: 'Fill', value: `${fillPct}%` },
+  ];
+  applyChartA11y(canvas, a11yLabel, a11yData);
 
   return canvas;
 }

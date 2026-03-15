@@ -72,7 +72,11 @@ export function bubble(
     }
   });
 
-  applyChartA11y(canvas, `Bubble chart: ${data.length} data points`);
+  const a11yData = data.map((d) => ({
+    label: d.label || `(${d.x}, ${d.y})`,
+    value: `z ${d.z ?? 1}`,
+  }));
+  applyChartA11y(canvas, `Bubble chart: ${data.length} data points`, a11yData);
 
   return canvas;
 }

@@ -77,7 +77,12 @@ export function areaChart(
   });
 
   const maxPts = Math.max(...datasets.map((ds) => ds.data.length));
-  applyChartA11y(canvas, `Area chart: ${datasets.length} series, ${maxPts} points`);
+  const a11yLabel = `Area chart: ${datasets.length} series, ${maxPts} points`;
+  const a11yData = datasets.map((ds, i) => ({
+    label: `Series ${i + 1}`,
+    value: `${ds.data.length} points, last ${ds.data[ds.data.length - 1] ?? 0}`,
+  }));
+  applyChartA11y(canvas, a11yLabel, a11yData);
 
   return canvas;
 }
