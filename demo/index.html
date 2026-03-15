@@ -63,7 +63,7 @@
     (function () {
       try {
         const t = localStorage.getItem('mn-theme');
-        if (t && t !== 'editorial') {
+        if (t && ['nero', 'avorio', 'colorblind'].includes(t)) {
           document.body.classList.remove('mn-nero', 'mn-avorio', 'mn-colorblind');
           document.body.classList.add('mn-' + t);
         }

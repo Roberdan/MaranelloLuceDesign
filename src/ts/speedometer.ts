@@ -183,17 +183,15 @@ export function speedometer(
   const s = dim / 220;
   const cx = dim / 2, cy = dim / 2, R = dim * 0.4;
 
-  // Accessibility: role, aria-label, fallback text, sr-only span
   const max = options.max as number, unit = (options.unit as string) || '';
-
-  function buildLabel(v: number): string {
-    return `Speedometer: ${unit ? `${Math.round(v)}${unit}` : Math.round(v)} of ${max}`;
-  }
+  const buildLabel = (v: number) => `Speedometer: ${unit ? `${Math.round(v)}${unit}` : Math.round(v)} of ${max}`;
 
   canvas.setAttribute('role', 'img');
   const initLabel = buildLabel(options.value as number);
   canvas.setAttribute('aria-label', initLabel);
   canvas.textContent = initLabel;
+  // Remove stale sr-only span left by previous fluid resize, then insert fresh one
+  (canvas.nextSibling as HTMLElement)?.classList?.contains('mn-sr-only') && (canvas.nextSibling as Element).remove();
   const srSpan = document.createElement('span');
   srSpan.className = 'mn-sr-only';
   srSpan.textContent = initLabel;

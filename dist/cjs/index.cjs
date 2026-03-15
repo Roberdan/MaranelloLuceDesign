@@ -4903,13 +4903,12 @@ function speedometer(canvas, opts) {
   const s = dim / 220;
   const cx = dim / 2, cy = dim / 2, R = dim * 0.4;
   const max = options.max, unit = options.unit || "";
-  function buildLabel(v) {
-    return `Speedometer: ${unit ? `${Math.round(v)}${unit}` : Math.round(v)} of ${max}`;
-  }
+  const buildLabel = (v) => `Speedometer: ${unit ? `${Math.round(v)}${unit}` : Math.round(v)} of ${max}`;
   canvas.setAttribute("role", "img");
   const initLabel = buildLabel(options.value);
   canvas.setAttribute("aria-label", initLabel);
   canvas.textContent = initLabel;
+  canvas.nextSibling?.classList?.contains("mn-sr-only") && canvas.nextSibling.remove();
   const srSpan = document.createElement("span");
   srSpan.className = "mn-sr-only";
   srSpan.textContent = initLabel;
