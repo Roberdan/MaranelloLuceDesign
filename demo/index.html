@@ -56,10 +56,17 @@
     body.mn-avorio .demo-nav__pg-label { color: var(--grigio-scuro, #555); }
     body.mn-avorio .demo-nav__pg-sep { background: rgba(0,0,0,0.1); }
     @media (max-width: 768px) { .demo-nav__pg-label { display: none; } }
+    .demo-lang { display: flex; align-items: center; gap: 2px; }
+    .demo-lang__btn { background: none; border: 1px solid rgba(255,255,255,0.12); border-radius: 4px; color: var(--grigio-chiaro,#c8c8c8); font-size: 0.6rem; font-weight: 600; padding: 3px 6px; cursor: pointer; transition: color 0.18s, border-color 0.18s, background 0.18s; font-family: var(--font-display,sans-serif); line-height: 1; text-transform: uppercase; letter-spacing: 0.05em; }
+    .demo-lang__btn[aria-pressed="true"] { color: var(--mn-accent,#FFC72C); border-color: var(--mn-accent,#FFC72C); background: rgba(255,199,44,0.08); }
+    .demo-lang__btn:hover:not([aria-pressed="true"]) { color: var(--mn-accent,#FFC72C); border-color: var(--mn-accent,#FFC72C); }
+    body.mn-avorio .demo-lang__btn { border-color: rgba(0,0,0,0.12); color: var(--grigio-medio,#888); }
+    body.mn-avorio .demo-lang__btn[aria-pressed="true"] { color: var(--rosso-corsa,#DC0000); border-color: var(--rosso-corsa,#DC0000); background: rgba(220,0,0,0.06); }
+    @media (max-width: 640px) { .demo-lang { display: none; } }
   </style>
 </head>
 <body class="mn-nero">
-  <script>/* Restore saved theme before first paint to prevent flash of wrong theme */
+  <script>/* Restore saved theme + language before first paint */
     (function () {
       try {
         const t = localStorage.getItem('mn-theme');
@@ -67,6 +74,8 @@
           document.body.classList.remove('mn-nero', 'mn-avorio', 'mn-colorblind');
           document.body.classList.add('mn-' + t);
         }
+        const l = localStorage.getItem('mn-lang');
+        if (l === 'it') document.documentElement.lang = 'it';
       } catch (_) { /* storage blocked or unavailable */ }
     })();
   </script>
@@ -116,10 +125,16 @@
         <button id="demo-pg-next" class="demo-nav__pg-btn" aria-label="Next section">▶</button>
       </div>
       <div class="demo-nav__pg-sep" aria-hidden="true"></div>
+      <div class="demo-lang" role="group" aria-label="Language / Lingua">
+        <button id="demo-lang-en" class="demo-lang__btn" aria-pressed="true" aria-label="English">EN</button>
+        <button id="demo-lang-it" class="demo-lang__btn" aria-pressed="false" aria-label="Italiano">IT</button>
+      </div>
+      <div class="demo-nav__pg-sep" aria-hidden="true"></div>
       <span id="demo-theme-label" style="font-family:var(--font-display);font-size:var(--text-micro);font-weight:500;text-transform:uppercase;letter-spacing:0.08em;color:var(--grigio-chiaro)">Current: Nero</span>
       <mn-theme-toggle mode="nero"></mn-theme-toggle>
     </div>
   </nav>
+  <mn-a11y></mn-a11y>
   <main id="demo-root"></main>
   <footer class="mn-section-dark" style="padding:var(--space-2xl) var(--space-xl);text-align:center">
     <div class="mn-container">
@@ -147,22 +162,60 @@
   <script type="module" src="../src/wc/mn-funnel.js"></script>
   <script type="module" src="../src/wc/mn-toast.js"></script>
   <script type="module" src="../src/wc/mn-theme-rotary.js"></script>
+  <script type="module" src="../src/wc/mn-a11y.js"></script>
   <script type="module" src="app.js"></script>
   <script>
     (function() {
+      // Hamburger nav toggle
       var btn = document.querySelector('.demo-hamburger');
       var links = document.querySelector('.demo-nav__links');
-      if (!btn || !links) return;
-      btn.addEventListener('click', function() {
-        var open = links.classList.toggle('demo-nav__links--open');
-        btn.setAttribute('aria-expanded', String(open));
-      });
-      // Close hamburger on nav link click (hash change triggers section render)
-      links.addEventListener('click', function(e) {
-        if (e.target.tagName === 'A') {
-          links.classList.remove('demo-nav__links--open');
-          btn.setAttribute('aria-expanded', 'false');
+      if (btn && links) {
+        btn.addEventListener('click', function() {
+          var open = links.classList.toggle('demo-nav__links--open');
+          btn.setAttribute('aria-expanded', String(open));
+        });
+        links.addEventListener('click', function(e) {
+          if (e.target.tagName === 'A') {
+            links.classList.remove('demo-nav__links--open');
+            btn.setAttribute('aria-expanded', 'false');
+          }
+        });
+      }
+
+      // Language selector
+      var LABELS = {
+        en: { current: 'CURRENT:', nero: 'Nero', avorio: 'Avorio', colorblind: 'Colorblind', editorial: 'Editorial' },
+        it: { current: 'CORRENTE:', nero: 'Nero', avorio: 'Avorio', colorblind: 'Daltonismo', editorial: 'Editoriale' }
+      };
+      function applyLang(lang) {
+        document.documentElement.lang = lang;
+        try { localStorage.setItem('mn-lang', lang); } catch (_) {}
+        var enBtn = document.getElementById('demo-lang-en');
+        var itBtn = document.getElementById('demo-lang-it');
+        if (enBtn) enBtn.setAttribute('aria-pressed', String(lang === 'en'));
+        if (itBtn) itBtn.setAttribute('aria-pressed', String(lang === 'it'));
+        // Update [data-mn-en] / [data-mn-it] elements
+        document.querySelectorAll('[data-mn-en]').forEach(function(el) {
+          el.textContent = lang === 'it' ? (el.dataset.mnIt || el.dataset.mnEn) : el.dataset.mnEn;
+        });
+        // Update theme label current word
+        var lbl = document.getElementById('demo-theme-label');
+        if (lbl) {
+          var m = lbl.textContent.match(/:\s*(.+)$/);
+          var themePart = m ? m[1].trim() : '';
+          lbl.textContent = (LABELS[lang] || LABELS.en).current + ' ' + themePart;
         }
+      }
+      var initLang = document.documentElement.lang || 'en';
+      applyLang(initLang);
+      var enBtn = document.getElementById('demo-lang-en');
+      var itBtn = document.getElementById('demo-lang-it');
+      if (enBtn) enBtn.addEventListener('click', function() { applyLang('en'); });
+      if (itBtn) itBtn.addEventListener('click', function() { applyLang('it'); });
+
+      // Re-apply lang label when theme changes (theme label gets rewritten)
+      document.addEventListener('mn-theme-change', function() {
+        setTimeout(function() { applyLang(document.documentElement.lang || 'en'); }, 50);
       });
     })();
   </script>

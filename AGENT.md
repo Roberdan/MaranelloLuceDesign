@@ -1,14 +1,14 @@
 # Maranello Luce Design — Agent Reference
 
-> Ferrari Luce-inspired design system. Zero deps. 4 themes. 150+ APIs.
+> Ferrari Luce-inspired design system. Zero deps. 4 themes. 150+ APIs. v4.0.2
 > Repo: github.com/Roberdan/MaranelloLuceDesign
 > Demo: roberdan.github.io/MaranelloLuceDesign/
-> Inspired by: ferrari.com/it-IT/auto/ferrari-luce
+> AI Expert: @NaSra (see `.github/agents/NaSra.agent.md`)
 
 ## Install
 
 ```bash
-npm i github:Roberdan/MaranelloLuceDesign#v3.3.0
+npm i github:Roberdan/MaranelloLuceDesign#v4.0.2
 ```
 
 ## Import Paths
@@ -27,8 +27,8 @@ npm i github:Roberdan/MaranelloLuceDesign#v3.3.0
 
 CDN (no build):
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v3.3.0/dist/css/index.css">
-<script src="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v3.3.0/dist/iife/maranello.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v4.0.2/dist/css/index.css">
+<script src="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v4.0.2/dist/iife/maranello.min.js"></script>
 ```
 IIFE attaches everything to `window.Maranello`.
 
@@ -36,12 +36,17 @@ IIFE attaches everything to `window.Maranello`.
 
 | Class | Style | Accent |
 |-------|-------|--------|
-| `mn-nero` | Dark (#0a0a0a) | Giallo Ferrari (#FFC72C) |
-| `mn-avorio` | Warm light (#f5e5c7) | Rosso Corsa (#DC0000) |
-| (default) | Editorial (mixed) | Giallo Ferrari |
-| `mn-colorblind` | High-contrast | Blue |
+| (default) | Editorial (dark, mixed surfaces) | Giallo Ferrari (#FFC72C) |
+| `mn-nero` | Pure dark (#0a0a0a) | Giallo Ferrari (#FFC72C) |
+| `mn-avorio` | Warm ivory light (#faf3e6) | Rosso Corsa (#DC0000) |
+| `mn-colorblind` | Dark, Wong palette | Blue (#0072B2) |
 
-Apply: `<body class="mn-nero">`. Toggle: `Maranello.cycleTheme()`.
+Apply: `<body class="mn-nero">`. Toggle: `Maranello.cycleTheme()` or `Maranello.setTheme('nero')`.
+Persist: `<mn-theme-toggle>` or `<mn-theme-rotary>` (saves to localStorage).
+
+**CRITICAL — Token safety:** Always use `var(--mn-text)` / `var(--mn-surface)` for component
+text/backgrounds. Never use `var(--bianco-caldo)` directly — it is `#fafafa` white, invisible
+on Avorio. CI blocks violations. Ask `@NaSra` if unsure which token to use.
 
 ## Charts API
 
@@ -89,6 +94,18 @@ All chart functions: `(canvas: HTMLCanvasElement, data, options?) → void`
 | `openDrawer(id)` | — | Show drawer |
 | `closeDrawer(id)` | — | Hide drawer |
 | `initOrgTree(container)` | — | Init org tree |
+
+## Responsive API (v4.0.0)
+
+| Function | Signature | Notes |
+|----------|-----------|-------|
+| `autoResize(canvas, factory, data)` | `(canvas, data, {width,height}) => void` | ResizeObserver; re-renders on width change |
+| `autoResizeAll(selector?)` | scans `[data-chart]` | Batch init |
+| `initSidebarToggleAuto()` | — | Auto-finds `.mn-sidebar` + `[data-sidebar-toggle]`; returns cleanup fn |
+| `initSidebarToggle(sidebar, btn)` | explicit elements | Manual init |
+
+Fluid gauge: `speedometer(canvas, { size: 'fluid' })` — call `controller.destroy()` on cleanup.
+Fluid WCs: `<mn-gauge size="fluid">` · `<mn-speedometer size="fluid">` · `<mn-chart>` (no width/height).
 
 ## Forms API
 
@@ -340,6 +357,11 @@ Sizes: `xs` (12px), `sm` (16px), `md` (20px), `lg` (24px), `xl` (32px), `2xl` (4
 | Controls (Ferrari) | `<mn-ferrari-control type="rotary" value="65">` |
 | Funnel chart | `<mn-funnel data="[...]">` or `Maranello.funnel(el, data)` |
 | Org tree | `Maranello.initOrgTree(container)` |
+| Responsive canvas chart | `Maranello.autoResize(canvas, Maranello.sparkline, data)` |
+| Fluid gauge | `<mn-gauge size="fluid">` or `speedometer(canvas, {size:'fluid'})` |
+| Theme rotary | `<mn-theme-rotary>` — dual-level base+overlay selector |
+| Live color tokens | `Maranello.palette()` — reads 20 semantic tokens from active theme |
+| Mobile sidebar | `Maranello.initSidebarToggleAuto()` |
 
 ## Recipes
 

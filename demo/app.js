@@ -150,8 +150,14 @@ function getActiveTheme() {
 function updateThemeLabel() {
   const label = document.getElementById('demo-theme-label');
   if (!label) return;
-  const names = { nero: 'Nero', avorio: 'Avorio', colorblind: 'Colorblind', editorial: 'Editorial' };
-  label.textContent = `Current: ${names[getActiveTheme()] ?? getActiveTheme()}`;
+  const lang = document.documentElement.lang || 'en';
+  const prefix = lang === 'it' ? 'CORRENTE:' : 'CURRENT:';
+  const names = {
+    en: { nero: 'Nero', avorio: 'Avorio', colorblind: 'Colorblind', editorial: 'Editorial' },
+    it: { nero: 'Nero', avorio: 'Avorio', colorblind: 'Daltonismo', editorial: 'Editoriale' }
+  };
+  const map = names[lang] ?? names.en;
+  label.textContent = `${prefix} ${map[getActiveTheme()] ?? getActiveTheme()}`;
 }
 
 document.addEventListener('mn-theme-change', (event) => {

@@ -182,6 +182,74 @@ const g = speedometer(canvas, { size: 'fluid' });
 | `<mn-chart width="400">` hardcoded | Remove width/height, let WC self-size |
 | Layout overflow on mobile | Add `.mn-full-mobile` or `overflow-x: auto` wrapper |
 
+## Component Selection — NaSra Recommends
+
+When asked to implement something, always map requirements to existing Maranello APIs first.
+**Never build custom components when Maranello already has one.** See full API in `AGENT.md`.
+
+| Requirement | Use | NOT |
+|---|---|---|
+| KPI / metric card | `mn-stat` + `mn-stat__value/label/delta` | Custom div with hardcoded style |
+| Real-time chart | `liveGraph(canvas, data)` or `<mn-chart type="liveGraph">` | Custom canvas loop |
+| Trend sparkline | `sparkline(canvas, data)` + `autoResize()` | SVG/D3 custom |
+| Agent status grid | `mn-mesh-network` + `mn-mesh-node` + `mn-mesh-status` | Custom grid |
+| Task timeline | `<mn-gantt>` or `gantt(el, tasks)` | Custom CSS bars |
+| Alerts / toasts | `Maranello.toast(msg, {type})` | Custom notification div |
+| Detail slide-over | `<mn-detail-panel>` + `openDetailPanel(id)` | Custom `position:fixed` panel |
+| Data table | `<mn-data-table sortable paginate>` | Custom `<table>` + sort logic |
+| Multi-step form | `mn-wizard-*` + `initFormSteps(el)` | Custom step state machine |
+| AI chat panel | `<mn-chat>` | Custom chat bubble layout |
+| Color from theme | `Maranello.palette()` — live read | Hardcoded hex in JS |
+
+## Framework Integration
+
+Engine modules are **imperative DOM-first**. Same pattern across all frameworks:
+acquire a DOM reference → init on mount → destroy on unmount → react to data changes.
+
+**Svelte 5**
+```svelte
+let el: HTMLElement; let widget: any;
+onMount(() => { widget = createGantt(el, data); });
+onDestroy(() => widget?.destroy());
+$effect(() => { widget?.setData(data); });
+// Template: <div bind:this={el}></div>
+```
+
+**React 18+**
+```tsx
+const ref = useRef<HTMLDivElement>(null);
+useEffect(() => {
+  const w = createGantt(ref.current!, data);
+  return () => w.destroy();
+}, []);
+useEffect(() => { widgetRef.current?.setData(data); }, [data]);
+// JSX: <div ref={ref} />
+```
+
+**Vue 3**
+```vue
+const el = ref<HTMLElement>(); let widget: any;
+onMounted(() => { widget = createGantt(el.value!, data); });
+onUnmounted(() => widget?.destroy());
+watch(data, (d) => widget?.setData(d));
+// Template: <div ref="el"></div>
+```
+
+**Vanilla / no framework**
+```js
+document.addEventListener('DOMContentLoaded', () => {
+  const w = createGantt(document.getElementById('gantt'), data);
+  window.addEventListener('beforeunload', () => w.destroy());
+});
+```
+
+**Web Components** — framework-agnostic, zero boilerplate:
+```html
+<mn-gantt id="g" tasks='[...]'></mn-gantt>
+<script>document.getElementById('g').setAttribute('tasks', JSON.stringify(data));</script>
+```
+Preferred when SSR or framework integration overhead is undesirable.
+
 ## CI Constitution
 
 `scripts/check-theme-semantics.sh` runs on every push and blocks:
