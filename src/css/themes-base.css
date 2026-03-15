@@ -182,6 +182,14 @@ body.mn-avorio {
   /* Text aliases — dark for light surface */
   --testo-primario:   #1a1a1a;
   --testo-secondario: #5a5550;
+  /* Grigio overrides for light background contrast (WCAG AA) */
+  --grigio-chiaro:    #707070;
+  /* New semantic tokens */
+  --sfondo:           var(--avorio-chiaro);
+  --superficie-card:  #f5f0e8;
+  --superficie-input: #ffffff;
+  --backdrop:         rgba(0,0,0,0.25);
+  --grigio-30:        rgba(0,0,0,0.08);
 }
 
 

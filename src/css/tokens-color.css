@@ -211,6 +211,19 @@
   --testo-primario:   var(--mn-text);
   --testo-secondario: var(--mn-text-muted);
 
+  /* ─── Semantic: backgrounds & overlays ─── */
+  --sfondo:            var(--nero-profondo);     /* page background alias          */
+  --superficie-card:   #1e1e1e;                  /* raised card surface            */
+  --superficie-input:  var(--nero-soft);          /* input/field background         */
+  --backdrop:          rgba(0,0,0,0.4);           /* modal / panel overlay          */
+  --grigio-30:         rgba(255,255,255,0.08);    /* subtle separator (dark themes) */
+
+  /* ─── Semantic: dimmed signals — auto-adapt via color-mix on theme vars ─── */
+  --signal-ok-dim:     color-mix(in srgb, var(--signal-ok)    8%,  transparent);
+  --signal-danger-bg:  color-mix(in srgb, var(--signal-danger) 10%, transparent);
+  --mn-accent-bg:      color-mix(in srgb, var(--mn-accent)    8%,  transparent);
+  --mn-accent-border:  color-mix(in srgb, var(--mn-accent)    20%, transparent);
+
   /* ─── Paired Colors (bg + contrast text, WCAG AA) ─── */
   --mn-pair-1-bg: #DC0000; --mn-pair-1-text: #fff;
   --mn-pair-2-bg: #FFC72C; --mn-pair-2-text: #111;

@@ -21,4 +21,9 @@ export declare const navIcons: {
     readonly minimize: () => string;
     readonly expand: () => string;
     readonly collapse: () => string;
+    readonly funnel: () => string;
+    readonly gantt: () => string;
+    readonly table: () => string;
+    readonly heatmap: () => string;
+    readonly grid: () => string;
 };
