@@ -134,14 +134,34 @@ body.mn-avorio .mn-hbar__label { color: var(--nero-assoluto); }
 body.mn-avorio .mn-hbar__axis-label { color: var(--grigio-scuro); }
 body.mn-avorio .mn-hbar__grid-line { border-color: var(--avorio-scuro); }
 body.mn-avorio .mn-okr { background: var(--avorio-chiaro); }
+/* OKR summary strip */
 body.mn-avorio .mn-okr__summary-card { background: var(--bianco-puro); border-color: var(--avorio-scuro); }
 body.mn-avorio .mn-okr__summary-label { color: var(--grigio-scuro); }
 body.mn-avorio .mn-okr__summary-count { color: var(--nero-assoluto); }
 body.mn-avorio .mn-okr__overall-pct { color: var(--nero-assoluto); }
+/* OKR hero gauge panel */
+body.mn-avorio .mn-okr__hero { background-color: var(--avorio-chiaro); background-image: none; border-color: var(--avorio-scuro); }
+body.mn-avorio .mn-okr__average-label { color: var(--grigio-medio); }
+body.mn-avorio .mn-okr__average-value { color: var(--nero-assoluto); text-shadow: none; }
+body.mn-avorio .mn-okr__gauge-value { color: var(--nero-assoluto); text-shadow: none; }
+body.mn-avorio .mn-okr__period-tag { background: rgba(0,0,0,0.03); border-color: var(--avorio-scuro); color: var(--grigio-medio); }
+body.mn-avorio .mn-okr__ring-track,
+body.mn-avorio .mn-okr__ring-track--overall { stroke: rgba(0,0,0,0.1); }
+body.mn-avorio .mn-okr__ring-text { fill: var(--nero-assoluto); }
+/* OKR objective cards (current class names from okr-panel.ts) */
+body.mn-avorio .mn-okr__objective { background: var(--bianco-puro); border-color: var(--avorio-scuro); box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+body.mn-avorio .mn-okr__objective:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
+body.mn-avorio .mn-okr__objective-title { color: var(--nero-assoluto); }
+body.mn-avorio .mn-okr__kr-title { color: var(--grigio-scuro); }
+body.mn-avorio .mn-okr__kr-metric { color: var(--grigio-medio); }
+body.mn-avorio .mn-okr__kr-track { background: rgba(0,0,0,0.08); }
+/* OKR legacy class names (backward compat) */
 body.mn-avorio .mn-okr__obj-card { background: var(--bianco-puro); border-color: var(--avorio-scuro); }
 body.mn-avorio .mn-okr__obj-title { color: var(--nero-assoluto); }
-body.mn-avorio .mn-okr__kr-title { color: var(--grigio-scuro); }
 body.mn-avorio .mn-okr__kr-bar { background: var(--avorio-scuro); }
+/* Generic dark card in Avorio */
+body.mn-avorio .mn-card-dark { background: var(--avorio-chiaro); color: var(--nero-assoluto); box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+body.mn-avorio .mn-card-dark:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
 
 /* ============================================================
    NERO — Funnel, Horizontal Bar, OKR
