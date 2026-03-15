@@ -1,4 +1,4 @@
-<!-- v3.4.0 | 2026-03-14 -->
+<!-- v4.0.0 | 2026-03-15 -->
 # MaranelloLuceDesign
 
 Ferrari Luce-inspired design system for business dashboards. Part of Convergio.
@@ -256,6 +256,22 @@ All responsive overrides live in `src/css/responsive-*.css` files, imported by `
 | Avorio | `mn-avorio` | `--rosso-corsa` |
 | Colorblind | `mn-colorblind` | `#0072B2` |
 
+## API Notes
+
+- `Maranello.palette()` returns `{ signalOk, signalWarning, signalDanger, signalInfo, ... }` — uses `--signal-*` CSS var names
+- `loginScreen(el, { showStatus: false })` — pure login form; use `mn-system-status` WC separately for health panel
+- `speedometer(canvas, { size: 'fluid' })` — fluid mode with ResizeObserver; call `controller.destroy()` to clean up observer + sr-only span
+- `autoResize(canvas, factory, data)` — ResizeObserver wrapper; factory is called with `(canvas, data, { width, height })`
+- `initSidebarToggleAuto()` — auto-finds `.mn-sidebar` + `[data-sidebar-toggle]`; returns cleanup fn
+
+## CI / GitHub Actions
+
+- `ci.yml` triggers on `push: [main, plan/**, fix/**, feat/**]` + `pull_request` + `workflow_dispatch`
+- Dispatch manually: `gh api --method POST repos/Roberdan/MaranelloLuceDesign/actions/workflows/245666212/dispatches -f ref=<branch>`
+- Constitution checks run in CI: no emoji, max 250 lines, mn- CSS prefix, no hardcoded colors (exceptions: gradients, conic, rgba, %, deg)
+- Scrub check: `VirtualBPM`, `ISE Portfolio`, `MirrorDesign`, `MirrorBuddy` forbidden in src/demo
+- `accessibility.css` high-contrast block must use `var(--mn-surface)` / `var(--mn-text)` not `#000`/`#fff`
+
 ## Conventions
 
 - Max 250 lines/file — split if exceeds
@@ -264,3 +280,4 @@ All responsive overrides live in `src/css/responsive-*.css` files, imported by `
 - CSS: all rules in `@layer` blocks
 - TS: strict mode, no `any`, named exports only
 - Comments: explain WHY, not WHAT, <5% density
+- localStorage theme values: always whitelist `['nero', 'avorio', 'colorblind', 'editorial']` before applying
