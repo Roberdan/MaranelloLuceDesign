@@ -11,6 +11,15 @@ export function createDataBindingSection() {
       <p class="mn-section-number">28 — Data Binding</p>
       <h2 class="mn-title-section mn-mb-sm mn-anim-fadeInUp">Data Binding</h2>
       <p class="mn-body mn-mb-2xl">Reactive pub/sub bus: emit/on/off, bind(), and autoBind wiring slider inputs to live gauges.</p>
+      <details class="mn-code-snippet">
+        <summary class="mn-label" style="cursor:pointer;color:var(--mn-accent);margin-bottom:var(--space-sm)">⟨/⟩ Usage</summary>
+        <pre class="mn-card-dark" style="padding:var(--space-md);font-family:var(--font-mono);font-size:var(--text-micro);overflow-x:auto;margin-bottom:var(--space-lg);border-left:3px solid var(--mn-accent)"><code>// Bind a slider to a gauge via the event bus
+Maranello.bind(sliderEl, { event: 'gauge:update', map: v => ({ value: v }) });
+Maranello.on('gauge:update', ({ value }) => Maranello.updateGauge(gaugeEl, { value }));
+
+// Or use autoBind for declarative wiring
+Maranello.autoBind(container); // reads data-bind-event attributes</code></pre>
+      </details>
 
       <div class="mn-grid-2 mn-mb-2xl" style="gap:var(--space-xl)">
 

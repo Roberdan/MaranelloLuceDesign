@@ -12,6 +12,13 @@ export function createAnimationsSection() {
       <div class="mn-watermark">MOVIMENTO</div>
       <h2 class="mn-title-section mn-mb-sm">Animations</h2>
       <p class="mn-body mn-mb-2xl">Subtle motion guides the eye. Every animation respects <code>prefers-reduced-motion</code>.</p>
+      <details class="mn-code-snippet">
+        <summary class="mn-label" style="cursor:pointer;color:var(--mn-accent);margin-bottom:var(--space-sm)">⟨/⟩ Usage</summary>
+        <pre class="mn-card-dark" style="padding:var(--space-md);font-family:var(--font-mono);font-size:var(--text-micro);overflow-x:auto;margin-bottom:var(--space-lg);border-left:3px solid var(--mn-accent)"><code>&lt;div class="mn-anim-fadeInUp"&gt;Fades in from below&lt;/div&gt;
+&lt;div class="mn-anim-fadeIn"&gt;Simple fade&lt;/div&gt;
+&lt;div class="mn-anim-slideInLeft"&gt;Slides from left&lt;/div&gt;
+&lt;span class="mn-anim-pulseDot"&gt;&lt;/span&gt; &lt;!-- live status dot --&gt;</code></pre>
+      </details>
 
       <div class="mn-demo-section-label mn-mt-2xl">Entrance Animations</div>
       <div class="mn-flex-wrap mn-gap-md mn-mb-2xl" style="align-items:stretch" id="anim-entrance-row">

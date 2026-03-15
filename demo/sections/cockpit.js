@@ -10,6 +10,15 @@ export function createCockpitSection() {
       <p class="mn-section-number">09 — Cockpit</p>
       <h2 class="mn-title-section mn-mb-sm">Cockpit Instruments</h2>
       <p class="mn-body mn-mb-2xl">Maranello Luce platform cockpit with live-style telemetry dials and AI service health visibility.</p>
+      <details class="mn-code-snippet">
+        <summary class="mn-label" style="cursor:pointer;color:var(--mn-accent);margin-bottom:var(--space-sm)">⟨/⟩ Usage</summary>
+        <pre class="mn-card-dark" style="padding:var(--space-md);font-family:var(--font-mono);font-size:var(--text-micro);overflow-x:auto;margin-bottom:var(--space-lg);border-left:3px solid var(--mn-accent)"><code>&lt;canvas id="my-dial"&gt;&lt;/canvas&gt;
+
+Maranello.speedometer(document.querySelector('#my-dial'), {
+  value: 78, max: 100, unit: '%', size: 'md',
+  arcColor: '#FFC72C', needleColor: '#DC0000', animate: true
+});</code></pre>
+      </details>
       <div class="mn-divider-gold mn-mb-lg"></div>
       <h3 class="mn-title-sub mn-mb-sm">Performance Dials</h3>
       <div class="mn-flex-wrap mn-gap-xl mn-mb-2xl" style="align-items:flex-end;justify-content:space-between">

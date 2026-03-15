@@ -12,6 +12,12 @@ export function createOverlaysSection() {
       <div class="mn-watermark">OVERLAY</div>
       <h2 class="mn-title-section mn-mb-sm mn-anim-fadeInUp">Modals, Toasts &amp; Drawers</h2>
       <p class="mn-body mn-mb-2xl">Contextual overlays: confirmation dialogs, non-blocking notifications, and slide-out panels.</p>
+      <details class="mn-code-snippet">
+        <summary class="mn-label" style="cursor:pointer;color:var(--mn-accent);margin-bottom:var(--space-sm)">⟨/⟩ Usage</summary>
+        <pre class="mn-card-dark" style="padding:var(--space-md);font-family:var(--font-mono);font-size:var(--text-micro);overflow-x:auto;margin-bottom:var(--space-lg);border-left:3px solid var(--mn-accent)"><code>Maranello.openModal('my-modal');
+Maranello.toast({ type: 'success', title: 'Deploy done', message: 'Pipeline promoted.' });
+Maranello.openDrawer('my-drawer');</code></pre>
+      </details>
 
       <div class="mn-demo-section-label mn-mt-xl">Modal Dialogs</div>
       <div class="mn-flex-wrap mn-gap-md mn-mb-2xl">

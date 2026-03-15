@@ -26,7 +26,16 @@ export function createTokensSection() {
   section.innerHTML = `
     <div class="mn-container">
       <p class="mn-section-number">01 — Design Tokens</p>
-      <h2 class="mn-title-section" style="margin-bottom:var(--space-2xl)">Colors & Typography</h2>
+      <h2 class="mn-title-section" style="margin-bottom:var(--space-lg)">Colors & Typography</h2>
+      <details class="mn-code-snippet">
+        <summary class="mn-label" style="cursor:pointer;color:var(--mn-accent);margin-bottom:var(--space-sm)">⟨/⟩ Usage</summary>
+        <pre class="mn-card-dark" style="padding:var(--space-md);font-family:var(--font-mono);font-size:var(--text-micro);overflow-x:auto;margin-bottom:var(--space-lg);border-left:3px solid var(--mn-accent)"><code>.element {
+  color: var(--mn-text);
+  background: var(--mn-surface);
+  border-color: var(--mn-accent); /* #FFC72C editorial/nero, #DC0000 avorio */
+  font-family: var(--font-display); /* Outfit */
+}</code></pre>
+      </details>
 
       <!-- Nero Scale -->
       <h3 class="mn-title-sub" style="margin-bottom:var(--space-md)">Nero Scale (Dark)</h3>

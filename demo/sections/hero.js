@@ -104,6 +104,15 @@ export function createHeroSection() {
         </div>
       </div>
 
+      <details class="mn-code-snippet" style="max-width:640px;margin:var(--space-2xl) auto 0;text-align:left">
+        <summary class="mn-label" style="cursor:pointer;color:var(--mn-accent);margin-bottom:var(--space-sm)">⟨/⟩ Install</summary>
+        <pre class="mn-card-dark" style="padding:var(--space-md);font-family:var(--font-mono);font-size:var(--text-micro);overflow-x:auto;margin-bottom:var(--space-lg);border-left:3px solid var(--mn-accent)"><code>npm install github:Roberdan/MaranelloLuceDesign#v4.1.0
+
+&lt;!-- CDN --&gt;
+&lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v4.1.0/dist/css/index.css"&gt;
+&lt;script src="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v4.1.0/dist/iife/maranello.min.js"&gt;&lt;/script&gt;</code></pre>
+      </details>
+
       <div style="margin-top:var(--space-2xl);display:flex;gap:var(--space-md);justify-content:center;flex-wrap:wrap">
         <button class="mn-btn mn-btn--accent" onclick="document.getElementById('dashboard').scrollIntoView({behavior:'smooth'})">Explore Dashboard ↓</button>
         <button class="mn-btn mn-btn--ghost-light" onclick="document.getElementById('charts').scrollIntoView({behavior:'smooth'})">View Charts</button>

@@ -22,6 +22,16 @@ export function createDetailPanelSection() {
       <p class="mn-section-number">16 — Detail &amp; Drill-Down</p>
       <h2 class="mn-title-section" style="margin-bottom:var(--space-lg)">Detail Panel System</h2>
       <p class="mn-body" style="margin-bottom:var(--space-2xl)">Interactive slide-over panels with drill-down navigation, inline field editors, and JS-driven deployment tables.</p>
+      <details class="mn-code-snippet">
+        <summary class="mn-label" style="cursor:pointer;color:var(--mn-accent);margin-bottom:var(--space-sm)">⟨/⟩ Usage</summary>
+        <pre class="mn-card-dark" style="padding:var(--space-md);font-family:var(--font-mono);font-size:var(--text-micro);overflow-x:auto;margin-bottom:var(--space-lg);border-left:3px solid var(--mn-accent)"><code>Maranello.openDetailPanel({
+  title: 'Pipeline Alpha',
+  fields: [
+    { label: 'Region', value: 'us-east-1' },
+    { label: 'Status', value: 'Running' }
+  ]
+});</code></pre>
+      </details>
       <h3 class="mn-title-sub" style="margin-bottom:var(--space-lg)">Interactive Detail Panel</h3>
       <p class="mn-micro" style="margin-bottom:var(--space-lg)">Click a deployment card to drill down into its detail panel.</p>
       <div id="dp-card-grid" class="mn-grid-3" style="margin-bottom:var(--space-2xl)">${DEPLOYMENTS.map(deploymentCard).join('')}</div>

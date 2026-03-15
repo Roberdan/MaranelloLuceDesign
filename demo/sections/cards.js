@@ -34,6 +34,16 @@ export function createCardsSection() {
       <p class="mn-section-number">02 — Components</p>
       <h2 class="mn-title-section" style="margin-bottom:var(--space-lg)">Cards & Signal Surfaces</h2>
       <p class="mn-body" style="margin-bottom:var(--space-xl)">A richer, extended card gallery for Maranello Luce deployment regions: KPI tiles, operational media, model profiles, and dashboard micro-panels built to feel cinematic but still highly readable.</p>
+      <details class="mn-code-snippet">
+        <summary class="mn-label" style="cursor:pointer;color:var(--mn-accent);margin-bottom:var(--space-sm)">⟨/⟩ Usage</summary>
+        <pre class="mn-card-dark" style="padding:var(--space-md);font-family:var(--font-mono);font-size:var(--text-micro);overflow-x:auto;margin-bottom:var(--space-lg);border-left:3px solid var(--mn-accent)"><code>&lt;div class="mn-card-dark"&gt;
+  &lt;div class="mn-stat"&gt;
+    &lt;div class="mn-stat__value"&gt;847&lt;/div&gt;
+    &lt;div class="mn-stat__label"&gt;Active Agents&lt;/div&gt;
+    &lt;div class="mn-stat__delta"&gt;↑ 12% Y/Y&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+      </details>
       <div class="mn-tag-group" style="justify-content:center;margin-bottom:var(--space-2xl)"><span class="mn-tag mn-tag--active">Maranello Luce</span><span class="mn-tag">Deployment Regions</span><span class="mn-tag">Model Profiles</span><span class="mn-tag">Quality Gates</span><span class="mn-tag mn-tag--xs">dashboard</span></div>
       <h3 class="mn-title-sub" style="text-align:center;margin-bottom:var(--space-lg)">KPI stat cards</h3>
       <div class="mn-grid-4" style="margin-bottom:var(--space-2xl)">${KPI_CARDS.map(statCard).join('')}</div>

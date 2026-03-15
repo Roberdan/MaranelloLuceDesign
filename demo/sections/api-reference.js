@@ -2,6 +2,12 @@
  * Section 21 — API Reference
  * Grouped catalog of all 91 Maranello exports
  */
+const _API_USAGE = `<details class="mn-code-snippet"><summary class="mn-label" style="cursor:pointer;color:var(--mn-accent);margin-bottom:var(--space-sm)">⟨/⟩ Usage</summary><pre class="mn-card-dark" style="padding:var(--space-md);font-family:var(--font-mono);font-size:var(--text-micro);overflow-x:auto;margin-bottom:var(--space-lg);border-left:3px solid var(--mn-accent)"><code>// All 87 APIs on window.Maranello (IIFE)
+const { barChart, gantt, FerrariGauge, socialGraph } = window.Maranello;
+
+// Or tree-shakeable ESM:
+import { barChart } from 'maranello-luce-design-business/charts';
+import { gantt } from 'maranello-luce-design-business/gantt';</code></pre></details>`;
 
 const groups = [
   ['Charts', 'Maranello.charts.*', [
@@ -104,6 +110,7 @@ export function createApiReferenceSection() {
       </p>
 
       ${statsBar()}
+      ${_API_USAGE}
 
       <div class="mn-grid-2">
         ${groups.map(([t, ns, apis]) => apiGroup(t, ns, apis)).join('')}

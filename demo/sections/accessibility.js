@@ -32,6 +32,13 @@ export function createAccessibilitySection() {
       <h2 class="mn-title-section" style="margin-bottom:var(--space-lg)">Accessibility</h2>
       <p class="mn-body" style="margin-bottom:var(--space-lg)">Accessibility controls with quick profiles, focused toggles, a themed voice selector, and a persistent gold FAB.</p>
       <p class="mn-micro" style="margin-bottom:var(--space-xl);color:var(--grigio-medio)">The live panel is shown inline below for preview, while the floating action button opens the same interface as a slide-up overlay from the bottom-right.</p>
+      <details class="mn-code-snippet">
+        <summary class="mn-label" style="cursor:pointer;color:var(--mn-accent);margin-bottom:var(--space-sm)">⟨/⟩ Usage</summary>
+        <pre class="mn-card-dark" style="padding:var(--space-md);font-family:var(--font-mono);font-size:var(--text-micro);overflow-x:auto;margin-bottom:var(--space-lg);border-left:3px solid var(--mn-accent)"><code>&lt;mn-a11y&gt;&lt;/mn-a11y&gt;
+
+&lt;!-- or JS API --&gt;
+Maranello.a11yPanel(document.body);</code></pre>
+      </details>
       <div class="mn-a11y-demo-stage">${panelMarkup('inline')}</div>
     </div>`;
   requestAnimationFrame(() => mountSection(section, state));

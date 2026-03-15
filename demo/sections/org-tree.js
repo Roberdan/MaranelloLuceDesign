@@ -12,6 +12,16 @@ export function createOrgTreeSection() {
       <div class="mn-watermark">ORG</div>
       <h2 class="mn-title-section mn-mb-sm mn-anim-fadeInUp">Organisation Tree</h2>
       <p class="mn-body mn-mb-xl">Hierarchical structure viewer with expand/collapse and full keyboard navigation.</p>
+      <details class="mn-code-snippet">
+        <summary class="mn-label" style="cursor:pointer;color:var(--mn-accent);margin-bottom:var(--space-sm)">⟨/⟩ Usage</summary>
+        <pre class="mn-card-dark" style="padding:var(--space-md);font-family:var(--font-mono);font-size:var(--text-micro);overflow-x:auto;margin-bottom:var(--space-lg);border-left:3px solid var(--mn-accent)"><code>Maranello.initOrgTree(el, {
+  nodes: [
+    { id: 'ceo', label: 'CEO', children: ['cto', 'cpo'] },
+    { id: 'cto', label: 'CTO', parentId: 'ceo' },
+    { id: 'cpo', label: 'CPO', parentId: 'ceo' }
+  ]
+});</code></pre>
+      </details>
       <p class="mn-micro mn-mb-2xl" style="color:var(--grigio-medio)">
         Keyboard: <kbd style="padding:2px 6px;border:1px solid var(--grigio-scuro);border-radius:4px;font-family:monospace">Tab</kbd> to focus nodes &nbsp;
         <kbd style="padding:2px 6px;border:1px solid var(--grigio-scuro);border-radius:4px;font-family:monospace">Enter / Space</kbd> to expand/collapse &nbsp;

@@ -66,6 +66,16 @@ export function createTelemetrySection() {
       <p class="mn-body" style="margin-bottom:var(--space-2xl)">
         Unified monitoring for agent orchestration, token routing, and inference pipelines.
       </p>
+      <details class="mn-code-snippet">
+        <summary class="mn-label" style="cursor:pointer;color:var(--mn-accent);margin-bottom:var(--space-sm)">⟨/⟩ Usage</summary>
+        <pre class="mn-card-dark" style="padding:var(--space-md);font-family:var(--font-mono);font-size:var(--text-micro);overflow-x:auto;margin-bottom:var(--space-lg);border-left:3px solid var(--mn-accent)"><code>&lt;div class="mn-signal-panel"&gt;
+  &lt;div class="mn-signal-panel__eyebrow"&gt;us-east-1&lt;/div&gt;
+  &lt;div class="mn-signal-panel__title"&gt;Gateway&lt;/div&gt;
+  &lt;div class="mn-status mn-status--active"&gt;
+    &lt;span class="mn-status__dot"&gt;&lt;/span&gt;Running
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+      </details>
       <div style="display:flex;flex-wrap:wrap;gap:var(--space-lg);margin-bottom:var(--space-2xl)">
         ${GAUGES.map(svgGauge).join('')}
       </div>

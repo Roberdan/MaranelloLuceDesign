@@ -71,7 +71,10 @@ export function createWebComponentsSection() {
       #web-components .mn-wc-meta{display:grid;gap:6px}
       #web-components .mn-wc-placeholder{display:flex;align-items:center;justify-content:center;gap:8px;opacity:0.4}
     </style>
-    <div class="mn-container"><p class="mn-section-number">14 — Web Components</p><h2 class="mn-title-section" style="margin-bottom:var(--space-lg)">24 Web Components / Catalog View</h2><p class="mn-body" style="margin-bottom:var(--space-2xl)">A complete Maranello Luce-flavored catalog of the <code>mn-*</code> layer: charts, controls, data surfaces, layout shells, and interactive widgets.</p>${GROUPS.map(groupBlock).join('')}</div>`;
+    <div class="mn-container"><p class="mn-section-number">14 — Web Components</p><h2 class="mn-title-section" style="margin-bottom:var(--space-lg)">24 Web Components / Catalog View</h2><p class="mn-body" style="margin-bottom:var(--space-2xl)">A complete Maranello Luce-flavored catalog of the <code>mn-*</code> layer: charts, controls, data surfaces, layout shells, and interactive widgets.</p><details class="mn-code-snippet"><summary class="mn-label" style="cursor:pointer;color:var(--mn-accent);margin-bottom:var(--space-sm)">⟨/⟩ Usage</summary><pre class="mn-card-dark" style="padding:var(--space-md);font-family:var(--font-mono);font-size:var(--text-micro);overflow-x:auto;margin-bottom:var(--space-lg);border-left:3px solid var(--mn-accent)"><code>&lt;mn-chart type="donut" data='[{"label":"A","value":60},{"label":"B","value":40}]'&gt;&lt;/mn-chart&gt;
+&lt;mn-gauge value="78" max="100" unit="%" label="Readiness"&gt;&lt;/mn-gauge&gt;
+&lt;mn-gantt tasks='[{"id":"t1","title":"Deploy","start":"2026-01-01","end":"2026-01-31"}]'&gt;&lt;/mn-gantt&gt;
+&lt;mn-data-table columns='[{"key":"name","label":"Name"}]' rows='[{"name":"Alpha"}]'&gt;&lt;/mn-data-table&gt;</code></pre></details>${GROUPS.map(groupBlock).join('')}</div>`;
   requestAnimationFrame(() => initCatalog(section));
   return section;
 }
