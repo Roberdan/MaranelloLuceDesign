@@ -30,7 +30,9 @@ class MnLogin extends HTMLElement {
     this._container.className = "mn-wc-root";
     this._container.setAttribute("role", "main");
     this._container.setAttribute("aria-label", "Sign in");
-    this.shadowRoot.append(link1, link2, link3, this._container);
+    const hostStyle = document.createElement("style");
+    hostStyle.textContent = ":host{display:block;width:100%;max-width:100%;box-sizing:border-box}";
+    this.shadowRoot.append(hostStyle, link1, link2, link3, this._container);
   }
   async connectedCallback() {
     await this._init();
@@ -61,6 +63,7 @@ class MnLogin extends HTMLElement {
       version: void 0,
       healthUrl,
       autoHealth: !!healthUrl,
+      showStatus: false,
       onLogin: () => {
         this.dispatchEvent(new CustomEvent("mn-login", {
           bubbles: true,

@@ -1,17 +1,12 @@
 /** Maranello Luce Design - Speedometer gauge (animated needle + optional bar). */
 import type { SpeedometerOptions, SpeedometerController } from './core/types';
-import { cssVar } from './core/utils';
+import { cssVar, debounce } from './core/utils';
 
 const SIZES: Record<string, number> = { sm: 120, md: 220, lg: 320 };
-const SWEEP = Math.PI * 1.5;
-const START = Math.PI * 0.75;
+const SWEEP = Math.PI * 1.5, START = Math.PI * 0.75;
 const FONT = "'Barlow Condensed', 'Outfit', sans-serif";
-
 function easeOutCubic(t: number): number { return 1 - Math.pow(1 - t, 3); }
-
-function v2a(v: number, max: number): number {
-  return START + (Math.min(Math.max(v, 0), max) / max) * SWEEP;
-}
+function v2a(v: number, max: number): number { return START + (Math.min(Math.max(v, 0), max) / max) * SWEEP; }
 
 function speedoPalette(): Record<string, unknown> {
   const cl = document.body.classList;
@@ -168,7 +163,16 @@ export function speedometer(
     ...opts,
   };
 
-  const dim = SIZES[(options.size as string)] || SIZES.md;
+  const isFluid = (options.size as string) === 'fluid';
+  let dim: number;
+  if (isFluid) {
+    const rect = (canvas.parentElement || canvas).getBoundingClientRect();
+    dim = Math.min(rect.width, rect.height) || SIZES.md;
+  } else if (typeof options.size === 'number') {
+    dim = options.size;
+  } else {
+    dim = SIZES[(options.size as string)] || SIZES.md;
+  }
   const dpr = window.devicePixelRatio || 1;
   canvas.width = dim * dpr;
   canvas.height = dim * dpr;
@@ -179,71 +183,66 @@ export function speedometer(
   const s = dim / 220;
   const cx = dim / 2, cy = dim / 2, R = dim * 0.4;
 
-  // Accessibility: role, aria-label, fallback text, sr-only span
-  const max = options.max as number;
-  const unit = (options.unit as string) || '';
-
-  function buildLabel(v: number): string {
-    const suffix = unit ? `${Math.round(v)}${unit}` : String(Math.round(v));
-    return `Speedometer: ${suffix} of ${max}`;
-  }
+  const max = options.max as number, unit = (options.unit as string) || '';
+  const buildLabel = (v: number) => `Speedometer: ${unit ? `${Math.round(v)}${unit}` : Math.round(v)} of ${max}`;
 
   canvas.setAttribute('role', 'img');
   const initLabel = buildLabel(options.value as number);
   canvas.setAttribute('aria-label', initLabel);
   canvas.textContent = initLabel;
-
+  // Remove stale sr-only span left by previous fluid resize, then insert fresh one
+  (canvas.nextSibling as HTMLElement)?.classList?.contains('mn-sr-only') && (canvas.nextSibling as Element).remove();
   const srSpan = document.createElement('span');
   srSpan.className = 'mn-sr-only';
   srSpan.textContent = initLabel;
   canvas.parentElement?.insertBefore(srSpan, canvas.nextSibling);
 
   function updateA11y(v: number): void {
-    const l = buildLabel(v);
-    canvas.setAttribute('aria-label', l);
-    canvas.textContent = l;
-    srSpan.textContent = l;
+    const l = buildLabel(v); canvas.setAttribute('aria-label', l); canvas.textContent = l; srSpan.textContent = l;
   }
 
   let curAngle = v2a(options.value as number, max);
   let curVal = options.value as number;
   let barVal = options.bar ? ((options.bar as Record<string, unknown>).value as number || 0) : 0;
   let animId: number | null = null;
-
-  function draw(): void {
-    drawSpeedo(ctx, dim, s, cx, cy, R, curAngle, curVal, barVal, options);
-  }
+  function draw(): void { drawSpeedo(ctx, dim, s, cx, cy, R, curAngle, curVal, barVal, options); }
 
   function animateTo(toAngle: number, toVal: number): void {
     if (animId) cancelAnimationFrame(animId);
-    const fromA = curAngle, fromV = curVal;
-    const t0 = performance.now(), dur = 800;
+    const fromA = curAngle, fromV = curVal, t0 = performance.now(), dur = 800;
     const tick = (now: number): void => {
-      const p = Math.min(1, (now - t0) / dur);
-      const ep = easeOutCubic(p);
-      curAngle = fromA + (toAngle - fromA) * ep;
-      curVal = fromV + (toVal - fromV) * ep;
+      const p = Math.min(1, (now - t0) / dur), ep = easeOutCubic(p);
+      curAngle = fromA + (toAngle - fromA) * ep; curVal = fromV + (toVal - fromV) * ep;
       draw();
-      if (p < 1) animId = requestAnimationFrame(tick);
-      else { animId = null; updateA11y(toVal); }
+      if (p < 1) animId = requestAnimationFrame(tick); else { animId = null; updateA11y(toVal); }
     };
     tick(performance.now());
   }
 
-  if (options.animate) {
-    curAngle = START; curVal = 0;
-    animateTo(v2a(options.value as number, max), options.value as number);
-  } else {
-    draw();
+  if (options.animate) { curAngle = START; curVal = 0; animateTo(v2a(options.value as number, max), options.value as number); }
+  else { draw(); }
+  // Fluid: ResizeObserver re-renders on parent resize (passes numeric size to prevent recursion)
+  let resizeObs: ResizeObserver | null = null;
+  if (isFluid && window.ResizeObserver && canvas.parentElement) {
+    const p = canvas.parentElement;
+    resizeObs = new ResizeObserver(debounce(() => {
+      const r = p.getBoundingClientRect();
+      const nd = Math.min(r.width, r.height);
+      if (nd <= 0 || nd === dim) return;
+      if (animId) cancelAnimationFrame(animId);
+      resizeObs?.disconnect(); // disconnect before re-init to prevent double-observer
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      speedometer(canvas, { ...(opts || {}), size: nd, value: curVal, animate: false });
+    }, 150));
+    resizeObs.observe(p);
   }
 
   return {
     setValue(v: number): void {
       const ta = v2a(v, max);
-      if (options.animate) animateTo(ta, v);
-      else { curAngle = ta; curVal = v; draw(); updateA11y(v); }
+      if (options.animate) animateTo(ta, v); else { curAngle = ta; curVal = v; draw(); updateA11y(v); }
     },
     setBar(v: number): void { barVal = Math.max(0, Math.min(1, v)); if (!animId) draw(); },
-    destroy(): void { if (animId) cancelAnimationFrame(animId); ctx.clearRect(0, 0, dim * dpr, dim * dpr); },
+    destroy(): void { if (animId) cancelAnimationFrame(animId); resizeObs?.disconnect(); ctx.clearRect(0, 0, dim * dpr, dim * dpr); srSpan.remove(); },
   };
 }

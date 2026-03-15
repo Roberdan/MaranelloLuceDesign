@@ -100,21 +100,33 @@ export function networkMessages(
     ctx.fillStyle = 'rgba(3,7,12,0.36)';
     ctx.fillRect(0, 0, width, height);
 
-    ctx.save();
-    ctx.lineWidth = 1.15;
-    ctx.setLineDash([6, 8]);
+    ctx.setLineDash([]);
     for (const link of options.connections) {
       const from = map.get(link.from), to = map.get(link.to);
       if (!from || !to) continue;
       const a = point(from), b = point(to);
       const active = messages.some((msg) => msg.from === link.from && msg.to === link.to);
-      ctx.strokeStyle = link.color ?? (active ? alpha('#FFC72C', 0.45) : 'rgba(255,255,255,0.16)');
+      const baseColor = link.color ?? 'rgba(78,168,222,0.35)';
+      const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+      const dx = mx - 0.5 * width, dy = my - 0.5 * height;
+      const len = Math.sqrt(dx * dx + dy * dy) || 1;
+      const dist = Math.sqrt((b.x - a.x) ** 2 + (b.y - a.y) ** 2);
+      const cpx = mx + (dx / len) * dist * 0.28, cpy = my + (dy / len) * dist * 0.28;
+      ctx.save();
+      ctx.lineWidth = active ? 2.0 : 1.5;
+      if (active && options.glowEffect) { ctx.shadowColor = baseColor; ctx.shadowBlur = 8; }
+      const op = active ? 0.7 : 0.38;
+      const recolor = (c: string) => c.replace(/[\d.]+\)$/, `${op})`);
+      const grad = ctx.createLinearGradient(a.x, a.y, b.x, b.y);
+      grad.addColorStop(0, link.color ? recolor(link.color) : `rgba(78,168,222,${op})`);
+      grad.addColorStop(1, link.color ? recolor(link.color) : `rgba(255,199,44,${op})`);
+      ctx.strokeStyle = grad;
       ctx.beginPath();
       ctx.moveTo(a.x, a.y);
-      ctx.lineTo(b.x, b.y);
+      ctx.quadraticCurveTo(cpx, cpy, b.x, b.y);
       ctx.stroke();
+      ctx.restore();
     }
-    ctx.restore();
 
     for (let i = flashes.length - 1; i >= 0; i--) {
       const flash = flashes[i];

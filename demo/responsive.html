@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Maranello Responsive Demo</title>
+  <link rel="stylesheet" href="../src/fonts/local-fonts.css">
+  <link rel="stylesheet" href="../dist/css/maranello.css">
+  <style>
+    body { margin: 0; font-family: var(--font-body); background: var(--nero-profondo); color: var(--grigio-chiaro); }
+    .viewport-bar { display: flex; gap: 8px; padding: 12px 20px; background: #1a1a1a; border-bottom: 1px solid #333; position: sticky; top: 0; z-index: 200; align-items: center; }
+    .viewport-bar button { padding: 6px 14px; border: 1px solid #555; background: #222; color: #ccc; border-radius: 4px; cursor: pointer; font-size: 13px; }
+    .viewport-bar button.active { background: var(--giallo-ferrari); color: #000; border-color: var(--giallo-ferrari); font-weight: 600; }
+    .viewport-bar span { color: #888; font-size: 12px; margin-left: auto; }
+    .frame-wrap { display: flex; justify-content: center; padding: 20px; }
+    iframe { border: 2px solid #333; border-radius: 8px; background: var(--nero-carbon); transition: width 0.3s ease; height: 80vh; }
+  </style>
+</head>
+<body>
+  <div class="viewport-bar">
+    <strong style="color:var(--giallo-ferrari);font-family:var(--font-display);font-size:13px;letter-spacing:0.06em">RESPONSIVE DEMO</strong>
+    <button data-width="375" class="active">📱 Phone (375)</button>
+    <button data-width="768">📱 Tablet (768)</button>
+    <button data-width="1280">🖥️ Desktop (1280)</button>
+    <span id="dim-label">375 × 80vh</span>
+  </div>
+  <div class="frame-wrap">
+    <iframe id="preview" src="about:blank" width="375" title="Responsive preview"></iframe>
+  </div>
+
+  <script>
+    const frame = document.getElementById('preview');
+    const label = document.getElementById('dim-label');
+    const btns = document.querySelectorAll('.viewport-bar button[data-width]');
+
+    btns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        btns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const w = btn.dataset.width;
+        frame.style.width = w + 'px';
+        label.textContent = w + ' × 80vh';
+      });
+    });
+
+    const content = `<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="../src/fonts/local-fonts.css">
+<link rel="stylesheet" href="../dist/css/maranello.css">
+<style>body{margin:0;padding:16px;font-family:var(--font-body);background:var(--nero-profondo);color:var(--grigio-chiaro)}
+h3{font-family:var(--font-display);font-size:var(--text-small);color:var(--giallo-ferrari);text-transform:uppercase;letter-spacing:0.08em;margin:16px 0 8px}
+.demo-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
+.kpi{background:var(--nero-carbon);border:1px solid var(--grigio-scuro);border-radius:var(--radius-md);padding:12px;text-align:center}
+.kpi strong{font-size:var(--text-xl);color:var(--giallo-ferrari);display:block}
+.kpi span{font-size:var(--text-micro);color:var(--grigio-medio)}
+</style></head><body class="mn-nero">
+
+<aside class="mn-sidebar" id="demo-sidebar">
+  <div class="mn-sidebar__header"><span class="mn-sidebar__brand">Menu</span></div>
+  <nav class="mn-sidebar__nav">
+    <a class="mn-sidebar__item" href="#">Dashboard</a>
+    <a class="mn-sidebar__item" href="#">Analytics</a>
+    <a class="mn-sidebar__item" href="#">Settings</a>
+  </nav>
+</aside>
+<button class="mn-sidebar-toggle mn-show-mobile" style="position:fixed;top:8px;left:8px;z-index:1200;padding:8px 12px;background:var(--nero-carbon);border:1px solid var(--grigio-scuro);color:var(--grigio-chiaro);border-radius:4px;cursor:pointer">☰</button>
+
+<h3>KPI Cards</h3>
+<div class="demo-grid">
+  <div class="kpi"><strong>1,284</strong><span>Revenue</span></div>
+  <div class="kpi"><strong>92%</strong><span>Uptime</span></div>
+  <div class="kpi"><strong>47</strong><span>Users</span></div>
+  <div class="kpi"><strong>3.2s</strong><span>Latency</span></div>
+</div>
+
+<h3>Gauge (fluid)</h3>
+<div style="width:100%;max-width:300px;aspect-ratio:1">
+  <canvas id="fluid-gauge" data-size="fluid"></canvas>
+</div>
+
+<h3>Chart (auto-resize)</h3>
+<div style="width:100%;height:150px;position:relative">
+  <canvas id="auto-chart"></canvas>
+</div>
+
+<h3>Data Table</h3>
+<div class="mn-dt"><div class="mn-dt__scroll">
+  <table><thead><tr><th class="mn-dt__th">Name</th><th class="mn-dt__th">Status</th><th class="mn-dt__th">Value</th></tr></thead>
+  <tbody>
+    <tr><td class="mn-dt__td">Alpha</td><td class="mn-dt__td">Active</td><td class="mn-dt__td">1,200</td></tr>
+    <tr><td class="mn-dt__td">Beta</td><td class="mn-dt__td">Pending</td><td class="mn-dt__td">800</td></tr>
+    <tr><td class="mn-dt__td">Gamma</td><td class="mn-dt__td">Done</td><td class="mn-dt__td">2,400</td></tr>
+  </tbody></table>
+</div></div>
+
+<h3>Form</h3>
+<form class="mn-form--grid" style="gap:12px">
+  <div class="mn-field"><label class="mn-form-label">Name</label><input class="mn-form-input" placeholder="Enter name"></div>
+  <div class="mn-field"><label class="mn-form-label">Email</label><input class="mn-form-input" type="email" placeholder="Enter email"></div>
+  <div class="mn-form__actions"><button class="mn-btn" type="button">Submit</button></div>
+</form>
+
+<script src="../dist/iife/maranello.min.js"><\/script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var M = window.Maranello;
+    if (!M) return;
+    // Fluid gauge
+    var gc = document.getElementById('fluid-gauge');
+    if (gc) { var g = new M.FerrariGauge(gc); g.config.value = 72; g.config.unit = '%'; g.animate(); }
+    // Auto-resize chart
+    var cc = document.getElementById('auto-chart');
+    if (cc && M.autoResize && M.sparkline) {
+      M.autoResize(cc, M.sparkline, [10,30,20,50,40,60,35,70,55,80]);
+    }
+    // Sidebar toggle
+    if (M.initSidebarToggleAuto) M.initSidebarToggleAuto();
+  });
+<\/script>
+</body></html>`;
+
+    frame.srcdoc = content;
+  </script>
+</body>
+</html>

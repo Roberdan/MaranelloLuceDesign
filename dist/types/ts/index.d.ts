@@ -2,11 +2,11 @@
  * Maranello Luce Design - Main ES module entry point
  * Re-exports the public API surface for library consumers.
  */
-export declare const VERSION = "3.3.0";
+export declare const VERSION = "4.0.0";
 export * from './core/types';
 export { EventBus, eventBus } from './core/events';
 export type { EventCallback } from './core/events';
-export { cssVar, getTheme, setTheme, cycleTheme, getAccent, debounce, throttle, createElement, formatNumber, formatDate, clamp, lerp, hiDpiCanvas, } from './core/utils';
+export { cssVar, palette, getTheme, setTheme, cycleTheme, getAccent, debounce, throttle, createElement, formatNumber, formatDate, clamp, lerp, hiDpiCanvas, } from './core/utils';
 export { networkMessages } from './network-messages';
 export { neuralNodes } from './neural-nodes';
 export { COLOR, FONT, TEXT_SIZE, SPACE, DURATION, EASE, RADIUS, SHADOW, SCOPE_COLOR, Z_INDEX, } from './core/tokens';
@@ -21,7 +21,6 @@ export { initThemeToggle } from './theme-toggle';
 export type { ThemeGaugeInstance, ThemeToggleController } from './theme-toggle';
 export { themeRotary } from './theme-rotary';
 export type { ThemeRotaryOptions, ThemeRotaryController } from './theme-rotary';
-export { getGlass, setGlass, toggleGlass } from './core/utils';
 export { toast } from './toast';
 export { openModal, closeModal } from './modal';
 export { commandPalette } from './command-palette';
@@ -35,6 +34,7 @@ export { profileMenu } from './profile-menu';
 export type { ProfileMenuUser, ProfileMenuOptions, ProfileMenuController } from './profile-menu';
 export * from './charts';
 export { chartInteract, sparklineInteract } from './chart-interact';
+export { autoResize, autoResizeAll } from './auto-resize';
 export { FerrariGauge } from './gauge-engine';
 export { buildGaugePalette } from './gauge-engine-palette';
 export type { GaugeRenderPalette } from './gauge-engine-palette';
@@ -46,6 +46,7 @@ export { mapboxView } from './map-mapbox';
 export type { MapboxMarker, MapboxViewOptions, MapboxViewController } from './map-mapbox';
 export { socialGraph } from './social-graph';
 export { openDetailPanel, closeDetailPanel, openDrawer, closeDrawer, initOrgTree, toggleNotifications, initDrillDown, } from './controls';
+export { initSidebarToggle, initSidebarToggleAuto } from './sidebar-toggle';
 export { cruiseLever, toggleLever } from './controls-ferrari';
 export { manettino, steppedRotary } from './controls-ferrari-dials';
 export { emit, on, bind, autoBind, onDrillDown } from './data-binding';

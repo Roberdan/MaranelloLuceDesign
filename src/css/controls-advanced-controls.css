@@ -9,7 +9,7 @@
   height: 100px;
   background: linear-gradient(135deg, var(--nero-soft) 0%, var(--nero-carbon) 100%);
   border-radius: 20px;
-  border: 1px solid var(--grigio-scuro);
+  border: 1px solid var(--mn-border);
   box-shadow: inset 0 2px 8px rgba(0,0,0,0.4), 0 4px 12px rgba(0,0,0,0.3);
   cursor: pointer;
 }
@@ -43,7 +43,7 @@
   transition: color 0.2s;
 }
 .mn-ctrl-cruise__mark--active { color: var(--mn-accent); font-weight: 600; }
-.mn-ctrl-cruise__label { font-family: var(--font-mono); font-size: var(--text-nano); color: var(--grigio-chiaro); text-transform: uppercase; letter-spacing: 0.08em; }
+.mn-ctrl-cruise__label { font-family: var(--font-mono); font-size: var(--text-nano); color: var(--mn-text-muted); text-transform: uppercase; letter-spacing: 0.08em; }
 
 /* ── Manettino ── */
 .mn-ctrl-manettino { --mn-ctrl-manettino-tint: var(--rosso-corsa, #DC0000); display: flex; flex-direction: column; align-items: center; gap: var(--space-sm); }
@@ -92,7 +92,7 @@
   user-select: none;
 }
 .mn-ctrl-manettino__pos--active { color: var(--rosso-corsa); }
-.mn-ctrl-manettino__label { font-family: var(--font-mono); font-size: var(--text-nano); color: var(--grigio-chiaro); text-transform: uppercase; letter-spacing: 0.08em; }
+.mn-ctrl-manettino__label { font-family: var(--font-mono); font-size: var(--text-nano); color: var(--mn-text-muted); text-transform: uppercase; letter-spacing: 0.08em; }
 
 /* ── Toggle Lever (3D physical switch) ── */
 .mn-ctrl-lever { display: flex; flex-direction: column; align-items: center; gap: var(--space-sm); }
@@ -102,7 +102,7 @@
   height: 28px;
   background: linear-gradient(180deg, var(--nero-carbon) 0%, var(--nero-soft) 100%);
   border-radius: 14px;
-  border: 1px solid var(--grigio-scuro);
+  border: 1px solid var(--mn-border);
   box-shadow: inset 0 2px 6px rgba(0,0,0,0.5);
   cursor: pointer;
 }
@@ -122,7 +122,7 @@
   background: linear-gradient(180deg, var(--nero-carbon) 0%, rgba(0,166,81,0.3) 100%);
   border-color: var(--verde-racing);
 }
-.mn-ctrl-lever__label { font-family: var(--font-mono); font-size: var(--text-nano); color: var(--grigio-chiaro); text-transform: uppercase; letter-spacing: 0.08em; }
+.mn-ctrl-lever__label { font-family: var(--font-mono); font-size: var(--text-nano); color: var(--mn-text-muted); text-transform: uppercase; letter-spacing: 0.08em; }
 
 /* ── Stepped Rotary (wiper-style) ── */
 .mn-ctrl-stepped { display: flex; flex-direction: column; align-items: center; gap: var(--space-sm); }
@@ -132,7 +132,7 @@
   height: 48px;
   border-radius: 50%;
   background: radial-gradient(circle at 40% 35%, var(--nero-soft) 0%, var(--nero-carbon) 100%);
-  border: 1px solid var(--grigio-scuro);
+  border: 1px solid var(--mn-border);
   box-shadow: 0 4px 12px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);
   cursor: pointer;
 }
@@ -161,8 +161,8 @@
   transition: color 0.2s;
   user-select: none;
 }
-.mn-ctrl-stepped__mark--active { color: var(--bianco-caldo); font-weight: 600; }
-.mn-ctrl-stepped__label { font-family: var(--font-mono); font-size: var(--text-nano); color: var(--grigio-chiaro); text-transform: uppercase; letter-spacing: 0.08em; }
+.mn-ctrl-stepped__mark--active { color: var(--mn-text); font-weight: 600; }
+.mn-ctrl-stepped__label { font-family: var(--font-mono); font-size: var(--text-nano); color: var(--mn-text-muted); text-transform: uppercase; letter-spacing: 0.08em; }
 
 /* Avorio — Ferrari Controls v2 */
 body.mn-avorio .mn-ctrl-cruise__housing { background: linear-gradient(135deg, var(--avorio-medio) 0%, var(--avorio-scuro) 100%); border-color: var(--avorio-scuro); }

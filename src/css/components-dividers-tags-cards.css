@@ -89,10 +89,10 @@
 }
 
 .mn-card-dark {
-  background: var(--nero-soft);
+  background: var(--mn-surface);
   border-radius: var(--radius-lg);
   overflow: hidden;
-  color: var(--bianco-caldo);
+  color: var(--mn-text);
   box-shadow:
     0 4px 16px rgba(0,0,0,0.3),
     0 1px 4px rgba(0,0,0,0.2),

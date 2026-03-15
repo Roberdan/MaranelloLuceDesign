@@ -40,8 +40,8 @@
 .mn-dt {
   border-radius: var(--radius-lg);
   overflow: clip;
-  border: 1px solid var(--grigio-scuro);
-  background: var(--nero-profondo);
+  border: 1px solid var(--mn-border);
+  background: var(--mn-surface-sunken);
   font-family: var(--font-body);
   font-size: var(--text-caption);
   position: relative;
@@ -67,7 +67,7 @@
   z-index: 2;
 }
 .mn-dt__header-row {
-  background: var(--nero-carbon);
+  background: var(--mn-surface);
 }
 .mn-dt__th {
   font-family: var(--font-display);
@@ -78,7 +78,7 @@
   padding: var(--space-sm) var(--space-md);
   text-align: left;
   color: var(--grigio-alluminio);
-  border-bottom: 2px solid var(--grigio-scuro);
+  border-bottom: 2px solid var(--mn-border);
   white-space: nowrap;
   user-select: none;
   position: relative;
@@ -115,21 +115,21 @@
 }
 /* ── Filter row ── */
 .mn-dt__filter-row {
-  background: var(--nero-soft);
+  background: var(--mn-surface-raised);
 }
 .mn-dt__filter-cell {
   padding: 4px var(--space-md);
-  border-bottom: 1px solid var(--grigio-scuro);
+  border-bottom: 1px solid var(--mn-border);
 }
 .mn-dt__filter-input {
   width: 100%;
   padding: 4px 8px;
   font-family: var(--font-body);
   font-size: var(--text-micro);
-  background: var(--nero-carbon);
-  border: 1px solid var(--grigio-scuro);
+  background: var(--mn-surface);
+  border: 1px solid var(--mn-border);
   border-radius: var(--radius-sm);
-  color: var(--bianco-caldo);
+  color: var(--mn-text);
   outline: none;
   transition: border-color 0.2s;
 }
@@ -174,21 +174,21 @@
 /* ── Cells ── */
 .mn-dt__td {
   padding: var(--space-sm) var(--space-md);
-  color: var(--grigio-chiaro);
+  color: var(--mn-text-muted);
   vertical-align: middle;
 }
 .mn-dt__cell-text {
-  color: var(--bianco-caldo);
+  color: var(--mn-text);
 }
 .mn-dt__cell-number {
   font-family: var(--font-mono);
   font-weight: 500;
-  color: var(--bianco-caldo);
+  color: var(--mn-text);
 }
 .mn-dt__cell-date {
   font-family: var(--font-mono);
   font-size: var(--text-micro);
-  color: var(--grigio-chiaro);
+  color: var(--mn-text-muted);
   letter-spacing: 0.02em;
 }
 .mn-dt__cell-progress {
@@ -199,7 +199,7 @@
 .mn-dt__cell-pct {
   font-family: var(--font-mono);
   font-size: var(--text-micro);
-  color: var(--grigio-chiaro);
+  color: var(--mn-text-muted);
   min-width: 32px;
   text-align: right;
 }

@@ -1,0 +1,164 @@
+/* MARANELLO DESIGN SYSTEM — Responsive Charts v4.0.0
+   Chart wrappers, gauge, gantt, funnel, social graph, mesh — mobile overrides */
+
+@layer charts {
+
+@media (max-width: 640px) {
+
+  /* Chart containers: fluid width, no overflow */
+  .mn-chart-wrap,
+  .mn-chart__root,
+  mn-chart {
+    max-width: 100%;
+    overflow: hidden;
+  }
+  .mn-chart-wrap canvas,
+  mn-chart canvas {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Gauge: prevent overflow */
+  .mn-gauge-wrap,
+  mn-gauge {
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  /* Gantt: constrained height with horizontal scroll */
+  .mn-gantt {
+    max-height: 280px;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .mn-gantt__header { font-size: var(--text-small); }
+  .mn-gantt-timeline__canvas-wrap { height: 280px; min-height: 220px; }
+
+  /* Funnel: center, responsive height variants */
+  .mn-funnel {
+    max-width: 100%;
+    margin-inline: auto;
+  }
+  .mn-funnel svg { max-height: 240px; }
+  .mn-funnel--sm svg { max-height: 160px; }
+  .mn-funnel--md svg { max-height: 240px; }
+  .mn-funnel--lg svg { max-height: 340px; }
+
+  /* Social graph / hub-and-spoke: reduce canvas */
+  [id*="social-graph"] canvas,
+  .mn-social-graph {
+    max-height: 280px;
+    width: 100% !important;
+  }
+  #social-graph-canvas {
+    height: 280px !important;
+    width: 100% !important;
+  }
+
+  /* Network canvases */
+  #network-messages-demo,
+  #neural-nodes-demo {
+    height: 220px !important;
+  }
+
+  /* Radar/bubble: constrain */
+  .mn-chart-wrap canvas[width="280"],
+  .mn-chart-wrap canvas[width="260"] { max-width: 240px; max-height: 240px; }
+
+  /* KPI grids: 2 columns on mobile */
+  .mn-grid-4 { grid-template-columns: repeat(2, 1fr) !important; }
+  .mn-grid-3 { grid-template-columns: repeat(2, 1fr) !important; }
+  .mn-grid-2 { grid-template-columns: 1fr !important; }
+
+  /* Sparkline interaction: tooltip no overflow */
+  .mn-chart-tooltip,
+  .mn-spark-tip { max-width: calc(100vw - 2rem); }
+
+  /* Mini gantt: reduce label width */
+  .mn-gantt-mini { font-size: var(--text-small); }
+  .mn-gantt-mini__grid { grid-template-columns: 100px repeat(6, 1fr) !important; }
+
+  /* Map: constrained */
+  .mn-map, [id*="map-canvas"] { max-height: 280px; }
+
+  /* Heatmap: horizontal scroll */
+  .mn-heatmap, .mn-cap-heatmap, .mn-cap-grid {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Treemap: full width */
+  .mn-treemap { max-width: 100%; overflow: hidden; }
+
+  /* Mesh network: stack nodes vertically */
+  .mn-mesh-network__grid {
+    grid-template-columns: 1fr !important;
+    gap: var(--space-md) !important;
+  }
+  .mn-mesh-network__toolbar {
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+  }
+  .mn-mesh-network__actions {
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+  }
+  .mn-mesh-network__actions button {
+    font-size: var(--text-micro);
+    padding: var(--space-xs) var(--space-sm);
+  }
+  .mn-mesh-node {
+    min-width: 0;
+    width: 100%;
+  }
+
+  /* Org tree: vertical on mobile */
+  .mn-org-tree {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .mn-org-tree__container {
+    min-width: 280px;
+  }
+
+  /* OKR panel */
+  mn-okr, .mn-okr-panel {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  /* Code snippets */
+  .mn-code-snippet pre {
+    max-width: calc(100vw - 2rem);
+    overflow-x: auto;
+    font-size: var(--text-micro);
+  }
+
+  /* Detail panel */
+  .mn-detail-panel {
+    width: 100% !important;
+    max-width: 100vw !important;
+    right: 0 !important;
+  }
+
+  /* Convergio / advanced sections */
+  .mn-convergio-grid,
+  .mn-advanced-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ── Tablet 641–1024px ── */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .mn-grid-4 { grid-template-columns: repeat(2, 1fr) !important; }
+  .mn-grid-2 { grid-template-columns: repeat(2, 1fr); }
+  .mn-funnel { max-width: 80%; margin-inline: auto; }
+  #social-graph-canvas { height: 380px !important; }
+  #network-messages-demo,
+  #neural-nodes-demo { height: 300px !important; }
+  .mn-mesh-network__grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+} /* end @layer charts */

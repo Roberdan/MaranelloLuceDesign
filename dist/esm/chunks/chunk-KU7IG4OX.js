@@ -305,16 +305,32 @@ function cycleTheme() {
 function getAccent(fallback = "#FFC72C") {
   return cssVar("--giallo-ferrari", fallback);
 }
-function getGlass() {
-  return document.body.classList.contains("mn-glass");
-}
-function setGlass(on) {
-  document.body.classList.toggle("mn-glass", on);
-}
-function toggleGlass() {
-  const next = !getGlass();
-  setGlass(next);
-  return next;
+function palette(el = document.documentElement) {
+  const read = (name) => getComputedStyle(el).getPropertyValue(name).trim();
+  return {
+    // Semantic (theme-aware) — use these for UI surfaces
+    surface: read("--mn-surface"),
+    surfaceRaised: read("--mn-surface-raised"),
+    surfaceSunken: read("--mn-surface-sunken"),
+    text: read("--mn-text"),
+    textMuted: read("--mn-text-muted"),
+    border: read("--mn-border"),
+    accent: read("--mn-accent"),
+    // Brand primitives — fixed across themes
+    giallo: read("--giallo-ferrari"),
+    rosso: read("--rosso-corsa"),
+    verde: read("--verde-racing"),
+    azzurro: read("--status-info"),
+    biancoCaldo: read("--bianco-caldo"),
+    grigioChiaro: read("--grigio-chiaro"),
+    grigioMedio: read("--grigio-medio"),
+    neroAssoluto: read("--nero-assoluto"),
+    // Status — use in charts, badges, gauges
+    signalOk: read("--signal-ok"),
+    signalWarning: read("--signal-warning"),
+    signalDanger: read("--signal-danger"),
+    signalInfo: read("--signal-info")
+  };
 }
 function debounce(fn, ms) {
   let timer = null;
@@ -408,9 +424,7 @@ export {
   setTheme,
   cycleTheme,
   getAccent,
-  getGlass,
-  setGlass,
-  toggleGlass,
+  palette,
   debounce,
   throttle,
   createElement,
@@ -420,4 +434,4 @@ export {
   lerp,
   hiDpiCanvas
 };
-//# sourceMappingURL=chunk-JTCZVEB6.js.map
+//# sourceMappingURL=chunk-KU7IG4OX.js.map

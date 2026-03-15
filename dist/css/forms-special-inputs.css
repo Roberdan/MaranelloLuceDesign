@@ -136,7 +136,7 @@
   transition: color 0.15s;
 }
 .mn-password-toggle:hover {
-  color: var(--bianco-caldo);
+  color: var(--mn-text);
 }
 
 
@@ -145,7 +145,7 @@
    ══════════════════════════════════════════════════════════════ */
 
 .mn-form-card {
-  border: 1px solid var(--grigio-scuro);
+  border: 1px solid var(--mn-border);
   border-radius: var(--radius-md);
   padding: var(--space-lg);
   background: rgba(255, 255, 255, 0.02);
@@ -154,13 +154,13 @@
   font-family: var(--font-display);
   font-size: var(--text-h3);
   font-weight: 600;
-  color: var(--bianco-caldo);
+  color: var(--mn-text);
   margin-bottom: var(--space-md);
 }
 .mn-form-card__description {
   font-family: var(--font-body);
   font-size: var(--text-caption);
-  color: var(--grigio-chiaro);
+  color: var(--mn-text-muted);
   margin-bottom: var(--space-lg);
 }
 
@@ -184,7 +184,7 @@
 }
 .mn-inline-edit:hover {
   background: rgba(255, 255, 255, 0.04);
-  border-color: var(--grigio-scuro);
+  border-color: var(--mn-border);
 }
 .mn-inline-edit__icon {
   width: 14px;

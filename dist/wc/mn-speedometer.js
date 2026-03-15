@@ -46,6 +46,8 @@ class MnSpeedometer extends HTMLElement {
     this._init();
   }
   disconnectedCallback() {
+    this._resizeObs?.disconnect();
+    this._resizeObs = null;
     this._teardownObserver();
     this._ctrl?.destroy?.();
     this._ctrl = null;
@@ -72,7 +74,12 @@ class MnSpeedometer extends HTMLElement {
   /* ── Internals ────────────────────────────────────────────── */
   _sizeValue() {
     const map = { sm: 120, md: 220, lg: 320 };
-    return map[this.getAttribute("size") || "md"] || 220;
+    const key = this.getAttribute("size") || "md";
+    if (key === "fluid") {
+      const rect = this.getBoundingClientRect();
+      return Math.min(rect.width, rect.height) || 220;
+    }
+    return map[key] || 220;
   }
   _buildOpts() {
     return {
@@ -97,10 +104,32 @@ class MnSpeedometer extends HTMLElement {
     this._canvas.style.width = px + "px";
     this._canvas.style.height = px + "px";
     this._ctrl = M.speedometer(this._canvas, this._buildOpts());
+    const sizeKey = this.getAttribute("size");
+    if ((sizeKey === "fluid" || !sizeKey) && window.ResizeObserver) {
+      this._attachResizeObserver(M);
+    }
     this.dispatchEvent(new CustomEvent("mn-speedometer-ready", {
       bubbles: true,
       composed: true
     }));
+  }
+  _attachResizeObserver(M) {
+    let tid = null;
+    this._resizeObs = new ResizeObserver(() => {
+      clearTimeout(tid);
+      tid = setTimeout(() => {
+        const rect = this.getBoundingClientRect();
+        const px = Math.min(rect.width, rect.height);
+        if (px <= 0) return;
+        this._ctrl?.destroy?.();
+        this._canvas.width = px;
+        this._canvas.height = px;
+        this._canvas.style.width = px + "px";
+        this._canvas.style.height = px + "px";
+        this._ctrl = M.speedometer(this._canvas, { ...this._buildOpts(), size: px });
+      }, 150);
+    });
+    this._resizeObs.observe(this);
   }
   _rebuild() {
     this._ctrl?.destroy?.();

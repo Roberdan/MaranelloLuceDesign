@@ -11,15 +11,16 @@ export function createMapSection() {
   return section;
 }
 
+// color must be semantic key: 'active' | 'warning' | 'danger' (mapView theme-mapped)
 const MAP_MARKERS = [
-  { id: 'm1', lat: 38.90, lon: -77.04, label: 'us-east-1', detail: 'Active · 120 live agents', color: '#00E676', size: 8, status: 'active' },
-  { id: 'm2', lat: 40.71, lon: -74.00, label: 'us-east-2', detail: 'Active · 85 live agents', color: '#00E676', size: 8, status: 'active' },
-  { id: 'm3', lat: 37.77, lon: -122.42, label: 'us-west-2', detail: 'Warning · cache warmup pending', color: '#FFD54F', size: 8, status: 'warning' },
-  { id: 'r1', lat: 53.35, lon: -6.26, label: 'eu-west-1', detail: 'Active · 110 live agents', color: '#00E676', size: 8, status: 'active' },
-  { id: 'r2', lat: 50.11, lon: 8.68, label: 'eu-central-1', detail: 'Active · 72 live agents', color: '#00E676', size: 8, status: 'active' },
-  { id: 't1', lat: 1.35, lon: 103.82, label: 'ap-southeast-1', detail: 'Active · 64 live agents', color: '#00E676', size: 8, status: 'active' },
-  { id: 'f1', lat: -33.87, lon: 151.21, label: 'ap-southeast-2', detail: 'Warning · token budget 92%', color: '#FFD54F', size: 8, status: 'warning' },
-  { id: 'b1', lat: -23.55, lon: -46.63, label: 'sa-east-1', detail: 'Planned · opening Q3 2026', color: '#B388FF', size: 8, status: 'planned' },
+  { id: 'm1', lat: 38.90, lon: -77.04, label: 'us-east-1', detail: 'Active · 120 live agents', color: 'active', size: 8, status: 'active' },
+  { id: 'm2', lat: 40.71, lon: -74.00, label: 'us-east-2', detail: 'Active · 85 live agents', color: 'active', size: 8, status: 'active' },
+  { id: 'm3', lat: 37.77, lon: -122.42, label: 'us-west-2', detail: 'Warning · cache warmup pending', color: 'warning', size: 8, status: 'warning' },
+  { id: 'r1', lat: 53.35, lon: -6.26, label: 'eu-west-1', detail: 'Active · 110 live agents', color: 'active', size: 8, status: 'active' },
+  { id: 'r2', lat: 50.11, lon: 8.68, label: 'eu-central-1', detail: 'Active · 72 live agents', color: 'active', size: 8, status: 'active' },
+  { id: 't1', lat: 1.35, lon: 103.82, label: 'ap-southeast-1', detail: 'Active · 64 live agents', color: 'active', size: 8, status: 'active' },
+  { id: 'f1', lat: -33.87, lon: 151.21, label: 'ap-southeast-2', detail: 'Warning · token budget 92%', color: 'warning', size: 8, status: 'warning' },
+  { id: 'b1', lat: -23.55, lon: -46.63, label: 'sa-east-1', detail: 'Danger · critical latency spike', color: 'danger', size: 8, status: 'danger' },
 ];
 
 function mountMap(section) {

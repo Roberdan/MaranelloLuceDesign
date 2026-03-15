@@ -95,6 +95,9 @@ class MnGauge extends HTMLElement {
   }
 
   disconnectedCallback() {
+    this._resizeObs?.disconnect();
+    this._resizeObs = null;
+    this._gauge?.destroy?.();
     this._gauge = null;
     this._ready = false;
   }
@@ -129,7 +132,12 @@ class MnGauge extends HTMLElement {
   }
 
   _sizeValue() {
-    return SIZE_MAP[this.getAttribute('size') || 'md'] ?? SIZE_MAP.md;
+    const key = this.getAttribute('size') || 'md';
+    if (key === 'fluid') {
+      const rect = this.getBoundingClientRect();
+      return Math.min(rect.width, rect.height) || SIZE_MAP.md;
+    }
+    return SIZE_MAP[key] ?? SIZE_MAP.md;
   }
 
   _applyConfig() {
@@ -182,6 +190,32 @@ class MnGauge extends HTMLElement {
     this.dispatchEvent(new CustomEvent('mn-gauge-ready', {
       bubbles: true, composed: true,
     }));
+
+    const sizeKey = this.getAttribute('size');
+    if ((sizeKey === 'fluid' || !sizeKey) && window.ResizeObserver) {
+      this._attachResizeObserver();
+    }
+  }
+
+  _attachResizeObserver() {
+    let tid = null;
+    this._resizeObs = new ResizeObserver(() => {
+      clearTimeout(tid);
+      tid = setTimeout(() => {
+        if (!this._gauge) return;
+        const rect = this.getBoundingClientRect();
+        const px = Math.min(rect.width, rect.height);
+        if (px <= 0 || px === this._gauge.size) return;
+        this._canvas.width  = px;
+        this._canvas.height = px;
+        this._canvas.style.width  = px + 'px';
+        this._canvas.style.height = px + 'px';
+        this._glass.style.width   = px + 'px';
+        this._glass.style.height  = px + 'px';
+        this._gauge.init();
+      }, 150);
+    });
+    this._resizeObs.observe(this);
   }
 }
 

@@ -1,0 +1,40 @@
+/* MARANELLO DESIGN SYSTEM — Responsive Token Overrides v4.0.0 */
+
+@layer tokens {
+
+/* ── Mobile: compact spacing + full-width content ── */
+@media (max-width: 640px) {
+  :root {
+    /* Preserve a11y space scaling: calc(base * scale) */
+    --space-5xl: calc(3rem * var(--mn-a11y-space-scale, 1));
+    --space-4xl: calc(2rem * var(--mn-a11y-space-scale, 1));
+    --space-3xl: calc(1.5rem * var(--mn-a11y-space-scale, 1));
+    --space-2xl: calc(1.5rem * var(--mn-a11y-space-scale, 1));
+    --space-xxl: calc(1.5rem * var(--mn-a11y-space-scale, 1));
+    --space-xl:  calc(1.25rem * var(--mn-a11y-space-scale, 1));
+    --space-lg:  calc(1rem * var(--mn-a11y-space-scale, 1));
+
+    --content-width:  100%;
+    --content-narrow: 100%;
+
+    --text-hero: clamp(calc(1.75rem * var(--mn-a11y-font-scale, 1)), 6vw, 2.5rem);
+    --text-xxl:  clamp(calc(1.25rem * var(--mn-a11y-font-scale, 1)), 4vw, 1.75rem);
+    --text-h1:   clamp(calc(1.25rem * var(--mn-a11y-font-scale, 1)), 4vw, 1.75rem);
+  }
+}
+
+/* ── Tablet: intermediate spacing ── */
+@media (min-width: 641px) and (max-width: 1024px) {
+  :root {
+    --space-5xl: calc(5rem * var(--mn-a11y-space-scale, 1));
+    --space-4xl: calc(3.5rem * var(--mn-a11y-space-scale, 1));
+    --space-3xl: calc(2.5rem * var(--mn-a11y-space-scale, 1));
+    --space-2xl: calc(2rem * var(--mn-a11y-space-scale, 1));
+    --space-xxl: calc(2rem * var(--mn-a11y-space-scale, 1));
+
+    --content-width:  100%;
+    --content-narrow: 100%;
+  }
+}
+
+} /* end @layer tokens */

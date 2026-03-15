@@ -1,0 +1,53 @@
+/**
+ * Maranello Luce Design - Platform, hardware, CLI, and orchestration icons
+ */
+export declare const platformIcons: {
+    readonly apple: () => string;
+    readonly windows: () => string;
+    readonly linux: () => string;
+    readonly android: () => string;
+    readonly cpu: () => string;
+    readonly memory: () => string;
+    readonly disk: () => string;
+    readonly network: () => string;
+    readonly wifi: () => string;
+    readonly bluetooth: () => string;
+    readonly usb: () => string;
+    readonly server: () => string;
+    readonly database: () => string;
+    readonly cloud: () => string;
+    readonly cloudSync: () => string;
+    readonly terminal: () => string;
+    readonly code: () => string;
+    readonly git: () => string;
+    readonly gitPull: () => string;
+    readonly gitMerge: () => string;
+    readonly gitCommit: () => string;
+    readonly deploy: () => string;
+    readonly pipeline: () => string;
+    readonly docker: () => string;
+    readonly brain: () => string;
+    readonly robot: () => string;
+    readonly sparkle: () => string;
+    readonly wand: () => string;
+    readonly lightbulb: () => string;
+    readonly ideaJar: () => string;
+    readonly nightAgent: () => string;
+    readonly moonClock: () => string;
+    readonly autopilot: () => string;
+    readonly delegate: () => string;
+    readonly start: () => string;
+    readonly pause: () => string;
+    readonly stop: () => string;
+    readonly reset: () => string;
+    readonly cancel: () => string;
+    readonly runNow: () => string;
+    readonly fixOn: () => string;
+    readonly mesh: () => string;
+    readonly coordinator: () => string;
+    readonly worker: () => string;
+    readonly sync: () => string;
+    readonly discover: () => string;
+    readonly push: () => string;
+    readonly addPeer: () => string;
+};

@@ -34,6 +34,14 @@ body.mn-nero {
 body.mn-avorio {
   background: var(--avorio-chiaro); color: var(--nero-assoluto);
   --mn-accent: var(--rosso-corsa); --mn-accent-hover: #b30000; --mn-accent-text: #fff;
+  /* Semantic surface tokens — light palette */
+  --mn-surface:        var(--bianco-puro);
+  --mn-surface-raised: var(--avorio-chiaro);
+  --mn-surface-sunken: var(--avorio-medio);
+  --mn-text:           var(--nero-assoluto);
+  --mn-text-muted:     var(--grigio-medio);
+  --mn-border:         var(--avorio-scuro);
+  --mn-border-subtle:  rgba(0,0,0,0.06);
 }
 
 /* Colorblind accent: high-contrast blue */

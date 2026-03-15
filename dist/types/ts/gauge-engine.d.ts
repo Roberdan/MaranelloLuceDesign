@@ -10,6 +10,7 @@ export declare class FerrariGauge {
     radius: number;
     density: 'sm' | 'md' | 'lg';
     private srSpan;
+    private _resizeObserver;
     constructor(canvas: HTMLCanvasElement);
     get palette(): import("./gauge-engine-palette").GaugeRenderPalette;
     /** Initialize canvas size from data attribute or parent bounds. */
@@ -28,4 +29,8 @@ export declare class FerrariGauge {
     rad(deg: number): number;
     /** Draw the gauge at a given animation progress (0..1). */
     draw(progress: number): void;
+    /** Attach ResizeObserver for size='fluid' mode. */
+    private _attachFluidObserver;
+    /** Clean up ResizeObserver and screen reader helpers. */
+    destroy(): void;
 }

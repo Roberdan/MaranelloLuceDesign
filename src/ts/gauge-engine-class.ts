@@ -42,10 +42,11 @@ export interface GaugeEntry {
 // Size presets (mirrors FerrariGauge.SIZES for external access)
 // ---------------------------------------------------------------------------
 
-export const GAUGE_SIZES: Record<GaugeSize, number> = {
+export const GAUGE_SIZES: Record<'sm' | 'md' | 'lg' | 'fluid', number> = {
   sm: 120,
   md: 220,
   lg: 320,
+  fluid: 0,
 };
 
 // ---------------------------------------------------------------------------
@@ -79,8 +80,8 @@ export function createGauge(
   if (opts.config) {
     canvas.dataset.gauge = JSON.stringify(opts.config);
   }
-  if (opts.size) {
-    canvas.dataset.size = opts.size;
+  if (opts.size !== undefined) {
+    canvas.dataset.size = String(opts.size);
   }
 
   return new FerrariGauge(canvas);

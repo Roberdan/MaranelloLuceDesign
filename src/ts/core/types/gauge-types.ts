@@ -6,7 +6,7 @@
 
 // --- Ferrari Gauge ---
 
-export type GaugeSize = 'sm' | 'md' | 'lg';
+export type GaugeSize = 'sm' | 'md' | 'lg' | 'fluid' | number;
 
 export interface GaugeConfig {
   value?: number;

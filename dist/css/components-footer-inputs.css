@@ -20,7 +20,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: var(--bianco-caldo);
+  color: var(--mn-text);
   margin-bottom: var(--space-lg);
 }
 .mn-footer__links {
@@ -31,7 +31,7 @@
 }
 .mn-footer__link {
   font-size: var(--text-caption);
-  color: var(--grigio-chiaro);
+  color: var(--mn-text-muted);
   transition: color var(--duration-sm) var(--ease-out);
 }
 .mn-footer__link:hover { color: var(--bianco-puro); }
@@ -39,7 +39,7 @@
   max-width: var(--content-width);
   margin: var(--space-2xl) auto 0;
   padding-top: var(--space-lg);
-  border-top: 1px solid var(--grigio-scuro);
+  border-top: 1px solid var(--mn-border);
   font-size: var(--text-micro);
   color: var(--grigio-medio);
   text-align: center;
@@ -65,9 +65,9 @@
 .mn-input:focus { border-color: var(--nero-assoluto); }
 .mn-input::placeholder { color: var(--grigio-chiaro); }
 .mn-section-dark .mn-input {
-  background: var(--nero-carbon);
-  border-color: var(--grigio-scuro);
-  color: var(--bianco-caldo);
+  background: var(--mn-surface);
+  border-color: var(--mn-border);
+  color: var(--mn-text);
 }
 .mn-section-dark .mn-input:focus { border-color: var(--mn-accent); }
 .mn-input-group { display: flex; gap: 0; }
@@ -87,7 +87,7 @@
   width: 1px; height: 40px;
   background: var(--grigio-alluminio);
 }
-.mn-section-dark .mn-annotation__line { background: var(--grigio-scuro); }
+.mn-section-dark .mn-annotation__line { background: var(--mn-border); }
 
 
 /* ── BADGE / COUNTER ── */
@@ -128,8 +128,8 @@
   color: var(--bianco-puro);
 }
 .mn-section-dark .mn-icon-btn {
-  border-color: var(--grigio-scuro);
-  color: var(--grigio-chiaro);
+  border-color: var(--mn-border);
+  color: var(--mn-text-muted);
 }
 .mn-section-dark .mn-icon-btn:hover {
   background: var(--bianco-puro);
@@ -142,7 +142,7 @@
 .mn-accordion { border-top: 1px solid var(--grigio-ghost); }
 .mn-accordion__item { border-bottom: 1px solid var(--grigio-ghost); }
 .mn-section-dark .mn-accordion,
-.mn-section-dark .mn-accordion__item { border-color: var(--grigio-scuro); }
+.mn-section-dark .mn-accordion__item { border-color: var(--mn-border); }
 .mn-accordion__header {
   width: 100%;
   padding: var(--space-lg) 0;

@@ -1,0 +1,61 @@
+/* MARANELLO DESIGN SYSTEM — Responsive Data v4.0.0
+   Data table, toolbar, strip-pod, signal-binnacle — mobile overrides */
+
+@layer layouts {
+
+@media (max-width: 640px) {
+
+  /* Data table: compact padding + touch scroll */
+  .mn-dt__th,
+  .mn-dt__td {
+    padding: var(--space-xs) var(--space-sm);
+    font-size: var(--text-small);
+  }
+  .mn-dt__scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .mn-dt__filter-row { display: none; }
+  .mn-dt__toolbar {
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+  }
+  .mn-dt__actions { width: 100%; justify-content: flex-start; }
+
+  /* Convergio toolbar: wrap on mobile */
+  .convergio-toolbar {
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+    padding: var(--space-sm);
+  }
+  .convergio-toolbar__group { width: 100%; }
+
+  /* Strip + Pod: vertical stack */
+  .mn-strip {
+    flex-direction: column;
+    padding: var(--space-sm);
+  }
+  .mn-pod {
+    width: 100%;
+    min-height: auto;
+  }
+
+  /* Signal binnacle: single column */
+  .mn-signal-panel {
+    grid-template-columns: 1fr;
+  }
+  .mn-binnacle {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  .mn-dt__th,
+  .mn-dt__td {
+    padding: var(--space-sm);
+  }
+  .mn-signal-panel { grid-template-columns: repeat(2, 1fr); }
+  .mn-binnacle { grid-template-columns: repeat(2, 1fr); }
+}
+
+} /* end @layer layouts */

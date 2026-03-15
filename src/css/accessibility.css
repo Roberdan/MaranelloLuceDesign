@@ -87,7 +87,7 @@
 
 /* Status text on dark background needs adequate contrast */
 .mn-section-dark .mn-micro {
-  color: var(--grigio-chiaro); /* #9e9e9e on #000000 = 10.4:1 ✓ */
+  color: var(--mn-text-muted); /* #9e9e9e on #000000 = 10.4:1 ✓ */
 }
 
 /* Ensure gold text passes on dark */
@@ -173,5 +173,48 @@ html.mn-high-contrast {
 html.mn-no-focus-ring *:focus-visible {
   outline: none !important;
   box-shadow: none !important;
+}
+
+/* ── A11Y BODY CLASSES — activated by a11y panel or direct body class ── */
+/* CSS custom vars cascade into shadow DOM — all tokens scale automatically */
+
+body.mn-a11y-large-text   { --mn-a11y-font-scale:  1.2; }
+body.mn-a11y-high-spacing { --mn-a11y-space-scale: 1.3; }
+
+/* OpenDyslexic loaded on demand by a11y panel JS via CDN @font-face */
+body.mn-a11y-dyslexia-font {
+  --font-body:    var(--font-dyslexic);
+  --font-display: var(--font-dyslexic);
+}
+
+/* WCAG AAA forced contrast — overrides all semantic surface tokens */
+body.mn-a11y-high-contrast {
+  --mn-surface:        #000000;
+  --mn-surface-raised: #111111;
+  --mn-surface-sunken: #000000;
+  --mn-text:           #ffffff;
+  --mn-text-muted:     #e0e0e0;
+  --mn-border:         #ffffff;
+  --mn-border-subtle:  rgba(255,255,255,0.4);
+  background: var(--mn-surface) !important;
+  color: var(--mn-text) !important;
+}
+
+/* Enhanced focus ring (thicker, higher offset) */
+/* a11y: keep !important — must beat existing :focus-visible specificity */
+body.mn-a11y-focus *:focus-visible {
+  outline-width: 3px !important;
+  outline-offset: 3px !important;
+}
+
+/* Reduced motion via body class (mirrors html.mn-reduced-motion) */
+/* a11y: keep !important — must override regardless of specificity */
+body.mn-a11y-reduced-motion *,
+body.mn-a11y-reduced-motion *::before,
+body.mn-a11y-reduced-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
 }
 } /* end @layer base */

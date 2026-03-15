@@ -17,8 +17,8 @@
   align-items: center;
   gap: var(--space-md);
   padding: var(--space-md) var(--space-lg);
-  background: var(--nero-soft);
-  border: 1px solid var(--grigio-scuro);
+  background: var(--mn-surface-raised);
+  border: 1px solid var(--mn-border);
   border-radius: var(--radius-md);
   box-shadow: 0 8px 32px rgba(0,0,0,0.5);
   color: var(--bianco-caldo);
@@ -116,8 +116,8 @@ body.mn-avorio .mn-toast__text { color: var(--grigio-medio); }
   top: calc(100% + 4px);
   left: 0;
   min-width: 180px;
-  background: var(--nero-soft);
-  border: 1px solid var(--grigio-scuro);
+  background: var(--mn-surface-raised);
+  border: 1px solid var(--mn-border);
   border-radius: var(--radius-md);
   box-shadow: 0 8px 32px rgba(0,0,0,0.5);
   padding: 4px;

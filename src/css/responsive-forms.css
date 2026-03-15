@@ -1,0 +1,48 @@
+/* MARANELLO DESIGN SYSTEM — Responsive Forms v4.0.0
+   Form grids, inputs, buttons — mobile overrides */
+
+@layer forms {
+
+@media (max-width: 640px) {
+
+  /* Form grids: single column */
+  .mn-form--grid,
+  .mn-form--grid-2,
+  .mn-form--grid-3 {
+    grid-template-columns: 1fr;
+  }
+
+  /* Touch-friendly input height (Apple HIG: 44px minimum) */
+  .mn-form-input,
+  .mn-form-select,
+  .mn-form-textarea,
+  .mn-input,
+  select.mn-form-select {
+    min-height: 44px;
+    font-size: var(--text-body);
+  }
+
+  /* Inline form: stack vertically */
+  .mn-form--inline {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .mn-form--inline .mn-field { width: 100%; }
+
+  /* Action buttons: full-width */
+  .mn-form__actions {
+    flex-direction: column;
+  }
+  .mn-form__actions .mn-btn {
+    width: 100%;
+  }
+
+  /* Form steps: compact horizontal padding */
+  .mn-form-steps__nav {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    gap: var(--space-xs);
+  }
+}
+
+} /* end @layer forms */

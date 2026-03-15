@@ -85,6 +85,8 @@ class MnChart extends HTMLElement {
   }
 
   disconnectedCallback() {
+    this._resizeObs?.disconnect();
+    this._resizeObs = null;
     this._ctrl?.destroy?.();
     this._ctrl = null;
   }
@@ -149,21 +151,60 @@ class MnChart extends HTMLElement {
       return;
     }
 
-    const w = parseInt(this.getAttribute('width') || '300', 10);
-    const h = parseInt(this.getAttribute('height') || '200', 10);
-    this._canvas.width = w;
-    this._canvas.height = h;
-    this._canvas.style.width = `${w}px`;
-    this._canvas.style.height = `${h}px`;
+    const hasExplicitSize = this.hasAttribute('width') || this.hasAttribute('height');
+
+    if (hasExplicitSize) {
+      const w = parseInt(this.getAttribute('width') || '300', 10);
+      const h = parseInt(this.getAttribute('height') || '200', 10);
+      this._canvas.width = w;
+      this._canvas.height = h;
+      this._canvas.style.width = `${w}px`;
+      this._canvas.style.height = `${h}px`;
+    } else {
+      const rect = this.getBoundingClientRect();
+      const w = rect.width || 300;
+      const h = rect.height || 200;
+      this._canvas.width = w;
+      this._canvas.height = h;
+      this._canvas.style.width = `${w}px`;
+      this._canvas.style.height = `${h}px`;
+    }
 
     const data = this._parseJSON('data', []);
     const opts = this._parseJSON('options', {});
-    this._ctrl = factory(this._canvas, data, { ...opts, width: w, height: h });
+    const cw = this._canvas.width, ch = this._canvas.height;
+    this._ctrl = factory(this._canvas, data, { ...opts, width: cw, height: ch });
+
+    if (!hasExplicitSize && window.ResizeObserver) {
+      this._attachResizeObserver(factory);
+    }
 
     this.dispatchEvent(new CustomEvent('mn-chart-ready', { bubbles: true, composed: true }));
   }
 
+  _attachResizeObserver(factory) {
+    let tid = null;
+    this._resizeObs = new ResizeObserver(() => {
+      clearTimeout(tid);
+      tid = setTimeout(() => {
+        const r = this.getBoundingClientRect();
+        if (r.width === 0 && r.height === 0) return;
+        this._ctrl?.destroy?.();
+        this._canvas.width = r.width;
+        this._canvas.height = r.height;
+        this._canvas.style.width = `${r.width}px`;
+        this._canvas.style.height = `${r.height}px`;
+        const data = this._parseJSON('data', []);
+        const opts = this._parseJSON('options', {});
+        this._ctrl = factory(this._canvas, data, { ...opts, width: r.width, height: r.height });
+      }, 150);
+    });
+    this._resizeObs.observe(this);
+  }
+
   _rebuild() {
+    this._resizeObs?.disconnect();
+    this._resizeObs = null;
     this._ctrl?.destroy?.();
     this._ctrl = null;
     this._canvas.getContext('2d')?.clearRect(0, 0, this._canvas.width, this._canvas.height);

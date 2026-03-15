@@ -43,15 +43,15 @@
   bottom: 80px;
   right: var(--space-lg);
   width: 300px;
-  background: var(--nero-profondo);
-  border: 1px solid var(--grigio-scuro);
+  background: var(--mn-surface-sunken);
+  border: 1px solid var(--mn-border);
   border-radius: var(--radius-lg);
   box-shadow: 0 16px 48px rgba(0,0,0,0.5);
   z-index: 9001;
   padding: var(--space-lg);
   display: none;
   font-family: var(--font-body);
-  color: var(--bianco-caldo);
+  color: var(--mn-text);
 }
 .mn-a11y-panel--open {
   display: block;
@@ -82,7 +82,7 @@
 }
 .mn-a11y-panel__label {
   font-size: var(--text-micro);
-  color: var(--grigio-chiaro);
+  color: var(--mn-text-muted);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   font-weight: 600;
@@ -98,7 +98,7 @@
 
 .mn-a11y-panel__row-label {
   font-size: var(--text-caption);
-  color: var(--bianco-caldo);
+  color: var(--mn-text);
 }
 
 /* Size buttons */
@@ -110,9 +110,9 @@
   width: 32px;
   height: 32px;
   border-radius: var(--radius-sm);
-  border: 1px solid var(--grigio-scuro);
+  border: 1px solid var(--mn-border);
   background: transparent;
-  color: var(--grigio-chiaro);
+  color: var(--mn-text-muted);
   cursor: pointer;
   font-size: 0.85rem;
   font-weight: 600;
@@ -122,7 +122,7 @@
   justify-content: center;
 }
 .mn-a11y-panel__size-btn:hover {
-  background: var(--nero-soft);
+  background: var(--mn-surface-raised);
   color: var(--mn-accent);
   border-color: var(--mn-accent);
 }
@@ -143,9 +143,9 @@
   width: 100%;
   padding: var(--space-sm);
   border-radius: var(--radius-sm);
-  border: 1px solid var(--grigio-scuro);
+  border: 1px solid var(--mn-border);
   background: transparent;
-  color: var(--grigio-chiaro);
+  color: var(--mn-text-muted);
   font-family: var(--font-body);
   font-size: var(--text-micro);
   cursor: pointer;
@@ -202,8 +202,8 @@
   top: calc(100% + 8px);
   right: 0;
   width: 280px;
-  background: var(--nero-profondo);
-  border: 1px solid var(--grigio-scuro);
+  background: var(--mn-surface-sunken);
+  border: 1px solid var(--mn-border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-deep);
   z-index: 9000;
@@ -216,7 +216,7 @@
 }
 .mn-profile-dropdown__header {
   padding: var(--space-lg);
-  border-bottom: 1px solid var(--grigio-scuro);
+  border-bottom: 1px solid var(--mn-border);
   display: flex;
   align-items: center;
   gap: var(--space-md);

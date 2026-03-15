@@ -1,4 +1,4 @@
-<!-- v3.3.0 | 2026-03-14 -->
+<!-- v4.0.0 | 2026-03-15 -->
 # MaranelloLuceDesign
 
 Ferrari Luce-inspired design system for business dashboards. Part of Convergio.
@@ -41,6 +41,13 @@ Ferrari Luce-inspired design system for business dashboards. Part of Convergio.
 | `src/ts/controls.ts` | Controls sub-package entry |
 | `src/ts/forms.ts` | Forms sub-package entry |
 | `src/ts/core/sanitize.ts` | Security utilities (escapeHtml, sanitizeAttr, sanitizeSvg, isValidColor) |
+| `src/ts/auto-resize.ts` | ResizeObserver wrapper for responsive canvas charts |
+| `src/ts/sidebar-toggle.ts` | Mobile sidebar hamburger toggle |
+| `src/css/responsive-tokens.css` | Spacing token overrides at mobile/tablet breakpoints |
+| `src/css/responsive-layouts.css` | Sidebar, panels, chat, notification mobile overrides |
+| `src/css/responsive-data.css` | Data table, toolbar, strip-pod mobile overrides |
+| `src/css/responsive-forms.css` | Form grid, touch targets mobile overrides |
+| `src/css/responsive-charts.css` | Chart/gauge container mobile overrides |
 | `src/wc/index.ts` | WC registry (`registerAll()`) |
 | `esbuild.config.mjs` | JS build config |
 | `scripts/build-css.mjs` | CSS build config |
@@ -48,6 +55,69 @@ Ferrari Luce-inspired design system for business dashboards. Part of Convergio.
 | `demo/` | Interactive demo pages |
 | `tests/` | Unit tests (vitest) |
 | `e2e/` | E2E tests (playwright) |
+
+## Responsive Mobile Adaptation
+
+### Breakpoints
+
+| Breakpoint | Query | Usage |
+|---|---|---|
+| Mobile | `max-width: 640px` | Single-column, off-canvas sidebar, 44px touch targets |
+| Tablet | `641px – 1024px` | Intermediate spacing, 2-column where feasible |
+| Desktop | `> 1024px` | Full layout (default, no @media needed) |
+
+### Already Responsive (no work needed)
+
+Gantt, Funnel, SocialGraph, NeuralNodes, MapView — these use fluid SVG/canvas or percentage-based layouts.
+
+### Making Charts Responsive
+
+```js
+// Option A: autoResize() wrapper (any chart factory)
+const cleanup = Maranello.autoResize(canvas, Maranello.sparkline, data);
+// cleanup() to disconnect observer
+
+// Option B: omit width/height on <mn-chart> — auto ResizeObserver
+<mn-chart type="sparkline" data="[10,20,30]"></mn-chart>
+```
+
+### Making Gauges Responsive
+
+```js
+// Option A: size='fluid' on canvas data attribute
+<canvas data-size="fluid" data-gauge='{"value":72}'></canvas>
+const g = new Maranello.FerrariGauge(canvas);
+
+// Option B: omit size on <mn-gauge> — auto ResizeObserver
+<mn-gauge value="72" unit="%"></mn-gauge>
+
+// Option C: explicit size='fluid' on WC
+<mn-gauge size="fluid" value="72"></mn-gauge>
+```
+
+### Sidebar on Mobile
+
+CSS auto-hides `.mn-sidebar` at ≤640px (off-canvas). To add hamburger toggle:
+```js
+Maranello.initSidebarToggleAuto(); // auto-finds .mn-sidebar + [data-sidebar-toggle]
+// or manually:
+Maranello.initSidebarToggle(sidebarEl, buttonEl);
+```
+
+### Responsive Utility Classes
+
+| Class | Effect |
+|---|---|
+| `.mn-hide-mobile` | Hidden at ≤640px |
+| `.mn-show-mobile` | Visible only at ≤640px |
+| `.mn-hide-tablet` | Hidden at 641–1024px |
+| `.mn-hide-desktop` | Hidden at ≥1025px |
+| `.mn-stack-mobile` | `flex-direction: column` at ≤640px |
+| `.mn-full-mobile` | `width: 100%` at ≤640px |
+
+### Responsive CSS File Pattern
+
+All responsive overrides live in `src/css/responsive-*.css` files, imported by `maranello.css` after `utilities.css`. Each file uses `@layer` matching its component domain and `@media` queries for breakpoints.
 
 ## IIFE Exports (87 functions/objects on `window.Maranello`)
 
@@ -92,6 +162,9 @@ Ferrari Luce-inspired design system for business dashboards. Part of Convergio.
 
 ### Observers (5)
 `initGauges` · `initScrollReveal` · `initNavTracking` · `autoContrast` · `relativeLuminance`
+
+### Responsive (4)
+`autoResize` · `autoResizeAll` · `initSidebarToggle` · `initSidebarToggleAuto`
 
 ### Icons (7)
 `icons` · `renderIcon` · `iconCatalog` · `navIcons` · `statusIcons` · `actionIcons` · `dataIcons`
@@ -183,6 +256,22 @@ Ferrari Luce-inspired design system for business dashboards. Part of Convergio.
 | Avorio | `mn-avorio` | `--rosso-corsa` |
 | Colorblind | `mn-colorblind` | `#0072B2` |
 
+## API Notes
+
+- `Maranello.palette()` returns `{ signalOk, signalWarning, signalDanger, signalInfo, ... }` — uses `--signal-*` CSS var names
+- `loginScreen(el, { showStatus: false })` — pure login form; use `mn-system-status` WC separately for health panel
+- `speedometer(canvas, { size: 'fluid' })` — fluid mode with ResizeObserver; call `controller.destroy()` to clean up observer + sr-only span
+- `autoResize(canvas, factory, data)` — ResizeObserver wrapper; factory is called with `(canvas, data, { width, height })`
+- `initSidebarToggleAuto()` — auto-finds `.mn-sidebar` + `[data-sidebar-toggle]`; returns cleanup fn
+
+## CI / GitHub Actions
+
+- `ci.yml` triggers on `push: [main, plan/**, fix/**, feat/**]` + `pull_request` + `workflow_dispatch`
+- Dispatch manually: `gh api --method POST repos/Roberdan/MaranelloLuceDesign/actions/workflows/245666212/dispatches -f ref=<branch>`
+- Constitution checks run in CI: no emoji, max 250 lines, mn- CSS prefix, no hardcoded colors (exceptions: gradients, conic, rgba, %, deg)
+- Scrub check: `VirtualBPM`, `ISE Portfolio`, `MirrorDesign`, `MirrorBuddy` forbidden in src/demo
+- `accessibility.css` high-contrast block must use `var(--mn-surface)` / `var(--mn-text)` not `#000`/`#fff`
+
 ## Conventions
 
 - Max 250 lines/file — split if exceeds
@@ -191,3 +280,4 @@ Ferrari Luce-inspired design system for business dashboards. Part of Convergio.
 - CSS: all rules in `@layer` blocks
 - TS: strict mode, no `any`, named exports only
 - Comments: explain WHY, not WHAT, <5% density
+- localStorage theme values: always whitelist `['nero', 'avorio', 'colorblind', 'editorial']` before applying

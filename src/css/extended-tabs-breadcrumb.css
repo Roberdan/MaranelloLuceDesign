@@ -9,7 +9,7 @@
 .mn-tabs__list {
   display: flex;
   gap: 0;
-  border-bottom: 1px solid var(--grigio-scuro);
+  border-bottom: 1px solid var(--mn-border);
 }
 .mn-tabs__tab {
   padding: var(--space-md) var(--space-xl);
@@ -28,7 +28,7 @@
 }
 .mn-tabs__tab:hover { color: var(--grigio-chiaro); }
 .mn-tabs__tab--active {
-  color: var(--bianco-caldo);
+  color: var(--mn-text);
   border-bottom-color: var(--mn-accent);
 }
 .mn-tabs__panel {
@@ -58,7 +58,7 @@ body.mn-avorio .mn-tabs__tab--active { color: var(--nero-assoluto); }
   transition: color var(--duration-sm) var(--ease-out);
 }
 .mn-breadcrumb__item:hover { color: var(--grigio-chiaro); }
-.mn-breadcrumb__item--active { color: var(--bianco-caldo); }
+.mn-breadcrumb__item--active { color: var(--mn-text); }
 .mn-breadcrumb__sep {
   color: var(--grigio-scuro);
   font-size: 0.6em;

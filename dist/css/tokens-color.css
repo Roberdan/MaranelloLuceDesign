@@ -116,6 +116,17 @@
   --mn-accent-text: #111111;
   --mn-line-height: 1.6;
 
+  /* ─── Color: Semantic UI tokens (cascade into shadow DOM) ─── */
+  /* These 7 vars are theme-aware: redefine them on body.mn-* to retheme
+     any component automatically — including WC shadow roots. */
+  --mn-surface:        var(--nero-carbon);      /* card / panel bg      */
+  --mn-surface-raised: var(--nero-soft);        /* modal / dropdown bg  */
+  --mn-surface-sunken: var(--nero-profondo);    /* code blocks / inset  */
+  --mn-text:           var(--bianco-caldo);     /* primary body text    */
+  --mn-text-muted:     var(--grigio-chiaro);    /* secondary/muted text */
+  --mn-border:         var(--grigio-scuro);     /* default borders      */
+  --mn-border-subtle:  rgba(255,255,255,0.07);  /* hairline dividers    */
+
   /* ─── Color: Scope ─── */
   --scope-local:     #4EA8DE;
   --scope-team:      #7C3AED;

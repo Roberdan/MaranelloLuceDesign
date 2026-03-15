@@ -21,11 +21,13 @@
   padding: 6px 12px;
   font-family: var(--font-body);
   font-size: var(--text-micro);
-  color: var(--bianco-caldo);
-  background: var(--nero-soft);
-  border: 1px solid var(--grigio-scuro);
+  color: var(--mn-text);
+  background: var(--mn-surface-raised);
+  border: 1px solid var(--mn-border);
   border-radius: var(--radius-sm);
-  white-space: nowrap;
+  white-space: normal;
+  max-width: min(280px, calc(100vw - 32px));
+  word-break: break-word;
   pointer-events: none;
   opacity: 0;
   transition: opacity var(--duration-sm) var(--ease-out),

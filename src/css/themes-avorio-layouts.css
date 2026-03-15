@@ -68,7 +68,7 @@ body.mn-avorio .mn-notification-center__item--unread { background: rgba(220, 0, 
 body.mn-avorio .mn-notification-center__item-title { color: var(--nero-assoluto); }
 body.mn-avorio .mn-notification-center__item-icon { color: var(--rosso-corsa); }
 
-body.mn-avorio .mn-drawer { background: var(--avorio-chiaro); }
+body.mn-avorio .mn-drawer { background: var(--avorio-chiaro); --mn-drawer-border: var(--avorio-scuro); }
 body.mn-avorio .mn-drawer__header { border-bottom-color: var(--avorio-scuro); }
 body.mn-avorio .mn-drawer__close { color: var(--grigio-alluminio); }
 
@@ -83,6 +83,13 @@ body.mn-avorio .mn-org-tree__toggle { color: var(--grigio-alluminio); }
 body.mn-avorio .mn-drill-down { color: var(--grigio-alluminio); }
 body.mn-avorio .mn-drill-down:hover { background: var(--avorio-medio); color: var(--nero-assoluto); }
 
+/* mn-mission-btn / mn-night-agent__action use --bianco-caldo (near-white) which is invisible on Avorio */
+body.mn-avorio .mn-mission-btn,
+body.mn-avorio .mn-night-agent__action { color: var(--grigio-scuro); border-color: var(--grigio-alluminio); background: var(--bianco-puro); }
+body.mn-avorio .mn-mission-btn--delegate { color: var(--mn-accent); border-color: var(--mn-accent); }
+body.mn-avorio .mn-mission-btn--start { color: var(--signal-ok); border-color: var(--signal-ok); }
+body.mn-avorio .mn-mission-btn--reset { color: var(--grigio-medio); }
+body.mn-avorio .mn-mission-btn--cancel { color: var(--signal-danger); border-color: var(--signal-danger); }
 
 /* ============================================================
    COLORBLIND (Deuteranopia-safe) — All Overrides

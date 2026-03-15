@@ -78,11 +78,11 @@
 
 /* ── PANEL (composable card container) ── */
 .mn-panel {
-  background: var(--nero-soft);
+  background: var(--mn-surface-raised);
   border-radius: var(--radius-lg);
   padding: var(--space-lg);
   box-shadow: var(--shadow-card);
-  color: var(--bianco-caldo);
+  color: var(--mn-text);
   overflow: hidden;
 }
 .mn-panel--glass {
@@ -96,7 +96,7 @@
   align-items: center;
   justify-content: space-between;
   padding-bottom: var(--space-md);
-  border-bottom: 1px solid var(--grigio-scuro);
+  border-bottom: 1px solid var(--mn-border);
   margin-bottom: var(--space-md);
 }
 .mn-panel__title {
@@ -105,7 +105,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: var(--grigio-chiaro);
+  color: var(--mn-text-muted);
 }
 
 body.mn-avorio .mn-panel {

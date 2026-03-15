@@ -11,11 +11,11 @@
 .mn-okr__kr-bar--behind { background: linear-gradient(90deg, var(--rosso-corsa), var(--rosso-corsa-light)); box-shadow: 0 0 8px rgba(220,0,0,0.3); }
 
 .mn-okr__empty {
-  border: 1px dashed var(--grigio-scuro);
+  border: 1px dashed var(--mn-border);
   border-radius: var(--radius-md);
   padding: var(--space-lg);
   text-align: center;
-  color: var(--grigio-chiaro);
+  color: var(--mn-text-muted);
 }
 
 @keyframes mn-okr-card-rise {

@@ -8,7 +8,7 @@
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: var(--nero-carbon);
+  background: var(--mn-surface);
   border: 2px solid var(--mn-accent);
   color: var(--mn-accent);
   cursor: pointer;
@@ -42,8 +42,8 @@
   left: var(--space-lg);
   width: 380px;
   height: 520px;
-  background: var(--nero-profondo);
-  border: 1px solid var(--grigio-scuro);
+  background: var(--mn-surface);
+  border: 1px solid var(--mn-border);
   border-radius: var(--radius-xl) var(--radius-xl) var(--radius-sm) var(--radius-sm);
   box-shadow: var(--shadow-deep);
   z-index: 9000;

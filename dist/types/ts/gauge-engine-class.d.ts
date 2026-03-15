@@ -26,7 +26,7 @@ export interface GaugeEntry {
     gauge: FerrariGauge;
     canvas: HTMLCanvasElement;
 }
-export declare const GAUGE_SIZES: Record<GaugeSize, number>;
+export declare const GAUGE_SIZES: Record<'sm' | 'md' | 'lg' | 'fluid', number>;
 /**
  * Create a single FerrariGauge instance with explicit options.
  * Returns null if the target canvas cannot be resolved.

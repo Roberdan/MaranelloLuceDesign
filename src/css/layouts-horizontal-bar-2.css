@@ -16,9 +16,9 @@
 }
 .mn-okr__hero {
   background: linear-gradient(145deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0));
-  border: 1px solid var(--grigio-scuro);
+  border: 1px solid var(--mn-border);
   border-radius: var(--radius-lg);
-  background-color: var(--nero-soft);
+  background-color: var(--mn-surface-raised);
   padding: var(--space-xl) var(--space-lg);
   display: grid;
   grid-template-columns: minmax(200px, 260px) 1fr;
@@ -61,7 +61,7 @@
 }
 .mn-okr__average-label {
   font-size: var(--text-caption);
-  color: var(--grigio-chiaro);
+  color: var(--mn-text-muted);
 }
 .mn-okr__average-value {
   font-family: var(--font-mono);
@@ -91,7 +91,7 @@
   align-items: center;
   justify-self: start;
   border-radius: var(--radius-pill);
-  border: 1px solid var(--grigio-scuro);
+  border: 1px solid var(--mn-border);
   background: rgba(255, 255, 255, 0.02);
   padding: 6px 12px;
   font-family: var(--font-mono);
@@ -131,8 +131,8 @@
   gap: var(--space-md);
 }
 .mn-okr__objective {
-  background: var(--nero-soft);
-  border: 1px solid var(--grigio-scuro);
+  background: var(--mn-surface-raised);
+  border: 1px solid var(--mn-border);
   border-left: 3px solid var(--mn-okr-status, #00A651);
   border-radius: var(--radius-md);
   padding: var(--space-md);
@@ -175,7 +175,7 @@
   font-family: var(--font-body);
   font-size: 1rem;
   line-height: 1.4;
-  color: var(--bianco-caldo);
+  color: var(--mn-text);
 }
 .mn-okr__objective-ring-wrap {
   width: 56px;
@@ -203,13 +203,13 @@
 }
 .mn-okr__kr-title {
   font-size: var(--text-caption);
-  color: var(--grigio-chiaro);
+  color: var(--mn-text-muted);
   line-height: 1.4;
 }
 .mn-okr__kr-metric {
   font-family: var(--font-mono);
   font-size: var(--text-micro);
-  color: var(--bianco-caldo);
+  color: var(--mn-text);
   white-space: nowrap;
 }
 .mn-okr__kr-track {

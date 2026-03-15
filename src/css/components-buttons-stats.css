@@ -111,7 +111,7 @@
   letter-spacing: -0.02em;
   line-height: 1;
 }
-.mn-section-dark .mn-stat__value { color: var(--bianco-caldo); }
+.mn-section-dark .mn-stat__value { color: var(--mn-text); }
 .mn-stat__unit {
   font-family: var(--font-body);
   font-size: var(--text-caption);
@@ -134,7 +134,7 @@
 /* ── VIDEO CARD ── */
 .mn-video-card {
   position: relative;
-  background: var(--nero-profondo);
+  background: var(--mn-surface-sunken);
   border-radius: var(--radius-xl);
   overflow: hidden;
   aspect-ratio: 16/9;
@@ -142,7 +142,7 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  border: 1px solid var(--grigio-scuro);
+  border: 1px solid var(--mn-border);
 }
 .mn-video-card__play {
   width: 64px;
@@ -177,6 +177,6 @@
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: var(--bianco-caldo);
+  color: var(--mn-text);
 }
 } /* end @layer components */

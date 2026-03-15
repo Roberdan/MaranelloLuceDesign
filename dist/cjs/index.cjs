@@ -56,6 +56,8 @@ __export(index_exports, {
   autoBind: () => autoBind,
   autoBindSliders: () => autoBindSliders,
   autoContrast: () => autoContrast,
+  autoResize: () => autoResize,
+  autoResizeAll: () => autoResizeAll,
   autoTextColor: () => autoTextColor,
   azIcons: () => azIcons,
   barChart: () => barChart,
@@ -111,7 +113,6 @@ __export(index_exports, {
   getAccent: () => getAccent,
   getCanvasSize: () => getCanvasSize,
   getFieldInput: () => getFieldInput,
-  getGlass: () => getGlass,
   getIcon: () => getIcon,
   getInitials: () => getInitials,
   getMarkerColors: () => getMarkerColors,
@@ -144,6 +145,8 @@ __export(index_exports, {
   initRotary: () => initRotary,
   initScrollReveal: () => initScrollReveal,
   initSearchClear: () => initSearchClear,
+  initSidebarToggle: () => initSidebarToggle,
+  initSidebarToggleAuto: () => initSidebarToggleAuto,
   initSlider: () => initSlider,
   initTabs: () => initTabs,
   initTagInput: () => initTagInput,
@@ -169,6 +172,7 @@ __export(index_exports, {
   openDetailPanel: () => openDetailPanel,
   openDrawer: () => openDrawer,
   openModal: () => openModal,
+  palette: () => palette,
   profileMenu: () => profileMenu,
   progressRing: () => progressRing,
   project: () => project,
@@ -187,7 +191,6 @@ __export(index_exports, {
   renderers: () => renderers,
   resolveContainer: () => resolveContainer3,
   saveSettings: () => saveSettings,
-  setGlass: () => setGlass,
   setTheme: () => setTheme,
   showTip: () => showTip2,
   showToast: () => showToast,
@@ -202,7 +205,6 @@ __export(index_exports, {
   themeRotary: () => themeRotary,
   throttle: () => throttle,
   toast: () => toast,
-  toggleGlass: () => toggleGlass,
   toggleLever: () => toggleLever,
   toggleNotifications: () => toggleNotifications,
   updateGauge: () => updateGauge,
@@ -562,16 +564,32 @@ function cycleTheme() {
 function getAccent(fallback = "#FFC72C") {
   return cssVar("--giallo-ferrari", fallback);
 }
-function getGlass() {
-  return document.body.classList.contains("mn-glass");
-}
-function setGlass(on3) {
-  document.body.classList.toggle("mn-glass", on3);
-}
-function toggleGlass() {
-  const next = !getGlass();
-  setGlass(next);
-  return next;
+function palette(el4 = document.documentElement) {
+  const read = (name) => getComputedStyle(el4).getPropertyValue(name).trim();
+  return {
+    // Semantic (theme-aware) — use these for UI surfaces
+    surface: read("--mn-surface"),
+    surfaceRaised: read("--mn-surface-raised"),
+    surfaceSunken: read("--mn-surface-sunken"),
+    text: read("--mn-text"),
+    textMuted: read("--mn-text-muted"),
+    border: read("--mn-border"),
+    accent: read("--mn-accent"),
+    // Brand primitives — fixed across themes
+    giallo: read("--giallo-ferrari"),
+    rosso: read("--rosso-corsa"),
+    verde: read("--verde-racing"),
+    azzurro: read("--status-info"),
+    biancoCaldo: read("--bianco-caldo"),
+    grigioChiaro: read("--grigio-chiaro"),
+    grigioMedio: read("--grigio-medio"),
+    neroAssoluto: read("--nero-assoluto"),
+    // Status — use in charts, badges, gauges
+    signalOk: read("--signal-ok"),
+    signalWarning: read("--signal-warning"),
+    signalDanger: read("--signal-danger"),
+    signalInfo: read("--signal-info")
+  };
 }
 function debounce(fn, ms) {
   let timer = null;
@@ -728,21 +746,36 @@ function networkMessages(container, opts = { nodes: [], connections: [] }) {
     ctx.clearRect(0, 0, width, height);
     ctx.fillStyle = "rgba(3,7,12,0.36)";
     ctx.fillRect(0, 0, width, height);
-    ctx.save();
-    ctx.lineWidth = 1.15;
-    ctx.setLineDash([6, 8]);
+    ctx.setLineDash([]);
     for (const link of options.connections) {
       const from = map.get(link.from), to = map.get(link.to);
       if (!from || !to) continue;
       const a = point(from), b = point(to);
       const active = messages.some((msg) => msg.from === link.from && msg.to === link.to);
-      ctx.strokeStyle = link.color ?? (active ? alpha("#FFC72C", 0.45) : "rgba(255,255,255,0.16)");
+      const baseColor = link.color ?? "rgba(78,168,222,0.35)";
+      const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+      const dx = mx - 0.5 * width, dy = my - 0.5 * height;
+      const len = Math.sqrt(dx * dx + dy * dy) || 1;
+      const dist = Math.sqrt((b.x - a.x) ** 2 + (b.y - a.y) ** 2);
+      const cpx = mx + dx / len * dist * 0.28, cpy = my + dy / len * dist * 0.28;
+      ctx.save();
+      ctx.lineWidth = active ? 2 : 1.5;
+      if (active && options.glowEffect) {
+        ctx.shadowColor = baseColor;
+        ctx.shadowBlur = 8;
+      }
+      const op = active ? 0.7 : 0.38;
+      const recolor = (c) => c.replace(/[\d.]+\)$/, `${op})`);
+      const grad = ctx.createLinearGradient(a.x, a.y, b.x, b.y);
+      grad.addColorStop(0, link.color ? recolor(link.color) : `rgba(78,168,222,${op})`);
+      grad.addColorStop(1, link.color ? recolor(link.color) : `rgba(255,199,44,${op})`);
+      ctx.strokeStyle = grad;
       ctx.beginPath();
       ctx.moveTo(a.x, a.y);
-      ctx.lineTo(b.x, b.y);
+      ctx.quadraticCurveTo(cpx, cpy, b.x, b.y);
       ctx.stroke();
+      ctx.restore();
     }
-    ctx.restore();
     for (let i = flashes.length - 1; i >= 0; i--) {
       const flash = flashes[i];
       flash.life -= dt * 26e-4;
@@ -1277,7 +1310,7 @@ var objectIcons = {
 var platformIcons = {
   apple: () => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.2 6.2c.9-1.1 1.3-2.2 1.2-3.2-1.2.1-2.4.8-3.2 1.8-.7.9-1.2 2.1-1.1 3.2 1.2.1 2.3-.6 3.1-1.8z"/><path d="M12.2 8.5c-1.6 0-2.3.8-3.5.8S6.7 8.5 5.5 8.6C3.4 8.8 1.7 10.6 1.7 13c0 1.8.7 3.8 1.8 5.3 1 1.4 2.1 3 3.6 2.9 1.4-.1 1.9-.9 3.6-.9s2.1.9 3.6.9c1.6 0 2.5-1.5 3.5-2.9.8-1.1 1.2-2.2 1.4-2.8-2.7-1-3.1-4.9-.5-6.4-.7-1-1.9-1.6-3.1-1.6-1.5-.1-2.6.9-3.4.9z"/></svg>',
   windows: () => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4.5l8-1v8H3zM13 3.2l8-1.2V11h-8zM3 13h8v8l-8-1zM13 13h8v10l-8-1.2z"/></svg>',
-  linux: () => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 8a3 3 0 0 1 6 0v3.2c1.9 1 3 2.8 3 5V19a2 2 0 0 1-2 2h-1v-3H9v3H8a2 2 0 0 1-2-2v-2.6c0-2.2 1.1-4 3-5z"/><circle cx="10.3" cy="9.7" r=".4" fill="currentColor" stroke="none"/><circle cx="13.7" cy="9.7" r=".4" fill="currentColor" stroke="none"/><path d="M10 13.2h4M9 18h6"/></svg>',
+  linux: () => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="8" rx="4.5" ry="5.5"/><ellipse cx="12" cy="8.5" rx="2" ry="2.5" fill="currentColor" stroke="none" opacity="0.3"/><circle cx="10.2" cy="7.2" r="0.5" fill="currentColor" stroke="none"/><circle cx="13.8" cy="7.2" r="0.5" fill="currentColor" stroke="none"/><path d="M10.5 9.5q1.5 1 3 0"/><path d="M9 13.5c-2 1-3.5 2.5-3.5 5a1 1 0 001 1h11a1 1 0 001-1c0-2.5-1.5-4-3.5-5"/><ellipse cx="12" cy="15.5" rx="2.5" ry="2" fill="currentColor" stroke="none" opacity="0.15"/><path d="M9.5 13c0 1 .8 2.5 2.5 2.5s2.5-1.5 2.5-2.5"/><path d="M10 19.5l-1 2"/><path d="M14 19.5l1 2"/></svg>',
   android: () => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 10.5a4 4 0 0 1 8 0V17a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2z"/><path d="M9.2 7.2L7.8 5.6M14.8 7.2l1.4-1.6M6 12v4M18 12v4"/><circle cx="10.3" cy="11.7" r=".4" fill="currentColor" stroke="none"/><circle cx="13.7" cy="11.7" r=".4" fill="currentColor" stroke="none"/></svg>',
   cpu: () => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="7" width="10" height="10" rx="1.5"/><rect x="10" y="10" width="4" height="4" rx=".6"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/></svg>',
   memory: () => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="8" rx="2"/><path d="M7 8v8M11 8v8M15 8v8M19 8v8M5 19v2M9 19v2M13 19v2M17 19v2"/></svg>',
@@ -1420,18 +1453,13 @@ function ensureStyles() {
 .mn-theme-rotary__pointer{position:absolute;top:8px;left:50%;width:2px;border-radius:1px;background:var(--mn-accent,#FFC72C);transform:translateX(-50%) rotate(0deg);transform-origin:50% calc(var(--rotary-center) - 8px);pointer-events:none;transition:transform .3s cubic-bezier(.4,0,.2,1)}
 .mn-theme-rotary__pos{position:absolute;font-family:var(--font-body,sans-serif);font-size:.55rem;color:var(--grigio-medio,#777);text-transform:uppercase;letter-spacing:.04em;cursor:pointer;transform:translate(-50%,-50%);white-space:nowrap;transition:color .15s}
 .mn-theme-rotary__pos--active{color:var(--bianco-caldo,#f5f0e8);font-weight:700}
-.mn-theme-rotary__center{position:absolute;top:50%;left:50%;border-radius:50%;cursor:pointer;transform:translate(-50%,-50%);transition:background .2s,box-shadow .2s;display:flex;align-items:center;justify-content:center}
-.mn-theme-rotary__center:hover{box-shadow:0 0 12px rgba(255,199,44,.3)}
-.mn-theme-rotary__center--glass{background:rgba(255,255,255,.12)!important;box-shadow:0 0 16px rgba(255,199,44,.4),inset 0 1px 0 rgba(255,255,255,.15)}
-.mn-theme-rotary__glass-icon{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.5;opacity:.7;transition:opacity .15s}
-.mn-theme-rotary__center--glass .mn-theme-rotary__glass-icon{opacity:1;stroke:var(--mn-accent,#FFC72C)}
+.mn-theme-rotary__center{position:absolute;top:50%;left:50%;border-radius:50%;transform:translate(-50%,-50%);display:flex;align-items:center;justify-content:center}
 `;
   document.head.appendChild(s);
 }
 function angleForTheme(mode) {
   return THEME_POSITIONS.find((p) => p.mode === mode)?.angle ?? -45;
 }
-var GLASS_SVG = `<svg class="mn-theme-rotary__glass-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" stroke-dasharray="4 2"/><path d="M12 4v2m0 12v2M4 12h2m12 0h2"/></svg>`;
 function themeRotary(opts) {
   ensureStyles();
   const { container, size = 140 } = opts;
@@ -1467,31 +1495,14 @@ function themeRotary(opts) {
   centerBtn.style.width = centerBtn.style.height = centerSize + "px";
   centerBtn.style.background = "radial-gradient(circle at 40% 35%, var(--grigio-scuro, #444), var(--nero-soft, #1a1a1a))";
   centerBtn.style.boxShadow = "0 3px 8px rgba(0,0,0,.55), inset 0 1px 1px rgba(255,255,255,.15)";
-  centerBtn.innerHTML = GLASS_SVG;
-  centerBtn.title = "Toggle glass mode";
-  centerBtn.setAttribute("role", "switch");
-  centerBtn.setAttribute("tabindex", "0");
-  centerBtn.addEventListener("click", () => toggleGlassMode());
-  centerBtn.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      toggleGlassMode();
-    }
-  });
+  centerBtn.innerHTML = '<svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="3" fill="var(--mn-accent,#FFC72C)" opacity="0.7"/></svg>';
   dial.appendChild(centerBtn);
   container.appendChild(root);
   function applyTheme(mode) {
     setTheme(mode);
     updateVisual();
-    eventBus.emit("theme:change", { theme: mode, glass: getGlass() });
-    opts.onChange?.(mode, getGlass());
-  }
-  function toggleGlassMode() {
-    const next = !getGlass();
-    setGlass(next);
-    updateVisual();
-    eventBus.emit("glass:change", { glass: next, theme: getTheme() });
-    opts.onChange?.(getTheme(), next);
+    eventBus.emit("theme:change", { theme: mode });
+    opts.onChange?.(mode);
   }
   function updateVisual() {
     const current = getTheme();
@@ -1500,20 +1511,11 @@ function themeRotary(opts) {
     for (const [mode, el4] of labels) {
       el4.classList.toggle("mn-theme-rotary__pos--active", mode === current);
     }
-    const glass = getGlass();
-    centerBtn.classList.toggle("mn-theme-rotary__center--glass", glass);
-    centerBtn.setAttribute("aria-checked", String(glass));
   }
   updateVisual();
   return {
     getTheme,
     setTheme: applyTheme,
-    getGlass,
-    setGlass: (on3) => {
-      setGlass(on3);
-      updateVisual();
-      opts.onChange?.(getTheme(), on3);
-    },
     destroy: () => {
       root.remove();
     }
@@ -1575,11 +1577,11 @@ function toast(options) {
 
 // src/ts/modal.ts
 function openModal(id) {
-  const backdrop = document.getElementById(id);
-  if (!backdrop) return;
-  const modal = backdrop.querySelector(".mn-modal");
+  const backdrop2 = document.getElementById(id);
+  if (!backdrop2) return;
+  const modal = backdrop2.querySelector(".mn-modal");
   if (!modal) return;
-  backdrop.classList.add("mn-modal-backdrop--open");
+  backdrop2.classList.add("mn-modal-backdrop--open");
   modal.setAttribute("role", "dialog");
   modal.setAttribute("aria-modal", "true");
   const focusable = modal.querySelectorAll(
@@ -1610,10 +1612,10 @@ function openModal(id) {
   document.addEventListener("keydown", trapFocus);
 }
 function closeModal(id) {
-  const backdrop = document.getElementById(id);
-  if (!backdrop) return;
-  const modal = backdrop.querySelector(".mn-modal");
-  backdrop.classList.remove("mn-modal-backdrop--open");
+  const backdrop2 = document.getElementById(id);
+  if (!backdrop2) return;
+  const modal = backdrop2.querySelector(".mn-modal");
+  backdrop2.classList.remove("mn-modal-backdrop--open");
   if (modal?._mnTrapFocus) {
     document.removeEventListener("keydown", modal._mnTrapFocus);
     delete modal._mnTrapFocus;
@@ -1621,12 +1623,12 @@ function closeModal(id) {
 }
 
 // src/ts/command-palette.ts
-function getVisibleItems(palette) {
-  const all = palette.querySelectorAll(".mn-command-palette__item");
+function getVisibleItems(palette2) {
+  const all = palette2.querySelectorAll(".mn-command-palette__item");
   return Array.from(all).filter((el4) => el4.style.display !== "none");
 }
-function clearActive(palette) {
-  palette.querySelectorAll(".mn-command-palette__item").forEach((el4) => {
+function clearActive(palette2) {
+  palette2.querySelectorAll(".mn-command-palette__item").forEach((el4) => {
     el4.classList.remove("mn-command-palette__item--active");
     el4.setAttribute("aria-selected", "false");
   });
@@ -1644,13 +1646,13 @@ function activateItem(input, items, index) {
   }
 }
 function commandPalette(id) {
-  const palette = document.getElementById(id);
-  if (!palette) return { open: () => {
+  const palette2 = document.getElementById(id);
+  if (!palette2) return { open: () => {
   }, close: () => {
   } };
-  const input = palette.querySelector(".mn-command-palette__input");
-  const listEl = palette.querySelector(".mn-command-palette__list");
-  const items = palette.querySelectorAll(".mn-command-palette__item");
+  const input = palette2.querySelector(".mn-command-palette__input");
+  const listEl = palette2.querySelector(".mn-command-palette__list");
+  const items = palette2.querySelectorAll(".mn-command-palette__item");
   let activeIndex = -1;
   if (listEl) {
     listEl.setAttribute("role", "listbox");
@@ -1670,18 +1672,18 @@ function commandPalette(id) {
     if (!item.id) item.id = id + "-item-" + i;
   });
   function open() {
-    palette.classList.add("mn-command-palette--open");
+    palette2.classList.add("mn-command-palette--open");
     if (input) {
       input.value = "";
       input.setAttribute("aria-expanded", "true");
       input.focus();
     }
     activeIndex = -1;
-    clearActive(palette);
+    clearActive(palette2);
     filterItems("");
   }
   function close() {
-    palette.classList.remove("mn-command-palette--open");
+    palette2.classList.remove("mn-command-palette--open");
     if (input) {
       input.setAttribute("aria-expanded", "false");
       input.setAttribute("aria-activedescendant", "");
@@ -1701,12 +1703,12 @@ function commandPalette(id) {
       item.style.display = match ? "" : "none";
     });
     activeIndex = -1;
-    clearActive(palette);
+    clearActive(palette2);
   }
   if (input) {
     input.addEventListener("input", () => filterItems(input.value));
     input.addEventListener("keydown", (e) => {
-      const visible = getVisibleItems(palette);
+      const visible = getVisibleItems(palette2);
       switch (e.key) {
         case "ArrowDown":
           e.preventDefault();
@@ -1733,7 +1735,7 @@ function commandPalette(id) {
   document.addEventListener("keydown", (e) => {
     if ((e.metaKey || e.ctrlKey) && e.key === "k") {
       e.preventDefault();
-      palette.classList.contains("mn-command-palette--open") ? close() : open();
+      palette2.classList.contains("mn-command-palette--open") ? close() : open();
     }
   });
   items.forEach((item) => {
@@ -1821,31 +1823,33 @@ function render(container, state, opts) {
     const errorEl = card.lastElementChild;
     errorEl.setAttribute("role", "alert");
   }
-  const statusSection = createElement("div", "mn-login__status");
-  statusSection.appendChild(createElement("div", "mn-login__status-title", { text: "SYSTEM STATUS" }));
-  const gaugeRow = createElement("div", "mn-login__status-gauges");
-  if (state.checks?.length) {
-    state.checks.forEach((c) => gaugeRow.appendChild(createServiceCard(c)));
-  } else {
-    ["Database", "Cache", "API"].forEach((name) => {
-      gaugeRow.appendChild(createServiceCard({ name, status: "healthy", latency_ms: null }));
-    });
-  }
-  statusSection.appendChild(gaugeRow);
-  let overall = "healthy";
-  if (state.checks) {
-    for (const c of state.checks) {
-      if (c.status === "unhealthy") {
-        overall = "unhealthy";
-        break;
-      }
-      if (c.status === "degraded" && overall !== "unhealthy") overall = "degraded";
+  if (opts.showStatus !== false) {
+    const statusSection = createElement("div", "mn-login__status");
+    statusSection.appendChild(createElement("div", "mn-login__status-title", { text: "SYSTEM STATUS" }));
+    const gaugeRow = createElement("div", "mn-login__status-gauges");
+    if (state.checks?.length) {
+      state.checks.forEach((c) => gaugeRow.appendChild(createServiceCard(c)));
+    } else {
+      ["Database", "Cache", "API"].forEach((name) => {
+        gaugeRow.appendChild(createServiceCard({ name, status: "healthy", latency_ms: null }));
+      });
     }
+    statusSection.appendChild(gaugeRow);
+    let overall = "healthy";
+    if (state.checks) {
+      for (const c of state.checks) {
+        if (c.status === "unhealthy") {
+          overall = "unhealthy";
+          break;
+        }
+        if (c.status === "degraded" && overall !== "unhealthy") overall = "degraded";
+      }
+    }
+    statusSection.appendChild(createElement("div", `mn-login__overall mn-login__overall--${overall}`, {
+      text: overall === "healthy" ? "All systems operational" : overall === "degraded" ? "Some services degraded" : "Service disruption detected"
+    }));
+    card.appendChild(statusSection);
   }
-  statusSection.appendChild(createElement("div", `mn-login__overall mn-login__overall--${overall}`, {
-    text: overall === "healthy" ? "All systems operational" : overall === "degraded" ? "Some services degraded" : "Service disruption detected"
-  }));
-  card.appendChild(statusSection);
   const footer = createElement("div", "mn-login__footer");
   footer.appendChild(createElement("span", "mn-login__version", { text: state.version ?? "" }));
   const envValue = state.env ?? "production";
@@ -2118,7 +2122,7 @@ function initMessages(state, els, opts) {
     inputEl.style.height = "auto";
     inputEl.rows = 1;
   }
-  function autoResize() {
+  function autoResize2() {
     inputEl.style.height = "auto";
     inputEl.style.height = Math.min(inputEl.scrollHeight, 80) + "px";
   }
@@ -2236,7 +2240,7 @@ function initMessages(state, els, opts) {
     agentSelector.addEventListener("click", () => toggleAgentGrid());
   }
   inputEl.addEventListener("input", () => {
-    autoResize();
+    autoResize2();
     updateSendVisibility();
   });
   inputEl.addEventListener("keydown", (e) => {
@@ -3797,6 +3801,63 @@ function sparklineInteract(canvas, data, opts) {
   });
 }
 
+// src/ts/auto-resize.ts
+function autoResize(canvas, factory, data, opts) {
+  if (typeof window === "undefined" || !window.ResizeObserver) return () => {
+  };
+  const parent = canvas.parentElement;
+  if (!parent) return () => {
+  };
+  let ctrl = null;
+  const resize = debounce(() => {
+    const rect = parent.getBoundingClientRect();
+    if (rect.width === 0 && rect.height === 0) return;
+    const dpr2 = window.devicePixelRatio || 1;
+    canvas.width = rect.width * dpr2;
+    canvas.height = rect.height * dpr2;
+    canvas.style.width = rect.width + "px";
+    canvas.style.height = rect.height + "px";
+    const ctx = canvas.getContext("2d");
+    if (ctx) ctx.scale(dpr2, dpr2);
+    if (ctrl && typeof ctrl.destroy === "function") {
+      ctrl.destroy();
+    }
+    ctrl = factory(canvas, data, { ...opts, width: rect.width, height: rect.height });
+  }, 150);
+  const observer = new ResizeObserver(resize);
+  observer.observe(parent);
+  resize();
+  return () => {
+    observer.disconnect();
+    if (ctrl && typeof ctrl.destroy === "function") {
+      ctrl.destroy();
+    }
+  };
+}
+function autoResizeAll(selector = "canvas[data-auto-resize]", chartLib) {
+  const canvases = document.querySelectorAll(selector);
+  const cleanups = [];
+  const lib = chartLib || (typeof window !== "undefined" ? window.Maranello : null);
+  if (!lib) return () => {
+  };
+  canvases.forEach((canvas) => {
+    const type = canvas.dataset.chartType;
+    if (!type) return;
+    const factory = lib[type];
+    if (typeof factory !== "function") return;
+    let data, opts;
+    try {
+      data = JSON.parse(canvas.dataset.chartData || "[]");
+      opts = JSON.parse(canvas.dataset.chartOptions || "{}");
+    } catch {
+      data = [];
+      opts = {};
+    }
+    cleanups.push(autoResize(canvas, factory, data, opts));
+  });
+  return () => cleanups.forEach((fn) => fn());
+}
+
 // src/ts/gauge-engine-draw-details.ts
 function drawNeedle(s, progress, sa, totalSweep, value, max, color) {
   const { ctx, cx, cy, radius } = s;
@@ -4473,11 +4534,13 @@ var SIZES = { sm: 120, md: 220, lg: 320 };
 var FerrariGauge = class {
   constructor(canvas) {
     this.srSpan = null;
+    this._resizeObserver = null;
     this.canvas = canvas;
     this.ctx = canvas.getContext("2d");
     this.config = JSON.parse(canvas.dataset.gauge || "{}");
     this.dpr = window.devicePixelRatio || 1;
     this.init();
+    if (canvas.dataset.size === "fluid") this._attachFluidObserver();
   }
   get palette() {
     const accent = getAccent();
@@ -4487,7 +4550,7 @@ var FerrariGauge = class {
   init() {
     const sizeKey = this.canvas.dataset.size;
     let size;
-    if (sizeKey && SIZES[sizeKey]) {
+    if (sizeKey && sizeKey !== "fluid" && SIZES[sizeKey]) {
       size = SIZES[sizeKey];
     } else {
       const rect = (this.canvas.parentElement || this.canvas).getBoundingClientRect();
@@ -4571,6 +4634,27 @@ var FerrariGauge = class {
     };
     drawGauge(state, progress);
     drawComplications(state, progress);
+  }
+  /** Attach ResizeObserver for size='fluid' mode. */
+  _attachFluidObserver() {
+    if (typeof window === "undefined" || !window.ResizeObserver) return;
+    const parent = this.canvas.parentElement;
+    if (!parent) return;
+    const handler = debounce(() => {
+      this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+      this.init();
+    }, 150);
+    this._resizeObserver = new ResizeObserver(handler);
+    this._resizeObserver.observe(parent);
+  }
+  /** Clean up ResizeObserver and screen reader helpers. */
+  destroy() {
+    this._resizeObserver?.disconnect();
+    this._resizeObserver = null;
+    if (this.srSpan) {
+      this.srSpan.remove();
+      this.srSpan = null;
+    }
   }
 };
 
@@ -4799,7 +4883,16 @@ function speedometer(canvas, opts) {
     animate: true,
     ...opts
   };
-  const dim = SIZES2[options.size] || SIZES2.md;
+  const isFluid = options.size === "fluid";
+  let dim;
+  if (isFluid) {
+    const rect = (canvas.parentElement || canvas).getBoundingClientRect();
+    dim = Math.min(rect.width, rect.height) || SIZES2.md;
+  } else if (typeof options.size === "number") {
+    dim = options.size;
+  } else {
+    dim = SIZES2[options.size] || SIZES2.md;
+  }
   const dpr2 = window.devicePixelRatio || 1;
   canvas.width = dim * dpr2;
   canvas.height = dim * dpr2;
@@ -4809,16 +4902,13 @@ function speedometer(canvas, opts) {
   ctx.scale(dpr2, dpr2);
   const s = dim / 220;
   const cx = dim / 2, cy = dim / 2, R = dim * 0.4;
-  const max = options.max;
-  const unit = options.unit || "";
-  function buildLabel(v) {
-    const suffix = unit ? `${Math.round(v)}${unit}` : String(Math.round(v));
-    return `Speedometer: ${suffix} of ${max}`;
-  }
+  const max = options.max, unit = options.unit || "";
+  const buildLabel = (v) => `Speedometer: ${unit ? `${Math.round(v)}${unit}` : Math.round(v)} of ${max}`;
   canvas.setAttribute("role", "img");
   const initLabel = buildLabel(options.value);
   canvas.setAttribute("aria-label", initLabel);
   canvas.textContent = initLabel;
+  canvas.nextSibling?.classList?.contains("mn-sr-only") && canvas.nextSibling.remove();
   const srSpan = document.createElement("span");
   srSpan.className = "mn-sr-only";
   srSpan.textContent = initLabel;
@@ -4838,11 +4928,9 @@ function speedometer(canvas, opts) {
   }
   function animateTo(toAngle, toVal) {
     if (animId) cancelAnimationFrame(animId);
-    const fromA = curAngle, fromV = curVal;
-    const t0 = performance.now(), dur = 800;
+    const fromA = curAngle, fromV = curVal, t0 = performance.now(), dur = 800;
     const tick = (now) => {
-      const p = Math.min(1, (now - t0) / dur);
-      const ep = easeOutCubic(p);
+      const p = Math.min(1, (now - t0) / dur), ep = easeOutCubic(p);
       curAngle = fromA + (toAngle - fromA) * ep;
       curVal = fromV + (toVal - fromV) * ep;
       draw();
@@ -4861,6 +4949,20 @@ function speedometer(canvas, opts) {
   } else {
     draw();
   }
+  let resizeObs = null;
+  if (isFluid && window.ResizeObserver && canvas.parentElement) {
+    const p = canvas.parentElement;
+    resizeObs = new ResizeObserver(debounce(() => {
+      const r = p.getBoundingClientRect();
+      const nd = Math.min(r.width, r.height);
+      if (nd <= 0 || nd === dim) return;
+      if (animId) cancelAnimationFrame(animId);
+      resizeObs?.disconnect();
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      speedometer(canvas, { ...opts || {}, size: nd, value: curVal, animate: false });
+    }, 150));
+    resizeObs.observe(p);
+  }
   return {
     setValue(v) {
       const ta = v2a(v, max);
@@ -4878,7 +4980,9 @@ function speedometer(canvas, opts) {
     },
     destroy() {
       if (animId) cancelAnimationFrame(animId);
+      resizeObs?.disconnect();
       ctx.clearRect(0, 0, dim * dpr2, dim * dpr2);
+      srSpan.remove();
     }
   };
 }
@@ -6712,10 +6816,10 @@ function openDetailPanel(id) {
   const panel = document.getElementById(id);
   if (!panel) return;
   panel.classList.add("mn-detail-panel--open");
-  const backdrop = panel.previousElementSibling;
-  if (backdrop && backdrop.classList.contains("mn-detail-panel__backdrop")) {
-    backdrop.classList.add("mn-detail-panel__backdrop--visible");
-    backdrop.addEventListener(
+  const backdrop2 = panel.previousElementSibling;
+  if (backdrop2 && backdrop2.classList.contains("mn-detail-panel__backdrop")) {
+    backdrop2.classList.add("mn-detail-panel__backdrop--visible");
+    backdrop2.addEventListener(
       "click",
       () => closeDetailPanel(id),
       { once: true }
@@ -6728,9 +6832,9 @@ function closeDetailPanel(id) {
   const panel = document.getElementById(id);
   if (!panel) return;
   panel.classList.remove("mn-detail-panel--open");
-  const backdrop = panel.previousElementSibling;
-  if (backdrop && backdrop.classList.contains("mn-detail-panel__backdrop")) {
-    backdrop.classList.remove("mn-detail-panel__backdrop--visible");
+  const backdrop2 = panel.previousElementSibling;
+  if (backdrop2 && backdrop2.classList.contains("mn-detail-panel__backdrop")) {
+    backdrop2.classList.remove("mn-detail-panel__backdrop--visible");
   }
 }
 function openDrawer(id, triggerEl) {
@@ -6738,10 +6842,10 @@ function openDrawer(id, triggerEl) {
   if (!drawer) return;
   drawer.classList.add("mn-drawer--open");
   const trigger = triggerEl ?? document.activeElement;
-  const backdrop = drawer.previousElementSibling;
-  if (backdrop && backdrop.classList.contains("mn-drawer__backdrop")) {
-    backdrop.classList.add("mn-drawer__backdrop--visible");
-    backdrop.addEventListener(
+  const backdrop2 = drawer.previousElementSibling;
+  if (backdrop2 && backdrop2.classList.contains("mn-drawer__backdrop")) {
+    backdrop2.classList.add("mn-drawer__backdrop--visible");
+    backdrop2.addEventListener(
       "click",
       () => closeDrawer(id, trigger),
       { once: true }
@@ -6777,9 +6881,9 @@ function closeDrawer(id, triggerEl) {
   const drawer = document.getElementById(id);
   if (!drawer) return;
   drawer.classList.remove("mn-drawer--open");
-  const backdrop = drawer.previousElementSibling;
-  if (backdrop && backdrop.classList.contains("mn-drawer__backdrop")) {
-    backdrop.classList.remove("mn-drawer__backdrop--visible");
+  const backdrop2 = drawer.previousElementSibling;
+  if (backdrop2 && backdrop2.classList.contains("mn-drawer__backdrop")) {
+    backdrop2.classList.remove("mn-drawer__backdrop--visible");
   }
   const handler = drawer._mnDrawerKeyHandler;
   if (typeof handler === "function") {
@@ -6862,6 +6966,62 @@ function initDrillDown(container) {
       trigger.setAttribute("aria-expanded", String(!isOpen));
     });
   });
+}
+
+// src/ts/sidebar-toggle.ts
+var backdrop = null;
+function ensureBackdrop() {
+  if (backdrop) return backdrop;
+  backdrop = document.createElement("div");
+  backdrop.className = "mn-sidebar__backdrop";
+  document.body.appendChild(backdrop);
+  return backdrop;
+}
+function closeSidebar(sidebar) {
+  sidebar.classList.remove("mn-sidebar--mobile-open");
+  const bd = ensureBackdrop();
+  bd.classList.remove("mn-sidebar__backdrop--visible");
+}
+function openSidebar(sidebar) {
+  sidebar.classList.add("mn-sidebar--mobile-open");
+  const bd = ensureBackdrop();
+  bd.classList.add("mn-sidebar__backdrop--visible");
+}
+function initSidebarToggle(sidebarEl, triggerEl) {
+  const bd = ensureBackdrop();
+  const onTrigger = () => {
+    if (sidebarEl.classList.contains("mn-sidebar--mobile-open")) {
+      closeSidebar(sidebarEl);
+    } else {
+      openSidebar(sidebarEl);
+    }
+  };
+  const onBackdrop = () => closeSidebar(sidebarEl);
+  const onEsc = (e) => {
+    if (e.key === "Escape" && sidebarEl.classList.contains("mn-sidebar--mobile-open")) {
+      closeSidebar(sidebarEl);
+    }
+  };
+  const mql = window.matchMedia("(min-width: 641px)");
+  const onDesktop = (e) => {
+    if ("matches" in e && e.matches) closeSidebar(sidebarEl);
+  };
+  triggerEl.addEventListener("click", onTrigger);
+  bd.addEventListener("click", onBackdrop);
+  document.addEventListener("keydown", onEsc);
+  mql.addEventListener("change", onDesktop);
+  return () => {
+    triggerEl.removeEventListener("click", onTrigger);
+    bd.removeEventListener("click", onBackdrop);
+    document.removeEventListener("keydown", onEsc);
+    mql.removeEventListener("change", onDesktop);
+  };
+}
+function initSidebarToggleAuto() {
+  const sidebar = document.querySelector(".mn-sidebar");
+  const trigger = document.querySelector("[data-sidebar-toggle], .mn-sidebar-toggle");
+  if (!sidebar || !trigger) return null;
+  return initSidebarToggle(sidebar, trigger);
 }
 
 // src/ts/controls-ferrari.ts
@@ -8805,24 +8965,28 @@ function funnel(container, options) {
     const total = data.total || pipe.reduce((a, s) => a + s.count, 0);
     const reach = cumulativeReach(pipe.map((s) => s.count));
     const rows = pipe.length;
-    const svgH = PAD * 2 + rows * BAR_H + (rows - 1) * GAP;
+    const containerH = host.clientHeight || 0;
+    const dynH = containerH > 100 ? containerH : 0;
+    const barH = dynH > 0 ? Math.max(28, Math.floor((dynH - PAD * 2 - (rows - 1) * 24) / rows)) : BAR_H;
+    const gap = dynH > 0 ? 24 : GAP;
+    const svgH = PAD * 2 + rows * barH + (rows - 1) * gap;
     const svg = svgEl("svg", { viewBox: "0 0 " + VB_W + " " + svgH, preserveAspectRatio: "xMidYMid meet" });
     svg.style.width = "100%";
-    svg.style.height = "auto";
+    svg.style.height = dynH > 0 ? "100%" : "auto";
     pipe.forEach((stageRaw, i) => {
       const stage = isValidColor(stageRaw.color) ? stageRaw : { ...stageRaw, color: "var(--grigio-alluminio)" };
       const barW = Math.max(PIPE_W * MIN_BAR, stage.count / maxC * PIPE_W);
       const barX = PIPE_L + (PIPE_W - barW) / 2;
-      const y = PAD + i * (BAR_H + GAP);
+      const y = PAD + i * (barH + gap);
       if (i < rows - 1) {
         const ns = pipe[i + 1];
         const nW = Math.max(PIPE_W * MIN_BAR, ns.count / maxC * PIPE_W);
         const nX = PIPE_L + (PIPE_W - nW) / 2;
-        svg.appendChild(svgEl("path", { d: trapPath(barX, barW, nX, nW, y + BAR_H, y + BAR_H + GAP), fill: stage.color, opacity: "0.12" }));
+        svg.appendChild(svgEl("path", { d: trapPath(barX, barW, nX, nW, y + barH, y + barH + gap), fill: stage.color, opacity: "0.12" }));
         const rate = reach[i] > 0 ? Math.round(reach[i + 1] / reach[i] * 100) : 0;
-        svg.appendChild(svgText({ x: PIPE_L + PIPE_W / 2, y: y + BAR_H + GAP / 2 + 1, "text-anchor": "middle", "dominant-baseline": "middle", "font-size": 9, "font-family": "'Barlow Condensed',sans-serif", fill: "var(--grigio-medio,#777)", "font-weight": "500" }, "\u2193 " + rate + "%"));
+        svg.appendChild(svgText({ x: PIPE_L + PIPE_W / 2, y: y + barH + gap / 2 + 1, "text-anchor": "middle", "dominant-baseline": "middle", "font-size": 9, "font-family": "'Barlow Condensed',sans-serif", fill: "var(--grigio-medio,#777)", "font-weight": "500" }, "\u2193 " + rate + "%"));
       }
-      const bar = svgEl("rect", { x: barX, y, width: barW, height: BAR_H, rx: RAD, fill: stage.color });
+      const bar = svgEl("rect", { x: barX, y, width: barW, height: barH, rx: RAD, fill: stage.color });
       bar.classList.add("mn-funnel__bar");
       bar.setAttribute("data-stage", stage.label);
       if (opts.animate) {
@@ -8831,15 +8995,15 @@ function funnel(container, options) {
       }
       svg.appendChild(bar);
       const tc = autoTextColor(stage.color);
-      svg.appendChild(svgText({ x: PIPE_L + PIPE_W / 2, y: y + 14, "text-anchor": "middle", "font-size": 11, "font-family": "'Inter',sans-serif", fill: tc, "font-weight": "600" }, stage.label));
+      svg.appendChild(svgText({ x: PIPE_L + PIPE_W / 2, y: y + Math.round(barH * 0.37), "text-anchor": "middle", "font-size": 11, "font-family": "'Inter',sans-serif", fill: tc, "font-weight": "600" }, stage.label));
       let cTxt = String(stage.count);
       if (total > 0) cTxt += " (" + Math.round(stage.count / total * 100) + "%)";
-      svg.appendChild(svgText({ x: PIPE_L + PIPE_W / 2, y: y + 29, "text-anchor": "middle", "font-size": 14, "font-family": "'Barlow Condensed',sans-serif", fill: tc, "font-weight": "700" }, cTxt));
+      svg.appendChild(svgText({ x: PIPE_L + PIPE_W / 2, y: y + Math.round(barH * 0.76), "text-anchor": "middle", "font-size": 14, "font-family": "'Barlow Condensed',sans-serif", fill: tc, "font-weight": "700" }, cTxt));
       const holdClr = isValidColor(data.onHold?.color || "") ? data.onHold.color : "#ea580c";
       const wdClr = isValidColor(data.withdrawn?.color || "") ? data.withdrawn.color : "#666";
       if (stage.holdCount && stage.holdCount > 0) renderExitPill(svg, barX, y, "left", stage.holdCount, holdClr, "\u23F8");
       if (stage.withdrawnCount && stage.withdrawnCount > 0) renderExitPill(svg, barX + barW, y, "right", stage.withdrawnCount, wdClr, "\u2715");
-      const hit = svgEl("rect", { x: barX, y, width: barW, height: BAR_H, fill: "transparent", cursor: "pointer", "pointer-events": "all" });
+      const hit = svgEl("rect", { x: barX, y, width: barW, height: barH, fill: "transparent", cursor: "pointer", "pointer-events": "all" });
       hit.addEventListener("mouseenter", () => {
         bar.style.filter = "brightness(1.3)";
         bar.style.transition = "filter 0.15s";
@@ -8849,7 +9013,7 @@ function funnel(container, options) {
       });
       hit.addEventListener("click", () => {
         svg.querySelectorAll(".mn-funnel__sel").forEach((el4) => el4.remove());
-        const sel = svgEl("rect", { x: barX - 2, y: y - 2, width: barW + 4, height: BAR_H + 4, fill: "none", stroke: "#FFC72C", "stroke-width": "2", rx: "6", class: "mn-funnel__sel" });
+        const sel = svgEl("rect", { x: barX - 2, y: y - 2, width: barW + 4, height: barH + 4, fill: "none", stroke: "#FFC72C", "stroke-width": "2", rx: "6", class: "mn-funnel__sel" });
         svg.appendChild(sel);
         if (opts.onClick) opts.onClick(stage);
       });
@@ -9309,7 +9473,8 @@ function autoContrast(selector, threshold = 0.35) {
 var GAUGE_SIZES = {
   sm: 120,
   md: 220,
-  lg: 320
+  lg: 320,
+  fluid: 0
 };
 function resolveCanvas(target) {
   if (typeof target === "string") {
@@ -9324,8 +9489,8 @@ function createGauge(opts) {
   if (opts.config) {
     canvas.dataset.gauge = JSON.stringify(opts.config);
   }
-  if (opts.size) {
-    canvas.dataset.size = opts.size;
+  if (opts.size !== void 0) {
+    canvas.dataset.size = String(opts.size);
   }
   return new FerrariGauge(canvas);
 }
@@ -10135,8 +10300,8 @@ function validateField2(value, field) {
 function buildDOM(container, opts, activeTab, onTabClick) {
   container.innerHTML = "";
   container.classList.add("mn-detail-panel");
-  const backdrop = createElement("div", "mn-detail-panel__backdrop");
-  container.parentNode.insertBefore(backdrop, container);
+  const backdrop2 = createElement("div", "mn-detail-panel__backdrop");
+  container.parentNode.insertBefore(backdrop2, container);
   const header = createElement("div", "mn-detail-panel__header");
   const titleEl = createElement("div", "mn-detail-panel__title");
   titleEl.textContent = opts.title ?? "";
@@ -10181,7 +10346,7 @@ function buildDOM(container, opts, activeTab, onTabClick) {
     }
   }
   container.appendChild(footer);
-  return { backdrop, titleEl, editBtn, saveBtn, cancelBtn, closeBtn, tabBar, body, footer };
+  return { backdrop: backdrop2, titleEl, editBtn, saveBtn, cancelBtn, closeBtn, tabBar, body, footer };
 }
 function renderBody(body, state, opts) {
   body.innerHTML = "";
@@ -11255,9 +11420,7 @@ M.initThemeToggle = initThemeToggle;
 M.themeRotary = themeRotary;
 M.getAccent = getAccent;
 M.cssVar = cssVar;
-M.getGlass = getGlass;
-M.setGlass = setGlass;
-M.toggleGlass = toggleGlass;
+M.palette = palette;
 M.clamp = clamp;
 M.lerp = lerp;
 M.hiDpiCanvas = hiDpiCanvas;
@@ -11339,6 +11502,10 @@ M.initScrollReveal = initScrollReveal;
 M.initNavTracking = initNavTracking;
 M.relativeLuminance = relativeLuminance;
 M.autoContrast = autoContrast;
+M.autoResize = autoResize;
+M.autoResizeAll = autoResizeAll;
+M.initSidebarToggle = initSidebarToggle;
+M.initSidebarToggleAuto = initSidebarToggleAuto;
 M.charts = {
   sparkline,
   donut,
@@ -11353,5 +11520,5 @@ M.charts = {
 registerExtras(M);
 
 // src/ts/index.ts
-var VERSION = "3.3.0";
+var VERSION = "4.0.0";
 //# sourceMappingURL=index.cjs.map

@@ -59,7 +59,11 @@ class MnThemeToggle extends HTMLElement {
   }
 
   connectedCallback() {
-    const mode = this.getAttribute('mode');
+    // Priority: attribute > localStorage > default (nero)
+    const attr = this.getAttribute('mode');
+    let saved = null;
+    try { saved = localStorage.getItem('mn-theme'); } catch (_) { /* storage blocked */ }
+    const mode = attr || saved;
     if (mode) {
       const idx = this._modes.indexOf(mode);
       if (idx >= 0) this._idx = idx;
@@ -95,6 +99,7 @@ class MnThemeToggle extends HTMLElement {
     this._btn.title = this._labels[this._idx];
 
     if (emit) {
+      try { localStorage.setItem('mn-theme', mode); } catch (_) { /* storage blocked */ }
       this.dispatchEvent(new CustomEvent('mn-theme-change', {
         detail: { theme: mode },
         bubbles: true, composed: true,

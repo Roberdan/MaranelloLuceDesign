@@ -55,6 +55,43 @@ export function getAccent(fallback: string = '#FFC72C'): string {
   return cssVar('--giallo-ferrari', fallback);
 }
 
+/**
+ * Read all design token colors live from CSS custom properties.
+ * Call this inside render functions — never cache the result — so colors
+ * automatically reflect the current theme (avorio ↔ nero ↔ colorblind).
+ * Resolves against `el` if provided (useful for shadow DOM contexts).
+ *
+ * @example
+ * const { giallo, rosso, verde, accent } = Maranello.palette();
+ */
+export function palette(el: Element = document.documentElement): Record<string, string> {
+  const read = (name: string) => getComputedStyle(el).getPropertyValue(name).trim();
+  return {
+    // Semantic (theme-aware) — use these for UI surfaces
+    surface:        read('--mn-surface'),
+    surfaceRaised:  read('--mn-surface-raised'),
+    surfaceSunken:  read('--mn-surface-sunken'),
+    text:           read('--mn-text'),
+    textMuted:      read('--mn-text-muted'),
+    border:         read('--mn-border'),
+    accent:         read('--mn-accent'),
+    // Brand primitives — fixed across themes
+    giallo:         read('--giallo-ferrari'),
+    rosso:          read('--rosso-corsa'),
+    verde:          read('--verde-racing'),
+    azzurro:        read('--status-info'),
+    biancoCaldo:    read('--bianco-caldo'),
+    grigioChiaro:   read('--grigio-chiaro'),
+    grigioMedio:    read('--grigio-medio'),
+    neroAssoluto:   read('--nero-assoluto'),
+    // Status — use in charts, badges, gauges
+    signalOk:       read('--signal-ok'),
+    signalWarning:  read('--signal-warning'),
+    signalDanger:   read('--signal-danger'),
+    signalInfo:     read('--signal-info'),
+  };
+}
+
 /** Debounce a function call. */
 export function debounce<T extends (...args: never[]) => void>(
   fn: T,

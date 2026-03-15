@@ -30,7 +30,7 @@
   font-family: var(--font-display);
   font-weight: 600;
   font-size: var(--text-body);
-  color: var(--bianco-caldo);
+  color: var(--mn-text);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -38,7 +38,7 @@
 .mn-profile-dropdown__email {
   font-family: var(--font-body);
   font-size: var(--text-nano);
-  color: var(--grigio-chiaro);
+  color: var(--mn-text-muted);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -62,7 +62,7 @@
   padding: var(--space-sm) var(--space-md);
   cursor: pointer;
   transition: background 0.2s;
-  color: var(--bianco-caldo);
+  color: var(--mn-text);
   font-family: var(--font-body);
   font-size: var(--text-caption);
   border: none;
@@ -72,7 +72,7 @@
 }
 .mn-profile-dropdown__item:hover,
 .mn-profile-dropdown__item--focused {
-  background: var(--nero-soft);
+  background: var(--mn-surface-raised);
 }
 .mn-profile-dropdown__item--danger {
   color: var(--status-danger);
@@ -83,7 +83,7 @@
 .mn-profile-dropdown__item-icon {
   width: 18px;
   flex-shrink: 0;
-  color: var(--grigio-chiaro);
+  color: var(--mn-text-muted);
 }
 .mn-profile-dropdown__item-icon svg {
   width: 16px;
@@ -106,7 +106,7 @@
 }
 .mn-profile-dropdown__divider {
   height: 1px;
-  background: var(--grigio-scuro);
+  background: var(--mn-border);
   margin: var(--space-xs) 0;
 }
 } /* end @layer layouts */

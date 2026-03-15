@@ -13,7 +13,7 @@ body.mn-avorio .mn-section-dark .mn-title-hero,
 body.mn-avorio .mn-section-dark .mn-title-section,
 body.mn-avorio .mn-section-dark .mn-title-sub,
 body.mn-avorio .mn-section-dark h3 { color: var(--nero-assoluto); }
-body.mn-avorio .mn-section-dark .mn-label { color: var(--giallo-ferrari); }
+body.mn-avorio .mn-section-dark .mn-label { color: var(--mn-accent); }
 body.mn-avorio .mn-section-dark .mn-micro { color: var(--grigio-medio); }
 body.mn-avorio .mn-section-dark .mn-section-number { color: var(--avorio-scuro); }
 

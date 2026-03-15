@@ -3,11 +3,11 @@
 
 /* ── Group rows ── */
 .mn-dt__group-row {
-  background: var(--nero-carbon);
-  border-bottom: 1px solid var(--grigio-scuro);
+  background: var(--mn-surface);
+  border-bottom: 1px solid var(--mn-border);
 }
 .mn-dt__group-row:hover {
-  background: var(--nero-soft);
+  background: var(--mn-surface-raised);
 }
 .mn-dt__group-cell {
   padding: var(--space-sm) var(--space-md);
@@ -18,7 +18,7 @@
   justify-content: center;
   width: 16px;
   font-size: 0.7rem;
-  color: var(--grigio-chiaro);
+  color: var(--mn-text-muted);
   transition: transform 0.2s var(--ease-out);
 }
 .mn-dt__group-chevron--open {
@@ -40,7 +40,7 @@
   font-weight: 700;
   font-size: var(--text-micro);
   letter-spacing: 0.08em;
-  color: var(--bianco-caldo);
+  color: var(--mn-text);
 }
 .mn-dt__group-count {
   display: inline-flex;
@@ -49,8 +49,8 @@
   min-width: 22px;
   height: 20px;
   border-radius: var(--radius-pill);
-  background: var(--grigio-scuro);
-  color: var(--grigio-chiaro);
+  background: var(--mn-border);
+  color: var(--mn-text-muted);
   font-family: var(--font-mono);
   font-size: 0.65rem;
   padding: 0 6px;
@@ -63,13 +63,13 @@
   justify-content: center;
   gap: var(--space-md);
   padding: var(--space-sm) var(--space-md);
-  border-top: 1px solid var(--grigio-scuro);
-  background: var(--nero-carbon);
+  border-top: 1px solid var(--mn-border);
+  background: var(--mn-surface);
 }
 .mn-dt__page-info {
   font-family: var(--font-body);
   font-size: var(--text-micro);
-  color: var(--grigio-chiaro);
+  color: var(--mn-text-muted);
 }
 .mn-dt__page-btn {
   display: inline-flex;
@@ -78,15 +78,15 @@
   width: 32px;
   height: 32px;
   border-radius: var(--radius-sm);
-  border: 1px solid var(--grigio-scuro);
+  border: 1px solid var(--mn-border);
   background: transparent;
-  color: var(--grigio-chiaro);
+  color: var(--mn-text-muted);
   font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.2s;
 }
 .mn-dt__page-btn:hover:not(:disabled) {
-  background: var(--nero-soft);
+  background: var(--mn-surface-raised);
   color: var(--mn-accent);
   border-color: var(--mn-accent);
 }

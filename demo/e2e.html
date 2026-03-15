@@ -83,6 +83,41 @@
       <button id="ovl-cmd-palette">Command Palette</button>
     </section>
     <section id="icons"><h2>Icons</h2></section>
+
+    <!-- Responsive test fixtures -->
+    <section id="responsive-fixtures">
+      <h2>Responsive Fixtures</h2>
+
+      <aside class="mn-sidebar" data-testid="sidebar">
+        <div class="mn-sidebar__header"><span class="mn-sidebar__brand">Nav</span></div>
+        <nav class="mn-sidebar__nav">
+          <a class="mn-sidebar__item" href="#">Item 1</a>
+          <a class="mn-sidebar__item" href="#">Item 2</a>
+        </nav>
+      </aside>
+
+      <div class="mn-dt" data-testid="data-table">
+        <div class="mn-dt__scroll">
+          <table><thead><tr><th class="mn-dt__th">Name</th><th class="mn-dt__th">Value</th></tr></thead>
+          <tbody><tr><td class="mn-dt__td">A</td><td class="mn-dt__td">1</td></tr>
+          <tr><td class="mn-dt__td">B</td><td class="mn-dt__td">2</td></tr>
+          <tr><td class="mn-dt__td">C</td><td class="mn-dt__td">3</td></tr></tbody></table>
+        </div>
+      </div>
+
+      <form class="mn-form--grid" data-testid="form-grid">
+        <div class="mn-field"><input class="mn-form-input" placeholder="Field 1" aria-label="Field 1"></div>
+        <div class="mn-field"><input class="mn-form-input" placeholder="Field 2" aria-label="Field 2"></div>
+      </form>
+
+      <div class="mn-chat-panel" data-testid="chat-panel"><div class="mn-chat-panel__body">Chat</div></div>
+
+      <div class="mn-detail-panel" data-testid="detail-panel"><div class="mn-detail-panel__body">Detail</div></div>
+
+      <div data-testid="chart-container" style="width:100%;height:200px;position:relative">
+        <canvas data-testid="responsive-chart" width="300" height="200" role="img" aria-label="Responsive chart test fixture"></canvas>
+      </div>
+    </section>
   </main>
   <script src="../dist/iife/maranello.min.js"></script>
   <!-- Only mn-theme-toggle WC: other APIs come from the IIFE.

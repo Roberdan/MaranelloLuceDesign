@@ -1,121 +1,157 @@
 /**
  * Maranello Luce Design System — Demo App
- * Lazy-loads section modules when they scroll into view.
+ * Hash-based SPA routing: one section at a time.
+ * Dynamic imports: only the current section's JS loads on demand.
+ * Works on local dev server AND GitHub Pages static hosting.
  */
-
-const sectionDefs = [
-  { id: 'hero',        mod: './sections/hero.js',           fn: 'createHeroSection',        eager: true },
-  { id: 'tokens',      mod: './sections/tokens.js',         fn: 'createTokensSection',      eager: true },
-  { id: 'cards',       mod: './sections/cards.js',          fn: 'createCardsSection',        eager: true },
-  { id: 'dashboard',   mod: './sections/dashboard.js',      fn: 'createDashboardSection' },
-  { id: 'charts',      mod: './sections/charts.js',         fn: 'createChartsSection' },
-  { id: 'network',     mod: './sections/network.js',        fn: 'createNetworkSection' },
-  { id: 'controls',    mod: './sections/controls.js',       fn: 'createControlsSection' },
-  { id: 'forms',       mod: './sections/forms.js',          fn: 'createFormsSection' },
-  { id: 'tables',      mod: './sections/tables.js',         fn: 'createTablesSection' },
-  { id: 'gauges',      mod: './sections/gauges.js',         fn: 'createGaugesSection' },
-  { id: 'cockpit',     mod: './sections/cockpit.js',        fn: 'createCockpitSection' },
-  { id: 'telemetry',   mod: './sections/telemetry.js',      fn: 'createTelemetrySection' },
-  { id: 'gantt',       mod: './sections/gantt.js',          fn: 'createGanttSection' },
-  { id: 'icons',       mod: './sections/icons.js',          fn: 'createIconsSection' },
-  { id: 'animations',  mod: './sections/animations.js',     fn: 'createAnimationsSection' },
-  { id: 'heatmap',     mod: './sections/heatmap.js',        fn: 'createHeatmapSection' },
-  { id: 'treemap',     mod: './sections/treemap.js',        fn: 'createTreemapSection' },
-  { id: 'layouts',     mod: './sections/layouts.js',        fn: 'createLayoutsSection' },
-  { id: 'detail-panel',mod: './sections/detail-panel.js',   fn: 'createDetailPanelSection' },
-  { id: 'interactive', mod: './sections/interactive.js',     fn: 'createInteractiveSection' },
-  { id: 'okr',         mod: './sections/okr-panel.js',      fn: 'createOkrSection' },
-  { id: 'map',         mod: './sections/map.js',            fn: 'createMapSection' },
-  { id: 'social-graph',mod: './sections/social-graph.js',   fn: 'createSocialGraphSection' },
-  { id: 'advanced',    mod: './sections/advanced.js',       fn: 'createAdvancedSection' },
-  { id: 'mesh-network',mod: './sections/mesh-network.js',   fn: 'createMeshNetworkSection' },
-  { id: 'convergio',   mod: './sections/convergio.js',      fn: 'createConvergioSection' },
-  { id: 'web-components', mod: './sections/web-components.js', fn: 'createWebComponentsSection' },
-  { id: 'glass',       mod: './sections/section-glass.js',  fn: 'createGlassSection' },
-  { id: 'launch',      mod: './sections/launch.js',         fn: 'createLaunchSection' },
-  { id: 'accessibility', mod: './sections/accessibility.js', fn: 'createAccessibilitySection' },
-  { id: 'api-reference', mod: './sections/api-reference.js', fn: 'createApiReferenceSection' },
-  { id: 'data-binding', mod: './sections/data-binding.js',  fn: 'createDataBindingSection' },
-  { id: 'overlays',    mod: './sections/overlays.js',       fn: 'createOverlaysSection' },
-  { id: 'org-tree',    mod: './sections/org-tree.js',       fn: 'createOrgTreeSection' },
-];
 
 const root = document.getElementById('demo-root');
 if (!root) throw new Error('Missing #demo-root');
 
-/* Placeholder with min-height so nav anchors work before lazy load */
-function makePlaceholder(id) {
+// Dynamic import map — sections load only when navigated to (browser caches modules)
+const SECTIONS = new Map([
+  ['hero',           () => import('./sections/hero.js').then(m => m.createHeroSection)],
+  ['tokens',         () => import('./sections/tokens.js').then(m => m.createTokensSection)],
+  ['cards',          () => import('./sections/cards.js').then(m => m.createCardsSection)],
+  ['dashboard',      () => import('./sections/dashboard.js').then(m => m.createDashboardSection)],
+  ['charts',         () => import('./sections/charts.js').then(m => m.createChartsSection)],
+  ['network',        () => import('./sections/network.js').then(m => m.createNetworkSection)],
+  ['controls',       () => import('./sections/controls.js').then(m => m.createControlsSection)],
+  ['forms',          () => import('./sections/forms.js').then(m => m.createFormsSection)],
+  ['tables',         () => import('./sections/tables.js').then(m => m.createTablesSection)],
+  ['gauges',         () => import('./sections/gauges.js').then(m => m.createGaugesSection)],
+  ['cockpit',        () => import('./sections/cockpit.js').then(m => m.createCockpitSection)],
+  ['telemetry',      () => import('./sections/telemetry.js').then(m => m.createTelemetrySection)],
+  ['gantt',          () => import('./sections/gantt.js').then(m => m.createGanttSection)],
+  ['icons',          () => import('./sections/icons.js').then(m => m.createIconsSection)],
+  ['animations',     () => import('./sections/animations.js').then(m => m.createAnimationsSection)],
+  ['heatmap',        () => import('./sections/heatmap.js').then(m => m.createHeatmapSection)],
+  ['treemap',        () => import('./sections/treemap.js').then(m => m.createTreemapSection)],
+  ['layouts',        () => import('./sections/layouts.js').then(m => m.createLayoutsSection)],
+  ['detail-panel',   () => import('./sections/detail-panel.js').then(m => m.createDetailPanelSection)],
+  ['interactive',    () => import('./sections/interactive.js').then(m => m.createInteractiveSection)],
+  ['okr',            () => import('./sections/okr-panel.js').then(m => m.createOkrSection)],
+  ['map',            () => import('./sections/map.js').then(m => m.createMapSection)],
+  ['social-graph',   () => import('./sections/social-graph.js').then(m => m.createSocialGraphSection)],
+  ['advanced',       () => import('./sections/advanced.js').then(m => m.createAdvancedSection)],
+  ['mesh-network',   () => import('./sections/mesh-network.js').then(m => m.createMeshNetworkSection)],
+  ['convergio',      () => import('./sections/convergio.js').then(m => m.createConvergioSection)],
+  ['web-components', () => import('./sections/web-components.js').then(m => m.createWebComponentsSection)],
+  ['launch',         () => import('./sections/launch.js').then(m => m.createLaunchSection)],
+  ['accessibility',  () => import('./sections/accessibility.js').then(m => m.createAccessibilitySection)],
+  ['api-reference',  () => import('./sections/api-reference.js').then(m => m.createApiReferenceSection)],
+  ['data-binding',   () => import('./sections/data-binding.js').then(m => m.createDataBindingSection)],
+  ['overlays',       () => import('./sections/overlays.js').then(m => m.createOverlaysSection)],
+  ['org-tree',       () => import('./sections/org-tree.js').then(m => m.createOrgTreeSection)],
+]);
+
+const SECTION_KEYS = [...SECTIONS.keys()];
+
+const SECTION_LABELS = {
+  'hero': 'Home', 'tokens': 'Tokens', 'cards': 'Cards', 'dashboard': 'Dashboard',
+  'charts': 'Charts', 'network': 'Network', 'controls': 'Controls', 'forms': 'Forms',
+  'tables': 'Tables', 'gauges': 'Gauges', 'cockpit': 'Cockpit', 'telemetry': 'Telemetry',
+  'gantt': 'Gantt', 'icons': 'Icons', 'animations': 'Anim', 'heatmap': 'Heatmap',
+  'treemap': 'Treemap', 'layouts': 'Layouts', 'detail-panel': 'Detail',
+  'interactive': 'Chat', 'okr': 'OKR', 'map': 'Map', 'social-graph': 'Social',
+  'advanced': 'Advanced', 'mesh-network': 'Mesh', 'convergio': 'Convergio',
+  'web-components': 'WC', 'launch': 'Launch', 'accessibility': 'A11y',
+  'api-reference': 'API', 'data-binding': 'Binding', 'overlays': 'Overlays',
+  'org-tree': 'Org',
+};
+
+function safeErr(name, err) {
+  console.error(`[demo] ${name} crashed:`, err);
   const el = document.createElement('section');
-  el.id = id;
   el.className = 'mn-section-dark';
-  el.style.cssText = 'min-height:60vh;display:flex;align-items:center;justify-content:center';
-  el.innerHTML = `<p class="mn-label" style="color:var(--grigio-scuro);opacity:.4">Loading ${id}…</p>`;
+  el.innerHTML = `<div class="mn-container" style="padding:var(--space-xl)">
+    <p style="color:var(--rosso-corsa)">⚠ Section "${name}" failed to render</p>
+    <pre class="mn-micro" style="color:var(--grigio-medio)">${String(err?.message ?? err)}</pre></div>`;
   return el;
 }
 
-/* Render a section, replacing its placeholder */
-async function renderSection(def, placeholder) {
-  try {
-    const mod = await import(def.mod);
-    const section = mod[def.fn]();
-    if (section) {
-      placeholder.replaceWith(section);
-    }
-  } catch (e) {
-    console.error(`[demo] ${def.id} crashed:`, e);
-    placeholder.className = 'mn-section-dark';
-    placeholder.style.cssText = 'padding:var(--space-xl)';
-    placeholder.innerHTML = `<div class="mn-container">
-      <p style="color:var(--rosso-corsa)">⚠ Section "${def.id}" failed to render</p>
-      <pre class="mn-micro" style="color:var(--grigio-medio)">${e.message}</pre></div>`;
+function updateHeaderNav(name) {
+  const idx = SECTION_KEYS.indexOf(name);
+  const prev = idx > 0 ? SECTION_KEYS[idx - 1] : null;
+  const next = idx < SECTION_KEYS.length - 1 ? SECTION_KEYS[idx + 1] : null;
+  const prevBtn = document.getElementById('demo-pg-prev');
+  const nextBtn = document.getElementById('demo-pg-next');
+  const label = document.getElementById('demo-pg-label');
+  if (prevBtn) {
+    prevBtn.disabled = !prev;
+    prevBtn.title = prev ? (SECTION_LABELS[prev] || prev) : '';
+    prevBtn.setAttribute('aria-label', prev ? `Previous: ${SECTION_LABELS[prev] || prev}` : 'Previous section');
   }
+  if (nextBtn) {
+    nextBtn.disabled = !next;
+    nextBtn.title = next ? (SECTION_LABELS[next] || next) : '';
+    nextBtn.setAttribute('aria-label', next ? `Next: ${SECTION_LABELS[next] || next}` : 'Next section');
+  }
+  if (label) label.textContent = `${idx + 1} / ${SECTION_KEYS.length}`;
 }
 
-/* Mount all placeholders, eager-load first 3, lazy-load rest */
-const fragment = document.createDocumentFragment();
-const lazyQueue = [];
-
-for (const def of sectionDefs) {
-  const ph = makePlaceholder(def.id);
-  fragment.appendChild(ph);
-  if (def.eager) {
-    renderSection(def, ph);
-  } else {
-    lazyQueue.push({ def, ph });
-  }
-}
-
-fragment.appendChild(createFooter());
-root.appendChild(fragment);
-
-/* IntersectionObserver: load section when 200px from viewport */
-const observer = new IntersectionObserver((entries) => {
-  for (const entry of entries) {
-    if (!entry.isIntersecting) continue;
-    observer.unobserve(entry.target);
-    const item = lazyQueue.find(q => q.ph === entry.target);
-    if (item) renderSection(item.def, item.ph);
-  }
-}, { rootMargin: '200px' });
-
-for (const item of lazyQueue) observer.observe(item.ph);
-
-/* Nav smooth scroll */
-document.querySelectorAll('.demo-nav__links a').forEach((link) => {
-  link.addEventListener('click', (event) => {
-    event.preventDefault();
-    const target = document.querySelector(link.getAttribute('href'));
-    if (target) target.scrollIntoView({ behavior: 'smooth' });
+function initHeaderNav() {
+  document.getElementById('demo-pg-prev')?.addEventListener('click', () => {
+    const idx = SECTION_KEYS.indexOf(currentSection());
+    if (idx > 0) window.location.hash = SECTION_KEYS[idx - 1];
   });
-});
+  document.getElementById('demo-pg-next')?.addEventListener('click', () => {
+    const idx = SECTION_KEYS.indexOf(currentSection());
+    if (idx < SECTION_KEYS.length - 1) window.location.hash = SECTION_KEYS[idx + 1];
+  });
+}
 
-/** Sync theme label next to the theme toggle. */
+function currentSection() {
+  const hash = window.location.hash.replace('#', '').trim();
+  return SECTIONS.has(hash) ? hash : 'hero';
+}
+
+function setActiveNav(name) {
+  document.querySelectorAll('.demo-nav__links a').forEach((a) => {
+    a.classList.toggle('demo-nav__link--active', a.getAttribute('href') === '#' + name);
+  });
+  updateHeaderNav(name);
+}
+
+// Loading placeholder while dynamic import resolves
+function showLoader() {
+  root.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;min-height:60vh">
+    <div class="mn-spinner mn-spinner--lg"><div class="mn-spinner__ring"></div></div>
+  </div>`;
+}
+
+async function render(name) {
+  setActiveNav(name);
+  showLoader();
+  try {
+    const factory = await SECTIONS.get(name)();
+    // Clear after load (stops canvas/RAF of removed elements)
+    while (root.firstChild) root.removeChild(root.firstChild);
+    root.appendChild(factory());
+  } catch (err) {
+    while (root.firstChild) root.removeChild(root.firstChild);
+    root.appendChild(safeErr(name, err));
+  }
+  window.scrollTo({ top: 0, behavior: 'instant' });
+}
+
+// Hash navigation
+window.addEventListener('hashchange', () => render(currentSection()));
+
+// Theme label sync — reads body class directly so it works before Maranello IIFE loads
+function getActiveTheme() {
+  const cl = document.body.classList;
+  if (cl.contains('mn-avorio')) return 'avorio';
+  if (cl.contains('mn-colorblind')) return 'colorblind';
+  if (cl.contains('mn-nero')) return 'nero';
+  return window.Maranello?.getTheme?.() ?? 'editorial';
+}
+
 function updateThemeLabel() {
   const label = document.getElementById('demo-theme-label');
   if (!label) return;
-  const theme = window.Maranello?.getTheme?.() ?? 'nero';
   const names = { nero: 'Nero', avorio: 'Avorio', colorblind: 'Colorblind', editorial: 'Editorial' };
-  label.textContent = `Current: ${names[theme] ?? theme}`;
+  label.textContent = `Current: ${names[getActiveTheme()] ?? getActiveTheme()}`;
 }
 
 document.addEventListener('mn-theme-change', (event) => {
@@ -133,16 +169,8 @@ document.addEventListener('mn-theme-change', (event) => {
 
 requestAnimationFrame(updateThemeLabel);
 
-function createFooter() {
-  const footer = document.createElement('footer');
-  footer.className = 'mn-section-dark';
-  footer.style.cssText = 'padding:var(--space-2xl) var(--space-xl);text-align:center';
-  footer.innerHTML = `
-    <div class="mn-container">
-      <div class="mn-divider-gold--accent mn-divider-gold" style="margin-bottom:var(--space-xl)"></div>
-      <p class="mn-label" style="color:var(--mn-accent);margin-bottom:var(--space-sm)">Maranello Luce Design System</p>
-      <p class="mn-micro" style="color:var(--grigio-medio)">Demo built with fictional Maranello Luce operations data. All data is illustrative and does not represent a real platform.</p>
-      <p class="mn-micro" style="color:var(--grigio-scuro);margin-top:var(--space-sm)">v3.3.0 — 5 themes · 150 APIs · 25 Web Components</p>
-    </div>`;
-  return footer;
-}
+// Wire header prev/next buttons once
+initHeaderNav();
+
+// Initial render
+render(currentSection());

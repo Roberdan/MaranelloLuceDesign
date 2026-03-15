@@ -24,6 +24,8 @@ export interface LoginScreenOptions {
     appTitle?: string;
     /** Title accent text (default: "Luce") */
     appTitleAccent?: string;
+    /** Whether to show the system status section (default: true) */
+    showStatus?: boolean;
 }
 export interface LoginScreenController {
     updateStatus: (healthData: LoginHealthData | null | undefined) => void;

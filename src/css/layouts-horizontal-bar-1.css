@@ -175,8 +175,8 @@
   gap: var(--space-md);
 }
 .mn-okr__summary-card {
-  background: var(--nero-soft);
-  border: 1px solid var(--grigio-scuro);
+  background: var(--mn-surface-raised);
+  border: 1px solid var(--mn-border);
   border-radius: var(--radius-md);
   padding: var(--space-md);
   display: flex;

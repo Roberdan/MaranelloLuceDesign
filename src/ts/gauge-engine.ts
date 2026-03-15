@@ -6,7 +6,7 @@ import type { GaugeDrawState } from './gauge-engine-draw';
 import { drawGauge } from './gauge-engine-draw';
 import { buildGaugePalette } from './gauge-engine-palette';
 import { drawComplications } from './gauge-engine-complications';
-import { getAccent } from './core/utils';
+import { getAccent, debounce } from './core/utils';
 
 /** Size presets for the gauge canvas. */
 const SIZES: Record<string, number> = { sm: 120, md: 220, lg: 320 };
@@ -24,6 +24,7 @@ export class FerrariGauge {
   density!: 'sm' | 'md' | 'lg';
 
   private srSpan: HTMLSpanElement | null = null;
+  private _resizeObserver: ResizeObserver | null = null;
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
@@ -31,6 +32,7 @@ export class FerrariGauge {
     this.config = JSON.parse(canvas.dataset.gauge || '{}');
     this.dpr = window.devicePixelRatio || 1;
     this.init();
+    if (canvas.dataset.size === 'fluid') this._attachFluidObserver();
   }
 
   get palette() {
@@ -42,7 +44,7 @@ export class FerrariGauge {
   init(): void {
     const sizeKey = this.canvas.dataset.size;
     let size: number;
-    if (sizeKey && SIZES[sizeKey]) {
+    if (sizeKey && sizeKey !== 'fluid' && SIZES[sizeKey]) {
       size = SIZES[sizeKey];
     } else {
       const rect = (this.canvas.parentElement || this.canvas).getBoundingClientRect();
@@ -125,5 +127,28 @@ export class FerrariGauge {
     };
     drawGauge(state, progress);
     drawComplications(state, progress);
+  }
+
+  /** Attach ResizeObserver for size='fluid' mode. */
+  private _attachFluidObserver(): void {
+    if (typeof window === 'undefined' || !window.ResizeObserver) return;
+    const parent = this.canvas.parentElement;
+    if (!parent) return;
+    const handler = debounce(() => {
+      this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+      this.init();
+    }, 150);
+    this._resizeObserver = new ResizeObserver(handler);
+    this._resizeObserver.observe(parent);
+  }
+
+  /** Clean up ResizeObserver and screen reader helpers. */
+  destroy(): void {
+    this._resizeObserver?.disconnect();
+    this._resizeObserver = null;
+    if (this.srSpan) {
+      this.srSpan.remove();
+      this.srSpan = null;
+    }
   }
 }

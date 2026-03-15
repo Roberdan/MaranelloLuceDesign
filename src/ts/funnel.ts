@@ -36,28 +36,32 @@ export function funnel(
     const total = data.total || pipe.reduce((a, s) => a + s.count, 0);
     const reach = cumulativeReach(pipe.map((s) => s.count));
     const rows = pipe.length;
-    const svgH = PAD * 2 + rows * BAR_H + (rows - 1) * GAP;
+    const containerH = (host as HTMLElement).clientHeight || 0;
+    const dynH = containerH > 100 ? containerH : 0;
+    const barH = dynH > 0 ? Math.max(28, Math.floor((dynH - PAD * 2 - (rows - 1) * 24) / rows)) : BAR_H;
+    const gap = dynH > 0 ? 24 : GAP;
+    const svgH = PAD * 2 + rows * barH + (rows - 1) * gap;
     const svg = svgEl('svg', { viewBox: '0 0 ' + VB_W + ' ' + svgH, preserveAspectRatio: 'xMidYMid meet' }) as SVGSVGElement;
-    svg.style.width = '100%'; svg.style.height = 'auto';
+    svg.style.width = '100%'; svg.style.height = dynH > 0 ? '100%' : 'auto';
 
     pipe.forEach((stageRaw, i) => {
       const stage = isValidColor(stageRaw.color) ? stageRaw : { ...stageRaw, color: 'var(--grigio-alluminio)' };
       const barW = Math.max(PIPE_W * MIN_BAR, (stage.count / maxC) * PIPE_W);
       const barX = PIPE_L + (PIPE_W - barW) / 2;
-      const y = PAD + i * (BAR_H + GAP);
+      const y = PAD + i * (barH + gap);
 
       // Connector
       if (i < rows - 1) {
         const ns = pipe[i + 1];
         const nW = Math.max(PIPE_W * MIN_BAR, (ns.count / maxC) * PIPE_W);
         const nX = PIPE_L + (PIPE_W - nW) / 2;
-        svg.appendChild(svgEl('path', { d: trapPath(barX, barW, nX, nW, y + BAR_H, y + BAR_H + GAP), fill: stage.color, opacity: '0.12' }));
+        svg.appendChild(svgEl('path', { d: trapPath(barX, barW, nX, nW, y + barH, y + barH + gap), fill: stage.color, opacity: '0.12' }));
         const rate = reach[i] > 0 ? Math.round(reach[i + 1] / reach[i] * 100) : 0;
-        svg.appendChild(svgText({ x: PIPE_L + PIPE_W / 2, y: y + BAR_H + GAP / 2 + 1, 'text-anchor': 'middle', 'dominant-baseline': 'middle', 'font-size': 9, 'font-family': "'Barlow Condensed',sans-serif", fill: 'var(--grigio-medio,#777)', 'font-weight': '500' }, '\u2193 ' + rate + '%'));
+        svg.appendChild(svgText({ x: PIPE_L + PIPE_W / 2, y: y + barH + gap / 2 + 1, 'text-anchor': 'middle', 'dominant-baseline': 'middle', 'font-size': 9, 'font-family': "'Barlow Condensed',sans-serif", fill: 'var(--grigio-medio,#777)', 'font-weight': '500' }, '\u2193 ' + rate + '%'));
       }
 
       // Bar
-      const bar = svgEl('rect', { x: barX, y, width: barW, height: BAR_H, rx: RAD, fill: stage.color });
+      const bar = svgEl('rect', { x: barX, y, width: barW, height: barH, rx: RAD, fill: stage.color });
       bar.classList.add('mn-funnel__bar');
       bar.setAttribute('data-stage', stage.label);
       if (opts.animate) { (bar as SVGElement & ElementCSSInlineStyle).style.opacity = '0'; (bar as SVGElement & ElementCSSInlineStyle).style.transform = 'translateX(-12px)'; }
@@ -65,10 +69,10 @@ export function funnel(
 
       // Labels
       const tc = autoTextColor(stage.color);
-      svg.appendChild(svgText({ x: PIPE_L + PIPE_W / 2, y: y + 14, 'text-anchor': 'middle', 'font-size': 11, 'font-family': "'Inter',sans-serif", fill: tc, 'font-weight': '600' }, stage.label));
+      svg.appendChild(svgText({ x: PIPE_L + PIPE_W / 2, y: y + Math.round(barH * 0.37), 'text-anchor': 'middle', 'font-size': 11, 'font-family': "'Inter',sans-serif", fill: tc, 'font-weight': '600' }, stage.label));
       let cTxt = String(stage.count);
       if (total > 0) cTxt += ' (' + Math.round(stage.count / total * 100) + '%)';
-      svg.appendChild(svgText({ x: PIPE_L + PIPE_W / 2, y: y + 29, 'text-anchor': 'middle', 'font-size': 14, 'font-family': "'Barlow Condensed',sans-serif", fill: tc, 'font-weight': '700' }, cTxt));
+      svg.appendChild(svgText({ x: PIPE_L + PIPE_W / 2, y: y + Math.round(barH * 0.76), 'text-anchor': 'middle', 'font-size': 14, 'font-family': "'Barlow Condensed',sans-serif", fill: tc, 'font-weight': '700' }, cTxt));
 
       // Exit branches
       const holdClr = isValidColor(data.onHold?.color || '') ? data.onHold!.color : '#ea580c';
@@ -77,7 +81,7 @@ export function funnel(
       if (stage.withdrawnCount && stage.withdrawnCount > 0) renderExitPill(svg, barX + barW, y, 'right', stage.withdrawnCount, wdClr, '\u2715');
 
       // Hover + Click selection
-      const hit = svgEl('rect', { x: barX, y, width: barW, height: BAR_H, fill: 'transparent', cursor: 'pointer', 'pointer-events': 'all' });
+      const hit = svgEl('rect', { x: barX, y, width: barW, height: barH, fill: 'transparent', cursor: 'pointer', 'pointer-events': 'all' });
       hit.addEventListener('mouseenter', () => {
         (bar as SVGElement & ElementCSSInlineStyle).style.filter = 'brightness(1.3)';
         (bar as SVGElement & ElementCSSInlineStyle).style.transition = 'filter 0.15s';
@@ -87,7 +91,7 @@ export function funnel(
       });
       hit.addEventListener('click', () => {
         svg.querySelectorAll('.mn-funnel__sel').forEach(el => el.remove());
-        const sel = svgEl('rect', { x: barX - 2, y: y - 2, width: barW + 4, height: BAR_H + 4, fill: 'none', stroke: '#FFC72C', 'stroke-width': '2', rx: '6', class: 'mn-funnel__sel' });
+        const sel = svgEl('rect', { x: barX - 2, y: y - 2, width: barW + 4, height: barH + 4, fill: 'none', stroke: '#FFC72C', 'stroke-width': '2', rx: '6', class: 'mn-funnel__sel' });
         svg.appendChild(sel);
         if (opts.onClick) opts.onClick(stage);
       });

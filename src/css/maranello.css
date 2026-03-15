@@ -22,4 +22,9 @@
 @import url('accessibility.css');
 @import url('themes.css');
 @import url('utilities.css');
+@import url('responsive-tokens.css');
+@import url('responsive-layouts.css');
+@import url('responsive-data.css');
+@import url('responsive-forms.css');
+@import url('responsive-charts.css');
 @import './integration.css';

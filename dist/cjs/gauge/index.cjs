@@ -463,6 +463,16 @@ function cssVar(name, fallback = "") {
 function getAccent(fallback = "#FFC72C") {
   return cssVar("--giallo-ferrari", fallback);
 }
+function debounce(fn, ms) {
+  let timer = null;
+  return (...args) => {
+    if (timer !== null) clearTimeout(timer);
+    timer = setTimeout(() => {
+      timer = null;
+      fn(...args);
+    }, ms);
+  };
+}
 
 // src/ts/gauge-engine-complications.ts
 function drawComplications(state, progress) {
@@ -711,11 +721,13 @@ var SIZES = { sm: 120, md: 220, lg: 320 };
 var FerrariGauge = class {
   constructor(canvas) {
     this.srSpan = null;
+    this._resizeObserver = null;
     this.canvas = canvas;
     this.ctx = canvas.getContext("2d");
     this.config = JSON.parse(canvas.dataset.gauge || "{}");
     this.dpr = window.devicePixelRatio || 1;
     this.init();
+    if (canvas.dataset.size === "fluid") this._attachFluidObserver();
   }
   get palette() {
     const accent = getAccent();
@@ -725,7 +737,7 @@ var FerrariGauge = class {
   init() {
     const sizeKey = this.canvas.dataset.size;
     let size;
-    if (sizeKey && SIZES[sizeKey]) {
+    if (sizeKey && sizeKey !== "fluid" && SIZES[sizeKey]) {
       size = SIZES[sizeKey];
     } else {
       const rect = (this.canvas.parentElement || this.canvas).getBoundingClientRect();
@@ -809,6 +821,27 @@ var FerrariGauge = class {
     };
     drawGauge(state, progress);
     drawComplications(state, progress);
+  }
+  /** Attach ResizeObserver for size='fluid' mode. */
+  _attachFluidObserver() {
+    if (typeof window === "undefined" || !window.ResizeObserver) return;
+    const parent = this.canvas.parentElement;
+    if (!parent) return;
+    const handler = debounce(() => {
+      this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+      this.init();
+    }, 150);
+    this._resizeObserver = new ResizeObserver(handler);
+    this._resizeObserver.observe(parent);
+  }
+  /** Clean up ResizeObserver and screen reader helpers. */
+  destroy() {
+    this._resizeObserver?.disconnect();
+    this._resizeObserver = null;
+    if (this.srSpan) {
+      this.srSpan.remove();
+      this.srSpan = null;
+    }
   }
 };
 
@@ -1037,7 +1070,16 @@ function speedometer(canvas, opts) {
     animate: true,
     ...opts
   };
-  const dim = SIZES2[options.size] || SIZES2.md;
+  const isFluid = options.size === "fluid";
+  let dim;
+  if (isFluid) {
+    const rect = (canvas.parentElement || canvas).getBoundingClientRect();
+    dim = Math.min(rect.width, rect.height) || SIZES2.md;
+  } else if (typeof options.size === "number") {
+    dim = options.size;
+  } else {
+    dim = SIZES2[options.size] || SIZES2.md;
+  }
   const dpr = window.devicePixelRatio || 1;
   canvas.width = dim * dpr;
   canvas.height = dim * dpr;
@@ -1047,16 +1089,13 @@ function speedometer(canvas, opts) {
   ctx.scale(dpr, dpr);
   const s = dim / 220;
   const cx = dim / 2, cy = dim / 2, R = dim * 0.4;
-  const max = options.max;
-  const unit = options.unit || "";
-  function buildLabel(v) {
-    const suffix = unit ? `${Math.round(v)}${unit}` : String(Math.round(v));
-    return `Speedometer: ${suffix} of ${max}`;
-  }
+  const max = options.max, unit = options.unit || "";
+  const buildLabel = (v) => `Speedometer: ${unit ? `${Math.round(v)}${unit}` : Math.round(v)} of ${max}`;
   canvas.setAttribute("role", "img");
   const initLabel = buildLabel(options.value);
   canvas.setAttribute("aria-label", initLabel);
   canvas.textContent = initLabel;
+  canvas.nextSibling?.classList?.contains("mn-sr-only") && canvas.nextSibling.remove();
   const srSpan = document.createElement("span");
   srSpan.className = "mn-sr-only";
   srSpan.textContent = initLabel;
@@ -1076,11 +1115,9 @@ function speedometer(canvas, opts) {
   }
   function animateTo(toAngle, toVal) {
     if (animId) cancelAnimationFrame(animId);
-    const fromA = curAngle, fromV = curVal;
-    const t0 = performance.now(), dur = 800;
+    const fromA = curAngle, fromV = curVal, t0 = performance.now(), dur = 800;
     const tick = (now) => {
-      const p = Math.min(1, (now - t0) / dur);
-      const ep = easeOutCubic(p);
+      const p = Math.min(1, (now - t0) / dur), ep = easeOutCubic(p);
       curAngle = fromA + (toAngle - fromA) * ep;
       curVal = fromV + (toVal - fromV) * ep;
       draw();
@@ -1099,6 +1136,20 @@ function speedometer(canvas, opts) {
   } else {
     draw();
   }
+  let resizeObs = null;
+  if (isFluid && window.ResizeObserver && canvas.parentElement) {
+    const p = canvas.parentElement;
+    resizeObs = new ResizeObserver(debounce(() => {
+      const r = p.getBoundingClientRect();
+      const nd = Math.min(r.width, r.height);
+      if (nd <= 0 || nd === dim) return;
+      if (animId) cancelAnimationFrame(animId);
+      resizeObs?.disconnect();
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      speedometer(canvas, { ...opts || {}, size: nd, value: curVal, animate: false });
+    }, 150));
+    resizeObs.observe(p);
+  }
   return {
     setValue(v) {
       const ta = v2a(v, max);
@@ -1116,7 +1167,9 @@ function speedometer(canvas, opts) {
     },
     destroy() {
       if (animId) cancelAnimationFrame(animId);
+      resizeObs?.disconnect();
       ctx.clearRect(0, 0, dim * dpr, dim * dpr);
+      srSpan.remove();
     }
   };
 }

@@ -67,7 +67,7 @@
   font-size: var(--text-micro);
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: var(--grigio-chiaro);
+  color: var(--mn-text-muted);
   text-align: center;
 }
 .mn-login__btn {
@@ -76,9 +76,9 @@
   gap: 10px;
   padding: 12px 28px;
   background: rgba(255,255,255,0.06);
-  border: 1px solid var(--grigio-scuro);
+  border: 1px solid var(--mn-border);
   border-radius: var(--radius-md);
-  color: var(--bianco-caldo);
+  color: var(--mn-text);
   font-family: var(--font-body);
   font-size: 0.9rem;
   font-weight: 500;
@@ -110,7 +110,7 @@
   align-items: center;
   gap: var(--space-sm);
   padding-top: var(--space-lg);
-  border-top: 1px solid var(--grigio-scuro);
+  border-top: 1px solid var(--mn-border);
 }
 .mn-login__status-title {
   font-family: var(--font-mono);
@@ -136,7 +136,7 @@
   font-size: 0.55rem;
   font-weight: 600;
   letter-spacing: 0.08em;
-  color: var(--grigio-chiaro);
+  color: var(--mn-text-muted);
 }
 .mn-login__service-status {
   font-family: var(--font-mono);
@@ -192,4 +192,11 @@ body.mn-avorio .mn-login__btn { background: rgba(0,0,0,0.04); border-color: var(
 body.mn-avorio .mn-login__btn:hover { background: rgba(0,0,0,0.08); }
 body.mn-avorio .mn-login__status { border-top-color: var(--grigio-chiaro); }
 body.mn-avorio .mn-login__service-name { color: var(--grigio-medio); }
+
+/* ── Mobile ── */
+@media (max-width: 640px) {
+  .mn-login { min-height: 0; padding: var(--space-xl) var(--space-md); }
+  .mn-login__status-gauges { flex-wrap: wrap; gap: var(--space-md); }
+  .mn-login__btn { padding: 12px 20px; font-size: 0.85rem; }
+}
 } /* end @layer layouts */
