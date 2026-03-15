@@ -37,22 +37,11 @@ describe('themeRotary', () => {
     ctrl.destroy();
   });
 
-  it('toggles glass via controller', () => {
-    ctrl = themeRotary({ container });
-    expect(ctrl.getGlass()).toBe(false);
-    ctrl.setGlass(true);
-    expect(ctrl.getGlass()).toBe(true);
-    expect(document.body.classList.contains('mn-glass')).toBe(true);
-    ctrl.destroy();
-  });
-
   it('calls onChange callback', () => {
     const onChange = vi.fn();
     ctrl = themeRotary({ container, onChange });
     ctrl.setTheme('nero');
-    expect(onChange).toHaveBeenCalledWith('nero', false);
-    ctrl.setGlass(true);
-    expect(onChange).toHaveBeenCalledWith('nero', true);
+    expect(onChange).toHaveBeenCalledWith('nero');
     ctrl.destroy();
   });
 
