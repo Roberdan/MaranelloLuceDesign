@@ -68,7 +68,7 @@ body.mn-avorio .mn-notification-center__item--unread { background: rgba(220, 0, 
 body.mn-avorio .mn-notification-center__item-title { color: var(--nero-assoluto); }
 body.mn-avorio .mn-notification-center__item-icon { color: var(--rosso-corsa); }
 
-body.mn-avorio .mn-drawer { background: var(--avorio-chiaro); }
+body.mn-avorio .mn-drawer { background: var(--avorio-chiaro); --mn-drawer-border: var(--avorio-scuro); }
 body.mn-avorio .mn-drawer__header { border-bottom-color: var(--avorio-scuro); }
 body.mn-avorio .mn-drawer__close { color: var(--grigio-alluminio); }
 

@@ -191,6 +191,16 @@ body.mn-colorblind .mn-okr__kr-bar--at-risk { background: linear-gradient(90deg,
 body.mn-colorblind .mn-okr__kr-bar--behind { background: linear-gradient(90deg, var(--mn-cb-orange), var(--mn-cb-orange)); box-shadow: 0 0 8px rgba(213,94,0,0.3); }
 
 /* ============================================================
+   AVORIO — Chart Tooltips
+   ============================================================ */
+body.mn-avorio {
+  --mn-chart-tooltip-bg: var(--bianco-puro);
+  --mn-chart-tooltip-border: var(--grigio-alluminio);
+  --mn-chart-tooltip-text: var(--nero-assoluto);
+  --mn-chart-tooltip-shadow: 0 4px 16px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.06);
+}
+
+/* ============================================================
    COLORBLIND — Capacity Heatmap
    ============================================================ */
 body.mn-colorblind .mn-cap-grid__cell--low { background: var(--mn-cb-blue); }

@@ -12217,9 +12217,11 @@
     background: var(--nero-soft);
     border: 1px solid var(--grigio-scuro);
     border-radius: var(--radius-sm);
-    white-space: nowrap;
+    white-space: normal;
+    word-break: break-word;
     pointer-events: none;
     opacity: 0;
+    max-width: min(280px, 100vw - 32px);
     transition: opacity var(--duration-sm) var(--ease-out),
               transform var(--duration-sm) var(--ease-out);
     z-index: 1020;
@@ -13238,6 +13240,13 @@
     box-shadow: 0 0 8px #d55e004d;
   }
 
+  body.mn-avorio {
+    --mn-chart-tooltip-bg: var(--bianco-puro);
+    --mn-chart-tooltip-border: var(--grigio-alluminio);
+    --mn-chart-tooltip-text: var(--nero-assoluto);
+    --mn-chart-tooltip-shadow: 0 4px 16px #0000001f, 0 0 0 1px #0000000f;
+  }
+
   body.mn-colorblind .mn-cap-grid__cell--low {
     background: var(--mn-cb-blue);
   }
@@ -13468,6 +13477,7 @@
 
   body.mn-avorio .mn-drawer {
     background: var(--avorio-chiaro);
+    --mn-drawer-border: var(--avorio-scuro);
   }
 
   body.mn-avorio .mn-drawer__header {
@@ -13551,7 +13561,7 @@
   }
 
   body.mn-avorio .mn-section-dark .mn-label {
-    color: var(--giallo-ferrari);
+    color: var(--mn-accent);
   }
 
   body.mn-avorio .mn-section-dark .mn-micro {
