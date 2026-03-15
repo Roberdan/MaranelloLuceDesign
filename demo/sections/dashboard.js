@@ -55,15 +55,16 @@ function initDashboard(section) {
   SPARKS.forEach((spark) => {
     const canvas = section.querySelector(`#dashboard-spark-${spark.id}`);
     if (!(canvas instanceof HTMLCanvasElement)) return;
-    const width = canvas.clientWidth || 220;
-    const height = 52;
     const min = Math.min(...spark.data);
     const max = Math.max(...spark.data);
     const labels = spark.data.map((_, i) => (i === 0 ? '24h ago' : i === spark.data.length - 1 ? 'now' : `${spark.data.length - 1 - i}h ago`));
 
-    charts.sparkline(canvas, spark.data, { color: spark.color, width, height, lineWidth: 2, fillOpacity: 0.18 });
+    charts.sparkline(canvas, spark.data, { color: spark.color, lineWidth: 2, fillOpacity: 0.18 });
 
     if (M.chartInteract) {
+      // Read dimensions AFTER sparkline renders so chartHiDpi has set the exact CSS size
+      const w = canvas.clientWidth || 220;
+      const h = canvas.clientHeight || 52;
       const pad = { top: 2, right: 2, bottom: 2, left: 2 };
       const range = max - min || 1;
       M.chartInteract(canvas, {
@@ -72,8 +73,8 @@ function initDashboard(section) {
         labels,
         pad,
         maxLen: spark.data.length,
-        gx: (idx) => pad.left + (idx / (spark.data.length - 1)) * (width - pad.left - pad.right),
-        gy: (value) => height - pad.bottom - ((value - min) / range) * (height - pad.top - pad.bottom),
+        gx: (idx) => pad.left + (idx / (spark.data.length - 1)) * (w - pad.left - pad.right),
+        gy: (value) => h - pad.bottom - ((value - min) / range) * (h - pad.top - pad.bottom),
       }, [spark.color]);
     }
   });
