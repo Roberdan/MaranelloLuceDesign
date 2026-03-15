@@ -65,6 +65,53 @@ describe('network visualizations', () => {
     expect(host.innerHTML).toBe('');
   });
 
+  it('creates data-driven neuralNodes with custom nodes and connections', async () => {
+    const { neuralNodes } = await import('../../src/ts/neural-nodes');
+    const host = document.createElement('div');
+    document.body.appendChild(host);
+    const ctrl = neuralNodes(host, {
+      width: 400, height: 300,
+      nodes: [
+        { id: 's1', label: 'Claude', sublabel: 'opus', color: '#FFC72C', size: 1.5, group: 'claude', badge: 'm3max' },
+        { id: 's2', label: 'Copilot', group: 'copilot', size: 1.2 },
+        { id: 'p1', label: 'Plan #623', size: 2, group: 'plans' },
+      ],
+      connections: [
+        { from: 's1', to: 'p1', strength: 0.8 },
+        { from: 's2', to: 'p1', strength: 0.5 },
+      ],
+      forceLayout: true,
+      labels: true,
+      interactive: true,
+    });
+    expect(ctrl).not.toBeNull();
+    expect(() => ctrl?.pulse('s1')).not.toThrow();
+    expect(() => ctrl?.pulse(0)).not.toThrow();
+    ctrl?.destroy();
+    expect(host.innerHTML).toBe('');
+  });
+
+  it('supports dynamic node operations (add, remove, update, highlight)', async () => {
+    const { neuralNodes } = await import('../../src/ts/neural-nodes');
+    const host = document.createElement('div');
+    document.body.appendChild(host);
+    const ctrl = neuralNodes(host, {
+      width: 320, height: 220,
+      nodes: [{ id: 'a', label: 'A' }, { id: 'b', label: 'B' }],
+      connections: [{ from: 'a', to: 'b' }],
+    });
+    expect(ctrl).not.toBeNull();
+    expect(() => ctrl?.addNode({ id: 'c', label: 'C', group: 'test' })).not.toThrow();
+    expect(() => ctrl?.updateNode('c', { color: '#00A651', badge: 'new' })).not.toThrow();
+    expect(() => ctrl?.highlightNode('a')).not.toThrow();
+    expect(() => ctrl?.highlightNode(null)).not.toThrow();
+    expect(() => ctrl?.removeNode('b')).not.toThrow();
+    expect(() => ctrl?.setNodes([{ id: 'x', label: 'X' }])).not.toThrow();
+    expect(() => ctrl?.setConnections([{ from: 'x', to: 'a' }])).not.toThrow();
+    ctrl?.destroy();
+    expect(host.innerHTML).toBe('');
+  });
+
   it('returns null when container is missing', async () => {
     const { networkMessages } = await import('../../src/ts/network-messages');
     const { neuralNodes } = await import('../../src/ts/neural-nodes');

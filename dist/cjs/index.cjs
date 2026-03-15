@@ -894,16 +894,238 @@ function networkMessages(container, opts = { nodes: [], connections: [] }) {
   };
 }
 
+// src/ts/neural-nodes-force.ts
+var REPULSION = 4e3;
+var ATTRACTION = 8e-3;
+var GROUP_GRAVITY = 3e-3;
+var DAMPING = 0.88;
+var MAX_SPEED = 2.5;
+function applyForces(nodes, connections, width, height) {
+  const cx = width / 2, cy = height / 2;
+  const groupCenters = computeGroupCenters(nodes);
+  for (let i = 0; i < nodes.length; i++) {
+    let fx = 0, fy = 0;
+    const ni = nodes[i];
+    for (let j = 0; j < nodes.length; j++) {
+      if (i === j) continue;
+      const nj = nodes[j];
+      const dx = ni.x - nj.x, dy = ni.y - nj.y;
+      const dist = Math.max(1, Math.hypot(dx, dy));
+      const force = REPULSION / (dist * dist);
+      fx += dx / dist * force;
+      fy += dy / dist * force;
+    }
+    fx += (cx - ni.x) * 2e-4;
+    fy += (cy - ni.y) * 2e-4;
+    if (ni.group && groupCenters.has(ni.group)) {
+      const gc = groupCenters.get(ni.group);
+      fx += (gc.x - ni.x) * GROUP_GRAVITY;
+      fy += (gc.y - ni.y) * GROUP_GRAVITY;
+    }
+    ni.vx = (ni.vx + fx) * DAMPING;
+    ni.vy = (ni.vy + fy) * DAMPING;
+  }
+  for (const conn of connections) {
+    const a = nodes[conn.a], b = nodes[conn.b];
+    if (!a || !b) continue;
+    const dx = b.x - a.x, dy = b.y - a.y;
+    const dist = Math.hypot(dx, dy);
+    const force = (dist - 80) * ATTRACTION * (conn.strength ?? 0.5);
+    const nx = dx / Math.max(1, dist), ny = dy / Math.max(1, dist);
+    a.vx += nx * force;
+    a.vy += ny * force;
+    b.vx -= nx * force;
+    b.vy -= ny * force;
+  }
+  const pad2 = 28;
+  for (const n of nodes) {
+    n.vx = clampSpeed(n.vx);
+    n.vy = clampSpeed(n.vy);
+    n.x += n.vx;
+    n.y += n.vy;
+    if (n.x < pad2) {
+      n.x = pad2;
+      n.vx *= -0.5;
+    }
+    if (n.x > width - pad2) {
+      n.x = width - pad2;
+      n.vx *= -0.5;
+    }
+    if (n.y < pad2) {
+      n.y = pad2;
+      n.vy *= -0.5;
+    }
+    if (n.y > height - pad2) {
+      n.y = height - pad2;
+      n.vy *= -0.5;
+    }
+  }
+}
+function clampSpeed(v) {
+  return Math.max(-MAX_SPEED, Math.min(MAX_SPEED, v));
+}
+function computeGroupCenters(nodes) {
+  const sums = /* @__PURE__ */ new Map();
+  for (const n of nodes) {
+    if (!n.group) continue;
+    const entry = sums.get(n.group) ?? { sx: 0, sy: 0, count: 0 };
+    entry.sx += n.x;
+    entry.sy += n.y;
+    entry.count++;
+    sums.set(n.group, entry);
+  }
+  const centers = /* @__PURE__ */ new Map();
+  for (const [group, { sx, sy, count }] of sums) {
+    centers.set(group, { x: sx / count, y: sy / count });
+  }
+  return centers;
+}
+
+// src/ts/neural-nodes-labels.ts
+var MAX_LABEL_CHARS = 25;
+var BADGE_PAD_H = 6;
+var BADGE_PAD_V = 2;
+var BADGE_RADIUS = 4;
+function truncate(text) {
+  return text.length > MAX_LABEL_CHARS ? text.slice(0, MAX_LABEL_CHARS - 1) + "\u2026" : text;
+}
+function drawLabels(ctx, nodes, hovered, fontBase, alpha2) {
+  ctx.textAlign = "center";
+  ctx.textBaseline = "top";
+  for (let i = 0; i < nodes.length; i++) {
+    const n = nodes[i];
+    if (!n.label) continue;
+    const visible = n.energy > 0.3 || i === hovered;
+    if (!visible) continue;
+    const fade = i === hovered ? 1 : Math.min(1, (n.energy - 0.3) * 2.5);
+    const baseSize = n.size * 8;
+    let yOff = baseSize + 6;
+    ctx.font = `bold 10px ${fontBase}`;
+    ctx.fillStyle = alpha2("#ffffff", 0.92 * fade);
+    ctx.fillText(truncate(n.label), n.x, n.y + yOff);
+    yOff += 13;
+    if (n.sublabel) {
+      ctx.font = `9px ${fontBase}`;
+      ctx.fillStyle = alpha2("#c8c8c8", 0.7 * fade);
+      ctx.fillText(truncate(n.sublabel), n.x, n.y + yOff);
+      yOff += 12;
+    }
+    if (n.badge) {
+      drawBadge(ctx, n.x, n.y + yOff, n.badge, n.color, fade, fontBase);
+    }
+  }
+}
+function drawBadge(ctx, cx, cy, text, color, fade, fontBase) {
+  ctx.font = `bold 8px ${fontBase}`;
+  const m = ctx.measureText(text);
+  const w = m.width + BADGE_PAD_H * 2;
+  const h = 12 + BADGE_PAD_V * 2;
+  const x = cx - w / 2, y = cy;
+  ctx.save();
+  ctx.globalAlpha = 0.75 * fade;
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  roundRect(ctx, x, y, w, h, BADGE_RADIUS);
+  ctx.fill();
+  ctx.globalAlpha = fade;
+  ctx.fillStyle = "#000000";
+  ctx.textBaseline = "middle";
+  ctx.fillText(text, cx, y + h / 2);
+  ctx.restore();
+}
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.arcTo(x + w, y, x + w, y + r, r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
+  ctx.lineTo(x + r, y + h);
+  ctx.arcTo(x, y + h, x, y + h - r, r);
+  ctx.lineTo(x, y + r);
+  ctx.arcTo(x, y, x + r, y, r);
+}
+
+// src/ts/neural-nodes-draw.ts
+function toAlpha(color, opacity) {
+  const full = color.replace("#", "").replace(/^(.)(.)(.)$/, "$1$1$2$2$3$3");
+  const v = parseInt(full, 16);
+  return Number.isNaN(v) ? `rgba(255,199,44,${opacity})` : `rgba(${v >> 16 & 255},${v >> 8 & 255},${v & 255},${opacity})`;
+}
+function drawFrame(ctx, now, s) {
+  const w = ctx.canvas.clientWidth || 1, h = ctx.canvas.clientHeight || 1;
+  ctx.clearRect(0, 0, w, h);
+  ctx.fillStyle = "rgba(4,10,18,0.28)";
+  ctx.fillRect(0, 0, w, h);
+  for (const l of s.connections) {
+    const a = s.nodes[l.a], b = s.nodes[l.b];
+    if (!a || !b) continue;
+    const em = s.hovered === l.a || s.hovered === l.b;
+    const g = ctx.createLinearGradient(a.x, a.y, b.x, b.y);
+    const baseA = l.strength * 0.5;
+    g.addColorStop(0, toAlpha(a.color, em ? 0.48 : baseA + a.energy * 0.18));
+    g.addColorStop(0.55, toAlpha(b.color, 0.18 + Math.max(a.energy, b.energy) * 0.16));
+    g.addColorStop(1, "rgba(0,0,0,0)");
+    ctx.strokeStyle = g;
+    ctx.lineWidth = em ? 2 : 0.6 + l.strength * 1.2;
+    ctx.beginPath();
+    ctx.moveTo(a.x, a.y);
+    ctx.lineTo(b.x, b.y);
+    ctx.stroke();
+  }
+  const visLanes = Math.max(1, Math.round(s.particleCount * (0.3 + s.activity * 0.7)));
+  for (const p of s.particles) {
+    if (p.lane >= visLanes) continue;
+    const l = s.connections[p.connection];
+    if (!l) continue;
+    const a = s.nodes[l.a], b = s.nodes[l.b];
+    if (!a || !b) continue;
+    const x = a.x + (b.x - a.x) * p.t, y = a.y + (b.y - a.y) * p.t;
+    ctx.save();
+    ctx.fillStyle = toAlpha(a.color, 0.65 + s.activity * 0.25);
+    ctx.shadowColor = a.color;
+    ctx.shadowBlur = 6 + s.activity * 8;
+    ctx.beginPath();
+    ctx.arc(x, y, 1.6 + s.activity * 1.8, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+  for (const wv of s.waves) {
+    ctx.save();
+    ctx.strokeStyle = toAlpha(wv.color, wv.life * 0.65);
+    ctx.lineWidth = 1.5 + wv.life * 2;
+    ctx.shadowColor = wv.color;
+    ctx.shadowBlur = 10;
+    ctx.beginPath();
+    ctx.arc(wv.x, wv.y, wv.radius, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
+  }
+  for (let i = 0; i < s.nodes.length; i++) {
+    const n = s.nodes[i];
+    const sz = n.size * 8;
+    const pulse = sz * 0.3 + Math.sin(now * 2e-3 * s.pulseSpeed + n.phase) * 1.4 + n.energy * 3.2 + (s.hovered === i ? 2 : 0);
+    ctx.save();
+    ctx.fillStyle = toAlpha(n.color, 0.2);
+    ctx.shadowColor = n.color;
+    ctx.shadowBlur = 12 + n.energy * 12;
+    ctx.beginPath();
+    ctx.arc(n.x, n.y, pulse + 4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = n.color;
+    ctx.beginPath();
+    ctx.arc(n.x, n.y, pulse, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+  if (s.labels) drawLabels(ctx, s.nodes, s.hovered, s.labelFont, toAlpha);
+}
+
 // src/ts/neural-nodes.ts
 var DEFAULT_COLORS = ["#FFC72C", "#4EA8DE", "#00A651"];
-function resolveContainer2(container) {
-  const found = typeof container === "string" ? document.querySelector(container) : container;
+var GROUP_COLORS = { claude: "#FFC72C", copilot: "#4EA8DE" };
+function resolveContainer2(c) {
+  const found = typeof c === "string" ? document.querySelector(c) : c;
   return found instanceof HTMLElement ? found : null;
-}
-function alpha2(color, opacity) {
-  const full = color.replace("#", "").replace(/^(.)(.)(.)$/, "$1$1$2$2$3$3");
-  const value = parseInt(full, 16);
-  return Number.isNaN(value) ? `rgba(255,199,44,${opacity})` : `rgba(${value >> 16 & 255},${value >> 8 & 255},${value & 255},${opacity})`;
 }
 function neuralNodes(container, opts = {}) {
   const target = resolveContainer2(container);
@@ -912,195 +1134,202 @@ function neuralNodes(container, opts = {}) {
     return null;
   }
   const host = target;
-  const options = {
+  const dataMode = Array.isArray(opts.nodes) && opts.nodes.length > 0;
+  const o = {
     nodeCount: 30,
     connectionDensity: 0.15,
     colors: DEFAULT_COLORS,
     pulseSpeed: 1,
     particleCount: 2,
     interactive: true,
+    labels: dataMode,
+    forceLayout: dataMode,
+    labelFont: "monospace",
     ...opts
   };
   const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d");
   let nodes = [], connections = [], particles = [];
   const waves = [], activations = [];
-  let activity = 0.55, hovered = -1, raf = 0, frame = 0;
-  let last = performance.now();
+  let activity = 0.55, hovered = -1, raf = 0, frame = 0, last = performance.now();
   host.innerHTML = "";
   host.style.position = "relative";
   host.style.overflow = "hidden";
-  if (options.width) host.style.width = `${options.width}px`;
-  if (options.height) host.style.height = `${options.height}px`;
+  if (o.width) host.style.width = `${o.width}px`;
+  if (o.height) host.style.height = `${o.height}px`;
   canvas.style.cssText = "display:block;width:100%;height:100%";
   canvas.setAttribute("role", "img");
   canvas.setAttribute("aria-label", "Neural nodes visualization");
   canvas.setAttribute("tabindex", "0");
   host.appendChild(canvas);
   const ro = window.ResizeObserver ? new ResizeObserver(resize) : null;
-  const onMove = (event) => {
-    const rect = canvas.getBoundingClientRect(), x = event.clientX - rect.left, y = event.clientY - rect.top;
-    hovered = nodes.findIndex((node) => Math.hypot(node.x - x, node.y - y) < 18 + node.energy * 8);
+  const onMove = (e) => {
+    const r = canvas.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
+    hovered = nodes.findIndex((n) => Math.hypot(n.x - x, n.y - y) < 18 + n.energy * 8);
   };
   const onLeave = () => {
     hovered = -1;
   };
   function resize() {
-    hiDpiCanvas(canvas, options.width ?? Math.max(360, host.clientWidth || 720), options.height ?? Math.max(280, host.clientHeight || 360));
+    hiDpiCanvas(canvas, o.width ?? Math.max(360, host.clientWidth || 720), o.height ?? Math.max(280, host.clientHeight || 360));
     if (!nodes.length) initNodes();
-    rebuildConnections();
+    if (!dataMode) rebuildAutoConnections();
+  }
+  function toInternal(nd, w, h) {
+    const color = nd.color ?? (nd.group && GROUP_COLORS[nd.group]) ?? o.colors[0];
+    return {
+      id: nd.id,
+      x: 24 + Math.random() * (w - 48),
+      y: 24 + Math.random() * (h - 48),
+      vx: 0,
+      vy: 0,
+      color,
+      phase: Math.random() * Math.PI * 2,
+      energy: nd.energy ?? Math.random() * 0.4,
+      size: nd.size ?? 1,
+      label: nd.label,
+      sublabel: nd.sublabel,
+      badge: nd.badge,
+      group: nd.group
+    };
   }
   function initNodes() {
-    const width = canvas.clientWidth || 1, height = canvas.clientHeight || 1;
-    nodes = Array.from({ length: options.nodeCount }, (_, index) => ({
-      x: 24 + Math.random() * (width - 48),
-      y: 24 + Math.random() * (height - 48),
-      vx: (Math.random() - 0.5) * 0.025,
-      vy: (Math.random() - 0.5) * 0.025,
-      color: options.colors[index % options.colors.length],
-      phase: Math.random() * Math.PI * 2,
-      energy: Math.random() * 0.4
-    }));
+    const w = canvas.clientWidth || 1, h = canvas.clientHeight || 1;
+    if (dataMode) {
+      nodes = o.nodes.map((nd) => toInternal(nd, w, h));
+      buildExplicitConnections();
+    } else {
+      nodes = Array.from({ length: o.nodeCount }, (_, i) => ({
+        id: String(i),
+        x: 24 + Math.random() * (w - 48),
+        y: 24 + Math.random() * (h - 48),
+        vx: (Math.random() - 0.5) * 0.025,
+        vy: (Math.random() - 0.5) * 0.025,
+        color: o.colors[i % o.colors.length],
+        phase: Math.random() * Math.PI * 2,
+        energy: Math.random() * 0.4,
+        size: 1
+      }));
+    }
+    updateAriaLabel();
   }
-  function rebuildConnections() {
-    const threshold = Math.min(canvas.clientWidth, canvas.clientHeight) * (0.14 + options.connectionDensity * 0.28);
+  function buildExplicitConnections() {
+    if (!o.connections) {
+      connections = [];
+      spawnParticles();
+      return;
+    }
+    const idMap = new Map(nodes.map((n, i) => [n.id, i]));
+    connections = [];
+    for (const c of o.connections) {
+      const a = idMap.get(c.from), b = idMap.get(c.to);
+      if (a !== void 0 && b !== void 0) connections.push({ a, b, strength: c.strength ?? 0.5 });
+    }
+    spawnParticles();
+  }
+  function rebuildAutoConnections() {
+    const threshold = Math.min(canvas.clientWidth, canvas.clientHeight) * (0.14 + o.connectionDensity * 0.28);
     connections = [];
     for (let i = 0; i < nodes.length; i++) {
       for (let j = i + 1; j < nodes.length; j++) {
-        const dist = Math.hypot(nodes[i].x - nodes[j].x, nodes[i].y - nodes[j].y);
-        if (dist < threshold) connections.push({ a: i, b: j });
+        if (Math.hypot(nodes[i].x - nodes[j].x, nodes[i].y - nodes[j].y) < threshold)
+          connections.push({ a: i, b: j, strength: 0.5 });
       }
     }
-    particles = connections.flatMap((_, index) => Array.from({ length: options.particleCount }, (_2, lane) => ({
-      connection: index,
+    spawnParticles();
+  }
+  function spawnParticles() {
+    particles = connections.flatMap((_, idx) => Array.from({ length: o.particleCount }, (_2, lane) => ({
+      connection: idx,
       lane,
       t: Math.random(),
       speed: 12e-5 + Math.random() * 18e-5
     })));
+    updateAriaLabel();
+  }
+  function updateAriaLabel() {
     canvas.setAttribute("aria-label", `Neural nodes: ${nodes.length} nodes, ${connections.length} connections`);
   }
-  function triggerPulse(nodeIndex = Math.floor(Math.random() * nodes.length)) {
+  function resolveTarget(target2) {
+    if (typeof target2 === "string") {
+      const idx = nodes.findIndex((n) => n.id === target2);
+      return idx >= 0 ? idx : Math.floor(Math.random() * nodes.length);
+    }
+    return target2 ?? Math.floor(Math.random() * nodes.length);
+  }
+  function triggerPulse(target2) {
+    const nodeIndex = resolveTarget(target2);
     if (!nodes[nodeIndex]) return;
     const graph = Array.from({ length: nodes.length }, () => []);
-    connections.forEach((link) => {
-      graph[link.a].push(link.b);
-      graph[link.b].push(link.a);
+    connections.forEach((l) => {
+      graph[l.a].push(l.b);
+      graph[l.b].push(l.a);
     });
     const queue = [[nodeIndex, 0]];
     const seen = /* @__PURE__ */ new Set([nodeIndex]);
     const start = performance.now();
     while (queue.length) {
-      const [index, hop] = queue.shift();
-      activations.push({ at: start + hop * 100, index });
-      graph[index].forEach((next) => {
-        if (seen.has(next)) return;
-        seen.add(next);
-        queue.push([next, hop + 1]);
+      const [idx, hop] = queue.shift();
+      activations.push({ at: start + hop * 100, index: idx });
+      graph[idx].forEach((next) => {
+        if (!seen.has(next)) {
+          seen.add(next);
+          queue.push([next, hop + 1]);
+        }
       });
     }
   }
   function update(dt, now) {
-    const width = canvas.clientWidth || 1, height = canvas.clientHeight || 1;
+    const w = canvas.clientWidth || 1, h = canvas.clientHeight || 1;
     while (activations[0] && activations[0].at <= now) {
-      const current = activations.shift();
-      const node = nodes[current.index];
-      if (!node) continue;
-      node.energy = 1.9;
-      waves.push({ x: node.x, y: node.y, radius: 4, life: 1, color: node.color });
+      const cur = activations.shift();
+      const n = nodes[cur.index];
+      if (!n) continue;
+      n.energy = 1.9;
+      waves.push({ x: n.x, y: n.y, radius: 4, life: 1, color: n.color });
     }
-    nodes.forEach((node) => {
-      node.vx = (node.vx + (Math.random() - 0.5) * 25e-4 * dt) * 0.985;
-      node.vy = (node.vy + (Math.random() - 0.5) * 25e-4 * dt) * 0.985;
-      node.x += node.vx * dt;
-      node.y += node.vy * dt;
-      if (node.x < 16 || node.x > width - 16) node.vx *= -1;
-      if (node.y < 16 || node.y > height - 16) node.vy *= -1;
-      node.x = Math.max(16, Math.min(width - 16, node.x));
-      node.y = Math.max(16, Math.min(height - 16, node.y));
-      node.energy = Math.max(0, node.energy - dt * 16e-4);
+    if (o.forceLayout && dataMode) {
+      applyForces(nodes, connections, w, h);
+    } else {
+      nodes.forEach((n) => {
+        n.vx = (n.vx + (Math.random() - 0.5) * 25e-4 * dt) * 0.985;
+        n.vy = (n.vy + (Math.random() - 0.5) * 25e-4 * dt) * 0.985;
+        n.x += n.vx * dt;
+        n.y += n.vy * dt;
+        if (n.x < 16 || n.x > w - 16) n.vx *= -1;
+        if (n.y < 16 || n.y > h - 16) n.vy *= -1;
+        n.x = Math.max(16, Math.min(w - 16, n.x));
+        n.y = Math.max(16, Math.min(h - 16, n.y));
+      });
+      if (++frame % 14 === 0) rebuildAutoConnections();
+    }
+    nodes.forEach((n) => {
+      n.energy = Math.max(0, n.energy - dt * 16e-4);
     });
-    if (++frame % 14 === 0) rebuildConnections();
-    particles.forEach((particle) => {
-      particle.t = (particle.t + dt * particle.speed * (0.45 + activity * 1.8) * options.pulseSpeed) % 1;
+    particles.forEach((p) => {
+      p.t = (p.t + dt * p.speed * (0.45 + activity * 1.8) * o.pulseSpeed) % 1;
     });
     for (let i = waves.length - 1; i >= 0; i--) {
-      waves[i].life -= dt * 13e-4 * options.pulseSpeed;
-      waves[i].radius += dt * 0.11 * options.pulseSpeed;
+      waves[i].life -= dt * 13e-4 * o.pulseSpeed;
+      waves[i].radius += dt * 0.11 * o.pulseSpeed;
       if (waves[i].life <= 0) waves.splice(i, 1);
     }
-  }
-  function draw(now) {
-    const width = canvas.clientWidth || 1, height = canvas.clientHeight || 1;
-    ctx.clearRect(0, 0, width, height);
-    ctx.fillStyle = "rgba(4,10,18,0.28)";
-    ctx.fillRect(0, 0, width, height);
-    connections.forEach((link) => {
-      const a = nodes[link.a], b = nodes[link.b];
-      const emphasized = hovered === link.a || hovered === link.b;
-      const gradient = ctx.createLinearGradient(a.x, a.y, b.x, b.y);
-      gradient.addColorStop(0, alpha2(a.color, emphasized ? 0.48 : 0.26 + a.energy * 0.18));
-      gradient.addColorStop(0.55, alpha2(b.color, 0.18 + Math.max(a.energy, b.energy) * 0.16));
-      gradient.addColorStop(1, "rgba(0,0,0,0)");
-      ctx.strokeStyle = gradient;
-      ctx.lineWidth = emphasized ? 2 : 1.1;
-      ctx.beginPath();
-      ctx.moveTo(a.x, a.y);
-      ctx.lineTo(b.x, b.y);
-      ctx.stroke();
-    });
-    const visibleLanes = Math.max(1, Math.round(options.particleCount * (0.3 + activity * 0.7)));
-    particles.forEach((particle) => {
-      if (particle.lane >= visibleLanes) return;
-      const link = connections[particle.connection];
-      if (!link) return;
-      const a = nodes[link.a], b = nodes[link.b];
-      const x = a.x + (b.x - a.x) * particle.t, y = a.y + (b.y - a.y) * particle.t;
-      ctx.save();
-      ctx.fillStyle = alpha2(a.color, 0.65 + activity * 0.25);
-      ctx.shadowColor = a.color;
-      ctx.shadowBlur = 6 + activity * 8;
-      ctx.beginPath();
-      ctx.arc(x, y, 1.6 + activity * 1.8, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-    });
-    waves.forEach((wave) => {
-      ctx.save();
-      ctx.strokeStyle = alpha2(wave.color, wave.life * 0.65);
-      ctx.lineWidth = 1.5 + wave.life * 2;
-      ctx.shadowColor = wave.color;
-      ctx.shadowBlur = 10;
-      ctx.beginPath();
-      ctx.arc(wave.x, wave.y, wave.radius, 0, Math.PI * 2);
-      ctx.stroke();
-      ctx.restore();
-    });
-    nodes.forEach((node, index) => {
-      const pulse = 2.4 + Math.sin(now * 2e-3 * options.pulseSpeed + node.phase) * 1.4 + node.energy * 3.2 + (hovered === index ? 2 : 0);
-      ctx.save();
-      ctx.fillStyle = alpha2(node.color, 0.2);
-      ctx.shadowColor = node.color;
-      ctx.shadowBlur = 12 + node.energy * 12;
-      ctx.beginPath();
-      ctx.arc(node.x, node.y, pulse + 4, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = node.color;
-      ctx.beginPath();
-      ctx.arc(node.x, node.y, pulse, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-    });
   }
   function loop(now) {
     const dt = Math.min(48, now - last || 16);
     last = now;
     update(dt, now);
-    draw(now);
+    drawFrame(ctx, now, { nodes, connections, particles, waves, hovered, activity, pulseSpeed: o.pulseSpeed, particleCount: o.particleCount, labels: o.labels, labelFont: o.labelFont });
     raf = requestAnimationFrame(loop);
+  }
+  function setAllNodes(data) {
+    const w = canvas.clientWidth || 1, h = canvas.clientHeight || 1;
+    nodes = data.map((nd) => toInternal(nd, w, h));
+    buildExplicitConnections();
   }
   resize();
   ro?.observe(host);
-  if (options.interactive) {
+  if (o.interactive) {
     canvas.addEventListener("mousemove", onMove);
     canvas.addEventListener("mouseleave", onLeave);
   }
@@ -1116,6 +1345,34 @@ function neuralNodes(container, opts = {}) {
       canvas.removeEventListener("mousemove", onMove);
       canvas.removeEventListener("mouseleave", onLeave);
       host.innerHTML = "";
+    },
+    setNodes: setAllNodes,
+    setConnections: (data) => {
+      o.connections = data;
+      buildExplicitConnections();
+    },
+    addNode: (nd) => {
+      const w = canvas.clientWidth || 1, h = canvas.clientHeight || 1;
+      nodes.push(toInternal(nd, w, h));
+      buildExplicitConnections();
+    },
+    removeNode: (id) => {
+      nodes = nodes.filter((n) => n.id !== id);
+      buildExplicitConnections();
+    },
+    updateNode: (id, patch) => {
+      const n = nodes.find((nd) => nd.id === id);
+      if (!n) return;
+      if (patch.label !== void 0) n.label = patch.label;
+      if (patch.sublabel !== void 0) n.sublabel = patch.sublabel;
+      if (patch.color !== void 0) n.color = patch.color;
+      if (patch.size !== void 0) n.size = patch.size;
+      if (patch.badge !== void 0) n.badge = patch.badge;
+      if (patch.group !== void 0) n.group = patch.group;
+      if (patch.energy !== void 0) n.energy = patch.energy;
+    },
+    highlightNode: (id) => {
+      hovered = id === null ? -1 : nodes.findIndex((n) => n.id === id);
     }
   };
 }
@@ -5281,7 +5538,7 @@ function contentH(rows, o) {
   });
   return h;
 }
-function roundRect(ctx, x, y, w, h, r) {
+function roundRect2(ctx, x, y, w, h, r) {
   if (w <= 0 || h <= 0) return;
   r = Math.min(r, w / 2, h / 2);
   ctx.beginPath();
@@ -5443,13 +5700,13 @@ function renderRows(ctx, s) {
     if (bx + bw <= lw || bx >= vw) return;
     const cx1 = Math.max(bx, lw), cx2 = Math.min(bx + bw, vw), cw = cx2 - cx1;
     ctx.fillStyle = color;
-    roundRect(ctx, cx1, by, cw, bh, o.barRadius);
+    roundRect2(ctx, cx1, by, cw, bh, o.barRadius);
     ctx.fill();
     if (o.showProgress && task.progress > 0 && row.type === "parent") {
       const pw = Math.min(bx + bw * Math.min(task.progress, 1), vw) - cx1;
       if (pw > 0) {
         ctx.fillStyle = "rgba(255,255,255,0.18)";
-        roundRect(ctx, cx1, by, Math.max(pw, 0), bh, o.barRadius);
+        roundRect2(ctx, cx1, by, Math.max(pw, 0), bh, o.barRadius);
         ctx.fill();
       }
     }
@@ -5566,7 +5823,7 @@ function renderHeader(ctx, s) {
     const tbx = lw + s.dateToX(s.today) - scrollX;
     if (tbx >= lw - 24 && tbx <= vw + 24) {
       ctx.fillStyle = cssVar("--today-line", "#4EA8DE");
-      roundRect(ctx, tbx - 24, tierH + (tierH - 18) / 2, 48, 18, 3);
+      roundRect2(ctx, tbx - 24, tierH + (tierH - 18) / 2, 48, 18, 3);
       ctx.fill();
       ctx.fillStyle = "#111";
       ctx.font = 'bold 9px "Barlow Condensed",sans-serif';
@@ -5683,7 +5940,7 @@ function renderSidebar(ctx, s) {
       if (badges?.missing6q) {
         bx -= 24;
         ctx.fillStyle = cssVar("--signal-danger", "#DC0000");
-        roundRect(ctx, bx, ry + (rh - 14) / 2, 22, 14, 2);
+        roundRect2(ctx, bx, ry + (rh - 14) / 2, 22, 14, 2);
         ctx.fill();
         ctx.fillStyle = "#fff";
         ctx.font = 'bold 8px "Barlow Condensed",sans-serif';
@@ -5731,14 +5988,14 @@ function renderScrollbars(ctx, s) {
     const sbW = Math.max(30, (vw - lw) * ((vw - lw) / tw));
     const sbX = lw + scrollX / msx * (vw - lw - sbW);
     ctx.fillStyle = "rgba(200,200,200,0.2)";
-    roundRect(ctx, sbX, vh - 5, sbW, 4, 2);
+    roundRect2(ctx, sbX, vh - 5, sbW, 4, 2);
     ctx.fill();
   }
   if (msy > 0) {
     const sbH = Math.max(30, (vh - hh) * ((vh - hh) / ch));
     const sbYp = hh + scrollY / msy * (vh - hh - sbH);
     ctx.fillStyle = "rgba(200,200,200,0.2)";
-    roundRect(ctx, vw - 5, sbYp, 4, sbH, 2);
+    roundRect2(ctx, vw - 5, sbYp, 4, sbH, 2);
     ctx.fill();
   }
 }
@@ -6668,7 +6925,7 @@ function mapboxView(container, opts) {
 }
 
 // src/ts/social-graph.ts
-var GROUP_COLORS = {
+var GROUP_COLORS2 = {
   default: "#FFC72C",
   Therapists: "#00A651",
   Researchers: "#4EA8DE",
@@ -6709,7 +6966,7 @@ function socialGraph(container, opts = { nodes: [], edges: [] }) {
   const hideTip4 = () => {
     tip.style.opacity = "0";
   };
-  const colorOf = (node) => opts.groups?.[node.group || ""] || GROUP_COLORS[node.group || ""] || GROUP_COLORS.default;
+  const colorOf = (node) => opts.groups?.[node.group || ""] || GROUP_COLORS2[node.group || ""] || GROUP_COLORS2.default;
   const inside = (node) => {
     if (node.avatar) return node.avatar.slice(0, 2);
     const parts = node.label.split(/\s+/).filter(Boolean).slice(0, 2);

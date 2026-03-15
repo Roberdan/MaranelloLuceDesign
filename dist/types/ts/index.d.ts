@@ -6,6 +6,7 @@ export type { EventCallback } from './core/events';
 export { cssVar, palette, getTheme, setTheme, cycleTheme, getAccent, debounce, throttle, createElement, formatNumber, formatDate, clamp, lerp, hiDpiCanvas, } from './core/utils';
 export { networkMessages } from './network-messages';
 export { neuralNodes } from './neural-nodes';
+export type { NeuralNodeData, NeuralConnection, NeuralNodesOptions, NeuralNodesController } from './neural-nodes';
 export { COLOR, FONT, TEXT_SIZE, SPACE, DURATION, EASE, RADIUS, SHADOW, SCOPE_COLOR, Z_INDEX, } from './core/tokens';
 export type { TokenName } from './core/tokens';
 export { icons, renderIcon, iconCatalog } from './icons';

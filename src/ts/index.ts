@@ -29,6 +29,7 @@ export {
 
 export { networkMessages } from './network-messages';
 export { neuralNodes } from './neural-nodes';
+export type { NeuralNodeData, NeuralConnection, NeuralNodesOptions, NeuralNodesController } from './neural-nodes';
 
 // Design tokens
 export {
