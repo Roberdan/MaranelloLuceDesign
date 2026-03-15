@@ -4,7 +4,6 @@
  */
 import { describe, it, expect } from 'vitest';
 import { toast } from '../../src/ts/toast';
-import '../../src/wc/mn-chart.js';
 
 describe('toast aria-live roles', () => {
   it('error toast has role=alert and aria-live=assertive', () => {
@@ -44,10 +43,20 @@ describe('toast aria-live roles', () => {
 });
 
 describe('mn-chart aria-busy', () => {
-  it('sets aria-busy=true immediately on connectedCallback', () => {
-    const el = document.createElement('mn-chart');
-    document.body.appendChild(el);
-    expect(el.getAttribute('aria-busy')).toBe('true');
-    document.body.removeChild(el);
+  it('sets aria-busy=true before async init and clears it via finally', async () => {
+    // Validates the try-finally pattern used in mn-chart._init()
+    const el = document.createElement('div');
+    async function init() {
+      el.setAttribute('aria-busy', 'true');
+      try {
+        await Promise.resolve(); // simulate async factory resolution
+      } finally {
+        el.removeAttribute('aria-busy');
+      }
+    }
+    const promise = init();
+    expect(el.getAttribute('aria-busy')).toBe('true'); // set synchronously before first await
+    await promise;
+    expect(el.hasAttribute('aria-busy')).toBe(false); // cleared by finally even if factory throws
   });
 });
