@@ -585,10 +585,10 @@ function palette(el4 = document.documentElement) {
     grigioMedio: read("--grigio-medio"),
     neroAssoluto: read("--nero-assoluto"),
     // Status — use in charts, badges, gauges
-    statusOk: read("--signal-ok"),
-    statusWarn: read("--signal-warning"),
-    statusError: read("--signal-danger"),
-    statusInfo: read("--signal-info")
+    signalOk: read("--signal-ok"),
+    signalWarning: read("--signal-warning"),
+    signalDanger: read("--signal-danger"),
+    signalInfo: read("--signal-info")
   };
 }
 function debounce(fn, ms) {
@@ -4982,6 +4982,7 @@ function speedometer(canvas, opts) {
       if (animId) cancelAnimationFrame(animId);
       resizeObs?.disconnect();
       ctx.clearRect(0, 0, dim * dpr2, dim * dpr2);
+      srSpan.remove();
     }
   };
 }

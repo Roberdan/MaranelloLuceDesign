@@ -20,7 +20,7 @@ class MnThemeRotary extends HTMLElement {
       saved = localStorage.getItem("mn-theme");
     } catch (_) {
     }
-    if (saved) {
+    if (saved && ["nero", "avorio", "colorblind", "editorial"].includes(saved)) {
       document.body.classList.remove("mn-nero", "mn-avorio", "mn-colorblind");
       if (saved !== "editorial") document.body.classList.add("mn-" + saved);
     }

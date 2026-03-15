@@ -85,10 +85,10 @@ export function palette(el: Element = document.documentElement): Record<string, 
     grigioMedio:    read('--grigio-medio'),
     neroAssoluto:   read('--nero-assoluto'),
     // Status — use in charts, badges, gauges
-    statusOk:       read('--signal-ok'),
-    statusWarn:     read('--signal-warning'),
-    statusError:    read('--signal-danger'),
-    statusInfo:     read('--signal-info'),
+    signalOk:       read('--signal-ok'),
+    signalWarning:  read('--signal-warning'),
+    signalDanger:   read('--signal-danger'),
+    signalInfo:     read('--signal-info'),
   };
 }
 

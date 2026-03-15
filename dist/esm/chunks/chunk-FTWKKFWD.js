@@ -3,7 +3,7 @@ import {
   cssVar,
   debounce,
   getAccent
-} from "./chunk-ZRJ72P3I.js";
+} from "./chunk-KU7IG4OX.js";
 
 // src/ts/gauge-engine-palette.ts
 function buildGaugePalette(accent) {
@@ -1129,6 +1129,7 @@ function speedometer(canvas, opts) {
       if (animId) cancelAnimationFrame(animId);
       resizeObs?.disconnect();
       ctx.clearRect(0, 0, dim * dpr, dim * dpr);
+      srSpan.remove();
     }
   };
 }
@@ -1138,4 +1139,4 @@ export {
   FerrariGauge,
   speedometer
 };
-//# sourceMappingURL=chunk-JCPITHWI.js.map
+//# sourceMappingURL=chunk-FTWKKFWD.js.map

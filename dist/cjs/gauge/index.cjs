@@ -1169,6 +1169,7 @@ function speedometer(canvas, opts) {
       if (animId) cancelAnimationFrame(animId);
       resizeObs?.disconnect();
       ctx.clearRect(0, 0, dim * dpr, dim * dpr);
+      srSpan.remove();
     }
   };
 }

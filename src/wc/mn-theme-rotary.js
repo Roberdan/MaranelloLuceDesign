@@ -27,7 +27,7 @@ class MnThemeRotary extends HTMLElement {
     // Restore saved theme before rendering so the dial reflects correct position
     let saved = null;
     try { saved = localStorage.getItem('mn-theme'); } catch (_) { /* storage blocked */ }
-    if (saved) {
+    if (saved && ['nero', 'avorio', 'colorblind', 'editorial'].includes(saved)) {
       document.body.classList.remove('mn-nero', 'mn-avorio', 'mn-colorblind');
       if (saved !== 'editorial') document.body.classList.add('mn-' + saved);
     }

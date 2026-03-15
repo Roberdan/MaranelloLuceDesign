@@ -243,6 +243,6 @@ export function speedometer(
       if (options.animate) animateTo(ta, v); else { curAngle = ta; curVal = v; draw(); updateA11y(v); }
     },
     setBar(v: number): void { barVal = Math.max(0, Math.min(1, v)); if (!animId) draw(); },
-    destroy(): void { if (animId) cancelAnimationFrame(animId); resizeObs?.disconnect(); ctx.clearRect(0, 0, dim * dpr, dim * dpr); },
+    destroy(): void { if (animId) cancelAnimationFrame(animId); resizeObs?.disconnect(); ctx.clearRect(0, 0, dim * dpr, dim * dpr); srSpan.remove(); },
   };
 }
