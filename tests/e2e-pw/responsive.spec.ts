@@ -23,10 +23,16 @@ test.describe('Responsive — Mobile (375px)', () => {
 
   test('spacing token --space-5xl is 3rem at mobile', async ({ page }) => {
     await page.goto('/demo/e2e.html');
-    const val = await page.evaluate(() =>
-      getComputedStyle(document.documentElement).getPropertyValue('--space-5xl').trim()
-    );
-    expect(val).toBe('3rem');
+    // Token is calc() so evaluate via element computed style (3rem at 16px = 48px)
+    const val = await page.evaluate(() => {
+      const el = document.createElement('div');
+      el.style.paddingTop = 'var(--space-5xl)';
+      document.body.appendChild(el);
+      const px = getComputedStyle(el).paddingTop;
+      el.remove();
+      return px;
+    });
+    expect(val).toBe('48px'); // 3rem × 16px
   });
 
   test('form grid is single-column at 375px', async ({ page }) => {
@@ -54,10 +60,16 @@ test.describe('Responsive — Tablet (768px)', () => {
 
   test('spacing tokens are intermediate at tablet', async ({ page }) => {
     await page.goto('/demo/e2e.html');
-    const val = await page.evaluate(() =>
-      getComputedStyle(document.documentElement).getPropertyValue('--space-5xl').trim()
-    );
-    expect(val).toBe('5rem');
+    // Token is calc() so evaluate via element computed style (5rem at 16px = 80px)
+    const val = await page.evaluate(() => {
+      const el = document.createElement('div');
+      el.style.paddingTop = 'var(--space-5xl)';
+      document.body.appendChild(el);
+      const px = getComputedStyle(el).paddingTop;
+      el.remove();
+      return px;
+    });
+    expect(val).toBe('80px'); // 5rem × 16px
   });
 });
 

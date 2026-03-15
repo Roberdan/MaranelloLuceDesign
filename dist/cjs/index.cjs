@@ -585,10 +585,10 @@ function palette(el4 = document.documentElement) {
     grigioMedio: read("--grigio-medio"),
     neroAssoluto: read("--nero-assoluto"),
     // Status — use in charts, badges, gauges
-    statusOk: read("--status-ok"),
-    statusWarn: read("--status-warn"),
-    statusError: read("--status-error"),
-    statusInfo: read("--status-info")
+    statusOk: read("--signal-ok"),
+    statusWarn: read("--signal-warning"),
+    statusError: read("--signal-danger"),
+    statusInfo: read("--signal-info")
   };
 }
 function debounce(fn, ms) {
