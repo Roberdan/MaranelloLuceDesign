@@ -1,192 +1,427 @@
 name: "Full WCAG 2.2 AA Accessibility"
+project: maranello-luce
 description: >
-  Bring Maranello Luce Design System to full WCAG 2.2 AA compliance.
-  Baseline (role/aria-label on all canvas) is done in v4.0.3.
-  This plan covers: focus management, keyboard navigation, screen reader
-  data access, semantic HTML improvements, live region announcements,
-  contrast audit, and documentation.
+  Full WCAG 2.2 AA compliance for Maranello Luce Design System.
+  Baseline done in v4.0.3. This plan: contrast CI, keyboard nav,
+  SR data, semantic forms, live regions, focus traps, docs+release.
+parallel_mode: standard
+version_target: "4.1.0"
 
-baseline_done:
-  - "All charts-* use applyChartA11y (role=img, aria-label, sr-only span)"
-  - "Gantt: role=grid, tabindex, arrow key nav"
-  - "Speedometer + gauge-engine: role=img, live aria-label updates"
-  - "social-graph, map-view, neural-nodes, network-messages: role=img + tabindex"
-  - "<mn-a11y>: Tab+Escape keyboard, FAB aria-expanded, panel role=dialog"
-  - ".mn-sr-only class in accessibility.css"
-  - "mn-reduced-motion, mn-high-contrast CSS hooks"
-  - "Skip link in demo"
+# Review fixes applied:
+# B1: 250-line overflow — split tasks include extract/refactor for near-limit files
+# B2: Added modal/drawer/command-palette focus trap + ARIA (W2)
+# B3: Added cruiseLever/toggleLever to keyboard nav (W2)
+# B4: Split T3.1 into T3.1a (helpers+core) and T3.1b (remaining charts)
+# B5: Tests per wave, not waterfall
 
 waves:
 
   - id: W1
-    name: "Contrast Audit"
-    goal: "No WCAG 1.4.3 (text 4.5:1) or 1.4.11 (UI 3:1) failures on any theme"
+    name: "Contrast Audit + CI Gate"
     tasks:
-      - id: T1.1
-        name: "Script: contrast checker against all 4 themes"
-        detail: >
-          Build scripts/check-contrast.mjs — parse CSS vars for each theme,
-          compute luminance ratios for all text/bg combos, output failures.
-          Run in CI on push.
-        files: ["scripts/check-contrast.mjs", ".github/workflows/ci.yml"]
+      - task_id: T1.1
+        name: "Build contrast checker script + CI step"
+        type: feature
+        priority: P1
+        effort_level: 2
+        model: opus
+        executor: task-executor
+        description: >
+          Create scripts/check-contrast.mjs — parse CSS var values from tokens.css
+          and themes-*.css, compute WCAG luminance ratios for text/bg combos.
+          Exit 1 on failure. Add to ci.yml as Constitution step.
+        test_criteria: "Exits 0 on current codebase. Exits 1 on deliberate bad combo."
+        files: [scripts/check-contrast.mjs, .github/workflows/ci.yml]
+        verify:
+          - "node scripts/check-contrast.mjs exits 0"
+          - "CI yml includes check-contrast step"
+          - "Max 250 lines"
 
-      - id: T1.2
-        name: "Fix any contrast failures found by T1.1"
-        detail: >
-          Apply adaptive token fixes (not primitive) per theme.
-          Must pass on Editorial, Nero, Avorio, Colorblind.
+      - task_id: T1.2
+        name: "Fix contrast failures + unit test"
+        type: fix
+        priority: P1
+        effort_level: 1
+        model: sonnet
+        executor: task-executor
+        description: "Run check-contrast.mjs, fix failures with adaptive tokens. Write test."
         depends_on: [T1.1]
+        files: [tests/contrast.test.ts]
+        verify:
+          - "node scripts/check-contrast.mjs exits 0"
+          - "test-digest.sh --suite unit passes"
 
   - id: W2
-    name: "Keyboard Navigation"
-    goal: "Every interactive element reachable and operable by keyboard alone"
+    name: "Keyboard Navigation + Focus Traps"
     tasks:
-      - id: T2.1
-        name: "Focus trap in <mn-a11y> panel dialog"
-        detail: >
-          Add trapFocus() (pattern in NaSra) to mn-a11y-fallback.js.
-          Tab cycles within panel when open. Shift+Tab also trapped.
-          Existing Escape already returns focus to FAB.
-        files: ["src/wc/mn-a11y-fallback.js"]
+      - task_id: T2.1
+        name: "Focus trap: mn-a11y panel"
+        type: feature
+        priority: P1
+        effort_level: 1
+        model: sonnet
+        executor: task-executor
+        description: >
+          Add trapFocus() to mn-a11y-fallback.js. Tab/Shift+Tab cycle within
+          panel when open. Cleanup in destroy().
+        files: [src/wc/mn-a11y-fallback.js]
+        verify:
+          - "trapFocus code in buildA11yFallback"
+          - "Cleanup in destroy()"
+          - "Max 250 lines"
 
-      - id: T2.2
-        name: "Keyboard nav: mn-theme-rotary"
-        detail: >
-          Add role=group + ArrowLeft/ArrowRight to cycle themes.
-          Each option needs role=radio + aria-checked. Announce theme name on change.
-        files: ["src/wc/mn-theme-rotary.js", "src/ts/theme-rotary.ts"]
+      - task_id: T2.2
+        name: "Focus trap: mn-modal + mn-drawer"
+        type: feature
+        priority: P1
+        effort_level: 1
+        model: sonnet
+        executor: task-executor
+        description: >
+          Add role=dialog, aria-modal=true, trapFocus() to mn-modal WC.
+          Same for mn-drawer (openDrawer). Escape closes. Focus returns to trigger.
+        files: [src/ts/controls-dialogs.ts, src/ts/modal.ts]
+        verify:
+          - "role=dialog and aria-modal on modal"
+          - "trapFocus active when open"
+          - "Escape closes and returns focus"
+          - "Max 250 lines per file"
 
-      - id: T2.3
-        name: "Keyboard nav: mn-ferrari-control (dial/knob)"
-        detail: >
-          Add role=slider, aria-valuemin/max/now, ArrowUp/Down/Left/Right.
-          Step 1 unit per arrow, 10 per Page Up/Down, Home=min, End=max.
-        files: ["src/ts/controls-ferrari.ts", "src/ts/controls-ferrari-dials.ts"]
+      - task_id: T2.3
+        name: "ARIA + keyboard: mn-command-palette"
+        type: feature
+        priority: P1
+        effort_level: 2
+        model: opus
+        executor: task-executor
+        description: >
+          Add role=combobox on input, role=listbox on results, role=option on items.
+          ArrowUp/Down navigate results. Enter selects. Escape closes.
+          aria-activedescendant tracks highlighted item.
+        files: [src/ts/command-palette.ts, src/wc/mn-command-palette.js]
+        verify:
+          - "role=combobox, role=listbox, role=option"
+          - "ArrowUp/Down/Enter/Escape handlers"
+          - "aria-activedescendant updates"
+          - "Max 250 lines per file"
 
-      - id: T2.4
-        name: "Tab order audit — demo page"
-        detail: >
-          Tab through entire demo, verify logical order matches visual order.
-          Fix any tabindex=-1 traps or skipped interactive elements.
-          Document exceptions in TROUBLESHOOTING.md.
-        files: ["demo/index.html", "TROUBLESHOOTING.md"]
+      - task_id: T2.4
+        name: "Keyboard: mn-theme-rotary"
+        type: feature
+        priority: P1
+        effort_level: 2
+        model: opus
+        executor: task-executor
+        description: >
+          role=radiogroup on container, role=radio + aria-checked on options.
+          ArrowLeft/Right cycle. Enter/Space select. :focus-visible ring.
+        files: [src/wc/mn-theme-rotary.js, src/ts/theme-rotary.ts]
+        verify:
+          - "role=radiogroup + role=radio"
+          - "ArrowLeft/Right keydown"
+          - "aria-checked updates"
+          - "Max 250 lines per file"
+
+      - task_id: T2.5
+        name: "Keyboard: all 4 Ferrari controls"
+        type: feature
+        priority: P2
+        effort_level: 2
+        model: opus
+        executor: task-executor
+        description: >
+          Add role=slider + aria-valuemin/max/now to manettino, steppedRotary,
+          cruiseLever, toggleLever. Arrow keys step value. PageUp/Down step 10.
+          Home=min, End=max. tabindex=0 on canvas.
+          NOTE: controls-ferrari-dials.ts is at 246 lines — extract keyboard
+          handler into new file src/ts/controls-ferrari-keys.ts if needed.
+        files:
+          - src/ts/controls-ferrari.ts
+          - src/ts/controls-ferrari-dials.ts
+          - src/ts/controls-ferrari-keys.ts
+        verify:
+          - "role=slider and aria-value* on all 4 controls"
+          - "keydown handler for Arrow/Page/Home/End"
+          - "npx tsc --noEmit exits 0"
+          - "Max 250 lines per file"
+
+      - task_id: T2.6
+        name: "Tab order audit + keyboard nav tests"
+        type: test
+        priority: P2
+        effort_level: 2
+        model: sonnet
+        executor: task-executor
+        description: >
+          Audit demo/index.html tab order. Fix tabindex=-1 traps.
+          Write vitest tests for: focus trap, theme rotary keyboard,
+          Ferrari control keyboard, command palette keyboard.
+        files: [demo/index.html, tests/keyboard-nav.test.ts]
+        verify:
+          - "No bare tabindex=-1 on interactive elements"
+          - "test-digest.sh --suite unit passes"
 
   - id: W3
     name: "Screen Reader Data Access"
-    goal: "Canvas chart data readable by screen readers via table alternative"
     tasks:
-      - id: T3.1
-        name: "applyChartA11y: use real data in aria-label + inject sr table"
-        detail: >
-          Extend applyChartA11y(canvas, label, data?) to:
-          1. Set aria-label with actual min/max/last values (already done for sparkline)
-          2. Optionally inject sr-only <table> with labels+values (new param)
-          All charts-*.ts pass real data summary to applyChartA11y.
-        files: ["src/ts/charts-helpers.ts", "src/ts/charts-sparkline.ts",
-                "src/ts/charts-donut.ts", "src/ts/charts-sparkbar.ts",
-                "src/ts/charts-area.ts", "src/ts/charts-live.ts",
-                "src/ts/charts-radar.ts", "src/ts/charts-bubble.ts",
-                "src/ts/charts-halfgauge.ts"]
+      - task_id: T3.1a
+        name: "Extend applyChartA11y + core charts (sparkline, donut, barChart)"
+        type: feature
+        priority: P1
+        effort_level: 2
+        model: opus
+        executor: task-executor
+        description: >
+          Extend applyChartA11y(canvas, label, data?) in charts-helpers.ts.
+          Optional data param injects sr-only table. Backward compat maintained.
+          Update sparkline, donut, sparkbar to pass real data summaries.
+        files:
+          - src/ts/charts-helpers.ts
+          - src/ts/charts-sparkline.ts
+          - src/ts/charts-donut.ts
+          - src/ts/charts-sparkbar.ts
+        verify:
+          - "applyChartA11y accepts optional data param"
+          - "sr-only table injected when data provided"
+          - "npx tsc --noEmit exits 0"
+          - "Max 250 lines per file"
 
-      - id: T3.2
-        name: "liveGraph: aria-live region for real-time updates"
-        detail: >
-          Add sr-only aria-live="polite" sibling. On each data push,
-          announce latest value + trend direction (e.g. "CPU: 42%, up from 38%").
-          Throttle to 1 announcement per 5 seconds to avoid SR spam.
-        files: ["src/ts/charts-live.ts"]
+      - task_id: T3.1b
+        name: "SR data: remaining charts (area, live, radar, bubble, halfGauge)"
+        type: feature
+        priority: P1
+        effort_level: 2
+        model: sonnet
+        executor: task-executor
+        description: >
+          Update areaChart, liveGraph, radar, bubble, halfGauge to pass
+          meaningful data summaries to applyChartA11y.
+        depends_on: [T3.1a]
+        files:
+          - src/ts/charts-area.ts
+          - src/ts/charts-live.ts
+          - src/ts/charts-radar.ts
+          - src/ts/charts-bubble.ts
+          - src/ts/charts-halfgauge.ts
+        verify:
+          - "All charts pass data to applyChartA11y"
+          - "Max 250 lines per file"
 
-      - id: T3.3
-        name: "social-graph + neural-nodes: node count in aria-label"
-        detail: >
-          Update aria-label dynamically: "Social graph: {n} nodes, {e} edges"
-          and "Neural network: {layers} layers, {nodes} nodes".
-        files: ["src/ts/social-graph.ts", "src/ts/neural-nodes.ts"]
+      - task_id: T3.2
+        name: "liveGraph: aria-live region (throttled)"
+        type: feature
+        priority: P2
+        effort_level: 2
+        model: opus
+        executor: task-executor
+        description: >
+          Add sr-only aria-live="polite" sibling to liveGraph canvas.
+          Announce latest value + trend. Throttle max 1 per 5s. Cleanup on destroy.
+        files: [src/ts/charts-live.ts]
+        verify:
+          - "aria-live=polite element created"
+          - "Throttle logic (5s)"
+          - "Cleanup on destroy"
+
+      - task_id: T3.3
+        name: "Dynamic aria-label: social-graph + neural-nodes"
+        type: fix
+        priority: P2
+        effort_level: 1
+        model: sonnet
+        executor: task-executor
+        description: >
+          Update static aria-label to include node/edge counts.
+          NOTE: both files are at exactly 250 lines — compact existing code
+          (e.g., merge single-use variable declarations) before adding.
+        files: [src/ts/social-graph.ts, src/ts/neural-nodes.ts]
+        verify:
+          - "aria-label includes dynamic counts"
+          - "Max 250 lines per file"
+
+      - task_id: T3.4
+        name: "SR data tests"
+        type: test
+        priority: P1
+        effort_level: 1
+        model: sonnet
+        executor: task-executor
+        description: >
+          Write vitest tests for applyChartA11y with data param,
+          sr-only table injection, aria-live region creation.
+        files: [tests/charts-a11y.test.ts]
+        verify:
+          - "test-digest.sh --suite unit passes"
 
   - id: W4
     name: "Semantic HTML — Forms & Tables"
-    goal: "All form controls and data tables meet WCAG 1.3.1 and 4.1.2"
     tasks:
-      - id: T4.1
-        name: "DataTable: add scope attributes to headers"
-        detail: >
-          th elements need scope="col" (column headers) or scope="row" (row headers).
-          Check mn-data-table WC and data-table-render.ts.
-        files: ["src/ts/data-table-render.ts", "src/wc/mn-data-table.js"]
+      - task_id: T4.1
+        name: "DataTable: scope on headers"
+        type: fix
+        priority: P1
+        effort_level: 1
+        model: sonnet
+        executor: task-executor
+        description: "Add scope='col' to th in data-table-render.ts and mn-data-table WC."
+        files: [src/ts/data-table-render.ts, src/wc/mn-data-table.js]
+        verify:
+          - "scope=col on th"
+          - "npx tsc --noEmit exits 0"
 
-      - id: T4.2
-        name: "Forms: aria-describedby for error messages"
-        detail: >
-          Each input error message must be linked via aria-describedby.
-          Required fields: aria-required="true". Invalid fields: aria-invalid="true".
-          Check forms-validate.ts and forms-widgets.ts.
-        files: ["src/ts/forms-validate.ts", "src/ts/forms-widgets.ts"]
+      - task_id: T4.2
+        name: "Forms: aria-describedby + aria-required + aria-invalid"
+        type: feature
+        priority: P1
+        effort_level: 2
+        model: opus
+        executor: task-executor
+        description: >
+          Link error messages via aria-describedby. aria-required on required.
+          aria-invalid toggled. Generate unique IDs for error elements.
+          NOTE: forms-widgets.ts is at 249 lines — extract validation helpers
+          to forms-validate.ts if needed to stay under 250.
+        files: [src/ts/forms-validate.ts, src/ts/forms-widgets.ts]
+        verify:
+          - "aria-describedby on inputs pointing to error elements"
+          - "aria-required and aria-invalid present"
+          - "Max 250 lines per file"
 
-      - id: T4.3
-        name: "Ensure all form controls have visible, programmatic labels"
-        detail: >
-          Audit all mn-form-* CSS classes and initForm* functions.
-          Every input must have: explicit <label for> OR aria-label OR aria-labelledby.
-          No placeholder-as-label antipattern.
-        files: ["src/ts/forms.ts", "src/css/forms-inputs.css"]
+      - task_id: T4.3
+        name: "Forms a11y tests"
+        type: test
+        priority: P1
+        effort_level: 1
+        model: sonnet
+        executor: task-executor
+        description: "Test aria-describedby linked, aria-invalid toggled, labels present."
+        files: [tests/forms-a11y.test.ts]
+        verify:
+          - "test-digest.sh --suite unit passes"
 
   - id: W5
     name: "Live Regions & Dynamic Content"
-    goal: "Dynamic content changes announced to screen readers"
     tasks:
-      - id: T5.1
-        name: "Toast notifications: aria-live assertive for errors, polite for info"
-        detail: >
-          toast() function currently uses mn-toast WC. Verify role="status"
-          or role="alert" on toast container. Errors = assertive, others = polite.
-        files: ["src/ts/toast.ts", "src/wc/mn-toast.js"]
+      - task_id: T5.1
+        name: "Toast: correct aria-live roles"
+        type: fix
+        priority: P1
+        effort_level: 1
+        model: sonnet
+        executor: task-executor
+        description: >
+          role=alert + aria-live=assertive for error/warning toasts.
+          role=status + aria-live=polite for info/success.
+        files: [src/ts/toast.ts, src/wc/mn-toast.js]
+        verify:
+          - "role=alert on error toasts"
+          - "role=status on info toasts"
 
-      - id: T5.2
-        name: "Loading states: aria-busy on containers during async operations"
-        detail: >
-          Add aria-busy="true" to chart containers while data loads.
-          Remove on render complete. Announce result via sr-only region.
-        files: ["src/wc/mn-chart.js", "src/ts/charts.ts"]
+      - task_id: T5.2
+        name: "Chart WC: aria-busy during render"
+        type: feature
+        priority: P2
+        effort_level: 1
+        model: sonnet
+        executor: task-executor
+        description: "aria-busy=true on host during render, remove on complete."
+        files: [src/wc/mn-chart.js]
+        verify:
+          - "aria-busy toggled during render"
+
+      - task_id: T5.3
+        name: "Live region + toast tests"
+        type: test
+        priority: P1
+        effort_level: 1
+        model: sonnet
+        executor: task-executor
+        description: "Test toast role/aria-live, chart aria-busy."
+        files: [tests/live-regions.test.ts]
+        verify:
+          - "test-digest.sh --suite unit passes"
 
   - id: W6
-    name: "Docs + NaSra Final Update"
-    goal: "All a11y work reflected in docs, NaSra, AGENT.md, TROUBLESHOOTING.md"
+    name: "Docs + Release"
     tasks:
-      - id: T6.1
-        name: "NaSra: update status matrix to reflect completed waves"
-        detail: >
-          Update the A11y Implementation Status table in NaSra.agent.md.
-          All ⚠️ items resolved in W1-W5 should become ✅.
-        files: [".github/agents/NaSra.agent.md"]
+      - task_id: TF-doc
+        name: "NaSra + AGENT.md + TROUBLESHOOTING + api-catalog"
+        type: doc
+        priority: P1
+        effort_level: 2
+        model: sonnet
+        executor: task-executor
+        description: >
+          1. NaSra.agent.md: update status matrix — all completed ⚠️ → ✅.
+             Update version to v4.1.0. Add keyboard patterns to CI Constitution.
+          2. AGENT.md: add Accessibility section.
+          3. TROUBLESHOOTING.md: add a11y known issues.
+          4. docs/api-catalog.md: document applyChartA11y data param.
+        files:
+          - .github/agents/NaSra.agent.md
+          - AGENT.md
+          - TROUBLESHOOTING.md
+          - docs/api-catalog.md
+        verify:
+          - "NaSra status matrix: no ⚠️ for completed items"
+          - "AGENT.md has Accessibility section"
 
-      - id: T6.2
-        name: "AGENT.md: add WCAG 2.2 compliance summary section"
-        detail: >
-          Add Accessibility section to AGENT.md with: compliance level,
-          key patterns, applyChartA11y API, mn-sr-only class, a11y panel.
-        files: ["AGENT.md"]
+      - task_id: TF-changelog
+        name: "CHANGELOG + version 4.1.0 + rebuild dist"
+        type: chore
+        priority: P0
+        effort_level: 1
+        model: sonnet
+        executor: task-executor
+        description: >
+          Bump package.json to 4.1.0. CHANGELOG entry. Update demo footer.
+          build-digest.sh. git add -f dist/.
+        depends_on: [TF-doc]
+        files: [package.json, CHANGELOG.md, demo/index.html]
+        verify:
+          - "package.json version 4.1.0"
+          - "CHANGELOG has [4.1.0]"
+          - "build-digest.sh exits 0"
 
-      - id: T6.3
-        name: "TROUBLESHOOTING.md: a11y known issues and fixes"
-        detail: >
-          Document: canvas charts not navigable (by design — use sr table instead),
-          focus trap requires visible focus ring (focusVisible=true), etc.
-        files: ["TROUBLESHOOTING.md"]
+      - task_id: TF-pr
+        name: "Create PR, CI green"
+        type: chore
+        priority: P0
+        effort_level: 1
+        model: sonnet
+        executor: task-executor
+        description: "PR from wave branch to main. CI green. No merge conflicts."
+        depends_on: [TF-changelog]
+        verify:
+          - "PR created"
+          - "CI passes"
 
-      - id: T6.4
-        name: "CHANGELOG + version bump (4.1.0 — minor, adds keyboard nav)"
-        files: ["CHANGELOG.md", "package.json"]
+      - task_id: TF-deploy-verify
+        name: "Merge, tag v4.1.0, verify GH Pages"
+        type: chore
+        priority: P0
+        effort_level: 1
+        model: sonnet
+        executor: task-executor
+        description: >
+          Squash merge PR. gh release create v4.1.0. Verify Pages deploy.
+        depends_on: [TF-pr]
+        verify:
+          - "v4.1.0 tag exists"
+          - "GH Pages deploy succeeds"
 
 success_criteria:
   - "scripts/check-contrast.mjs exits 0 on all 4 themes"
-  - "Full keyboard tab-through of demo with no traps or skipped elements"
-  - "All canvas charts have meaningful aria-label (not just 'Area chart: 3 series')"
-  - "liveGraph announces value changes to SR without spam"
-  - "DataTable: NVDA/VoiceOver reads column headers correctly"
-  - "Forms: all errors linked via aria-describedby"
-  - "Toast errors announced immediately (role=alert)"
-  - "NaSra status matrix: all components ✅ or — (not applicable)"
-
-version_target: "4.1.0"
-estimated_waves: 6
-priority: high
+  - "Full keyboard Tab — no traps, no skipped elements"
+  - "All canvas charts have meaningful aria-label with real data"
+  - "Focus trap on a11y panel, modal, drawer"
+  - "Command palette: combobox pattern with keyboard nav"
+  - "Ferrari controls: slider ARIA + keyboard"
+  - "Theme rotary: radiogroup ARIA + keyboard"
+  - "liveGraph announces values (throttled 5s)"
+  - "DataTable th scope=col"
+  - "Form errors via aria-describedby"
+  - "Toast role=alert for errors, role=status for info"
+  - "NaSra status: all ✅ or —"
+  - "test-digest.sh --suite unit passes"
+  - "v4.1.0 released"
