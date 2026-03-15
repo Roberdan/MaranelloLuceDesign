@@ -26,6 +26,9 @@ export function mapView(
 
   const canvas = document.createElement('canvas');
   canvas.style.cssText = 'width:100%;height:100%;display:block;';
+  canvas.setAttribute('role', 'img');
+  canvas.setAttribute('aria-label', 'Interactive map view');
+  canvas.setAttribute('tabindex', '0');
   container.appendChild(canvas);
 
   const tip = document.createElement('div');

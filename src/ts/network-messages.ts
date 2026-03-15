@@ -57,7 +57,9 @@ export function networkMessages(
   if (options.width) host.style.width = `${options.width}px`;
   if (options.height) host.style.height = `${options.height}px`;
   canvas.style.cssText = 'display:block;width:100%;height:100%';
+  canvas.setAttribute('role', 'img');
   canvas.setAttribute('aria-label', 'Network message flow');
+  canvas.setAttribute('tabindex', '0');
   host.appendChild(canvas);
 
   const getMap = (): Map<string, NetNode> => new Map(nodes.map((node) => [node.id, node]));

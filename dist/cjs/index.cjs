@@ -708,7 +708,9 @@ function networkMessages(container, opts = { nodes: [], connections: [] }) {
   if (options.width) host.style.width = `${options.width}px`;
   if (options.height) host.style.height = `${options.height}px`;
   canvas.style.cssText = "display:block;width:100%;height:100%";
+  canvas.setAttribute("role", "img");
   canvas.setAttribute("aria-label", "Network message flow");
+  canvas.setAttribute("tabindex", "0");
   host.appendChild(canvas);
   const getMap = () => new Map(nodes.map((node) => [node.id, node]));
   const point = (node) => ({ x: node.x * canvas.clientWidth, y: node.y * canvas.clientHeight });
@@ -934,7 +936,9 @@ function neuralNodes(container, opts = {}) {
   if (options.width) host.style.width = `${options.width}px`;
   if (options.height) host.style.height = `${options.height}px`;
   canvas.style.cssText = "display:block;width:100%;height:100%";
+  canvas.setAttribute("role", "img");
   canvas.setAttribute("aria-label", "Neural nodes visualization");
+  canvas.setAttribute("tabindex", "0");
   host.appendChild(canvas);
   const ro = window.ResizeObserver ? new ResizeObserver(resize) : null;
   const onMove = (event) => {
@@ -6252,6 +6256,9 @@ function mapView(container, opts) {
   container.style.overflow = "hidden";
   const canvas = document.createElement("canvas");
   canvas.style.cssText = "width:100%;height:100%;display:block;";
+  canvas.setAttribute("role", "img");
+  canvas.setAttribute("aria-label", "Interactive map view");
+  canvas.setAttribute("tabindex", "0");
   container.appendChild(canvas);
   const tip = document.createElement("div");
   tip.className = "mn-chart-tooltip";
@@ -6547,6 +6554,9 @@ function socialGraph(container, opts = { nodes: [], edges: [] }) {
   hostEl.style.overflow = "hidden";
   const canvas = document.createElement("canvas");
   canvas.style.cssText = "display:block;width:100%;height:100%;touch-action:none;";
+  canvas.setAttribute("role", "img");
+  canvas.setAttribute("aria-label", "Interactive social graph visualization");
+  canvas.setAttribute("tabindex", "0");
   const tip = document.createElement("div");
   tip.className = "mn-chart-tooltip";
   tip.style.cssText = "position:absolute;pointer-events:none;opacity:0;transition:opacity .12s ease;max-width:220px;";

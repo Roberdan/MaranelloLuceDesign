@@ -32,7 +32,7 @@
 
 ---
 
-> **[▶ Open Full Interactive Demo](https://roberdan.github.io/MaranelloLuceDesign/)** — 33 sections, every component, 4 themes, self-documenting API snippets · 🇬🇧 EN / 🇮🇹 IT language selector · ♿ Accessibility panel
+> **[▶ Open Full Interactive Demo](https://roberdan.github.io/MaranelloLuceDesign/)** — 33 sections, every component, 4 themes, self-documenting API snippets · ♿ Accessibility panel (font size, contrast, motion, dyslexia font)
 
 ---
 

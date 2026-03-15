@@ -25,18 +25,21 @@ class MnA11y extends HTMLElement {
     const link = cssLink("../css/accessibility.css");
     const style = document.createElement("style");
     style.textContent = `
-      :host { display: contents }
-      .mn-a11y-fab { position: fixed; bottom: 20px; right: 20px; z-index: 8500;
-        width: 44px; height: 44px; border-radius: 50%; border: none;
-        background: var(--nero-soft, #1a1a1a);
-        border: 1px solid var(--grigio-scuro, #444);
-        color: var(--grigio-chiaro, #ccc); cursor: pointer;
+      :host { display: block; position: fixed; bottom: 24px; right: 24px;
+        z-index: 8500; width: 52px; height: 52px; overflow: visible }
+      .mn-a11y-fab { width: 52px; height: 52px; border-radius: 50%;
+        background: var(--rosso-corsa, #DC0000);
+        border: 2px solid rgba(255,255,255,.18);
+        color: #fff; cursor: pointer;
         display: flex; align-items: center; justify-content: center;
-        box-shadow: 0 4px 12px rgba(0,0,0,.4);
-        transition: background .15s, transform .15s; font-size: 1.1rem }
-      .mn-a11y-fab:hover { background: var(--grigio-scuro, #333);
-        transform: scale(1.05) }
-      .mn-a11y-panel { position: fixed; bottom: 74px; right: 20px; z-index: 8500;
+        box-shadow: 0 4px 16px rgba(220,0,0,.45), 0 2px 8px rgba(0,0,0,.4);
+        transition: background .2s, transform .2s, box-shadow .2s; font-size: 1.35rem }
+      .mn-a11y-fab:hover { background: #b00000;
+        box-shadow: 0 6px 20px rgba(220,0,0,.55), 0 3px 10px rgba(0,0,0,.4);
+        transform: scale(1.07) }
+      .mn-a11y-fab:focus-visible { outline: 3px solid var(--giallo-ferrari, #FFC72C);
+        outline-offset: 3px }
+      .mn-a11y-panel { position: fixed; bottom: 88px; right: 24px; z-index: 8500;
         width: 280px; background: var(--nero-soft, #1a1a1a);
         border: 1px solid var(--grigio-scuro, #444); border-radius: 12px;
         padding: 16px; box-shadow: 0 12px 32px rgba(0,0,0,.5);

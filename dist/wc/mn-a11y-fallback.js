@@ -1,6 +1,7 @@
 const STORAGE = "mn-a11y";
-const DEFAULTS = { fontSize: "md", reducedMotion: false, highContrast: false, focusVisible: true };
+const DEFAULTS = { fontSize: "md", reducedMotion: false, highContrast: false, focusVisible: true, dyslexiaFont: false };
 const SIZES = { sm: 0.875, md: 1, lg: 1.125, xl: 1.25 };
+let _dyslexicLoaded = false;
 function loadSettings() {
   try {
     return { ...DEFAULTS, ...JSON.parse(localStorage.getItem(STORAGE)) };
@@ -14,6 +15,14 @@ function applySettings(s) {
   root.classList.toggle("mn-reduced-motion", s.reducedMotion);
   root.classList.toggle("mn-high-contrast", s.highContrast);
   root.classList.toggle("mn-no-focus-ring", !s.focusVisible);
+  if (s.dyslexiaFont && !_dyslexicLoaded) {
+    _dyslexicLoaded = true;
+    const lnk = document.createElement("link");
+    lnk.rel = "stylesheet";
+    lnk.href = "../fonts/opendyslexic.css";
+    document.head.appendChild(lnk);
+  }
+  document.body.classList.toggle("mn-a11y-dyslexia-font", s.dyslexiaFont);
   try {
     localStorage.setItem(STORAGE, JSON.stringify(s));
   } catch {
@@ -33,6 +42,7 @@ function buildToggle(label, key, s, onApply) {
   t.className = "mn-a11y-toggle" + (s[key] ? " mn-a11y-toggle--on" : "");
   t.setAttribute("role", "switch");
   t.setAttribute("aria-checked", String(!!s[key]));
+  t.dataset.a11yKey = key;
   const thumb = document.createElement("span");
   thumb.className = "mn-a11y-toggle__thumb";
   t.appendChild(thumb);
@@ -50,7 +60,7 @@ function buildA11yFallback(shadowRoot) {
   const apply = () => applySettings(s);
   const fab = document.createElement("button");
   fab.className = "mn-a11y-fab";
-  fab.innerHTML = "\u2699";
+  fab.innerHTML = '<svg width="22" height="22" viewBox="0 0 22 22" fill="currentColor" aria-hidden="true"><rect x="2" y="4" width="18" height="2" rx="1"/><rect x="2" y="10" width="18" height="2" rx="1"/><rect x="2" y="16" width="18" height="2" rx="1"/><circle cx="7" cy="5" r="3"/><circle cx="15" cy="11" r="3"/><circle cx="9" cy="17" r="3"/></svg>';
   fab.setAttribute("aria-label", "Display settings");
   fab.setAttribute("aria-expanded", "false");
   fab.setAttribute("aria-controls", "mn-a11y-panel");
@@ -85,6 +95,7 @@ function buildA11yFallback(shadowRoot) {
     return d;
   };
   panel.appendChild(divider());
+  panel.appendChild(buildToggle("Dyslexia Font", "dyslexiaFont", s, apply));
   panel.appendChild(buildToggle("Reduced Motion", "reducedMotion", s, apply));
   panel.appendChild(buildToggle("High Contrast", "highContrast", s, apply));
   panel.appendChild(buildToggle("Focus Indicators", "focusVisible", s, apply));
@@ -96,6 +107,11 @@ function buildA11yFallback(shadowRoot) {
     Object.assign(s, DEFAULTS);
     apply();
     panel.querySelectorAll(".mn-a11y-panel__size-btn").forEach((b) => b.classList.toggle("mn-a11y-panel__size-btn--active", b.textContent === "MD"));
+    panel.querySelectorAll("[data-a11y-key]").forEach((t) => {
+      const isOn = !!DEFAULTS[t.dataset.a11yKey];
+      t.classList.toggle("mn-a11y-toggle--on", isOn);
+      t.setAttribute("aria-checked", String(isOn));
+    });
   });
   panel.appendChild(resetBtn);
   let isOpen = false;
@@ -104,12 +120,22 @@ function buildA11yFallback(shadowRoot) {
     panel.classList.toggle("mn-a11y-panel--open", isOpen);
     fab.setAttribute("aria-expanded", String(isOpen));
   });
+  const onKeydown = (e) => {
+    if (e.key === "Escape" && isOpen) {
+      isOpen = false;
+      panel.classList.remove("mn-a11y-panel--open");
+      fab.setAttribute("aria-expanded", "false");
+      fab.focus();
+    }
+  };
+  document.addEventListener("keydown", onKeydown);
   shadowRoot.append(fab, panel);
   apply();
   return {
     getSettings: () => ({ ...s }),
     reset: () => resetBtn.click(),
     destroy: () => {
+      document.removeEventListener("keydown", onKeydown);
       fab.remove();
       panel.remove();
     }

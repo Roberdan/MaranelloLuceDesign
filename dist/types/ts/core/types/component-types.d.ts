@@ -182,6 +182,7 @@ export interface A11ySettings {
     highContrast: boolean;
     focusVisible: boolean;
     lineSpacing: string;
+    dyslexiaFont: boolean;
 }
 export interface A11yPanelController {
     getSettings: () => A11ySettings;

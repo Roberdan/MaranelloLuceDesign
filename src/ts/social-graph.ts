@@ -51,6 +51,9 @@ export function socialGraph(
   hostEl.style.overflow = 'hidden';
   const canvas = document.createElement('canvas');
   canvas.style.cssText = 'display:block;width:100%;height:100%;touch-action:none;';
+  canvas.setAttribute('role', 'img');
+  canvas.setAttribute('aria-label', 'Interactive social graph visualization');
+  canvas.setAttribute('tabindex', '0');
   const tip = document.createElement('div');
   tip.className = 'mn-chart-tooltip';
   tip.style.cssText = 'position:absolute;pointer-events:none;opacity:0;transition:opacity .12s ease;max-width:220px;';

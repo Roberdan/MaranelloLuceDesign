@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.0.3] - 15 Mar 2026
+
+### Fixed
+- `<mn-a11y>` FAB: moved `position:fixed` to `:host` (light DOM) — shadow DOM fixed positioning unreliable cross-browser
+- `<mn-a11y>` FAB: 52px, rosso-corsa background, sliders SVG icon — visible on all themes
+- `<mn-a11y>` reset: `data-a11y-key` on toggles — dyslexiaFont and all toggles now reset correctly
+- `<mn-a11y>` fallback: Escape key closes panel and returns focus to FAB
+
+### Changed
+- Language selector removed from demo nav (no strings were translated — misleading UX)
+- README: removed EN/IT language claim from demo description
+
+### Added
+- Canvas a11y baseline: `role="img"`, `aria-label`, `tabindex="0"` on social-graph, map-view, neural-nodes, network-messages (charts-* already covered)
+
 ## [4.0.2] - 15 Mar 2026
 
 ### Added

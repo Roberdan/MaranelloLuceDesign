@@ -59,7 +59,9 @@ export function neuralNodes(
   if (options.width) host.style.width = `${options.width}px`;
   if (options.height) host.style.height = `${options.height}px`;
   canvas.style.cssText = 'display:block;width:100%;height:100%';
+  canvas.setAttribute('role', 'img');
   canvas.setAttribute('aria-label', 'Neural nodes visualization');
+  canvas.setAttribute('tabindex', '0');
   host.appendChild(canvas);
 
   const ro = window.ResizeObserver ? new ResizeObserver(resize) : null;
