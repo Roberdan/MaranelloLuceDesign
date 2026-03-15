@@ -196,8 +196,8 @@ body.mn-a11y-high-contrast {
   --mn-text-muted:     #e0e0e0;
   --mn-border:         #ffffff;
   --mn-border-subtle:  rgba(255,255,255,0.4);
-  background: #000000 !important;
-  color: #ffffff !important;
+  background: var(--mn-surface) !important;
+  color: var(--mn-text) !important;
 }
 
 /* Enhanced focus ring (thicker, higher offset) */

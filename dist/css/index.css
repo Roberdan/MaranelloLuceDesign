@@ -563,8 +563,8 @@
     --mn-text-muted: #e0e0e0;
     --mn-border: #fff;
     --mn-border-subtle: #fff6;
-    color: #fff !important;
-    background: #000 !important;
+    background: var(--mn-surface) !important;
+    color: var(--mn-text) !important;
   }
 
   body.mn-a11y-focus :focus-visible {
