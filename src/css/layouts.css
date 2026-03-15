@@ -17,6 +17,7 @@
 @import "./layouts-detail-panel-comments.css";
 @import "./layouts-detail-panel-gantt.css";
 @import "./layouts-detail-panel.css";
+@import "./layouts-detail-panel-extras.css";
 @import "./layouts-filter-chips.css";
 @import "./layouts-funnel.css";
 @import "./layouts-heatmap.css";
@@ -30,9 +31,11 @@
 @import "./layouts-page-header.css";
 @import "./layouts-sidebar.css";
 @import "./layouts-sim-panel.css";
+@import "./layouts-sim-panel-2.css";
 @import "./layouts-toolbar-drawer.css";
 @import "./layouts-convergio-toolbar.css";
 @import './layouts-mapbox.css';
 @import './layouts-mesh-mission.css';
 @import "./layouts-widget.css";
 @import "./layouts-grid-templates.css";
+@import "./layouts-search-drawer.css";

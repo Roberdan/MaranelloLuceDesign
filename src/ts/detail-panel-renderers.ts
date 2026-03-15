@@ -161,6 +161,22 @@ const renderers: Record<string, DetailRenderer> = {
     return div;
   },
 
+  country(val) {
+    const wrap = createElement('span', 'mn-detail-panel__field-value mn-detail-panel__country');
+    if (val) {
+      const str = String(val);
+      const code = createElement('span', 'mn-country__code');
+      code.textContent = str.substring(0, 2).toUpperCase();
+      wrap.appendChild(code);
+      const name = createElement('span');
+      name.textContent = str;
+      wrap.appendChild(name);
+    } else {
+      wrap.textContent = DASH;
+    }
+    return wrap;
+  },
+
   readonly(val) {
     const span = createElement('span', 'mn-detail-panel__field-value mn-detail-panel__field-value--muted');
     span.textContent = val ? String(val) : DASH;

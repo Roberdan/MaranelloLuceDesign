@@ -113,6 +113,15 @@ const editors: Record<string, DetailEditor> = {
     return sel;
   },
 
+  country(val, _field, onChange) {
+    const input = createElement('input', 'mn-form-input mn-form-input--sm mn-detail-panel__edit-input');
+    input.type = 'text';
+    input.value = val ? String(val) : '';
+    input.placeholder = 'Country name';
+    input.addEventListener('input', () => onChange(input.value));
+    return input;
+  },
+
   person(val, field, onChange) {
     const wrap = createElement('div', 'mn-detail-panel__person-edit');
     const input = createElement('input', 'mn-form-input mn-form-input--sm mn-detail-panel__edit-input');
@@ -129,15 +138,16 @@ const editors: Record<string, DetailEditor> = {
       onChange(input.value);
       if (debounceTimer !== null) clearTimeout(debounceTimer);
       const query = input.value.trim();
-      if (query.length < 2 || !field.onSearch) {
+      const hasSearch = field.onSearch || field.searchFn;
+      if (query.length < 2 || !hasSearch) {
         results.innerHTML = '';
         results.classList.remove('mn-detail-panel__person-results--open');
         return;
       }
       debounceTimer = setTimeout(() => {
-        const searchFn = field.onSearch;
-        if (!searchFn) return;
-        const res = searchFn(query);
+        const res = field.searchFn
+          ? field.searchFn(query)
+          : field.onSearch!(query);
         if (res && typeof (res as Promise<unknown>).then === 'function') {
           (res as Promise<Array<string | { name: string; email?: string }>>).then((items) => {
             renderPersonResults(results, items, input, (v) => onChange(v));

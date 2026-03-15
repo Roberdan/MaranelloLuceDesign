@@ -8,7 +8,8 @@
 
 export type DetailFieldType =
   | 'text' | 'number' | 'date' | 'select' | 'status'
-  | 'person' | 'score' | 'textarea' | 'readonly' | 'badge' | 'custom';
+  | 'person' | 'score' | 'textarea' | 'readonly' | 'badge' | 'custom'
+  | 'country';
 
 export interface DetailFieldValidation {
   required?: boolean;
@@ -26,8 +27,20 @@ export interface DetailFieldOption {
 }
 
 export interface DetailPersonItem {
+  id?: string;
   name: string;
   email?: string;
+  initials?: string;
+}
+
+export interface DetailParentLink {
+  label: string;
+  onClick: () => void;
+}
+
+export interface DetailExternalLink {
+  label: string;
+  url: string;
 }
 
 export interface DetailField {
@@ -46,6 +59,7 @@ export interface DetailField {
   badgeColors?: Record<string, string>;
   validate?: DetailFieldValidation;
   onSearch?: (query: string) => DetailPersonItem[] | Promise<DetailPersonItem[]>;
+  searchFn?: (q: string) => Promise<Array<{ id: string; name: string; email?: string; initials?: string }>>;
   render?: (value: unknown, data: Record<string, unknown>) => HTMLElement;
 }
 
@@ -80,6 +94,9 @@ export interface DetailPanelOptions {
       ctx: { isEditing: boolean; changes: Record<string, unknown> },
     ) => void
   >;
+  tabRenderers?: Record<string, (body: HTMLElement, data: unknown) => void>;
+  parentLink?: DetailParentLink;
+  externalLinks?: DetailExternalLink[];
   footerActions?: DetailFooterAction[];
 }
 

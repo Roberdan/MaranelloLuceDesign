@@ -1,0 +1,116 @@
+/* forms-fields-advanced.css — Tags field + Person field components */
+
+@layer components {
+  /* --- Tags Field --- */
+  .mn-tags-field {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    min-height: 40px;
+    padding: 6px 10px;
+    border: 1px solid var(--mn-border);
+    border-radius: var(--radius-md);
+    background: var(--superficie-input);
+    cursor: text;
+  }
+
+  .mn-tags-field:focus-within {
+    border-color: var(--mn-accent);
+  }
+
+  .mn-tags-field__chips {
+    display: contents;
+  }
+
+  .mn-tags-field__input {
+    flex: 1;
+    min-width: 80px;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--mn-text);
+    font-size: inherit;
+  }
+
+  /* --- Chip (reusable) --- */
+  .mn-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    background: var(--mn-accent-bg);
+    color: var(--mn-text);
+    border: 1px solid var(--mn-accent-border);
+    border-radius: var(--radius-pill);
+    font-size: 0.8rem;
+    white-space: nowrap;
+  }
+
+  .mn-chip__remove {
+    all: unset;
+    color: inherit;
+    opacity: 0.6;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0 2px;
+  }
+
+  .mn-chip__remove:hover {
+    opacity: 1;
+  }
+
+  /* --- Person Field --- */
+  .mn-person-field {
+    position: relative;
+  }
+
+  .mn-person-field__dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    z-index: var(--z-dropdown);
+    background: var(--mn-surface-raised);
+    border: 1px solid var(--mn-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-elevated);
+    max-height: 200px;
+    overflow-y: auto;
+  }
+
+  .mn-person-field__item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    cursor: pointer;
+  }
+
+  .mn-person-field__item:hover {
+    background: var(--mn-accent-bg);
+  }
+
+  .mn-person__avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--mn-accent);
+    color: var(--mn-accent-text);
+    font: 700 0.7rem/1 sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    text-transform: uppercase;
+  }
+
+  .mn-person-field__name {
+    font-weight: 500;
+  }
+
+  .mn-person-field__email {
+    font-size: 0.75rem;
+    color: var(--mn-text-muted);
+  }
+}

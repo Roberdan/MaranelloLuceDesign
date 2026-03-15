@@ -1,42 +1,25 @@
-/**
- * Maranello Luce Design - Detail panel UI (DOM construction + body rendering)
- * Builds the panel skeleton, tabs, footer, and renders fields via renderers/editors.
- */
-
-import type {
-  DetailPanelOptions, DetailPanelState, DetailField,
-} from './core/types';
+/** Maranello Luce Design - Detail panel UI (DOM + body rendering) */
+import type { DetailPanelOptions, DetailPanelState, DetailField } from './core/types';
 import { createElement } from './core/utils';
 import { renderers } from './detail-panel-renderers';
 import { editors } from './detail-panel-editors';
 
 /** DOM references returned by buildDOM. */
 export interface DetailPanelDOM {
-  backdrop: HTMLElement;
-  titleEl: HTMLElement;
-  editBtn: HTMLButtonElement;
-  saveBtn: HTMLButtonElement;
-  cancelBtn: HTMLButtonElement;
-  closeBtn: HTMLButtonElement;
-  tabBar: HTMLElement | null;
-  body: HTMLElement;
-  footer: HTMLElement;
+  backdrop: HTMLElement; titleEl: HTMLElement;
+  editBtn: HTMLButtonElement; saveBtn: HTMLButtonElement;
+  cancelBtn: HTMLButtonElement; closeBtn: HTMLButtonElement;
+  tabBar: HTMLElement | null; body: HTMLElement; footer: HTMLElement;
 }
 
 /** Show a toast notification inside the panel. */
-export function showToast(
-  panel: HTMLElement,
-  message: string,
-  type: string = 'info',
-): void {
+export function showToast(panel: HTMLElement, message: string, type: string = 'info'): void {
   const existing = panel.querySelector('.mn-detail-panel__toast');
   if (existing) existing.remove();
-
   const toast = createElement('div', `mn-detail-panel__toast mn-detail-panel__toast--${type}`);
   toast.textContent = message;
   const body = panel.querySelector('.mn-detail-panel__body') ?? panel;
   body.insertBefore(toast, body.firstChild);
-
   setTimeout(() => toast.classList.add('mn-detail-panel__toast--visible'), 16);
   setTimeout(() => {
     toast.classList.remove('mn-detail-panel__toast--visible');
@@ -65,7 +48,6 @@ export function renderSkeleton(body: HTMLElement): void {
 export function validateField(value: unknown, field: DetailField): string | null {
   if (!field.validate) return null;
   const rules = field.validate;
-
   if (rules.required && (!value || (typeof value === 'string' && !value.trim()))) {
     return `${field.label} is required`;
   }
@@ -99,8 +81,35 @@ export function buildDOM(
   container.parentNode!.insertBefore(backdrop, container);
 
   const header = createElement('div', 'mn-detail-panel__header');
+
+  /* Parent back-link above title */
+  if (opts.parentLink) {
+    const back = createElement('button', 'mn-detail__back');
+    back.type = 'button';
+    back.textContent = '\u2190 ' + opts.parentLink.label;
+    back.addEventListener('click', () => opts.parentLink!.onClick());
+    header.appendChild(back);
+  }
+
+  const titleRow = createElement('div', 'mn-detail-panel__title-row');
   const titleEl = createElement('div', 'mn-detail-panel__title');
   titleEl.textContent = opts.title ?? '';
+  titleRow.appendChild(titleEl);
+
+  /* External link buttons after title */
+  if (opts.externalLinks?.length) {
+    for (const link of opts.externalLinks) {
+      const btn = createElement('button', 'mn-detail__ext-link');
+      btn.type = 'button';
+      btn.title = link.label;
+      btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>';
+      btn.addEventListener('click', () => {
+        window.open(link.url, '_blank', 'noopener');
+      });
+      titleRow.appendChild(btn);
+    }
+  }
+  header.appendChild(titleRow);
 
   const headerActions = createElement('div', 'mn-detail-panel__header-actions');
   const editBtn = createElement('button', 'mn-detail-panel__action-btn mn-detail-panel__edit-btn');
@@ -120,7 +129,7 @@ export function buildDOM(
   closeBtn.title = 'Close panel';
 
   headerActions.append(editBtn, saveBtn, cancelBtn, closeBtn);
-  header.append(titleEl, headerActions);
+  header.appendChild(headerActions);
   container.appendChild(header);
 
   let tabBar: HTMLElement | null = null;
@@ -162,6 +171,12 @@ export function renderBody(
 ): void {
   body.innerHTML = '';
   state.errors = {};
+
+  /* Custom tab renderer takes priority */
+  if (state.activeTab && opts.tabRenderers?.[state.activeTab]) {
+    opts.tabRenderers[state.activeTab](body, opts.data);
+    return;
+  }
 
   if (state.activeTab && opts.subComponents?.[state.activeTab]) {
     opts.subComponents[state.activeTab](body, state.data, {
