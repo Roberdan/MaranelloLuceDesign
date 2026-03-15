@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.3.0] - 15 Mar 2026
+
+### Added
+- `--grigio-10` token (#e8e8e8) for divider and tertiary text consumers
+- `--testo-primario` / `--testo-secondario` aliases for `--mn-text` / `--mn-text-muted` with dark overrides on avorio
+
+### Fixed
+- `--superficie-1/2/3` avorio values → warm-gray neutrals (#f5f0e8/ede8df/e5e0d7) instead of yellow-ivory
+- `--bordo` avorio → #c8c0b4 (neutral warm-gray, was yellow-beige)
+- FerrariGauge: full avorio bezel palette — warm-silver `capOuter`/`capInner`, dark text/numbers, darker gold ticks
+- Funnel SVG: `font-family` now uses CSS variables (`var(--font-display)`, `var(--font-body)`) — adapts to theme
+- Dashboard sparkline hover dot aligned to chart line (dimensions read after `chartHiDpi` runs)
+- `applyChartA11y` innerHTML: `escapeHtml()` applied to label/value (XSS P1)
+- `mn-chart`: `aria-busy` always cleared via `try-finally` even when chart factory throws
+- Theme rotary: `aria-activedescendant` + IDs on radio items for screen reader support
+- `contrast.test.ts`: `__dirname` → `fileURLToPath(import.meta.url)` for ESM compatibility
+- CSS var parser in `check-contrast.mjs` + `contrast.test.ts`: capture vars before `}` to handle one-line rules
+- Demo sections: heatmap/tables/accessibility theme-adaptive (removed `mn-card-dark`, semantic token colors)
+- Arrow-key navigation (←/→) between demo sections
+- Demo footer version bump to v4.2.0
+
 ## [4.2.0] - 15 Mar 2026
 
 ### Added

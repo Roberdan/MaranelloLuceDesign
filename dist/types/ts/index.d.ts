@@ -2,7 +2,7 @@
  * Maranello Luce Design - Main ES module entry point
  * Re-exports the public API surface for library consumers.
  */
-export declare const VERSION = "4.2.0";
+export declare const VERSION = "4.3.0";
 export * from './core/types';
 export { EventBus, eventBus } from './core/events';
 export type { EventCallback } from './core/events';
