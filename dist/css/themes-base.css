@@ -172,13 +172,16 @@ body.mn-avorio {
   --scope-global:    #d4a000;
 
   /* Surface (light backgrounds) */
-  --superficie-1:  var(--bianco-puro);
-  --superficie-2:  var(--avorio-chiaro);
-  --superficie-3:  var(--avorio-medio);
-  --bordo:         var(--avorio-scuro);
+  --superficie-1:  #f5f0e8;
+  --superficie-2:  #ede8df;
+  --superficie-3:  #e5e0d7;
+  --bordo:         #c8c0b4;
   --bianco:        var(--nero-assoluto);
   --mn-accent:     var(--rosso-corsa);
   --mn-accent-text: var(--bianco-puro);
+  /* Text aliases — dark for light surface */
+  --testo-primario:   #1a1a1a;
+  --testo-secondario: #5a5550;
 }
 
 

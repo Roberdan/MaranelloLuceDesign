@@ -22,7 +22,7 @@ import {
   FerrariGauge,
   buildGaugePalette,
   speedometer
-} from "./chunks/chunk-FTWKKFWD.js";
+} from "./chunks/chunk-OW2VCDPA.js";
 import {
   gantt
 } from "./chunks/chunk-PGRIGR2U.js";

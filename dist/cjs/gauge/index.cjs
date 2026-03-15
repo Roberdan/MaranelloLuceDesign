@@ -427,8 +427,39 @@ function buildGaugePalette(accent) {
   if (cl.contains("mn-avorio")) {
     return {
       ...D,
+      /* Text / numbers — dark on light surface */
+      numbers: "#3a3530",
+      centerValue: "#1a1a1a",
+      centerUnit: "#666660",
+      centerLabel: "#4a4540",
+      muted: "#666660",
+      dimmed: "#7a7570",
+      subDialLabel: "#5a5550",
+      axisLabel: "#4a4540",
+      axisTitle: "#5a5550",
+      gridScale: "#8a8580",
+      sparkMonth: "#8a8580",
+      sparkLabel: "#7a7570",
+      quadrant: "#a0a09a",
+      quadrantDim: "#b0aba4",
+      /* Ticks — darker gold for contrast on ivory */
+      tickMajor: "#a07818",
+      tickHalf: "#806010",
+      tickMinor: "#604808",
+      /* Bezel chrome — warm silver instead of dark chrome */
+      capOuter: ["#d0cfc9", "#b8b4ae", "#a09e98", "#888582"],
+      capInner: ["#d8d4ce", "#c0bcb6", "#a8a49e"],
+      capCenter: "#b0aba4",
+      /* Needle */
+      needleTail: "#a8a49e",
+      needleTip: "#1a1a1a",
+      /* Highlight / track */
+      highlightRing: "rgba(0,0,0,0.04)",
+      trackAlpha: "rgba(0,0,0,0.06)",
+      /* Sub-dials and odometer */
       subDialBg: ["#e8e4dc", "#ddd8ce"],
       subDialBorder: "#c0b9ad",
+      subDialTrack: "rgba(0,0,0,0.08)",
       odometerBg: "#f0ede6",
       odometerBorder: "#ccc",
       odometerText: "#1a1a1a"

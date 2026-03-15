@@ -14,6 +14,7 @@
   --grigio-scuro:     #2a2a2a;
   --grigio-chiaro:    #9e9e9e;
   --grigio-ghost:     #e8e8e8;
+  --grigio-10:        #e8e8e8;  /* light divider / tertiary text */
 
   /* ─── Color: Bianco ─── */
   --bianco-puro:      #ffffff;
@@ -205,6 +206,10 @@
   --avorio-1: var(--avorio-chiaro);
   --avorio-2: var(--avorio-medio);
   --avorio-3: var(--avorio-scuro);
+
+  /* ─── Text aliases (consumers may use --testo-* instead of --mn-text*) ─── */
+  --testo-primario:   var(--mn-text);
+  --testo-secondario: var(--mn-text-muted);
 
   /* ─── Paired Colors (bg + contrast text, WCAG AA) ─── */
   --mn-pair-1-bg: #DC0000; --mn-pair-1-text: #fff;
