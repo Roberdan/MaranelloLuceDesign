@@ -9116,7 +9116,7 @@ function funnel(container, options) {
         const nX = PIPE_L + (PIPE_W - nW) / 2;
         svg.appendChild(svgEl("path", { d: trapPath(barX, barW, nX, nW, y + barH, y + barH + gap), fill: stage.color, opacity: "0.12" }));
         const rate = reach[i] > 0 ? Math.round(reach[i + 1] / reach[i] * 100) : 0;
-        svg.appendChild(svgText({ x: PIPE_L + PIPE_W / 2, y: y + barH + gap / 2 + 1, "text-anchor": "middle", "dominant-baseline": "middle", "font-size": 9, "font-family": "'Barlow Condensed',sans-serif", fill: "var(--grigio-medio,#777)", "font-weight": "500" }, "\u2193 " + rate + "%"));
+        svg.appendChild(svgText({ x: PIPE_L + PIPE_W / 2, y: y + barH + gap / 2 + 1, "text-anchor": "middle", "dominant-baseline": "middle", "font-size": 9, style: "font-family:var(--font-display,'Barlow Condensed',sans-serif)", fill: "var(--grigio-medio,#777)", "font-weight": "500" }, "\u2193 " + rate + "%"));
       }
       const bar = svgEl("rect", { x: barX, y, width: barW, height: barH, rx: RAD, fill: stage.color });
       bar.classList.add("mn-funnel__bar");
@@ -9127,10 +9127,10 @@ function funnel(container, options) {
       }
       svg.appendChild(bar);
       const tc = autoTextColor(stage.color);
-      svg.appendChild(svgText({ x: PIPE_L + PIPE_W / 2, y: y + Math.round(barH * 0.37), "text-anchor": "middle", "font-size": 11, "font-family": "'Inter',sans-serif", fill: tc, "font-weight": "600" }, stage.label));
+      svg.appendChild(svgText({ x: PIPE_L + PIPE_W / 2, y: y + Math.round(barH * 0.37), "text-anchor": "middle", "font-size": 11, style: "font-family:var(--font-body,'Inter',sans-serif)", fill: tc, "font-weight": "600" }, stage.label));
       let cTxt = String(stage.count);
       if (total > 0) cTxt += " (" + Math.round(stage.count / total * 100) + "%)";
-      svg.appendChild(svgText({ x: PIPE_L + PIPE_W / 2, y: y + Math.round(barH * 0.76), "text-anchor": "middle", "font-size": 14, "font-family": "'Barlow Condensed',sans-serif", fill: tc, "font-weight": "700" }, cTxt));
+      svg.appendChild(svgText({ x: PIPE_L + PIPE_W / 2, y: y + Math.round(barH * 0.76), "text-anchor": "middle", "font-size": 14, style: "font-family:var(--font-display,'Barlow Condensed',sans-serif)", fill: tc, "font-weight": "700" }, cTxt));
       const holdClr = isValidColor(data.onHold?.color || "") ? data.onHold.color : "#ea580c";
       const wdClr = isValidColor(data.withdrawn?.color || "") ? data.withdrawn.color : "#666";
       if (stage.holdCount && stage.holdCount > 0) renderExitPill(svg, barX, y, "left", stage.holdCount, holdClr, "\u23F8");
@@ -9162,12 +9162,12 @@ function funnel(container, options) {
     if (data.onHold && data.onHold.count > 0) {
       const ohLegClr = isValidColor(data.onHold.color) ? data.onHold.color : "#ea580c";
       svg.appendChild(svgEl("circle", { cx: PIPE_L, cy: legendY, r: 4, fill: ohLegClr, opacity: "0.8" }));
-      svg.appendChild(svgText({ x: PIPE_L + 8, y: legendY + 3, "font-size": 9, "font-family": "'Inter',sans-serif", fill: "var(--grigio-medio,#999)", "font-weight": "500" }, "\u23F8 On Hold: " + data.onHold.count));
+      svg.appendChild(svgText({ x: PIPE_L + 8, y: legendY + 3, "font-size": 9, style: "font-family:var(--font-body,'Inter',sans-serif)", fill: "var(--grigio-medio,#999)", "font-weight": "500" }, "\u23F8 On Hold: " + data.onHold.count));
     }
     if (data.withdrawn && data.withdrawn.count > 0) {
       const wdLegClr = isValidColor(data.withdrawn.color) ? data.withdrawn.color : "#666";
       svg.appendChild(svgEl("circle", { cx: PIPE_L + PIPE_W / 2 + 20, cy: legendY, r: 4, fill: wdLegClr, opacity: "0.8" }));
-      svg.appendChild(svgText({ x: PIPE_L + PIPE_W / 2 + 28, y: legendY + 3, "font-size": 9, "font-family": "'Inter',sans-serif", fill: "var(--grigio-medio,#999)", "font-weight": "500" }, "\u2715 Withdrawn: " + data.withdrawn.count));
+      svg.appendChild(svgText({ x: PIPE_L + PIPE_W / 2 + 28, y: legendY + 3, "font-size": 9, style: "font-family:var(--font-body,'Inter',sans-serif)", fill: "var(--grigio-medio,#999)", "font-weight": "500" }, "\u2715 Withdrawn: " + data.withdrawn.count));
     }
     root.appendChild(svg);
   }
@@ -9179,7 +9179,7 @@ function funnel(container, options) {
     svg.appendChild(svgEl("line", { x1: anchorX, y1: cy, x2: lineEnd, y2: cy, stroke: color, "stroke-width": "1.5", "stroke-dasharray": "3 2", opacity: "0.5" }));
     const pw = EXIT_R * 2 + 20, ph = 20;
     svg.appendChild(svgEl("rect", { x: pillX, y: cy - ph / 2, width: pw, height: ph, rx: ph / 2, fill: color, opacity: "0.18" }));
-    svg.appendChild(svgText({ x: pillX + pw / 2, y: cy + 3.5, "text-anchor": "middle", "font-size": 10, "font-family": "'Barlow Condensed',sans-serif", fill: color, "font-weight": "600" }, icon + " " + count));
+    svg.appendChild(svgText({ x: pillX + pw / 2, y: cy + 3.5, "text-anchor": "middle", "font-size": 10, style: "font-family:var(--font-display,'Barlow Condensed',sans-serif)", fill: color, "font-weight": "600" }, icon + " " + count));
   }
   host.innerHTML = "";
   host.appendChild(root);
@@ -11675,5 +11675,5 @@ M.charts = {
 registerExtras(M);
 
 // src/ts/index.ts
-var VERSION = "4.0.0";
+var VERSION = "4.2.0";
 //# sourceMappingURL=index.cjs.map
