@@ -21,6 +21,21 @@
     @media (max-width: 768px) { .demo-nav__links { display: none; } .demo-nav__links--open { display: flex; position: absolute; top: 100%; left: 0; right: 0; flex-direction: column; background: rgba(10,10,10,0.95); padding: var(--space-md); gap: var(--space-sm); backdrop-filter: blur(16px); } }
     .demo-hamburger { display: none; background: none; border: 1px solid var(--grigio-scuro); color: var(--grigio-chiaro); font-size: 1.25rem; padding: 4px 8px; border-radius: 4px; cursor: pointer; }
     @media (max-width: 768px) { .demo-hamburger { display: block; } }
+    /* Theme-aware nav */
+    body.mn-colorblind .demo-nav { background: rgba(10,10,10,0.95); border-bottom-color: #0072B2; }
+    body.mn-colorblind .demo-nav__brand { color: #0072B2; }
+    body.mn-colorblind .demo-nav__links a:hover { color: #0072B2; }
+    body:not(.mn-nero):not(.mn-avorio):not(.mn-colorblind) .demo-nav { background: rgba(20,20,24,0.92); }
+    body.mn-avorio .demo-nav__brand { color: var(--rosso-corsa); }
+    body.mn-avorio #demo-theme-label { color: var(--grigio-scuro) !important; }
+    body.mn-avorio .demo-hamburger { border-color: var(--avorio-scuro); color: var(--grigio-scuro); }
+    /* Mobile: constrain inline-height canvases */
+    @media (max-width: 640px) {
+      [style*="height: 500px"], [style*="height:500px"] { height: 280px !important; }
+      [style*="height: 400px"], [style*="height:400px"] { height: 260px !important; }
+      [style*="height: 340px"], [style*="height:340px"] { height: 240px !important; }
+      [style*="width: 800px"], [style*="width:800px"] { width: 100% !important; }
+    }
   </style>
 </head>
 <body class="mn-nero mn-glass">
@@ -71,23 +86,23 @@
     </div>
   </nav>
   <main id="demo-root"></main>
+  <script>
+    window.addEventListener('error', function(e) {
+      var d = document.getElementById('demo-root');
+      if (d && !d.children.length) {
+        d.innerHTML = '<div style="padding:2rem;color:#DC0000;font-size:14px;word-break:break-all"><b>JS Error:</b> ' + e.message + '<br><b>File:</b> ' + (e.filename||'?') + ':' + (e.lineno||'?') + '</div>';
+      }
+    });
+    window.addEventListener('unhandledrejection', function(e) {
+      var d = document.getElementById('demo-root');
+      if (d && !d.children.length) {
+        d.innerHTML = '<div style="padding:2rem;color:#DC0000;font-size:14px;word-break:break-all"><b>Module Error:</b> ' + (e.reason && e.reason.message ? e.reason.message : String(e.reason)) + '<br><b>Stack:</b> ' + (e.reason && e.reason.stack ? e.reason.stack.substring(0,500) : '?') + '</div>';
+      }
+    });
+  </script>
   <script src="../dist/iife/maranello.min.js"></script>
-  <script type="module" src="../src/wc/mn-theme-toggle.js"></script>
-  <script type="module" src="../src/wc/mn-chart.js"></script>
-  <script type="module" src="../src/wc/mn-gauge.js"></script>
-  <script type="module" src="../src/wc/mn-ferrari-control.js"></script>
-  <script type="module" src="../src/wc/mn-data-table.js"></script>
-  <script type="module" src="../src/wc/mn-gantt.js"></script>
-  <script type="module" src="../src/wc/mn-chat.js"></script>
-  <script type="module" src="../src/wc/mn-speedometer.js"></script>
-  <script type="module" src="../src/wc/mn-detail-panel.js"></script>
-  <script type="module" src="../src/wc/mn-okr.js"></script>
-  <script type="module" src="../src/wc/mn-map.js"></script>
-  <script type="module" src="../src/wc/mn-system-status.js"></script>
-  <script type="module" src="../src/wc/mn-command-palette.js"></script>
-  <script type="module" src="../src/wc/mn-funnel.js"></script>
-  <script type="module" src="../src/wc/mn-toast.js"></script>
-  <script type="module" src="app.js"></script>
+  <script src="app.bundle.js"></script>
+  <script type="module" src="wc.bundle.js"></script>
   <script>
     (function() {
       var btn = document.querySelector('.demo-hamburger');

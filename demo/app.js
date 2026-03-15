@@ -43,15 +43,42 @@ const sectionDefs = [
 const root = document.getElementById('demo-root');
 if (!root) throw new Error('Missing #demo-root');
 
-/* Placeholder with min-height so nav anchors work before lazy load */
-function makePlaceholder(id) {
-  const el = document.createElement('section');
-  el.id = id;
-  el.className = 'mn-section-dark';
-  el.style.cssText = 'min-height:60vh;display:flex;align-items:center;justify-content:center';
-  el.innerHTML = `<p class="mn-label" style="color:var(--grigio-scuro);opacity:.4">Loading ${id}…</p>`;
-  return el;
-}
+const factories = [
+  ['hero', createHeroSection],
+  ['tokens', createTokensSection],
+  ['cards', createCardsSection],
+  ['dashboard', createDashboardSection],
+  ['charts', createChartsSection],
+  ['network', createNetworkSection],
+  ['controls', createControlsSection],
+  ['forms', createFormsSection],
+  ['tables', createTablesSection],
+  ['gauges', createGaugesSection],
+  ['cockpit', createCockpitSection],
+  ['telemetry', createTelemetrySection],
+  ['gantt', createGanttSection],
+  ['icons', createIconsSection],
+  ['animations', createAnimationsSection],
+  ['heatmap', createHeatmapSection],
+  ['treemap', createTreemapSection],
+  ['layouts', createLayoutsSection],
+  ['detail-panel', createDetailPanelSection],
+  ['interactive', createInteractiveSection],
+  ['okr', createOkrSection],
+  ['map', createMapSection],
+  ['social-graph', createSocialGraphSection],
+  ['advanced', createAdvancedSection],
+  ['mesh-network', createMeshNetworkSection],
+  ['convergio', createConvergioSection],
+  ['web-components', createWebComponentsSection],
+  ['launch', createLaunchSection],
+  ['accessibility', createAccessibilitySection],
+  ['api-reference', createApiReferenceSection],
+  ['data-binding', createDataBindingSection],
+  ['overlays', createOverlaysSection],
+  ['org-tree', createOrgTreeSection],
+  ['footer', createFooter],
+];
 
 /* Render a section, replacing its placeholder */
 async function renderSection(def, placeholder) {
@@ -73,19 +100,17 @@ async function renderSection(def, placeholder) {
 
 /* Mount all placeholders, eager-load first 3, lazy-load rest */
 const fragment = document.createDocumentFragment();
-const lazyQueue = [];
-
-for (const def of sectionDefs) {
-  const ph = makePlaceholder(def.id);
-  fragment.appendChild(ph);
-  if (def.eager) {
-    renderSection(def, ph);
-  } else {
-    lazyQueue.push({ def, ph });
+for (const [name, factory] of factories) {
+  try {
+    fragment.appendChild(factory());
+  } catch (err) {
+    console.error(`[demo] Section "${name}" failed:`, err);
+    const fallback = document.createElement('section');
+    fallback.id = name;
+    fallback.innerHTML = `<div class="mn-container" style="padding:var(--space-xl)"><p style="color:var(--rosso-corsa)">⚠ Section "${name}" failed to render</p></div>`;
+    fragment.appendChild(fallback);
   }
 }
-
-fragment.appendChild(createFooter());
 root.appendChild(fragment);
 
 /* IntersectionObserver: load section when 200px from viewport */

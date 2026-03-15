@@ -5095,12 +5095,173 @@
 
     .mn-gantt {
       -webkit-overflow-scrolling: touch;
-      max-height: 320px;
+      max-height: 280px;
       overflow: auto;
     }
 
     .mn-gantt__header {
       font-size: var(--text-small);
+    }
+
+    .mn-gantt-timeline__canvas-wrap {
+      height: 280px;
+      min-height: 220px;
+    }
+
+    .mn-funnel {
+      max-width: 100%;
+      margin-inline: auto;
+    }
+
+    .mn-funnel svg {
+      max-height: 240px;
+    }
+
+    .mn-funnel--sm svg {
+      max-height: 160px;
+    }
+
+    .mn-funnel--md svg {
+      max-height: 240px;
+    }
+
+    .mn-funnel--lg svg {
+      max-height: 340px;
+    }
+
+    [id*="social-graph"] canvas, .mn-social-graph {
+      max-height: 280px;
+      width: 100% !important;
+    }
+
+    #social-graph-canvas {
+      width: 100% !important;
+      height: 280px !important;
+    }
+
+    #network-messages-demo, #neural-nodes-demo {
+      height: 220px !important;
+    }
+
+    .mn-chart-wrap canvas[width="280"], .mn-chart-wrap canvas[width="260"] {
+      max-width: 240px;
+      max-height: 240px;
+    }
+
+    .mn-grid-4, .mn-grid-3 {
+      grid-template-columns: repeat(2, 1fr) !important;
+    }
+
+    .mn-grid-2 {
+      grid-template-columns: 1fr !important;
+    }
+
+    .mn-chart-tooltip, .mn-spark-tip {
+      max-width: calc(100vw - 2rem);
+    }
+
+    .mn-gantt-mini {
+      font-size: var(--text-small);
+    }
+
+    .mn-gantt-mini__grid {
+      grid-template-columns: 100px repeat(6, 1fr) !important;
+    }
+
+    .mn-map, [id*="map-canvas"] {
+      max-height: 280px;
+    }
+
+    .mn-heatmap, .mn-cap-heatmap, .mn-cap-grid {
+      -webkit-overflow-scrolling: touch;
+      overflow-x: auto;
+    }
+
+    .mn-treemap {
+      max-width: 100%;
+      overflow: hidden;
+    }
+
+    .mn-mesh-network__grid {
+      gap: var(--space-md) !important;
+      grid-template-columns: 1fr !important;
+    }
+
+    .mn-mesh-network__toolbar {
+      gap: var(--space-sm);
+      flex-wrap: wrap;
+    }
+
+    .mn-mesh-network__actions {
+      gap: var(--space-xs);
+      flex-wrap: wrap;
+    }
+
+    .mn-mesh-network__actions button {
+      font-size: var(--text-micro);
+      padding: var(--space-xs) var(--space-sm);
+    }
+
+    .mn-mesh-node {
+      width: 100%;
+      min-width: 0;
+    }
+
+    .mn-org-tree {
+      -webkit-overflow-scrolling: touch;
+      overflow-x: auto;
+    }
+
+    .mn-org-tree__container {
+      min-width: 280px;
+    }
+
+    mn-okr, .mn-okr-panel {
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+
+    .mn-code-snippet pre {
+      max-width: calc(100vw - 2rem);
+      font-size: var(--text-micro);
+      overflow-x: auto;
+    }
+
+    .mn-detail-panel {
+      width: 100% !important;
+      max-width: 100vw !important;
+      right: 0 !important;
+    }
+
+    .mn-convergio-grid, .mn-advanced-grid {
+      grid-template-columns: 1fr !important;
+    }
+  }
+
+  @media (min-width: 641px) and (max-width: 1024px) {
+    .mn-grid-4 {
+      grid-template-columns: repeat(2, 1fr) !important;
+    }
+
+    .mn-grid-2 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .mn-funnel {
+      max-width: 80%;
+      margin-inline: auto;
+    }
+
+    #social-graph-canvas {
+      height: 380px !important;
+    }
+
+    #network-messages-demo, #neural-nodes-demo {
+      height: 300px !important;
+    }
+
+    .mn-mesh-network__grid {
+      grid-template-columns: repeat(2, 1fr) !important;
     }
   }
 }
@@ -11236,6 +11397,12 @@
   }
 
   @media (max-width: 640px) {
+    .mn-container {
+      max-width: 100vw;
+      overflow-x: hidden;
+      padding-inline: var(--space-md) !important;
+    }
+
     .mn-sidebar {
       z-index: 1100;
       width: 0;
@@ -11322,6 +11489,55 @@
       max-width: 100vw;
       width: 100vw !important;
     }
+
+    .demo-section {
+      max-width: 100vw;
+      overflow-x: hidden;
+    }
+
+    .mn-card, .mn-card-dark {
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+
+    [style*="display:flex"][style*="gap"] {
+      flex-wrap: wrap !important;
+    }
+
+    .mn-title-hero {
+      font-size: clamp(1.5rem, 6vw, 2.5rem) !important;
+    }
+
+    .mn-title-section {
+      font-size: clamp(1.2rem, 5vw, 2rem) !important;
+    }
+
+    .mn-title-sub {
+      font-size: clamp(1rem, 4vw, 1.5rem) !important;
+    }
+
+    .mn-sim-panel {
+      flex-direction: column !important;
+    }
+
+    .mn-sim-panel__sidebar {
+      width: 100% !important;
+    }
+
+    .mn-strip {
+      gap: var(--space-md);
+      flex-direction: column !important;
+    }
+
+    .mn-pod {
+      min-width: 0;
+      width: 100% !important;
+    }
+
+    .mn-signal-panel, .mn-binnacle {
+      max-width: 100%;
+      overflow-x: auto;
+    }
   }
 
   @media (min-width: 641px) and (max-width: 1024px) {
@@ -11332,6 +11548,10 @@
 
     .mn-chat-panel--wide {
       width: 480px;
+    }
+
+    .mn-container {
+      padding-inline: var(--space-lg);
     }
   }
 

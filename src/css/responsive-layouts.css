@@ -1,10 +1,17 @@
-/* MARANELLO DESIGN SYSTEM — Responsive Layouts v3.4.0
-   Sidebar, detail panel, chat, notification, login — mobile overrides */
+/* MARANELLO DESIGN SYSTEM — Responsive Layouts v3.5.0
+   Sidebar, detail panel, chat, notification, login, containers — mobile overrides */
 
 @layer layouts {
 
 /* ── Mobile ≤ 640px ── */
 @media (max-width: 640px) {
+
+  /* Container: fluid with safe margins */
+  .mn-container {
+    padding-inline: var(--space-md) !important;
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
 
   /* Sidebar: off-canvas hidden by default */
   .mn-sidebar {
@@ -86,6 +93,52 @@
     width: 100vw !important;
     max-width: 100vw;
   }
+
+  /* Demo section: constrain everything */
+  .demo-section {
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+
+  /* Cards: full-width stacking */
+  .mn-card, .mn-card-dark {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  /* Flex layouts: stack on mobile */
+  [style*="display:flex"][style*="gap"] {
+    flex-wrap: wrap !important;
+  }
+
+  /* Typography: scale down */
+  .mn-title-hero { font-size: clamp(1.5rem, 6vw, 2.5rem) !important; }
+  .mn-title-section { font-size: clamp(1.2rem, 5vw, 2rem) !important; }
+  .mn-title-sub { font-size: clamp(1rem, 4vw, 1.5rem) !important; }
+
+  /* Sim panel: stack */
+  .mn-sim-panel {
+    flex-direction: column !important;
+  }
+  .mn-sim-panel__sidebar {
+    width: 100% !important;
+  }
+
+  /* Strip/pod: stack */
+  .mn-strip {
+    flex-direction: column !important;
+    gap: var(--space-md);
+  }
+  .mn-pod {
+    width: 100% !important;
+    min-width: 0;
+  }
+
+  /* Signal/binnacle panels */
+  .mn-signal-panel, .mn-binnacle {
+    max-width: 100%;
+    overflow-x: auto;
+  }
 }
 
 /* ── Tablet 641–1024px ── */
@@ -96,6 +149,9 @@
   }
   .mn-chat-panel--wide {
     width: 480px;
+  }
+  .mn-container {
+    padding-inline: var(--space-lg);
   }
 }
 
