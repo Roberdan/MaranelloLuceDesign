@@ -55,25 +55,6 @@ export function getAccent(fallback: string = '#FFC72C'): string {
   return cssVar('--giallo-ferrari', fallback);
 }
 
-/* ── Glass overlay API ── */
-
-/** Check if glass mode is currently active. */
-export function getGlass(): boolean {
-  return document.body.classList.contains('mn-glass');
-}
-
-/** Enable or disable glass mode. */
-export function setGlass(on: boolean): void {
-  document.body.classList.toggle('mn-glass', on);
-}
-
-/** Toggle glass mode on/off. Returns new state. */
-export function toggleGlass(): boolean {
-  const next = !getGlass();
-  setGlass(next);
-  return next;
-}
-
 /** Debounce a function call. */
 export function debounce<T extends (...args: never[]) => void>(
   fn: T,

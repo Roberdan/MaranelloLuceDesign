@@ -218,27 +218,6 @@
     --content-width: 1200px;
     --content-narrow: 800px;
   }
-
-  body.mn-glass {
-    --glass-blur: 16px;
-    --glass-blur-lg: 24px;
-    --glass-blur-sm: 8px;
-    --glass-saturation: 1.2;
-    --glass-tint: #ffffff14;
-    --glass-tint-hover: #ffffff1f;
-    --glass-tint-active: #ffffff29;
-    --glass-tint-raised: #ffffff1a;
-    --glass-border: #ffffff26;
-    --glass-border-hover: #ffffff40;
-    --glass-border-focus: #ffc72c80;
-    --glass-shadow: 0 4px 24px #00000026;
-    --glass-shadow-lg: 0 8px 40px #0003;
-    --glass-shadow-inset: inset 0 1px 0 #ffffff0f;
-    --glass-overlay: #0a0a0a80;
-    --glass-scrim: #0000004d;
-    --glass-specular: #ffffff0a;
-    --glass-transition: backdrop-filter .3s ease, background .3s ease;
-  }
 }
 
 @layer base {
@@ -12630,6 +12609,61 @@
     color: var(--nero-assoluto);
   }
 
+  body.mn-avorio .mn-okr__hero {
+    background-color: var(--avorio-chiaro);
+    border-color: var(--avorio-scuro);
+    background-image: none;
+  }
+
+  body.mn-avorio .mn-okr__average-label {
+    color: var(--grigio-medio);
+  }
+
+  body.mn-avorio .mn-okr__average-value, body.mn-avorio .mn-okr__gauge-value {
+    color: var(--nero-assoluto);
+    text-shadow: none;
+  }
+
+  body.mn-avorio .mn-okr__period-tag {
+    border-color: var(--avorio-scuro);
+    color: var(--grigio-medio);
+    background: #00000008;
+  }
+
+  body.mn-avorio .mn-okr__ring-track, body.mn-avorio .mn-okr__ring-track--overall {
+    stroke: #0000001a;
+  }
+
+  body.mn-avorio .mn-okr__ring-text {
+    fill: var(--nero-assoluto);
+  }
+
+  body.mn-avorio .mn-okr__objective {
+    background: var(--bianco-puro);
+    border-color: var(--avorio-scuro);
+    box-shadow: 0 2px 8px #0000000f;
+  }
+
+  body.mn-avorio .mn-okr__objective:hover {
+    box-shadow: 0 4px 16px #0000001f;
+  }
+
+  body.mn-avorio .mn-okr__objective-title {
+    color: var(--nero-assoluto);
+  }
+
+  body.mn-avorio .mn-okr__kr-title {
+    color: var(--grigio-scuro);
+  }
+
+  body.mn-avorio .mn-okr__kr-metric {
+    color: var(--grigio-medio);
+  }
+
+  body.mn-avorio .mn-okr__kr-track {
+    background: #00000014;
+  }
+
   body.mn-avorio .mn-okr__obj-card {
     background: var(--bianco-puro);
     border-color: var(--avorio-scuro);
@@ -12639,12 +12673,14 @@
     color: var(--nero-assoluto);
   }
 
-  body.mn-avorio .mn-okr__kr-title {
-    color: var(--grigio-scuro);
-  }
-
   body.mn-avorio .mn-okr__kr-bar {
     background: var(--avorio-scuro);
+  }
+
+  body.mn-avorio .mn-card-dark {
+    background: var(--avorio-chiaro);
+    color: var(--nero-assoluto);
+    box-shadow: 0 2px 8px #0000000f;
   }
 
   body.mn-nero .mn-funnel__stage {
@@ -14525,304 +14561,6 @@
 
   body.mn-nero .mn-pod__label {
     color: var(--grigio-chiaro);
-  }
-
-  body.mn-glass {
-    --superficie-1: var(--glass-tint);
-    --superficie-2: var(--glass-tint-hover);
-    --superficie-3: var(--glass-tint-active);
-    --bordo: var(--glass-border);
-  }
-
-  body.mn-glass .mn-section-dark, body.mn-glass .mn-section-light, body.mn-glass .mn-section-ivory, body.mn-glass .mn-section-accent {
-    background: var(--glass-tint);
-    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
-  }
-
-  body.mn-glass .mn-section-dark {
-    background: #0a0a0a99;
-  }
-
-  body.mn-glass .mn-section-light {
-    background: #ffffff0f;
-  }
-
-  body.mn-glass .mn-section-ivory {
-    background: #faf3e60d;
-  }
-
-  body.mn-glass .mn-container {
-    background: none;
-  }
-
-  @supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
-    body.mn-glass {
-      --glass-tint: #1a1a1aeb;
-      --glass-tint-hover: #1a1a1af2;
-      --glass-tint-active: #1a1a1af7;
-      --glass-tint-raised: #1a1a1af0;
-    }
-
-    body.mn-glass .mn-section-dark, body.mn-glass .mn-section-light, body.mn-glass .mn-section-ivory, body.mn-glass .mn-section-accent {
-      -webkit-backdrop-filter: none;
-    }
-  }
-
-  body.mn-glass .mn-card {
-    background: var(--glass-tint);
-    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
-    border: 1px solid var(--glass-border);
-    box-shadow: var(--glass-shadow), var(--glass-shadow-inset);
-    transition: var(--glass-transition);
-  }
-
-  body.mn-glass .mn-card:hover {
-    background: var(--glass-tint-hover);
-    border-color: var(--glass-border-hover);
-    box-shadow: var(--glass-shadow-lg), var(--glass-shadow-inset);
-  }
-
-  body.mn-glass .mn-btn {
-    background: var(--glass-tint-raised);
-    -webkit-backdrop-filter: blur(var(--glass-blur-sm));
-    border: 1px solid var(--glass-border);
-    transition: var(--glass-transition);
-  }
-
-  body.mn-glass .mn-btn:hover {
-    background: var(--glass-tint-hover);
-    border-color: var(--glass-border-hover);
-  }
-
-  body.mn-glass .mn-btn--ghost {
-    -webkit-backdrop-filter: none;
-    border-color: var(--glass-border);
-    background: none;
-  }
-
-  body.mn-glass .mn-btn--ghost:hover {
-    background: var(--glass-tint);
-    -webkit-backdrop-filter: blur(var(--glass-blur-sm));
-  }
-
-  body.mn-glass .mn-input, body.mn-glass .mn-select, body.mn-glass .mn-textarea {
-    background: var(--glass-tint);
-    -webkit-backdrop-filter: blur(var(--glass-blur-sm));
-    border: 1px solid var(--glass-border);
-    transition: var(--glass-transition);
-  }
-
-  body.mn-glass .mn-input:focus, body.mn-glass .mn-select:focus, body.mn-glass .mn-textarea:focus {
-    border-color: var(--glass-border-focus);
-    box-shadow: 0 0 0 3px #ffc72c26;
-  }
-
-  body.mn-glass .mn-tag {
-    background: var(--glass-tint);
-    -webkit-backdrop-filter: blur(var(--glass-blur-sm));
-    border: 1px solid var(--glass-border);
-  }
-
-  body.mn-glass .mn-tag:hover, body.mn-glass .mn-tag--active {
-    background: var(--glass-tint-active);
-    border-color: var(--glass-border-hover);
-  }
-
-  body.mn-glass .mn-accordion, body.mn-glass .mn-accordion__item {
-    background: var(--glass-tint);
-    -webkit-backdrop-filter: blur(var(--glass-blur-sm));
-    border-color: var(--glass-border);
-  }
-
-  body.mn-glass .mn-signal-panel {
-    background: var(--glass-tint);
-    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
-    border: 1px solid var(--glass-border);
-    box-shadow: var(--glass-shadow-inset);
-  }
-
-  body.mn-glass .mn-checkbox__box, body.mn-glass .mn-radio__dot {
-    background: var(--glass-tint);
-    border-color: var(--glass-border);
-  }
-
-  body.mn-glass .mn-fieldset {
-    border-color: var(--glass-border);
-  }
-
-  body.mn-glass .mn-form__actions {
-    border-color: var(--glass-border);
-    background: var(--glass-tint);
-    -webkit-backdrop-filter: blur(var(--glass-blur-sm));
-  }
-
-  body.mn-glass .mn-progress {
-    background: var(--glass-tint);
-  }
-
-  body.mn-glass .mn-divider-gold {
-    background: var(--glass-border);
-  }
-
-  @supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
-    body.mn-glass .mn-card, body.mn-glass .mn-btn, body.mn-glass .mn-input, body.mn-glass .mn-select, body.mn-glass .mn-textarea, body.mn-glass .mn-tag, body.mn-glass .mn-accordion, body.mn-glass .mn-accordion__item, body.mn-glass .mn-signal-panel, body.mn-glass .mn-form__actions {
-      -webkit-backdrop-filter: none;
-    }
-  }
-
-  body.mn-glass .mn-sidebar {
-    background: var(--glass-tint);
-    -webkit-backdrop-filter: blur(var(--glass-blur-lg)) saturate(var(--glass-saturation));
-    border-right: 1px solid var(--glass-border);
-    box-shadow: var(--glass-shadow-inset);
-  }
-
-  body.mn-glass .mn-nav {
-    background: var(--glass-tint);
-    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
-    border-bottom: 1px solid var(--glass-border);
-  }
-
-  body.mn-glass .mn-breadcrumb {
-    background: none;
-  }
-
-  body.mn-glass .mn-modal {
-    background: var(--glass-tint);
-    -webkit-backdrop-filter: blur(var(--glass-blur-lg)) saturate(var(--glass-saturation));
-    border: 1px solid var(--glass-border);
-    box-shadow: var(--glass-shadow-lg);
-  }
-
-  body.mn-glass .mn-modal__overlay {
-    background: var(--glass-overlay);
-    -webkit-backdrop-filter: blur(4px);
-  }
-
-  body.mn-glass .mn-drawer {
-    background: var(--glass-tint);
-    -webkit-backdrop-filter: blur(var(--glass-blur-lg)) saturate(var(--glass-saturation));
-    border-left: 1px solid var(--glass-border);
-    box-shadow: var(--glass-shadow-lg);
-  }
-
-  body.mn-glass .mn-detail-panel {
-    background: var(--glass-tint);
-    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
-    border: 1px solid var(--glass-border);
-    box-shadow: var(--glass-shadow), var(--glass-shadow-inset);
-  }
-
-  body.mn-glass .mn-detail-panel__header {
-    border-bottom-color: var(--glass-border);
-  }
-
-  body.mn-glass .mn-dt, body.mn-glass .mn-table-wrap {
-    background: var(--glass-tint);
-    -webkit-backdrop-filter: blur(var(--glass-blur-sm));
-    border: 1px solid var(--glass-border);
-  }
-
-  body.mn-glass .mn-table thead {
-    background: var(--glass-tint-raised);
-  }
-
-  body.mn-glass .mn-table td {
-    border-color: var(--glass-border);
-  }
-
-  body.mn-glass .mn-table tbody tr:hover {
-    background: var(--glass-tint-hover);
-  }
-
-  body.mn-glass .mn-toast {
-    background: var(--glass-tint-raised);
-    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
-    border: 1px solid var(--glass-border);
-    box-shadow: var(--glass-shadow-lg);
-  }
-
-  body.mn-glass .mn-tooltip {
-    background: var(--glass-tint-active);
-    -webkit-backdrop-filter: blur(var(--glass-blur));
-    border: 1px solid var(--glass-border);
-  }
-
-  body.mn-glass .mn-chat-panel {
-    background: var(--glass-tint);
-    -webkit-backdrop-filter: blur(var(--glass-blur-lg)) saturate(var(--glass-saturation));
-    border: 1px solid var(--glass-border);
-  }
-
-  body.mn-glass .mn-footer {
-    background: var(--glass-tint);
-    -webkit-backdrop-filter: blur(var(--glass-blur));
-    border-top: 1px solid var(--glass-border);
-  }
-
-  @supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
-    body.mn-glass .mn-sidebar, body.mn-glass .mn-nav, body.mn-glass .mn-modal, body.mn-glass .mn-drawer, body.mn-glass .mn-detail-panel, body.mn-glass .mn-dt, body.mn-glass .mn-table-wrap, body.mn-glass .mn-toast, body.mn-glass .mn-tooltip, body.mn-glass .mn-chat-panel, body.mn-glass .mn-footer, body.mn-glass .mn-modal__overlay {
-      -webkit-backdrop-filter: none;
-    }
-  }
-
-  body.mn-nero.mn-glass {
-    --glass-tint: #0a0a0a8c;
-    --glass-tint-hover: #0a0a0aa6;
-    --glass-tint-active: #0a0a0abf;
-    --glass-tint-raised: #0a0a0a99;
-    --glass-border: #ffffff1a;
-    --glass-border-hover: #ffffff2e;
-    --glass-shadow: 0 4px 24px #0000004d;
-    --glass-shadow-lg: 0 8px 40px #0006;
-    --glass-shadow-inset: inset 0 1px 0 #ffffff0a;
-    --glass-overlay: #0009;
-  }
-
-  body.mn-avorio.mn-glass {
-    --glass-tint: #faf3e68c;
-    --glass-tint-hover: #faf3e6a6;
-    --glass-tint-active: #faf3e6bf;
-    --glass-tint-raised: #faf3e699;
-    --glass-border: #0000001a;
-    --glass-border-hover: #0000002e;
-    --glass-border-focus: #dc000066;
-    --glass-shadow: 0 4px 24px #00000014;
-    --glass-shadow-lg: 0 8px 40px #0000001f;
-    --glass-shadow-inset: inset 0 1px 0 #ffffff4d;
-    --glass-overlay: #faf3e680;
-    --glass-specular: #ffffff26;
-  }
-
-  body.mn-colorblind.mn-glass {
-    --glass-tint: #141414a6;
-    --glass-tint-hover: #141414bf;
-    --glass-tint-active: #141414d1;
-    --glass-tint-raised: #141414b3;
-    --glass-border: #fff3;
-    --glass-border-hover: #ffffff4d;
-    --glass-border-focus: #0072b280;
-    --glass-shadow: 0 4px 24px #00000040;
-    --glass-shadow-lg: 0 8px 40px #00000059;
-    --glass-shadow-inset: inset 0 1px 0 #ffffff0f;
-    --glass-blur: 12px;
-    --glass-saturation: 1;
-  }
-
-  body.mn-glass:not(.mn-nero):not(.mn-avorio):not(.mn-colorblind) {
-    --glass-tint: #1a1a1a80;
-    --glass-tint-hover: #1a1a1a99;
-    --glass-tint-active: #1a1a1ab3;
-    --glass-tint-raised: #1a1a1a8c;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    body.mn-glass:not(.mn-nero):not(.mn-avorio):not(.mn-colorblind) {
-      --glass-tint: #0a0a0a8c;
-      --glass-tint-hover: #0a0a0aa6;
-      --glass-tint-active: #0a0a0abf;
-      --glass-tint-raised: #0a0a0a99;
-    }
   }
 }
 

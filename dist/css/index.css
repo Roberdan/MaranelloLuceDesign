@@ -218,27 +218,6 @@
     --content-width: 1200px;
     --content-narrow: 800px;
   }
-
-  body.mn-glass {
-    --glass-blur: 16px;
-    --glass-blur-lg: 24px;
-    --glass-blur-sm: 8px;
-    --glass-saturation: 1.2;
-    --glass-tint: #ffffff14;
-    --glass-tint-hover: #ffffff1f;
-    --glass-tint-active: #ffffff29;
-    --glass-tint-raised: #ffffff1a;
-    --glass-border: #ffffff26;
-    --glass-border-hover: #ffffff40;
-    --glass-border-focus: #ffc72c80;
-    --glass-shadow: 0 4px 24px #00000026;
-    --glass-shadow-lg: 0 8px 40px #0003;
-    --glass-shadow-inset: inset 0 1px 0 #ffffff0f;
-    --glass-overlay: #0a0a0a80;
-    --glass-scrim: #0000004d;
-    --glass-specular: #ffffff0a;
-    --glass-transition: backdrop-filter .3s ease, background .3s ease;
-  }
 }
 
 @layer base {
@@ -11550,6 +11529,61 @@
     color: var(--nero-assoluto);
   }
 
+  body.mn-avorio .mn-okr__hero {
+    background-color: var(--avorio-chiaro);
+    border-color: var(--avorio-scuro);
+    background-image: none;
+  }
+
+  body.mn-avorio .mn-okr__average-label {
+    color: var(--grigio-medio);
+  }
+
+  body.mn-avorio .mn-okr__average-value, body.mn-avorio .mn-okr__gauge-value {
+    color: var(--nero-assoluto);
+    text-shadow: none;
+  }
+
+  body.mn-avorio .mn-okr__period-tag {
+    border-color: var(--avorio-scuro);
+    color: var(--grigio-medio);
+    background: #00000008;
+  }
+
+  body.mn-avorio .mn-okr__ring-track, body.mn-avorio .mn-okr__ring-track--overall {
+    stroke: #0000001a;
+  }
+
+  body.mn-avorio .mn-okr__ring-text {
+    fill: var(--nero-assoluto);
+  }
+
+  body.mn-avorio .mn-okr__objective {
+    background: var(--bianco-puro);
+    border-color: var(--avorio-scuro);
+    box-shadow: 0 2px 8px #0000000f;
+  }
+
+  body.mn-avorio .mn-okr__objective:hover {
+    box-shadow: 0 4px 16px #0000001f;
+  }
+
+  body.mn-avorio .mn-okr__objective-title {
+    color: var(--nero-assoluto);
+  }
+
+  body.mn-avorio .mn-okr__kr-title {
+    color: var(--grigio-scuro);
+  }
+
+  body.mn-avorio .mn-okr__kr-metric {
+    color: var(--grigio-medio);
+  }
+
+  body.mn-avorio .mn-okr__kr-track {
+    background: #00000014;
+  }
+
   body.mn-avorio .mn-okr__obj-card {
     background: var(--bianco-puro);
     border-color: var(--avorio-scuro);
@@ -11559,12 +11593,14 @@
     color: var(--nero-assoluto);
   }
 
-  body.mn-avorio .mn-okr__kr-title {
-    color: var(--grigio-scuro);
-  }
-
   body.mn-avorio .mn-okr__kr-bar {
     background: var(--avorio-scuro);
+  }
+
+  body.mn-avorio .mn-card-dark {
+    background: var(--avorio-chiaro);
+    color: var(--nero-assoluto);
+    box-shadow: 0 2px 8px #0000000f;
   }
 
   body.mn-nero .mn-funnel__stage {

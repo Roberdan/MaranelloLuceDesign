@@ -59,12 +59,9 @@ export { objectIcons } from './icons-objects';
 export { initThemeToggle } from './theme-toggle';
 export type { ThemeGaugeInstance, ThemeToggleController } from './theme-toggle';
 
-// Theme rotary (dual-level: theme ring + glass toggle)
+// Theme rotary
 export { themeRotary } from './theme-rotary';
 export type { ThemeRotaryOptions, ThemeRotaryController } from './theme-rotary';
-
-// Glass overlay API
-export { getGlass, setGlass, toggleGlass } from './core/utils';
 
 // Toast notifications
 export { toast } from './toast';
