@@ -1,6 +1,7 @@
 /**
  * Maranello Luce Design System — Demo App
- * Lazy-loads section modules when they scroll into view.
+ * Lazy-loads sections via IntersectionObserver: sections render only when
+ * entering the viewport, avoiding 34 simultaneous canvas/RAF renders on load.
  */
 import { createHeroSection } from './sections/hero.js';
 import { createTokensSection } from './sections/tokens.js';
@@ -52,46 +53,77 @@ function safe(fn, name) {
   }
 }
 
-const sections = [
-  safe(createHeroSection, 'hero'),
-  safe(createTokensSection, 'tokens'),
-  safe(createCardsSection, 'cards'),
-  safe(createDashboardSection, 'dashboard'),
-  safe(createChartsSection, 'charts'),
-  safe(createNetworkSection, 'network'),
-  safe(createControlsSection, 'controls'),
-  safe(createFormsSection, 'forms'),
-  safe(createTablesSection, 'tables'),
-  safe(createGaugesSection, 'gauges'),
-  safe(createCockpitSection, 'cockpit'),
-  safe(createTelemetrySection, 'telemetry'),
-  safe(createGanttSection, 'gantt'),
-  safe(createIconsSection, 'icons'),
-  safe(createAnimationsSection, 'animations'),
-  safe(createHeatmapSection, 'heatmap'),
-  safe(createTreemapSection, 'treemap'),
-  safe(createLayoutsSection, 'layouts'),
-  safe(createDetailPanelSection, 'detail-panel'),
-  safe(createInteractiveSection, 'interactive'),
-  safe(createOkrSection, 'okr'),
-  safe(createMapSection, 'map'),
-  safe(createSocialGraphSection, 'social-graph'),
-  safe(createAdvancedSection, 'advanced'),
-  safe(createMeshNetworkSection, 'mesh-network'),
-  safe(createConvergioSection, 'convergio'),
-  safe(createWebComponentsSection, 'web-components'),
-  safe(createGlassSection, 'glass'),
-  safe(createLaunchSection, 'launch'),
-  safe(createAccessibilitySection, 'accessibility'),
-  safe(createApiReferenceSection, 'api-reference'),
-  safe(createDataBindingSection, 'data-binding'),
-  safe(createOverlaysSection, 'overlays'),
-  safe(createOrgTreeSection, 'org-tree'),
-  createFooter(),
-].filter(Boolean);
+/** Sections loaded immediately (above-the-fold). */
+const EAGER = ['hero', 'tokens'];
+
+const FACTORIES = [
+  ['hero', createHeroSection],
+  ['tokens', createTokensSection],
+  ['cards', createCardsSection],
+  ['dashboard', createDashboardSection],
+  ['charts', createChartsSection],
+  ['network', createNetworkSection],
+  ['controls', createControlsSection],
+  ['forms', createFormsSection],
+  ['tables', createTablesSection],
+  ['gauges', createGaugesSection],
+  ['cockpit', createCockpitSection],
+  ['telemetry', createTelemetrySection],
+  ['gantt', createGanttSection],
+  ['icons', createIconsSection],
+  ['animations', createAnimationsSection],
+  ['heatmap', createHeatmapSection],
+  ['treemap', createTreemapSection],
+  ['layouts', createLayoutsSection],
+  ['detail-panel', createDetailPanelSection],
+  ['interactive', createInteractiveSection],
+  ['okr', createOkrSection],
+  ['map', createMapSection],
+  ['social-graph', createSocialGraphSection],
+  ['advanced', createAdvancedSection],
+  ['mesh-network', createMeshNetworkSection],
+  ['convergio', createConvergioSection],
+  ['web-components', createWebComponentsSection],
+  ['glass', createGlassSection],
+  ['launch', createLaunchSection],
+  ['accessibility', createAccessibilitySection],
+  ['api-reference', createApiReferenceSection],
+  ['data-binding', createDataBindingSection],
+  ['overlays', createOverlaysSection],
+  ['org-tree', createOrgTreeSection],
+];
 
 const fragment = document.createDocumentFragment();
-sections.forEach((section) => fragment.appendChild(section));
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (!entry.isIntersecting) return;
+    const placeholder = entry.target;
+    const name = placeholder.dataset.section;
+    const factory = placeholder._factory;
+    if (!factory) return;
+    observer.unobserve(placeholder);
+    const real = safe(factory, name);
+    placeholder.replaceWith(real);
+  });
+}, { rootMargin: '200px' });
+
+for (const [name, factory] of FACTORIES) {
+  if (EAGER.includes(name)) {
+    fragment.appendChild(safe(factory, name));
+    continue;
+  }
+  // Placeholder: preserves anchor + approximate scroll height
+  const placeholder = document.createElement('section');
+  placeholder.id = name;
+  placeholder.dataset.section = name;
+  placeholder._factory = factory;
+  placeholder.style.cssText = 'min-height:60vh;display:flex;align-items:center;justify-content:center';
+  placeholder.innerHTML = `<span class="mn-micro" style="color:var(--grigio-scuro)">Loading…</span>`;
+  fragment.appendChild(placeholder);
+  observer.observe(placeholder);
+}
+
+fragment.appendChild(createFooter());
 root.appendChild(fragment);
 
 /* IntersectionObserver: load section when 200px from viewport */
@@ -115,7 +147,6 @@ document.querySelectorAll('.demo-nav__links a').forEach((link) => {
   });
 });
 
-/** Sync theme label next to the theme toggle. */
 function updateThemeLabel() {
   const label = document.getElementById('demo-theme-label');
   if (!label) return;
@@ -148,7 +179,7 @@ function createFooter() {
       <div class="mn-divider-gold--accent mn-divider-gold" style="margin-bottom:var(--space-xl)"></div>
       <p class="mn-label" style="color:var(--mn-accent);margin-bottom:var(--space-sm)">Maranello Luce Design System</p>
       <p class="mn-micro" style="color:var(--grigio-medio)">Demo built with fictional Maranello Luce operations data. All data is illustrative and does not represent a real platform.</p>
-      <p class="mn-micro" style="color:var(--grigio-scuro);margin-top:var(--space-sm)">v3.3.0 — 5 themes · 150 APIs · 25 Web Components</p>
+      <p class="mn-micro" style="color:var(--grigio-scuro);margin-top:var(--space-sm)">v3.3.0 — 4 themes · 87 APIs · 25 Web Components</p>
     </div>`;
   return footer;
 }
