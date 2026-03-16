@@ -61,7 +61,7 @@
 
 /* ── Loading skeleton shimmer ────────────────────────────────────────── */
 .mn-skeleton {
-  background: linear-gradient(90deg, var(--mn-text-tertiary) 25%, var(--mn-text-muted) 50%, var(--mn-text-tertiary) 75%);
+  background: linear-gradient(90deg, var(--mn-surface-raised) 25%, var(--mn-border) 50%, var(--mn-surface-raised) 75%);
   background-size: 200% 100%;
   animation: mnShimmer 1.5s infinite;
   border-radius: 4px;

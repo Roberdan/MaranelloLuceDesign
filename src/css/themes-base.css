@@ -30,7 +30,7 @@ body.mn-nero {
   --mn-backdrop: rgba(0,0,0,0.4); --mn-scrim: rgba(0,0,0,0.72);
 }
 body.mn-avorio {
-  background: var(--avorio-chiaro); color: var(--mn-text-inverse);
+  background: var(--avorio-chiaro); color: var(--mn-text);
   --mn-accent: var(--mn-error); --mn-accent-hover: #b30000; --mn-accent-text: #fff;
   --mn-surface: #ffffff; --mn-surface-raised: #faf3e6; --mn-surface-sunken: #e8d5b0;
   --mn-surface-input: #ffffff; --mn-surface-overlay: color-mix(in srgb, #ffffff 92%, transparent); --mn-surface-hover: rgba(0,0,0,0.04);
@@ -73,11 +73,11 @@ body.mn-nero .mn-section-light .mn-table td { border-color: var(--mn-border); co
 body.mn-nero .mn-section-light .mn-table tbody tr:hover { background: var(--mn-surface); }
 body.mn-nero .mn-tag { border-color: var(--mn-border); color: var(--mn-text-tertiary); }
 body.mn-nero .mn-tag:hover,
-body.mn-nero .mn-tag--active { background: var(--mn-surface); color: var(--mn-text-inverse); border-color: var(--mn-text); }
-body.mn-nero .mn-btn { background: var(--mn-surface); color: var(--mn-text-inverse); border-color: var(--mn-surface); }
+body.mn-nero .mn-tag--active { background: var(--mn-text); color: var(--mn-text-inverse); border-color: var(--mn-text); }
+body.mn-nero .mn-btn { background: var(--mn-text); color: var(--mn-text-inverse); border-color: var(--mn-surface); }
 body.mn-nero .mn-btn:hover { background: var(--mn-text-tertiary); }
 body.mn-nero .mn-btn--ghost { background: transparent; border-color: rgba(255,255,255,0.3); color: var(--mn-text); }
-body.mn-nero .mn-btn--ghost:hover { background: var(--mn-surface); color: var(--mn-text-inverse); }
+body.mn-nero .mn-btn--ghost:hover { background: var(--mn-text); color: var(--mn-text-inverse); }
 body.mn-nero .mn-input { background: var(--mn-surface); border-color: var(--mn-border); color: var(--mn-text); }
 body.mn-nero .mn-accordion, body.mn-nero .mn-accordion__item { border-color: var(--mn-border); }
 body.mn-nero .mn-accordion__header { color: var(--mn-text); }
@@ -99,7 +99,7 @@ body.mn-nero .mn-card__title { color: var(--mn-text); }
 body.mn-nero .mn-demo-swatch { border-color: var(--mn-border); }
 body.mn-nero .mn-demo-section-label { color: var(--mn-accent); }
 body.mn-nero .mn-dot { background: var(--mn-border); }
-body.mn-nero .mn-dot--active { background: var(--mn-surface); }
+body.mn-nero .mn-dot--active { background: var(--mn-text); }
 body.mn-nero .mn-progress { background: var(--mn-border); }
 body.mn-nero .mn-status { color: var(--mn-text-tertiary); }
 body.mn-nero .mn-divider-gold { background: var(--mn-border); }

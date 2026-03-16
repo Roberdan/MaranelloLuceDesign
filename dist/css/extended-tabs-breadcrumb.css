@@ -39,7 +39,7 @@
 
 body.mn-avorio .mn-tabs__list { border-color: var(--mn-border-subtle); }
 body.mn-avorio .mn-tabs__tab { color: var(--mn-text-muted); }
-body.mn-avorio .mn-tabs__tab--active { color: var(--mn-text-inverse); }
+body.mn-avorio .mn-tabs__tab--active { color: var(--mn-text); }
 
 
 /* ── BREADCRUMB ── */
@@ -65,5 +65,5 @@ body.mn-avorio .mn-tabs__tab--active { color: var(--mn-text-inverse); }
   user-select: none;
 }
 
-body.mn-avorio .mn-breadcrumb__item--active { color: var(--mn-text-inverse); }
+body.mn-avorio .mn-breadcrumb__item--active { color: var(--mn-text); }
 } /* end @layer extended */

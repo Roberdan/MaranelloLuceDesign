@@ -182,19 +182,19 @@
 /* ═══ Avorio theme ═══ */
 body.mn-avorio .mn-sim-card { background:var(--mn-surface); border-color:var(--mn-border); }
 body.mn-avorio .mn-sim-card:hover { background:var(--mn-surface-raised); }
-body.mn-avorio .mn-sim-card__title { color:var(--mn-text-inverse); }
-body.mn-avorio .mn-sim-step-header__title { color:var(--mn-text-inverse); }
+body.mn-avorio .mn-sim-card__title { color:var(--mn-text); }
+body.mn-avorio .mn-sim-step-header__title { color:var(--mn-text); }
 body.mn-avorio .mn-sim-eng-preview { background:var(--mn-surface); }
 body.mn-avorio .mn-sim-talent-card { background:var(--mn-surface); border-color:var(--mn-border); }
 body.mn-avorio .mn-sim-insight { background:var(--mn-accent-bg); }
 body.mn-avorio .mn-sim-ado-preview { background:var(--mn-surface); }
 body.mn-avorio .mn-sim-mutation { background:var(--mn-surface); border-color:var(--mn-border); }
-body.mn-avorio .mn-sim-label-input { background:var(--mn-surface); color:var(--mn-text-inverse); border-color:var(--mn-border); }
+body.mn-avorio .mn-sim-label-input { background:var(--mn-surface); color:var(--mn-text); border-color:var(--mn-border); }
 body.mn-avorio .mn-sim-suggestion { background:var(--mn-accent-bg); }
 body.mn-avorio .mn-nav__sim-btn { color:var(--mn-text-muted); border-color:var(--mn-border); }
 body.mn-avorio .mn-nav__sim-btn:hover { color:var(--mn-accent); border-color:var(--mn-accent); }
 body.mn-avorio .mn-sim-bar { background:var(--mn-surface); }
 body.mn-avorio .mn-sim-bar__toggle { background:var(--mn-surface-raised); }
 body.mn-avorio .mn-sim-kpi-delta { background:var(--mn-surface); border-color:var(--mn-border); }
-body.mn-avorio .mn-sim-kpi-delta__value { color:var(--mn-text-inverse); }
+body.mn-avorio .mn-sim-kpi-delta__value { color:var(--mn-text); }
 } /* end @layer layouts */

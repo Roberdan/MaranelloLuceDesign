@@ -127,14 +127,14 @@
 /* ═══════════════ Avorio theme ═══════════════ */
 body.mn-avorio .mn-sim-panel { background:var(--mn-surface); border-top:2px solid var(--mn-error); box-shadow:0 -4px 16px rgba(0,0,0,0.08); }
 body.mn-avorio .mn-sim-scenario { background:var(--mn-surface); border-color:var(--mn-border); color:var(--mn-text); }
-body.mn-avorio .mn-sim-scenario:hover { border-color:var(--mn-error); background:var(--mn-text-tertiary); }
+body.mn-avorio .mn-sim-scenario:hover { border-color:var(--mn-error); background:var(--mn-hover-bg); }
 body.mn-avorio .mn-sim-input { background:var(--mn-surface); border-color:var(--mn-border); color:var(--mn-text); }
 body.mn-avorio .mn-sim-input:focus { border-color:var(--mn-error); }
 body.mn-avorio .mn-sim-select__trigger { background:var(--mn-surface); border-color:var(--mn-border); color:var(--mn-text); }
 body.mn-avorio .mn-sim-select__dropdown { background:var(--mn-surface); border-color:var(--mn-border); }
 body.mn-avorio .mn-sim-select__search { color:var(--mn-text); border-bottom-color:var(--mn-border); }
 body.mn-avorio .mn-sim-select__item { color:var(--mn-text); }
-body.mn-avorio .mn-sim-select__item:hover { background:var(--mn-text-tertiary); }
+body.mn-avorio .mn-sim-select__item:hover { background:var(--mn-hover-bg); }
 body.mn-avorio .mn-sim-preview { background:var(--mn-surface); border-left-color:var(--mn-error); }
 body.mn-avorio .mn-sim-preview strong { color:var(--mn-text); }
 body.mn-avorio .mn-sim-kpi { background:var(--mn-surface); border-color:var(--mn-border); }

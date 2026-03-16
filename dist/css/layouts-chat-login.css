@@ -186,9 +186,9 @@
 /* Avorio theme */
 body.mn-avorio .mn-login { background: var(--mn-surface); }
 body.mn-avorio .mn-login__glow { background: radial-gradient(circle, rgba(255,199,44,0.08) 0%, transparent 70%); }
-body.mn-avorio .mn-login__title { color: var(--mn-text-inverse); }
+body.mn-avorio .mn-login__title { color: var(--mn-text); }
 body.mn-avorio .mn-login__subtitle { color: var(--mn-text-muted); }
-body.mn-avorio .mn-login__btn { background: rgba(0,0,0,0.04); border-color: var(--mn-text-tertiary); color: var(--mn-text-inverse); }
+body.mn-avorio .mn-login__btn { background: rgba(0,0,0,0.04); border-color: var(--mn-text-tertiary); color: var(--mn-text); }
 body.mn-avorio .mn-login__btn:hover { background: rgba(0,0,0,0.08); }
 body.mn-avorio .mn-login__status { border-top-color: var(--mn-text-tertiary); }
 body.mn-avorio .mn-login__service-name { color: var(--mn-text-muted); }

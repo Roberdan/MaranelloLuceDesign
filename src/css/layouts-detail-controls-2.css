@@ -141,16 +141,16 @@ body.mn-avorio .mn-detail-panel__avatar { background: rgba(220,0,0,0.1); color: 
 body.mn-avorio .mn-detail-panel__score-btn:hover { background: rgba(220,0,0,0.08); color: var(--mn-error); }
 body.mn-avorio .mn-detail-panel__tab--active { color: var(--mn-error); border-bottom-color: var(--mn-error); }
 body.mn-avorio .mn-date-picker { background: var(--avorio-chiaro, #faf8f2); border-color: var(--avorio-scuro); }
-body.mn-avorio .mn-date-picker__month-title { color: var(--mn-text-inverse); }
-body.mn-avorio .mn-date-picker__day { color: var(--mn-text-inverse); }
+body.mn-avorio .mn-date-picker__month-title { color: var(--mn-text); }
+body.mn-avorio .mn-date-picker__day { color: var(--mn-text); }
 body.mn-avorio .mn-date-picker__day:hover:not(.mn-date-picker__day--disabled):not(.mn-date-picker__day--empty) { background: rgba(220,0,0,0.08); color: var(--mn-error); }
 /* body + class + double-class = 0,3,0 — beats all day state variants */
 body.mn-avorio .mn-date-picker__day--selected.mn-date-picker__day--selected { background: var(--mn-error); color: var(--mn-text); }
 body.mn-avorio .mn-detail-panel__person-results { background: var(--avorio-chiaro); border-color: var(--avorio-scuro); }
-body.mn-avorio .mn-detail-panel__person-result { color: var(--mn-text-inverse); }
+body.mn-avorio .mn-detail-panel__person-result { color: var(--mn-text); }
 body.mn-avorio .mn-detail-panel__person-result:hover { background: rgba(220,0,0,0.06); }
 body.mn-avorio .mn-detail-panel__action-btn { border-color: rgba(0,0,0,0.1); color: var(--mn-border-strong); }
-body.mn-avorio .mn-detail-panel__action-btn:hover { background: rgba(0,0,0,0.04); color: var(--mn-text-inverse); }
+body.mn-avorio .mn-detail-panel__action-btn:hover { background: rgba(0,0,0,0.04); color: var(--mn-text); }
 body.mn-avorio .mn-detail-panel__save-btn { background: rgba(0,166,81,0.08); color: var(--verde-racing); }
 body.mn-avorio .mn-detail-panel__toast--info { background: rgba(220,0,0,0.06); border-color: rgba(220,0,0,0.15); color: var(--mn-error); }
 body.mn-avorio .mn-detail-panel__skeleton {
@@ -159,12 +159,12 @@ body.mn-avorio .mn-detail-panel__skeleton {
 }
 body.mn-avorio .mn-detail-panel__score-stepper { border-color: var(--mn-border-strong); }
 body.mn-avorio .mn-detail-panel__score-btn { background: rgba(0,0,0,0.04); color: var(--mn-border-strong); }
-body.mn-avorio .mn-detail-panel__score-value { color: var(--mn-text-inverse); border-color: var(--mn-border-strong); }
+body.mn-avorio .mn-detail-panel__score-value { color: var(--mn-text); border-color: var(--mn-border-strong); }
 body.mn-avorio .mn-detail-panel__tab { color: var(--mn-border-strong); }
-body.mn-avorio .mn-detail-panel__tab:hover { color: var(--mn-text-inverse); }
+body.mn-avorio .mn-detail-panel__tab:hover { color: var(--mn-text); }
 body.mn-avorio .mn-detail-panel__person-email { color: var(--mn-text-muted); }
 body.mn-avorio .mn-date-picker__nav-btn { color: var(--mn-border-strong); }
-body.mn-avorio .mn-date-picker__nav-btn:hover { background: rgba(0,0,0,0.04); color: var(--mn-text-inverse); }
+body.mn-avorio .mn-date-picker__nav-btn:hover { background: rgba(0,0,0,0.04); color: var(--mn-text); }
 body.mn-avorio .mn-date-picker__day-name { color: var(--mn-text-muted); }
 body.mn-avorio .mn-date-picker__today-btn { border-color: rgba(0,0,0,0.1); color: var(--mn-border-strong); }
 body.mn-avorio .mn-date-picker__today-btn:hover { background: rgba(220,0,0,0.06); color: var(--mn-error); border-color: rgba(220,0,0,0.2); }
@@ -181,7 +181,7 @@ body.mn-nero .mn-detail-panel__score-btn { background: var(--mn-hover-bg); color
 body.mn-nero .mn-detail-panel__score-value { color: var(--mn-text); border-color: var(--mn-border); }
 body.mn-nero .mn-detail-panel__tab { color: var(--mn-text-tertiary); }
 body.mn-nero .mn-detail-panel__tab:hover { color: var(--mn-text); }
-body.mn-nero .mn-detail-panel__tab--active { color: var(--giallo-ferrari); border-bottom-color: var(--giallo-ferrari); }
+body.mn-nero .mn-detail-panel__tab--active { color: var(--mn-accent); border-bottom-color: var(--mn-accent); }
 body.mn-nero .mn-date-picker__day { color: var(--mn-text); }
 body.mn-nero .mn-date-picker__nav-btn { color: var(--mn-text-tertiary); }
 body.mn-nero .mn-date-picker__day-name { color: var(--mn-text-muted); }

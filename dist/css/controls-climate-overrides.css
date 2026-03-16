@@ -61,7 +61,7 @@ body.mn-avorio .mn-segmented__item--active {
 body.mn-avorio .mn-climate {
   background: linear-gradient(180deg, var(--mn-surface-avorio-1), var(--mn-surface-avorio-2));
 }
-body.mn-avorio .mn-climate__temp { color: var(--mn-text-inverse); }
+body.mn-avorio .mn-climate__temp { color: var(--mn-text); }
 body.mn-avorio .mn-btn-cluster {
   background: linear-gradient(180deg, var(--mn-surface-avorio-1), var(--mn-surface-avorio-2));
 }

@@ -174,5 +174,5 @@ body.mn-avorio .mn-dropdown__menu {
   box-shadow: 0 8px 32px rgba(0,0,0,0.12);
 }
 body.mn-avorio .mn-dropdown__item { color: var(--mn-text-muted); }
-body.mn-avorio .mn-dropdown__item:hover { background: var(--avorio-chiaro); color: var(--mn-text-inverse); }
+body.mn-avorio .mn-dropdown__item:hover { background: var(--avorio-chiaro); color: var(--mn-text); }
 } /* end @layer extended */

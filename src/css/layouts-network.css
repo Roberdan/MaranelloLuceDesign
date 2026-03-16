@@ -81,8 +81,8 @@ body.mn-avorio .mn-network__canvas { background:var(--mn-surface); }
 }
 
 /* ── Avorio overrides ── */
-body.mn-avorio .mn-detail-resource__fte-bar { background:var(--mn-text-tertiary); }
+body.mn-avorio .mn-detail-resource__fte-bar { background:var(--mn-surface-raised); }
 body.mn-avorio .mn-detail-resource__eng { background:var(--mn-surface); border-left-color:var(--mn-error); }
-body.mn-avorio .mn-detail-resource__eng:hover { background:var(--mn-text-tertiary); }
+body.mn-avorio .mn-detail-resource__eng:hover { background:var(--mn-hover-bg); }
 body.mn-avorio .mn-detail-resource__mate { border-bottom-color:var(--mn-text-muted); }
 } /* end @layer layouts */

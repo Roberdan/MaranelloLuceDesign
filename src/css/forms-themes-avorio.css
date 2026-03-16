@@ -71,14 +71,14 @@
    ══════════════════════════════════════════════════════════════ */
 
 body.mn-avorio {
-  --mn-form-bg: var(--mn-text);
+  --mn-form-bg: var(--mn-surface-input);
   --mn-form-border: var(--mn-border-strong);
-  --mn-form-text: var(--mn-text-inverse);
+  --mn-form-text: var(--mn-text);
   --mn-form-placeholder: var(--mn-text-tertiary);
   --mn-form-label: var(--mn-text-muted);
   --mn-form-focus: var(--mn-error);
   --mn-form-focus-ring: rgba(220, 0, 0, 0.15);
-  --mn-form-disabled-bg: var(--mn-text);
+  --mn-form-disabled-bg: var(--mn-surface);
   --mn-form-disabled-text: var(--mn-border-strong);
 }
 

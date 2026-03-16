@@ -95,33 +95,33 @@ body.mn-nero .mn-gantt__label { color: var(--mn-text-tertiary); }
   background: linear-gradient(135deg, rgba(250,250,250,0.98), rgba(245,245,245,0.96));
   border-color: rgba(0,0,0,0.08);
 }
-.mn-avorio .mn-live-panel__value { color: var(--mn-text-inverse); }
-.mn-avorio .mn-live-panel__mode { color: var(--mn-text-inverse); border-color: var(--mn-text-inverse); }
+.mn-avorio .mn-live-panel__value { color: var(--mn-text); }
+.mn-avorio .mn-live-panel__mode { color: var(--mn-text); border-color: var(--mn-text); }
 .mn-avorio .mn-live-panel__mode--accent { color: var(--mn-error); border-color: var(--mn-error); }
 .mn-avorio .mn-flip-counter__digit {
   background: linear-gradient(180deg, #f5f5f5 0%, #e8e8e8 49.5%, #ddd 50%, #eee 100%);
   border-color: rgba(0,0,0,0.1);
 }
-.mn-avorio .mn-flip-counter__digit-face { color: var(--mn-text-inverse); }
+.mn-avorio .mn-flip-counter__digit-face { color: var(--mn-text); }
 .mn-avorio .mn-flip-counter__sep { color: var(--mn-text-tertiary); }
-.mn-avorio .mn-donut__value { color: var(--mn-text-inverse); }
-.mn-avorio .mn-half-gauge__value { color: var(--mn-text-inverse); }
+.mn-avorio .mn-donut__value { color: var(--mn-text); }
+.mn-avorio .mn-half-gauge__value { color: var(--mn-text); }
 .mn-avorio .mn-temp-badge {
   background: var(--mn-hover-bg);
   color: var(--mn-text-inverse);
 }
 .mn-avorio .mn-heatmap__cell { color: rgba(0,0,0,0.7); }
-.mn-avorio .mn-funnel__stage-label { color: var(--mn-text-inverse); }
-.mn-avorio .mn-gantt__label { color: var(--mn-text-inverse); }
+.mn-avorio .mn-funnel__stage-label { color: var(--mn-text); }
+.mn-avorio .mn-gantt__label { color: var(--mn-text); }
 .mn-avorio .mn-bar-chart__bar-label { color: var(--mn-text-tertiary); }
 .mn-avorio .mn-chart-legend { color: var(--mn-text-muted); }
 .mn-avorio .mn-treemap__cell { color: var(--mn-hover-bg); }
-.mn-avorio .mn-progress-ring__label { color: var(--mn-text-inverse); }
+.mn-avorio .mn-progress-ring__label { color: var(--mn-text); }
 
 /* Gauge DOM text — dark text on Avorio light backgrounds (WCAG 4.5:1) */
-.mn-avorio .mn-gauge__value { color: var(--mn-text-inverse); text-shadow: none; }
+.mn-avorio .mn-gauge__value { color: var(--mn-text); text-shadow: none; }
 .mn-avorio .mn-gauge__unit { color: var(--mn-text-muted); }
 .mn-avorio .mn-gauge__sublabel { color: var(--mn-border); }
 .mn-avorio .mn-gauge__arc-label { color: var(--mn-border); }
-.mn-avorio .mn-gauge__counter-digit { background: var(--mn-surface); border-color: var(--mn-border-strong); color: var(--mn-text-inverse); }
+.mn-avorio .mn-gauge__counter-digit { background: var(--mn-surface); border-color: var(--mn-border-strong); color: var(--mn-text); }
 } /* end @layer charts */

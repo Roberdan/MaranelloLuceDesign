@@ -1730,7 +1730,7 @@
   }
 
   body.mn-avorio .mn-ctrl-stepped__mark--active {
-    color: var(--mn-text-inverse);
+    color: var(--mn-text);
   }
 
   .mn-theme-rotary__pointer {
@@ -1980,7 +1980,7 @@
   }
 
   body.mn-avorio .mn-climate__temp {
-    color: var(--mn-text-inverse);
+    color: var(--mn-text);
   }
 
   body.mn-avorio .mn-btn-cluster {
@@ -3580,14 +3580,14 @@
   }
 
   body.mn-avorio {
-    --mn-form-bg: var(--mn-text);
+    --mn-form-bg: var(--mn-surface-input);
     --mn-form-border: var(--mn-border-strong);
-    --mn-form-text: var(--mn-text-inverse);
+    --mn-form-text: var(--mn-text);
     --mn-form-placeholder: var(--mn-text-tertiary);
     --mn-form-label: var(--mn-text-muted);
     --mn-form-focus: var(--mn-error);
     --mn-form-focus-ring: #dc000026;
-    --mn-form-disabled-bg: var(--mn-text);
+    --mn-form-disabled-bg: var(--mn-surface);
     --mn-form-disabled-text: var(--mn-border-strong);
   }
 
@@ -4796,12 +4796,12 @@
   }
 
   .mn-avorio .mn-live-panel__value {
-    color: var(--mn-text-inverse);
+    color: var(--mn-text);
   }
 
   .mn-avorio .mn-live-panel__mode {
-    color: var(--mn-text-inverse);
-    border-color: var(--mn-text-inverse);
+    color: var(--mn-text);
+    border-color: var(--mn-text);
   }
 
   .mn-avorio .mn-live-panel__mode--accent {
@@ -4815,7 +4815,7 @@
   }
 
   .mn-avorio .mn-flip-counter__digit-face {
-    color: var(--mn-text-inverse);
+    color: var(--mn-text);
   }
 
   .mn-avorio .mn-flip-counter__sep {
@@ -4823,7 +4823,7 @@
   }
 
   .mn-avorio .mn-donut__value, .mn-avorio .mn-half-gauge__value {
-    color: var(--mn-text-inverse);
+    color: var(--mn-text);
   }
 
   .mn-avorio .mn-temp-badge {
@@ -4836,7 +4836,7 @@
   }
 
   .mn-avorio .mn-funnel__stage-label, .mn-avorio .mn-gantt__label {
-    color: var(--mn-text-inverse);
+    color: var(--mn-text);
   }
 
   .mn-avorio .mn-bar-chart__bar-label {
@@ -4852,11 +4852,11 @@
   }
 
   .mn-avorio .mn-progress-ring__label {
-    color: var(--mn-text-inverse);
+    color: var(--mn-text);
   }
 
   .mn-avorio .mn-gauge__value {
-    color: var(--mn-text-inverse);
+    color: var(--mn-text);
     text-shadow: none;
   }
 
@@ -4871,7 +4871,7 @@
   .mn-avorio .mn-gauge__counter-digit {
     background: var(--mn-surface);
     border-color: var(--mn-border-strong);
-    color: var(--mn-text-inverse);
+    color: var(--mn-text);
   }
 
   .mn-treemap {
@@ -5237,7 +5237,7 @@
   }
 
   .mn-skeleton {
-    background: linear-gradient(90deg, var(--mn-text-tertiary) 25%, var(--mn-text-muted) 50%, var(--mn-text-tertiary) 75%);
+    background: linear-gradient(90deg, var(--mn-surface-raised) 25%, var(--mn-border) 50%, var(--mn-surface-raised) 75%);
     background-size: 200% 100%;
     border-radius: 4px;
     animation: 1.5s infinite mnShimmer;
@@ -5815,7 +5815,7 @@
   }
 
   body.mn-avorio .mn-login__title {
-    color: var(--mn-text-inverse);
+    color: var(--mn-text);
   }
 
   body.mn-avorio .mn-login__subtitle {
@@ -5824,7 +5824,7 @@
 
   body.mn-avorio .mn-login__btn {
     border-color: var(--mn-text-tertiary);
-    color: var(--mn-text-inverse);
+    color: var(--mn-text);
     background: #0000000a;
   }
 
@@ -7265,7 +7265,7 @@
   }
 
   body.mn-avorio .mn-date-picker__month-title, body.mn-avorio .mn-date-picker__day {
-    color: var(--mn-text-inverse);
+    color: var(--mn-text);
   }
 
   body.mn-avorio .mn-date-picker__day:hover:not(.mn-date-picker__day--disabled):not(.mn-date-picker__day--empty) {
@@ -7284,7 +7284,7 @@
   }
 
   body.mn-avorio .mn-detail-panel__person-result {
-    color: var(--mn-text-inverse);
+    color: var(--mn-text);
   }
 
   body.mn-avorio .mn-detail-panel__person-result:hover {
@@ -7297,7 +7297,7 @@
   }
 
   body.mn-avorio .mn-detail-panel__action-btn:hover {
-    color: var(--mn-text-inverse);
+    color: var(--mn-text);
     background: #0000000a;
   }
 
@@ -7326,7 +7326,7 @@
   }
 
   body.mn-avorio .mn-detail-panel__score-value {
-    color: var(--mn-text-inverse);
+    color: var(--mn-text);
     border-color: var(--mn-border-strong);
   }
 
@@ -7335,7 +7335,7 @@
   }
 
   body.mn-avorio .mn-detail-panel__tab:hover {
-    color: var(--mn-text-inverse);
+    color: var(--mn-text);
   }
 
   body.mn-avorio .mn-detail-panel__person-email {
@@ -7347,7 +7347,7 @@
   }
 
   body.mn-avorio .mn-date-picker__nav-btn:hover {
-    color: var(--mn-text-inverse);
+    color: var(--mn-text);
     background: #0000000a;
   }
 
@@ -7399,8 +7399,8 @@
   }
 
   body.mn-nero .mn-detail-panel__tab--active {
-    color: var(--giallo-ferrari);
-    border-bottom-color: var(--giallo-ferrari);
+    color: var(--mn-accent);
+    border-bottom-color: var(--mn-accent);
   }
 
   body.mn-nero .mn-date-picker__day {
@@ -8411,7 +8411,7 @@
   }
 
   body.mn-avorio .mn-heatmap__name, body.mn-avorio .mn-heatmap__card__number {
-    color: var(--mn-text-inverse);
+    color: var(--mn-text);
   }
 
   body.mn-avorio .mn-heatmap__card--idle .mn-heatmap__card__number {
@@ -8423,7 +8423,7 @@
   }
 
   body.mn-avorio .mn-heatmap__value {
-    color: var(--mn-text-inverse);
+    color: var(--mn-text);
     text-shadow: 0 1px 2px #ffffff80;
   }
 
@@ -8532,13 +8532,13 @@
   }
 
   body.mn-avorio .mn-heatmap__cell {
-    color: var(--mn-text-inverse);
+    color: var(--mn-text);
   }
 
   body.mn-avorio .mn-heatmap__cell[data-tooltip]:hover:after {
     background: var(--mn-surface);
     border-color: var(--mn-border-strong);
-    color: var(--mn-text-inverse);
+    color: var(--mn-text);
   }
 
   body.mn-avorio .mn-heatmap__filter-bar {
@@ -9248,7 +9248,7 @@
   }
 
   body.mn-avorio .mn-detail-resource__fte-bar {
-    background: var(--mn-text-tertiary);
+    background: var(--mn-surface-raised);
   }
 
   body.mn-avorio .mn-detail-resource__eng {
@@ -9257,7 +9257,7 @@
   }
 
   body.mn-avorio .mn-detail-resource__eng:hover {
-    background: var(--mn-text-tertiary);
+    background: var(--mn-hover-bg);
   }
 
   body.mn-avorio .mn-detail-resource__mate {
@@ -10041,7 +10041,7 @@
 
   body.mn-avorio .mn-sim-scenario:hover {
     border-color: var(--mn-error);
-    background: var(--mn-text-tertiary);
+    background: var(--mn-hover-bg);
   }
 
   body.mn-avorio .mn-sim-input {
@@ -10075,7 +10075,7 @@
   }
 
   body.mn-avorio .mn-sim-select__item:hover {
-    background: var(--mn-text-tertiary);
+    background: var(--mn-hover-bg);
   }
 
   body.mn-avorio .mn-sim-preview {
@@ -10666,7 +10666,7 @@
   }
 
   body.mn-avorio .mn-tabs__tab--active {
-    color: var(--mn-text-inverse);
+    color: var(--mn-text);
   }
 
   .mn-breadcrumb {
@@ -10701,7 +10701,7 @@
   }
 
   body.mn-avorio .mn-breadcrumb__item--active {
-    color: var(--mn-text-inverse);
+    color: var(--mn-text);
   }
 
   .mn-toast-container {
@@ -10918,7 +10918,7 @@
 
   body.mn-avorio .mn-dropdown__item:hover {
     background: var(--avorio-chiaro);
-    color: var(--mn-text-inverse);
+    color: var(--mn-text);
   }
 
   .mn-tooltip-wrap {
@@ -11507,7 +11507,7 @@
 
   body.mn-avorio {
     background: var(--avorio-chiaro);
-    color: var(--mn-text-inverse);
+    color: var(--mn-text);
     --mn-accent: var(--mn-error);
     --mn-accent-hover: #b30000;
     --mn-accent-text: #fff;
@@ -11619,13 +11619,13 @@
   }
 
   body.mn-nero .mn-tag:hover, body.mn-nero .mn-tag--active {
-    background: var(--mn-surface);
+    background: var(--mn-text);
     color: var(--mn-text-inverse);
     border-color: var(--mn-text);
   }
 
   body.mn-nero .mn-btn {
-    background: var(--mn-surface);
+    background: var(--mn-text);
     color: var(--mn-text-inverse);
     border-color: var(--mn-surface);
   }
@@ -11641,7 +11641,7 @@
   }
 
   body.mn-nero .mn-btn--ghost:hover {
-    background: var(--mn-surface);
+    background: var(--mn-text);
     color: var(--mn-text-inverse);
   }
 
@@ -11726,7 +11726,7 @@
   }
 
   body.mn-nero .mn-dot--active {
-    background: var(--mn-surface);
+    background: var(--mn-text);
   }
 
   body.mn-nero .mn-progress {
