@@ -54,6 +54,11 @@ Maranello.initSlider(el);</code></pre>
       <div class="mn-mb-2xl"><div class="mn-btn-cluster" style="--cluster-cols:4">${clusterButton('dashboard', true)}${clusterButton('chart')}${clusterButton('users')}${clusterButton('settings')}</div></div>
       <div class="mn-demo-section-label">Segmented Control</div>
       <div class="mn-mb-2xl"><div class="mn-segmented" role="tablist" aria-label="View mode"><button class="mn-segmented__item" role="tab">Day</button><button class="mn-segmented__item mn-segmented__item--active" role="tab" aria-selected="true">Week</button><button class="mn-segmented__item" role="tab">Month</button><button class="mn-segmented__item" role="tab">Quarter</button></div></div>
+      <div class="mn-demo-section-label">Theme Rotary</div>
+      <div class="mn-flex-center mn-gap-2xl mn-mb-2xl" style="flex-direction:column;align-items:center">
+        <div id="ctrl-theme-rotary"></div>
+        <p class="mn-micro" style="color:var(--mn-text-muted);text-align:center">Dial selects one of 4 design themes — Editorial · Nero · Avorio · Colorblind</p>
+      </div>
       <div class="mn-demo-section-label">Drag Rotary</div>
       <div class="mn-flex-center mn-gap-2xl mn-mb-2xl">
         <div id="ctrl-drag-rotary" class="mn-rotary" style="width:140px">
@@ -82,6 +87,7 @@ function initControls(section) {
   if (M.cruiseLever) M.cruiseLever(section.querySelector('#ctrl-cruise'), { positions: ['Off', 'Low', 'Medium', 'High', 'Urgent'], label: 'Priority', initial: 1 });
   if (M.toggleLever) [['#ctrl-lever-on', 'Auto-Assign', true], ['#ctrl-lever-off', 'Notifications', false]].forEach(([id, label, state]) => M.toggleLever(section.querySelector(id), { label, state }));
   if (M.steppedRotary) M.steppedRotary(section.querySelector('#ctrl-stepped'), { positions: ['S', 'M', 'L', 'XL'], label: 'Effort', initial: 1 });
+  if (M.themeRotary) M.themeRotary({ container: section.querySelector('#ctrl-theme-rotary'), size: 140, onChange: (t) => { if (M.toast) M.toast({ type: 'info', title: 'Theme changed', message: `Active theme: ${t}` }); } });
   if (M.initDragRotary) M.initDragRotary(section.querySelector('#ctrl-drag-rotary'), { steps: ['Off', 'Eco', 'Normal', 'Sport', 'Race'], initial: 2 });
   if (M.icons) [['dashboard', M.icons.dashboard], ['chart', M.icons.barChart], ['users', M.icons.user], ['settings', M.icons.settings ?? M.icons.filter]].forEach(([id, fn]) => { const el = section.querySelector(`#ic-cluster-${id}`); if (el && fn) el.innerHTML = fn(); });
   activate(section, '.mn-btn-cluster__item', 'mn-btn-cluster__item--active');

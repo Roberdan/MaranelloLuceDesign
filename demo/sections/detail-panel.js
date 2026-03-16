@@ -36,6 +36,10 @@ export function createDetailPanelSection() {
       <p class="mn-micro" style="margin-bottom:var(--space-lg)">Click a deployment card to drill down into its detail panel.</p>
       <div id="dp-card-grid" class="mn-grid-3" style="margin-bottom:var(--space-2xl)">${DEPLOYMENTS.map(deploymentCard).join('')}</div>
       <div id="dp-panel-host"></div>
+      <div style="margin-bottom:var(--space-2xl)">
+        <p class="mn-micro" style="color:var(--mn-text-muted);margin-bottom:var(--space-md)">Or open programmatically via <code>openDetailPanel</code>:</p>
+        <button class="mn-btn mn-btn--ghost" id="dp-open-btn">openDetailPanel('pipe-east')</button>
+      </div>
       <h3 class="mn-title-sub" style="margin-bottom:var(--space-lg)">Inline Editors</h3>
       <p class="mn-micro" style="margin-bottom:var(--space-lg)">Field-level editors rendered via <code>Maranello.editors</code> factories.</p>
       <div id="dp-editors-host" class="mn-card-dark" style="padding:var(--space-xl);margin-bottom:var(--space-2xl)"></div>
@@ -53,7 +57,7 @@ function deploymentCard(p) {
   return `<div class="mn-card-dark mn-hover-lift" style="padding:var(--space-xl);cursor:pointer" data-drilldown="${p.id}"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-md)"><h4 class="mn-label" style="color:var(--mn-accent)">${p.name}</h4><span class="mn-badge" style="background:${dot};color:var(--mn-nero);font-size:0.7rem;padding:2px 8px;border-radius:4px">${p.status}</span></div><p class="mn-micro" style="margin-bottom:var(--space-sm)">${p.region} · ${p.runs.toLocaleString('en-US')} runs</p><p class="mn-micro" style="color:var(--mn-grigio-2)">Lead: ${p.lead}</p></div>`;
 }
 
-function initDetailPanel(section) { initDrillDown(section); initEditors(section); initDataTable(section); }
+function initDetailPanel(section) { initDrillDown(section); initEditors(section); initDataTable(section); initOpenBtn(section); }
 function initDrillDown(section) {
   const host = section.querySelector('#dp-panel-host'); const api = M(); if (!host || typeof api.onDrillDown !== 'function' || typeof api.createDetailPanel !== 'function') return;
   let activePanel = null;
@@ -95,4 +99,8 @@ function initEditors(section) {
 function initDataTable(section) {
   const host = section.querySelector('#dp-table-host'); const api = M(); if (!host || typeof api.dataTable !== 'function') return;
   api.dataTable(host, { columns: [{ key: 'id', label: 'ID', width: '80px', sortable: true }, { key: 'activity', label: 'Activity', sortable: true }, { key: 'type', label: 'Type', width: '140px', sortable: true }, { key: 'progress', label: 'Progress', width: '100px', sortable: true }, { key: 'owner', label: 'Owner', width: '120px', sortable: true }], data: ACTIVITIES, onRowClick(row) { console.log('[data-table] row clicked:', row); } });
+}
+function initOpenBtn(section) {
+  const btn = section.querySelector('#dp-open-btn'); const api = M(); if (!btn || typeof api.openDetailPanel !== 'function') return;
+  btn.addEventListener('click', () => api.openDetailPanel('pipe-east'));
 }

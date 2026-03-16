@@ -64,12 +64,17 @@ Maranello.initForms();</code></pre>
       </div>
       <div class="mn-grid-2 mn-mb-2xl" style="gap:var(--space-xl)">
         <div style="display:flex;flex-direction:column;gap:var(--space-xl)">
-          <div class="mn-card-dark" style="padding:var(--space-xl)"><h4 class="mn-label" style="margin-bottom:var(--space-lg);color:var(--mn-accent)">Tag Input</h4><div id="tag-input-wrap" class="mn-tag-input" style="display:flex;flex-wrap:wrap;gap:var(--space-xs);padding:var(--space-sm);border:1px solid var(--grigio-scuro);border-radius:6px;min-height:40px;align-items:center">${INITIAL_TAGS.map(t => tagChip(t)).join('')}<input id="tag-field" class="mn-tag-input__field" type="text" placeholder="Add tag…" style="border:none;background:transparent;color:inherit;outline:none;flex:1;min-width:80px;font-size:var(--font-sm)"></div></div>
+          <div class="mn-card-dark" style="padding:var(--space-xl)"><h4 class="mn-label" style="margin-bottom:var(--space-lg);color:var(--mn-accent)">Tags Field — initTagsField</h4><div id="tags-field-host" style="min-height:42px"></div></div>
+          <div class="mn-card-dark" style="padding:var(--space-xl)"><h4 class="mn-label" style="margin-bottom:var(--space-lg);color:var(--mn-accent)">Password Toggle — initPasswordToggle</h4>
+            <div class="mn-password-wrap" id="pw-toggle-wrap" style="position:relative;display:flex;align-items:center"><input class="mn-input mn-form-input" type="password" placeholder="Enter API key…" style="width:100%;padding-right:40px"><button type="button" class="mn-password-toggle" aria-label="Show password" style="position:absolute;right:10px;background:none;border:none;cursor:pointer;color:var(--mn-text-muted);display:flex"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+          </div>
           <div class="mn-card-dark" style="padding:var(--space-xl)"><h4 class="mn-label" style="margin-bottom:var(--space-lg);color:var(--mn-accent)">Search Bar</h4><div class="mn-search-bar" style="position:relative"><div style="position:relative;display:flex;align-items:center"><span style="position:absolute;left:10px;display:flex;color:var(--mn-text-muted)">${MAGNIFIER_SVG}</span><input id="search-field" class="mn-input" type="search" placeholder="Search pipelines, agents…" style="width:100%;padding-left:34px"></div><ul id="search-suggestions" class="mn-search-bar__list" style="display:none;position:absolute;top:100%;left:0;right:0;margin:var(--space-xs) 0 0;padding:var(--space-xs);list-style:none;background:var(--nero-soft,#141414);border:1px solid var(--mn-accent,#FFC72C);border-radius:6px;z-index:10;box-shadow:0 8px 24px rgba(0,0,0,0.5)">${SEARCH_SUGGESTIONS.map(s => `<li class="mn-search-bar__item" style="padding:var(--space-sm) var(--space-md);border-radius:4px;cursor:pointer;color:var(--mn-text);font-size:0.85rem;transition:background 0.15s">${s}</li>`).join('')}</ul></div></div>
         </div>
         <div style="display:flex;flex-direction:column;gap:var(--space-xl)">
+          <div class="mn-card-dark" style="padding:var(--space-xl)"><h4 class="mn-label" style="margin-bottom:var(--space-lg);color:var(--mn-accent)">File Upload — initFileUpload</h4>
+            <div id="file-upload-host" class="mn-file-upload" style="border:2px dashed var(--grigio-scuro);border-radius:8px;padding:var(--space-xl);text-align:center;cursor:pointer;transition:border-color 0.2s"><input type="file" multiple style="display:none"><div class="mn-micro" style="color:var(--mn-text-muted)">Drop files here or click to browse</div><div id="file-upload-list" class="mn-micro" style="margin-top:var(--space-sm);color:var(--mn-accent)"></div></div>
+          </div>
           <div class="mn-card-dark" style="padding:var(--space-xl)"><h4 class="mn-label" style="margin-bottom:var(--space-lg);color:var(--mn-accent)">Date Range</h4><div style="display:flex;flex-direction:column;gap:var(--space-md)"><div><label class="mn-label" style="display:block;margin-bottom:var(--space-xs);color:var(--grigio-alluminio,#c0c0c0)">Start Date</label><input id="dp-start" class="mn-input" type="text" placeholder="YYYY-MM-DD" style="width:100%"></div><div><label class="mn-label" style="display:block;margin-bottom:var(--space-xs);color:var(--grigio-alluminio,#c0c0c0)">End Date</label><input id="dp-end" class="mn-input" type="text" placeholder="YYYY-MM-DD" style="width:100%"></div></div></div>
-          <div class="mn-card-dark" style="padding:var(--space-xl)"><h4 class="mn-label" style="margin-bottom:var(--space-lg);color:var(--mn-accent)">Quick Agent Setup</h4><form onsubmit="return false" style="display:flex;flex-direction:column;gap:var(--space-md)"><div><label class="mn-label" style="display:block;margin-bottom:var(--space-xs)">Agent Name</label><input class="mn-input" type="text" placeholder="validator-canary" style="width:100%"></div><div><label class="mn-label" style="display:block;margin-bottom:var(--space-xs)">Notification Email</label><input class="mn-input" type="email" placeholder="signals@maranelloluce.ai" style="width:100%"></div><div><label class="mn-label" style="display:block;margin-bottom:var(--space-xs)">Primary Model</label><select class="mn-select" style="width:100%"><option>Select…</option><option>Claude Sonnet</option><option>GPT-5.1</option><option>Gemini 2.5</option></select></div><div style="display:flex;gap:var(--space-md);padding-top:var(--space-sm)"><button class="mn-btn mn-btn--accent" type="submit">Register</button><button class="mn-btn mn-btn--ghost" type="reset">Clear</button></div></form></div>
         </div>
       </div>
     </div>
@@ -78,105 +83,58 @@ Maranello.initForms();</code></pre>
   return section;
 }
 
-function tagChip(text) { return `<span class="mn-tag-input__chip" style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;background:var(--mn-accent);color:var(--nero);font-size:var(--font-xs);font-weight:600">${text}<button type="button" class="mn-tag-input__remove" style="background:none;border:none;cursor:pointer;color:inherit;font-size:14px;line-height:1;padding:0 0 0 2px">&times;</button></span>`; }
-
 function initForms(section) {
   const M = window.Maranello;
-  let step = 1;
+  // Tags field via M.initTagsField
+  const tagsHost = section.querySelector('#tags-field-host');
+  if (M?.initTagsField && tagsHost) M.initTagsField(tagsHost, { value: INITIAL_TAGS, placeholder: 'Add tag…', suggestions: ['Claude Sonnet', 'GPT-5.1', 'Gemini 2.5', 'us-east-1', 'eu-west-1'] });
+  // Password toggle via M.initPasswordToggle
+  if (M?.initPasswordToggle) M.initPasswordToggle(section.querySelector('#pw-toggle-wrap'));
+  // File upload via M.initFileUpload
+  const fuHost = section.querySelector('#file-upload-host');
+  if (M?.initFileUpload && fuHost) {
+    fuHost.querySelector('input').addEventListener('change', (e) => { const names = Array.from(e.target.files).map(f => f.name).join(', '); section.querySelector('#file-upload-list').textContent = names || ''; });
+    fuHost.addEventListener('click', () => fuHost.querySelector('input').click());
+    M.initFileUpload(fuHost);
+  }
+  // Form steps wizard via M.initFormSteps
+  const wizardEl = section.querySelector('#wizard-steps')?.closest('.mn-card-dark');
+  const panels = wizardEl ? [...wizardEl.querySelectorAll('.mn-wizard-panel')] : [];
+  panels.forEach(p => p.classList.add('mn-form-step'));
+  const stepsApi = M?.initFormSteps && wizardEl ? M.initFormSteps(wizardEl) : null;
   const back = section.querySelector('#wizard-back');
   const next = section.querySelector('#wizard-next');
-  const setStep = (n) => {
-    step = n;
-    for (let i = 1; i <= 3; i++) {
-      const panel = section.querySelector(`#wizard-panel-${i}`);
-      const indicator = section.querySelector(`.mn-wizard-step[data-step="${i}"]`);
-      if (panel) panel.style.display = i === step ? '' : 'none';
-      if (indicator) {
-        indicator.style.opacity = i <= step ? 1 : 0.4;
-        const dot = indicator.querySelector('span');
-        if (dot) { dot.style.background = i <= step ? 'var(--mn-accent)' : 'var(--grigio-scuro)'; dot.style.color = i <= step ? 'var(--nero)' : 'var(--grigio-chiaro)'; }
-      }
-    }
-    back.disabled = step === 1;
-    next.textContent = step === 3 ? 'Submit' : 'Next';
-  };
-  next.addEventListener('click', () => { if (step < 3) setStep(step + 1); });
-  back.addEventListener('click', () => { if (step > 1) setStep(step - 1); });
-  const tagWrap = section.querySelector('#tag-input-wrap');
-  const tagField = section.querySelector('#tag-field');
-  tagWrap.addEventListener('click', (e) => { if (e.target.classList.contains('mn-tag-input__remove')) e.target.parentElement.remove(); else tagField.focus(); });
-  tagField.addEventListener('keydown', (e) => { if (e.key === 'Enter' && tagField.value.trim()) { e.preventDefault(); tagField.insertAdjacentHTML('beforebegin', tagChip(tagField.value.trim())); tagField.value = ''; } });
+  if (stepsApi) {
+    next.addEventListener('click', () => { if (stepsApi.getCurrent() < panels.length - 1) stepsApi.next(); next.textContent = stepsApi.getCurrent() === panels.length - 1 ? 'Submit' : 'Next'; back.disabled = stepsApi.getCurrent() === 0; });
+    back.addEventListener('click', () => { stepsApi.prev(); next.textContent = 'Next'; back.disabled = stepsApi.getCurrent() === 0; });
+  } else {
+    let step = 1;
+    const setStep = (n) => { step = n; for (let i = 1; i <= 3; i++) { const p = section.querySelector(`#wizard-panel-${i}`); if (p) p.style.display = i === step ? '' : 'none'; } back.disabled = step === 1; next.textContent = step === 3 ? 'Submit' : 'Next'; };
+    next.addEventListener('click', () => { if (step < 3) setStep(step + 1); });
+    back.addEventListener('click', () => { if (step > 1) setStep(step - 1); });
+  }
+  // Search bar
   const searchField = section.querySelector('#search-field');
   const suggestions = section.querySelector('#search-suggestions');
-  searchField.addEventListener('focus', () => { suggestions.style.display = ''; });
-  searchField.addEventListener('blur', () => { setTimeout(() => { suggestions.style.display = 'none'; }, 150); });
-  suggestions.querySelectorAll('.mn-search-bar__item').forEach(li => { li.addEventListener('mousedown', () => { searchField.value = li.textContent; suggestions.style.display = 'none'; }); li.addEventListener('mouseenter', () => { li.style.background = 'var(--grigio-scuro)'; }); li.addEventListener('mouseleave', () => { li.style.background = ''; }); });
-  if (M && M.datePicker) ['dp-start', 'dp-end'].forEach(id => { const input = section.querySelector(`#${id}`); if (input) M.registerDatePicker(input, { value: '', onChange: (d) => { input.value = d; } }); });
-  initValidationDemo(M, section);
-}
-
-function setFieldError(input, errSpan, message) {
-  if (message) {
-    input.setAttribute('aria-invalid', 'true');
-    input.style.borderColor = 'var(--rosso-corsa)';
-    errSpan.textContent = message;
-    errSpan.style.display = 'block';
-  } else {
-    input.removeAttribute('aria-invalid');
-    input.style.borderColor = '';
-    errSpan.style.display = 'none';
+  if (searchField && suggestions) {
+    searchField.addEventListener('focus', () => { suggestions.style.display = ''; });
+    searchField.addEventListener('blur', () => { setTimeout(() => { suggestions.style.display = 'none'; }, 150); });
+    suggestions.querySelectorAll('.mn-search-bar__item').forEach(li => { li.addEventListener('mousedown', () => { searchField.value = li.textContent; suggestions.style.display = 'none'; }); li.addEventListener('mouseenter', () => { li.style.background = 'var(--grigio-scuro)'; }); li.addEventListener('mouseleave', () => { li.style.background = ''; }); });
   }
+  if (M?.datePicker) ['dp-start', 'dp-end'].forEach(id => { const input = section.querySelector(`#${id}`); if (input) M.registerDatePicker(input, { value: '', onChange: (d) => { input.value = d; } }); });
+  initValidationDemo(M, section);
 }
 
 function initValidationDemo(M, section) {
   const form = section.querySelector('#validation-demo-form');
   if (!form) return;
-  const nameInput = form.querySelector('#vd-name');
-  const emailInput = form.querySelector('#vd-email');
-  const modelSelect = form.querySelector('#vd-model');
-  const nameErr = form.querySelector('#vd-name-err');
-  const emailErr = form.querySelector('#vd-email-err');
-  const modelErr = form.querySelector('#vd-model-err');
   const success = form.querySelector('#vd-success');
-
-  // Live validation on blur
-  nameInput.addEventListener('blur', () => {
-    const msg = nameInput.value.trim() === '' ? 'Agent name is required.' : '';
-    setFieldError(nameInput, nameErr, msg);
-  });
-  emailInput.addEventListener('blur', () => {
-    const val = emailInput.value.trim();
-    const msg = val === '' ? 'Email is required.' : !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val) ? 'Enter a valid email address.' : '';
-    setFieldError(emailInput, emailErr, msg);
-  });
-  modelSelect.addEventListener('change', () => {
-    const msg = modelSelect.value === '' ? 'Select a primary model.' : '';
-    setFieldError(modelSelect, modelErr, msg);
-  });
-
-  // Reset clears error states
-  form.addEventListener('reset', () => {
-    [nameInput, emailInput, modelSelect].forEach((el) => {
-      el.removeAttribute('aria-invalid');
-      el.style.borderColor = '';
-    });
-    [nameErr, emailErr, modelErr].forEach((el) => { el.style.display = 'none'; });
-    if (success) success.style.display = 'none';
-  });
-
-  form.querySelector('#vd-submit').addEventListener('click', () => {
-    const nameMsg = nameInput.value.trim() === '' ? 'Agent name is required.' : '';
-    const val = emailInput.value.trim();
-    const emailMsg = val === '' ? 'Email is required.' : !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val) ? 'Enter a valid email address.' : '';
-    const modelMsg = modelSelect.value === '' ? 'Select a primary model.' : '';
-    setFieldError(nameInput, nameErr, nameMsg);
-    setFieldError(emailInput, emailErr, emailMsg);
-    setFieldError(modelSelect, modelErr, modelMsg);
-    const valid = !nameMsg && !emailMsg && !modelMsg;
+  // M.initLiveValidation wires blur/change handlers automatically
+  if (M?.initLiveValidation) M.initLiveValidation(form);
+  form.addEventListener('reset', () => { if (success) success.style.display = 'none'; });
+  form.querySelector('#vd-submit')?.addEventListener('click', () => {
+    const valid = M?.validateForm ? M.validateForm(form) : form.checkValidity();
     if (success) success.style.display = valid ? 'block' : 'none';
-    if (valid && M?.validateField) {
-      // Use Maranello API if available for enhanced validation feedback
-      try { M.validateField(nameInput); M.validateField(emailInput); } catch (_) { /* graceful fallback */ }
-    }
+    if (!valid && M?.toast) M.toast({ type: 'warning', title: 'Validation failed', message: 'Please fix the highlighted fields.' });
   });
 }

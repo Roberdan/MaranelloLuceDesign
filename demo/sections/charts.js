@@ -85,6 +85,20 @@ Maranello.charts.donut(canvas, [{ label: 'A', value: 30 }, { label: 'B', value: 
         <button class="mn-btn mn-btn--accent" id="flip-inc">Increment</button>
         <button class="mn-btn mn-btn--ghost" id="flip-rand">Random</button>
       </div>
+      <h3 class="mn-title-sub" style="margin-top:var(--space-2xl);margin-bottom:var(--space-md)">Live Graph — Real-time Streaming</h3>
+      <div style="display:flex;gap:var(--space-xl);flex-wrap:wrap;align-items:flex-start;margin-bottom:var(--space-lg)">
+        <div class="mn-card-dark" style="padding:var(--space-lg);flex:1;min-width:260px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-md)">
+            <span class="mn-label">Inference Latency (ms)</span>
+            <button id="live-toggle" class="mn-btn mn-btn--ghost" style="padding:4px 12px;font-size:var(--text-micro)">Pause</button>
+          </div>
+          <canvas id="live-graph-1" width="460" height="80" style="width:100%;height:80px"></canvas>
+        </div>
+        <div class="mn-card-dark" style="padding:var(--space-lg);flex:1;min-width:260px">
+          <div class="mn-label" style="margin-bottom:var(--space-md)">Token Budget Consumption</div>
+          <canvas id="live-graph-2" width="460" height="80" style="width:100%;height:80px"></canvas>
+        </div>
+      </div>
     </div>
   `;
   setTimeout(() => initCharts(section), 120);
@@ -125,6 +139,24 @@ function initCharts(section) {
   C.halfGauge(g('hg-md'), { value: 96, max: 100, width: 180, height: 108 });
   C.halfGauge(g('hg-lg'), { value: 84, max: 100, width: 260, height: 156 });
   const M = window.Maranello;
+  // liveGraph — two real-time streams with interval updates
+  const lgData1 = Array.from({ length: 60 }, () => 80 + Math.random() * 60);
+  const lgData2 = Array.from({ length: 60 }, () => 30 + Math.random() * 50);
+  if (C.liveGraph) {
+    C.liveGraph(g('live-graph-1'), lgData1, { color: '#FFC72C', showRedLine: true, redLineValue: 120, unitLabel: 'ms' });
+    C.liveGraph(g('live-graph-2'), lgData2, { color: '#4EA8DE', showRedLine: true, redLineValue: 70, unitLabel: '%' });
+    let live = true;
+    const tick = setInterval(() => {
+      if (!live) return;
+      lgData1.shift(); lgData1.push(80 + Math.random() * 60);
+      lgData2.shift(); lgData2.push(30 + Math.random() * 50);
+      C.liveGraph(g('live-graph-1'), lgData1, { color: '#FFC72C', showRedLine: true, redLineValue: 120, unitLabel: 'ms' });
+      C.liveGraph(g('live-graph-2'), lgData2, { color: '#4EA8DE', showRedLine: true, redLineValue: 70, unitLabel: '%' });
+    }, 800);
+    const btn = g('live-toggle');
+    if (btn) btn.addEventListener('click', () => { live = !live; btn.textContent = live ? 'Pause' : 'Resume'; });
+    section.addEventListener('mn-section-destroy', () => clearInterval(tick));
+  }
   g('radar-score').innerHTML = `<span style="color:var(--mn-accent)">${Math.round(radarData.reduce((sum, { value }) => sum + value, 0) / radarData.length)}/100</span> accuracy score`;
   if (M.progressRing) {
     M.progressRing(g('ring-1'), { value: 72, max: 100, size: 60 });
@@ -180,6 +212,8 @@ const CHART_A11Y = [
   ['hg-lg', 'Half gauge: tokens 84%'],
   ['trend-1', 'Sparkline trend: token spend 15 months'],
   ['trend-2', 'Sparkline trend: inference runs 15 months'],
+  ['live-graph-1', 'Live graph: inference latency streaming (ms)'],
+  ['live-graph-2', 'Live graph: token budget consumption streaming (%)'],
 ];
 
 function addKeyboardAccess(section) {
