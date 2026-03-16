@@ -7231,6 +7231,8 @@ function activityFeed(el4, items, opts) {
   const maxItems = opts?.maxItems;
   const internal = [];
   el4.classList.add("mn-feed");
+  el4.setAttribute("role", "feed");
+  el4.setAttribute("aria-label", "Activity feed");
   el4.innerHTML = "";
   if (items) {
     for (const item of items) {
@@ -10034,6 +10036,8 @@ function auditLog(el4, entries = [], opts = {}) {
   const ac = new AbortController();
   let activeFilter = "all";
   el4.classList.add("mn-audit");
+  el4.setAttribute("role", "log");
+  el4.setAttribute("aria-label", "Audit log");
   el4.innerHTML = "";
   const header = document.createElement("div");
   header.className = "mn-audit__header";

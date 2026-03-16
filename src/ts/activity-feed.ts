@@ -127,6 +127,8 @@ export function activityFeed(
   const internal: ActivityItem[] = [];
 
   el.classList.add('mn-feed');
+  el.setAttribute('role', 'feed');
+  el.setAttribute('aria-label', 'Activity feed');
   el.innerHTML = '';
 
   // Render initial items without animation

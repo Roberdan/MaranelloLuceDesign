@@ -141,6 +141,8 @@ export function auditLog(
   let activeFilter: AuditSeverity | 'all' = 'all';
 
   el.classList.add('mn-audit');
+  el.setAttribute('role', 'log');
+  el.setAttribute('aria-label', 'Audit log');
   el.innerHTML = '';
 
   /* Header with title + filter tabs */
