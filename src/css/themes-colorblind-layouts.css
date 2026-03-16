@@ -184,6 +184,6 @@ body.mn-colorblind .mn-mission-btn--start {
   color: var(--mn-cb-blue); border-color: var(--mn-cb-blue);
 }
 body.mn-colorblind .mn-mission-btn--cancel {
-  color: #D55E00; border-color: #D55E00;
+  color: var(--mn-cb-orange); border-color: var(--mn-cb-orange);
 }
 } /* end @layer themes */
