@@ -1,7 +1,7 @@
 <!-- Reference catalog — not loaded in context, use for lookup -->
-# API Catalog — v4.1.0
+# API Catalog — v4.11.0
 
-## IIFE Exports (85 on `window.Maranello`)
+## IIFE Exports (107 on `window.Maranello`)
 
 > v4.0.0: removed `getGlass`/`setGlass`/`toggleGlass` (glass theme dropped). Added `palette()`.
 
@@ -24,6 +24,13 @@ Theme & Utilities (9): `initThemeToggle` · `themeRotary` · `setTheme` · `getT
 Detail Panel (5): `createDetailPanel` · `registerDatePicker` · `editors` · `renderers` · `a11yPanel`
 OKR (1): `okrPanel`
 Map (2): `mapView` · `attachEvents`
+Admin (2): `userTable` · `auditLog`
+AI/Agent (4): `agentCostBreakdown` · `agentTrace` · `tokenMeter` · `streamingText`
+Strategy (5): `businessModelCanvas` · `bcgMatrix` · `nineBoxMatrix` · `swotMatrix` · `decisionMatrix`
+Analytics (4): `kpiScorecard` · `cohortGrid` · `riskMatrix` · `approvalChain`
+Charts v4.11 (4): `costTimeline` · `waterfallChart` · `confidenceChart` · `bulletChart`
+Inputs (1): `dateRangePicker`
+Feed/Notify (2): `activityFeed` · `notificationCenter`
 
 ## Web Components (25)
 

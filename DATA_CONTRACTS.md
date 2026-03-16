@@ -1,7 +1,8 @@
-<!-- v3.1.0 | 2025-07-21 -->
+<!-- v4.11.0 | 2026-03-16 -->
 # Data Contracts
 
 All types importable from `maranello-luce-design-business`. Peer dep: `mapbox-gl` (optional, for MapView).
+Full API detail for v4.11.0 components: [`docs/api-contracts-v4.md`](docs/api-contracts-v4.md).
 
 ## Interface Summary
 
@@ -30,6 +31,28 @@ All types importable from `maranello-luce-design-business`. Peer dep: `mapbox-gl
 | `ProgressRingOptions` | `progressRing()` | `value`, `max`, `size`, `color` |
 | `ToastOptions` | `toast()` | `title`, `message`, `type` (`success`\|`error`\|`warning`\|`info`), `duration` |
 | `FormValidators` | `initForms()` | `required`, `email`, `minLength`, `pattern`, custom validators |
+| `UserTableOptions` | `userTable()` | `searchable`, `selectable`, `onSelect`, `onAction`, `pageSize` |
+| `AuditLogOptions` | `auditLog()` | `maxEntries`, `filterable`, `onSelect`, `live` |
+| `AgentCostBreakdownOptions` | `agentCostBreakdown()` | `currency`, `period`, `onSelect`, `onBudgetAlert`, `sortable` |
+| `CostTimelineOptions` | `costTimeline()` | `labels`, `series[]`, `stacked`, `unit`, `onHover` |
+| `BusinessModelCanvasOptions` | `businessModelCanvas()` | `blocks?`, `editable`, `onChange` |
+| `AgentTraceOptions` | `agentTrace()` | `maxVisible`, `onSelect` |
+| `TokenMeterOptions` | `tokenMeter()` | `label`, `showCost`, `showBreakdown`, `animate`, `onChange` |
+| `StreamingTextOptions` | `streamingText()` | `onCitationClick`, `onDone`, `typingCursor`, `processMarkdown` |
+| `RiskMatrixOptions` | `riskMatrix()` | `items[]`, `gridSize`, `onHover`, `onClick`, `animate` |
+| `KpiScorecardOptions` | `kpiScorecard()` | `currency`, `onSelect`, `animate` |
+| `CohortGridOptions` | `cohortGrid()` | `periodLabels`, `showAbsolute`, `onHover`, `colorHigh`, `colorLow` |
+| `ApprovalChainOptions` | `approvalChain()` | `onAction`, `editable`, `orientation` |
+| `BCGMatrixOptions` | `bcgMatrix()` | `items[]`, `shareThreshold`, `growthThreshold`, `onHover`, `onClick` |
+| `NineBoxMatrixOptions` | `nineBoxMatrix()` | `items[]`, `xLabel`, `yLabel`, `onSelect`, `onMove` |
+| `SwotMatrixOptions` | `swotMatrix()` | `items?`, `editable`, `onChange`, `quadrantLabels` |
+| `DecisionMatrixOptions` | `decisionMatrix()` | `criteria[]`, `alternatives[]`, `editable`, `onChange` |
+| `WaterfallChartOptions` | `waterfallChart()` | `segments[]`, `unit`, `animate`, `height` |
+| `ConfidenceChartOptions` | `confidenceChart()` | `labels`, `values`, `lower`, `upper`, `color`, `animate` |
+| `DateRangePickerOptions` | `dateRangePicker()` | `value?`, `min`, `max`, `placeholder`, `onChange` |
+| `ActivityFeedOptions` | `activityFeed()` | `maxItems`, `animate` |
+| `BulletChartOptions` | `bulletChart()` | `value`, `target`, `max`, `label`, `unit`, `ranges?` |
+| `NotificationCenterOptions` | `notificationCenter()` | `maxVisible`, `onAction`, `position` |
 
 ## Column Type Options (DataTable)
 
@@ -82,6 +105,12 @@ flipCounter(container, FlipCounterOptions)
 radar(canvas, RadarDataItem[])
 bubble(canvas, BubbleDataItem[])
 hBarChart(selector, HBarChartOptions)
+waterfallChart(canvas, WaterfallChartOptions)
+confidenceChart(canvas, ConfidenceChartOptions)
+bulletChart(canvas, BulletChartOptions)
+costTimeline(canvas, CostTimelineOptions)
+riskMatrix(canvas, RiskMatrixOptions)
+bcgMatrix(canvas, BCGMatrixOptions)
 ```
 
 ## Gantt Controller

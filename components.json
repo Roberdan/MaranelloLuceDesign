@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "name": "maranello-luce-design-business",
-  "version": "3.1.0",
+  "version": "4.11.0",
   "description": "Ferrari Luce-inspired design system for business dashboards",
   "detailCatalog": "./components-detail.json",
   "layers": {
@@ -122,6 +122,28 @@
     { "name": "ScrollReveal", "layer": "css-only", "cssImport": "maranello-luce-design-business/css/animations.css", "whenToUse": ["scroll animations", "content reveal"] },
     { "name": "NavTracking", "layer": "css-only", "cssImport": "maranello-luce-design-business/css/layouts-nav-controls.css", "whenToUse": ["breadcrumbs", "step indicators"] },
     { "name": "Heatmap", "layer": "css-only", "cssImport": "maranello-luce-design-business/css/layouts-heatmap.css", "whenToUse": ["data density visualization", "activity grids"] },
-    { "name": "Treemap", "layer": "css-only", "cssImport": "maranello-luce-design-business/css/charts-treemap-radar-gantt.css", "whenToUse": ["hierarchical data", "portfolio allocation"] }
+    { "name": "Treemap", "layer": "css-only", "cssImport": "maranello-luce-design-business/css/charts-treemap-radar-gantt.css", "whenToUse": ["hierarchical data", "portfolio allocation"] },
+    { "name": "UserTable", "layer": "headless-js", "import": "maranello-luce-design-business", "function": "userTable", "dataContract": "UserTableOptions", "version": "4.11.0", "whenToUse": ["admin user management", "team member listing"] },
+    { "name": "AuditLog", "layer": "headless-js", "import": "maranello-luce-design-business", "function": "auditLog", "dataContract": "AuditLogOptions", "version": "4.11.0", "whenToUse": ["security audit trail", "activity history"] },
+    { "name": "AgentCostBreakdown", "layer": "headless-js", "import": "maranello-luce-design-business", "function": "agentCostBreakdown", "dataContract": "AgentCostBreakdownOptions", "version": "4.11.0", "whenToUse": ["AI cost tracking", "FinOps dashboard"] },
+    { "name": "CostTimeline", "layer": "headless-js", "import": "maranello-luce-design-business/charts", "function": "costTimeline", "dataContract": "CostTimelineOptions", "version": "4.11.0", "whenToUse": ["cost trend analysis", "stacked area timeline"] },
+    { "name": "BusinessModelCanvas", "layer": "headless-js", "import": "maranello-luce-design-business", "function": "businessModelCanvas", "dataContract": "BusinessModelCanvasOptions", "version": "4.11.0", "whenToUse": ["strategy planning", "Osterwalder 9-block"] },
+    { "name": "AgentTrace", "layer": "headless-js", "import": "maranello-luce-design-business", "function": "agentTrace", "dataContract": "AgentTraceOptions", "version": "4.11.0", "whenToUse": ["AI execution trace", "tool call visualization"] },
+    { "name": "TokenMeter", "layer": "headless-js", "import": "maranello-luce-design-business", "function": "tokenMeter", "dataContract": "TokenMeterOptions", "version": "4.11.0", "whenToUse": ["LLM token usage", "budget metering"] },
+    { "name": "StreamingText", "layer": "headless-js", "import": "maranello-luce-design-business", "function": "streamingText", "dataContract": "StreamingTextOptions", "version": "4.11.0", "whenToUse": ["AI streaming response", "progressive text render"] },
+    { "name": "RiskMatrix", "layer": "headless-js", "import": "maranello-luce-design-business/charts", "function": "riskMatrix", "dataContract": "RiskMatrixOptions", "version": "4.11.0", "whenToUse": ["risk assessment", "probability-impact grid"] },
+    { "name": "KpiScorecard", "layer": "headless-js", "import": "maranello-luce-design-business", "function": "kpiScorecard", "dataContract": "KpiScorecardOptions", "version": "4.11.0", "whenToUse": ["KPI tracking", "target vs actual table"] },
+    { "name": "CohortGrid", "layer": "headless-js", "import": "maranello-luce-design-business", "function": "cohortGrid", "dataContract": "CohortGridOptions", "version": "4.11.0", "whenToUse": ["retention analysis", "cohort heatmap"] },
+    { "name": "ApprovalChain", "layer": "headless-js", "import": "maranello-luce-design-business", "function": "approvalChain", "dataContract": "ApprovalChainOptions", "version": "4.11.0", "whenToUse": ["approval workflow", "review chain"] },
+    { "name": "BCGMatrix", "layer": "headless-js", "import": "maranello-luce-design-business/charts", "function": "bcgMatrix", "dataContract": "BCGMatrixOptions", "version": "4.11.0", "whenToUse": ["portfolio strategy", "growth-share matrix"] },
+    { "name": "NineBoxMatrix", "layer": "headless-js", "import": "maranello-luce-design-business", "function": "nineBoxMatrix", "dataContract": "NineBoxMatrixOptions", "version": "4.11.0", "whenToUse": ["talent assessment", "GE-McKinsey matrix"] },
+    { "name": "SwotMatrix", "layer": "headless-js", "import": "maranello-luce-design-business", "function": "swotMatrix", "dataContract": "SwotMatrixOptions", "version": "4.11.0", "whenToUse": ["strategic analysis", "SWOT assessment"] },
+    { "name": "DecisionMatrix", "layer": "headless-js", "import": "maranello-luce-design-business", "function": "decisionMatrix", "dataContract": "DecisionMatrixOptions", "version": "4.11.0", "whenToUse": ["weighted scoring", "decision analysis"] },
+    { "name": "WaterfallChart", "layer": "headless-js", "import": "maranello-luce-design-business/charts", "function": "waterfallChart", "dataContract": "WaterfallChartOptions", "version": "4.11.0", "whenToUse": ["financial breakdown", "incremental changes"] },
+    { "name": "ConfidenceChart", "layer": "headless-js", "import": "maranello-luce-design-business/charts", "function": "confidenceChart", "dataContract": "ConfidenceChartOptions", "version": "4.11.0", "whenToUse": ["forecast bands", "confidence intervals"] },
+    { "name": "DateRangePicker", "layer": "headless-js", "import": "maranello-luce-design-business", "function": "dateRangePicker", "dataContract": "DateRangePickerOptions", "version": "4.11.0", "whenToUse": ["date range selection", "period filtering"] },
+    { "name": "ActivityFeed", "layer": "headless-js", "import": "maranello-luce-design-business", "function": "activityFeed", "dataContract": "ActivityFeedOptions", "version": "4.11.0", "whenToUse": ["activity timeline", "event feed"] },
+    { "name": "BulletChart", "layer": "headless-js", "import": "maranello-luce-design-business/charts", "function": "bulletChart", "dataContract": "BulletChartOptions", "version": "4.11.0", "whenToUse": ["target vs actual", "KPI bullet gauge"] },
+    { "name": "NotificationCenter", "layer": "headless-js", "import": "maranello-luce-design-business", "function": "notificationCenter", "dataContract": "NotificationCenterOptions", "version": "4.11.0", "whenToUse": ["notification panel", "alert center"] }
   ]
 }
