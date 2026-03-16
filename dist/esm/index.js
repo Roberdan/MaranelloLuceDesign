@@ -1488,9 +1488,9 @@ function arc(cx, cy, r, sa, ea) {
 function miniGaugeSVG(status, latencyMs, label) {
   let color = STATUS_COLORS[status] ?? cssVar("--stage-completed", "#6B7280");
   if (!isValidColor(color)) color = "var(--grigio-alluminio)";
-  const pct2 = status === "healthy" ? 95 : status === "degraded" ? 55 : 10;
+  const pct3 = status === "healthy" ? 95 : status === "degraded" ? 55 : 10;
   const sz = 56, cx = sz / 2, cy = sz - 4, r = 22;
-  const startAngle = Math.PI, needleAngle = startAngle + clamp(pct2, 0, 100) / 100 * Math.PI;
+  const startAngle = Math.PI, needleAngle = startAngle + clamp(pct3, 0, 100) / 100 * Math.PI;
   let ticks = "";
   for (let i = 0; i <= 6; i++) {
     const a = startAngle + i / 6 * Math.PI;
@@ -2636,7 +2636,7 @@ function mapView(container, opts) {
   let highlighted = null;
   let hovered = null;
   const pulse = 0;
-  function render3() {
+  function render5() {
     const rect = container.getBoundingClientRect();
     const vw = rect.width, vh = rect.height;
     canvas.width = vw * DPR;
@@ -2711,41 +2711,41 @@ function mapView(container, opts) {
   }
   let resizeObs = null;
   if (window.ResizeObserver) {
-    resizeObs = new ResizeObserver(() => render3());
+    resizeObs = new ResizeObserver(() => render5());
     resizeObs.observe(container);
   }
-  const mutationObs = new MutationObserver(() => render3());
+  const mutationObs = new MutationObserver(() => render5());
   mutationObs.observe(document.body, { attributes: true, attributeFilter: ["class"] });
-  render3();
+  render5();
   return {
     setMarkers: (m) => {
       markers = m;
-      render3();
+      render5();
     },
     addMarker: (m) => {
       markers.push(m);
-      render3();
+      render5();
     },
     removeMarker: (id) => {
       markers = markers.filter((m) => m.id !== id);
-      render3();
+      render5();
     },
     highlight: (id) => {
       highlighted = id;
-      render3();
+      render5();
     },
     setZoom: (z) => {
       viewState.zoom = z;
-      render3();
+      render5();
     },
     panTo: (_lat, _lon) => {
-      render3();
+      render5();
     },
     fitBounds: () => {
       viewState.zoom = 1;
       viewState.panX = 0;
       viewState.panY = 0;
-      render3();
+      render5();
     },
     destroy: () => {
       resizeObs?.disconnect();
@@ -3491,9 +3491,9 @@ var cellRenderers = {
     return '<span class="mn-status mn-status--' + st.cls + '"><span class="mn-status__dot"></span> ' + escHtml(val) + "</span>";
   },
   progress: (val) => {
-    const pct2 = typeof val === "number" ? val : parseFloat(String(val)) || 0;
-    const cls = pct2 >= 80 ? "green" : pct2 >= 50 ? "yellow" : "red";
-    return '<div class="mn-dt__cell-progress"><div class="mn-progress" style="width:64px"><div class="mn-progress__fill mn-progress__fill--' + cls + '" style="width:' + pct2 + '%"></div></div><span class="mn-dt__cell-pct">' + Math.round(pct2) + "%</span></div>";
+    const pct3 = typeof val === "number" ? val : parseFloat(String(val)) || 0;
+    const cls = pct3 >= 80 ? "green" : pct3 >= 50 ? "yellow" : "red";
+    return '<div class="mn-dt__cell-progress"><div class="mn-progress" style="width:64px"><div class="mn-progress__fill mn-progress__fill--' + cls + '" style="width:' + pct3 + '%"></div></div><span class="mn-dt__cell-pct">' + Math.round(pct3) + "%</span></div>";
   },
   date: (val) => {
     if (!val) return '<span class="mn-dt__cell-text">\u2014</span>';
@@ -4619,7 +4619,7 @@ function funnel(container, options) {
   root.className = "mn-funnel";
   root.setAttribute("role", "img");
   root.setAttribute("aria-label", "Pipeline funnel");
-  function render3(data) {
+  function render5(data) {
     if (destroyed) return;
     root.innerHTML = "";
     if (!data || !data.pipeline || !data.pipeline.length) {
@@ -4717,10 +4717,10 @@ function funnel(container, options) {
   }
   host.innerHTML = "";
   host.appendChild(root);
-  render3(opts.data);
+  render5(opts.data);
   return {
     update: (d) => {
-      render3(d);
+      render5(d);
     },
     destroy: () => {
       if (destroyed) return;
@@ -4994,7 +4994,7 @@ function okrPanel(container, opts) {
   const title = opts?.title ?? "OKR Dashboard";
   const period = opts?.period ?? "";
   let objectives = (opts?.objectives ?? []).map(normalizeObjective);
-  function render3() {
+  function render5() {
     el_host.innerHTML = "";
     const root = el3("div", "mn-okr");
     const header = el3("div", "mn-okr__header");
@@ -5024,11 +5024,11 @@ function okrPanel(container, opts) {
       animateGauge(root);
     });
   }
-  render3();
+  render5();
   return {
     update(newObjectives) {
       objectives = newObjectives.map(normalizeObjective);
-      render3();
+      render5();
     },
     destroy() {
       el_host.innerHTML = "";
@@ -5544,12 +5544,12 @@ function renderRows(ctx, bars, maxValue) {
     const track = createEl("div", "mn-hbar__track");
     const fill = createEl("div", "mn-hbar__fill");
     const valueEl = createEl("div", "mn-hbar__value");
-    const pct2 = clampVal(bar.value / maxValue * 100, 0, 100);
+    const pct3 = clampVal(bar.value / maxValue * 100, 0, 100);
     const txtColor = hexLum2(bar.color) > 0.55 ? "#111111" : "#FFFFFF";
     const safeColor2 = isValidColor(bar.color) ? bar.color : cssVar("--mn-accent");
     fill.style.background = safeColor2;
     fill.style.height = (state.opts.barHeight || 28) + "px";
-    fill.style.width = state.opts.animate ? "0%" : pct2 + "%";
+    fill.style.width = state.opts.animate ? "0%" : pct3 + "%";
     valueEl.style.color = txtColor;
     valueEl.textContent = bar.value + (state.opts.unit || "");
     valueEl.style.display = state.opts.showValues ? "" : "none";
@@ -5583,7 +5583,7 @@ function renderRows(ctx, bars, maxValue) {
     });
     if (state.opts.animate) {
       const t = window.setTimeout(() => {
-        fill.style.width = pct2 + "%";
+        fill.style.width = pct3 + "%";
       }, index * 50);
       state.timers.push(t);
     }
@@ -6782,14 +6782,14 @@ function initSlider(el4, options) {
   function pctFromValue(v) {
     return (v - opts.min) / (opts.max - opts.min) * 100;
   }
-  function valueFromPct(pct2) {
-    const raw = opts.min + pct2 / 100 * (opts.max - opts.min);
+  function valueFromPct(pct3) {
+    const raw = opts.min + pct3 / 100 * (opts.max - opts.min);
     return Math.round(raw / opts.step) * opts.step;
   }
-  function render3() {
-    const pct2 = pctFromValue(current);
-    fillEl.style.width = `${pct2}%`;
-    thumbEl.style.left = `${pct2}%`;
+  function render5() {
+    const pct3 = pctFromValue(current);
+    fillEl.style.width = `${pct3}%`;
+    thumbEl.style.left = `${pct3}%`;
     if (valueEl) valueEl.textContent = String(current);
     el4.setAttribute("aria-valuenow", String(current));
     if (opts.label) el4.setAttribute("aria-valuetext", `${current}${opts.unit}`);
@@ -6803,11 +6803,11 @@ function initSlider(el4, options) {
   }
   function setFromX(clientX) {
     const rect = track.getBoundingClientRect();
-    const pct2 = clamp((clientX - rect.left) / rect.width * 100, 0, 100);
-    const newVal = valueFromPct(pct2);
+    const pct3 = clamp((clientX - rect.left) / rect.width * 100, 0, 100);
+    const newVal = valueFromPct(pct3);
     if (newVal !== current) {
       current = newVal;
-      render3();
+      render5();
       opts.onChange?.(current);
       eventBus.emit("slider-change", { element: el4, value: current });
     }
@@ -6836,21 +6836,21 @@ function initSlider(el4, options) {
     if (e.key === "ArrowRight" || e.key === "ArrowUp") {
       e.preventDefault();
       current = Math.min(opts.max, current + opts.step);
-      render3();
+      render5();
       opts.onChange?.(current);
     } else if (e.key === "ArrowLeft" || e.key === "ArrowDown") {
       e.preventDefault();
       current = Math.max(opts.min, current - opts.step);
-      render3();
+      render5();
       opts.onChange?.(current);
     }
   });
-  render3();
+  render5();
   return {
     getValue: () => current,
     setValue: (v) => {
       current = clamp(v, opts.min, opts.max);
-      render3();
+      render5();
     }
   };
 }
@@ -7513,10 +7513,10 @@ function bulletChart(canvas, opts) {
   canvas.style.width = `${logicalW}px`;
   canvas.style.height = `${totalH}px`;
   canvas.setAttribute("role", "img");
-  const pct2 = opts.max > 0 ? Math.round(opts.value / opts.max * 100) : 0;
+  const pct3 = opts.max > 0 ? Math.round(opts.value / opts.max * 100) : 0;
   canvas.setAttribute(
     "aria-label",
-    `${opts.label ?? "Bullet chart"}: value ${opts.value}${opts.unit ?? ""}, target ${opts.target}${opts.unit ?? ""} (${pct2}% of max)`
+    `${opts.label ?? "Bullet chart"}: value ${opts.value}${opts.unit ?? ""}, target ${opts.target}${opts.unit ?? ""} (${pct3}% of max)`
   );
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
@@ -8108,7 +8108,7 @@ function decisionMatrix(el4, opts) {
       onChange?.(structuredClone(alternatives));
     }
     activeInput = null;
-    render3();
+    render5();
   }
   function openEdit(td, altId, critId) {
     if (activeInput) commitEdit();
@@ -8127,7 +8127,7 @@ function decisionMatrix(el4, opts) {
       if (e.key === "Enter") commitEdit();
       if (e.key === "Escape") {
         activeInput = null;
-        render3();
+        render5();
       }
     });
     input.addEventListener("blur", () => commitEdit());
@@ -8153,7 +8153,7 @@ function decisionMatrix(el4, opts) {
     const critId = target.dataset.crit ?? "";
     if (altId && critId) openEdit(target, altId, critId);
   }
-  function render3() {
+  function render5() {
     const ranks = rankAlternatives(alternatives, criteria);
     const winnerId = [...ranks.entries()].find(([, r]) => r === 1)?.[0] ?? "";
     const headCells = criteria.map(
@@ -8176,11 +8176,11 @@ function decisionMatrix(el4, opts) {
     el4.querySelector("table")?.addEventListener("keydown", handleKeydown);
     el4.querySelector("table")?.addEventListener("click", handleClick);
   }
-  render3();
+  render5();
   return {
     update(alts) {
       alternatives = structuredClone(alts);
-      render3();
+      render5();
     },
     getScores() {
       return structuredClone(alternatives);
@@ -8221,10 +8221,10 @@ function buildCard(card, onSelect) {
     }
     if (card.score !== void 0) {
       const score = document.createElement("span");
-      const pct2 = formatScore(card.score);
+      const pct3 = formatScore(card.score);
       score.className = `mn-source-card__score ${scoreClass(card.score)}`;
-      score.textContent = pct2;
-      score.setAttribute("aria-label", `Relevance: ${pct2}`);
+      score.textContent = pct3;
+      score.setAttribute("aria-label", `Relevance: ${pct3}`);
       header.appendChild(score);
     }
     article.appendChild(header);
@@ -8294,7 +8294,7 @@ function renderSourceCards(container, cards, opts) {
   const layout = opts?.layout ?? "list";
   const maxVisible = opts?.maxVisible;
   const onSelect = opts?.onSelect;
-  function render3(data) {
+  function render5(data) {
     container.innerHTML = "";
     container.className = `mn-source-cards mn-source-cards--${layout}`;
     container.setAttribute("role", "list");
@@ -8318,10 +8318,10 @@ function renderSourceCards(container, cards, opts) {
       container.appendChild(showMoreBtn);
     }
   }
-  render3(cards);
+  render5(cards);
   return {
     update(newCards) {
-      render3(newCards);
+      render5(newCards);
     },
     destroy() {
       container.innerHTML = "";
@@ -8584,7 +8584,7 @@ function nineBoxMatrix(el4, opts) {
   let items = [...opts.items];
   let selectedId = null;
   const ac = new AbortController();
-  function render3() {
+  function render5() {
     el4.innerHTML = "";
     const root = makeDiv("mn-nine-box");
     const yLabelEl = makeDiv("mn-nine-box__y-label", yLabel);
@@ -8666,7 +8666,7 @@ function nineBoxMatrix(el4, opts) {
     item.y = y;
     opts.onMove?.(item, x, y);
     selectedId = null;
-    render3();
+    render5();
   }
   function handleClick(e) {
     const target = e.target;
@@ -8724,12 +8724,12 @@ function nineBoxMatrix(el4, opts) {
     el4.addEventListener("click", handleClick, { signal: ac.signal });
     el4.addEventListener("keydown", handleKey, { signal: ac.signal });
   }
-  render3();
+  render5();
   return {
     update(newItems) {
       items = [...newItems];
       selectedId = null;
-      render3();
+      render5();
     },
     moveItem(id, x, y) {
       doMove(id, x, y);
@@ -8939,6 +8939,1006 @@ function swotMatrix(el4, opts) {
   };
 }
 
+// src/ts/approval-chain.ts
+var STATUS_ICONS = {
+  approved: "\u2713",
+  rejected: "\u2717",
+  skipped: "\u2192",
+  current: "\u25CF",
+  pending: "\u25CB"
+};
+var STATUS_LABELS2 = {
+  approved: "Approved",
+  rejected: "Rejected",
+  skipped: "Skipped",
+  current: "Current reviewer",
+  pending: "Pending"
+};
+function getInitials2(name) {
+  return name.trim().split(/\s+/).map((w) => w[0]).join("").slice(0, 2).toUpperCase();
+}
+function buildNode(step, editable, ac, onAction) {
+  const node = document.createElement("div");
+  node.className = `mn-approval__node mn-approval__node--${step.status}`;
+  node.dataset.id = step.id;
+  if (step.comment) node.title = step.comment;
+  const avatar = document.createElement("div");
+  avatar.className = `mn-approval__avatar mn-approval__avatar--${step.status}`;
+  avatar.textContent = getInitials2(step.name);
+  const badge = document.createElement("span");
+  badge.className = `mn-approval__badge mn-approval__badge--${step.status}`;
+  badge.textContent = STATUS_ICONS[step.status];
+  badge.setAttribute("aria-label", STATUS_LABELS2[step.status]);
+  avatar.appendChild(badge);
+  node.appendChild(avatar);
+  const nameEl = document.createElement("span");
+  nameEl.className = "mn-approval__name";
+  nameEl.textContent = escapeHtml(step.name);
+  node.appendChild(nameEl);
+  if (step.role) {
+    const roleEl = document.createElement("span");
+    roleEl.className = "mn-approval__role";
+    roleEl.textContent = escapeHtml(step.role);
+    node.appendChild(roleEl);
+  }
+  if (step.timestamp) {
+    const ts = document.createElement("span");
+    ts.className = "mn-approval__timestamp";
+    ts.textContent = escapeHtml(step.timestamp);
+    node.appendChild(ts);
+  }
+  if (editable && step.status === "current" && onAction) {
+    const actions = document.createElement("div");
+    actions.className = "mn-approval__actions";
+    const btns = [
+      { label: "Approve", action: "approve", cls: "mn-approval__btn--approve" },
+      { label: "Reject", action: "reject", cls: "mn-approval__btn--reject" },
+      { label: "Skip", action: "skip", cls: "mn-approval__btn--skip" }
+    ];
+    for (const b of btns) {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = `mn-approval__btn ${b.cls}`;
+      btn.textContent = b.label;
+      btn.addEventListener("click", () => onAction(step, b.action), { signal: ac.signal });
+      actions.appendChild(btn);
+    }
+    node.appendChild(actions);
+  }
+  return node;
+}
+function buildConnector(prevStatus) {
+  const conn = document.createElement("div");
+  conn.className = "mn-approval__connector";
+  const isDone = prevStatus === "approved" || prevStatus === "rejected" || prevStatus === "skipped";
+  if (isDone) {
+    conn.classList.add("mn-approval__connector--done");
+  } else {
+    conn.classList.add("mn-approval__connector--pending");
+  }
+  return conn;
+}
+function render3(el4, steps, opts, ac) {
+  el4.innerHTML = "";
+  for (let i = 0; i < steps.length; i++) {
+    if (i > 0) {
+      el4.appendChild(buildConnector(steps[i - 1].status));
+    }
+    el4.appendChild(buildNode(steps[i], opts.editable ?? false, ac, opts.onAction));
+  }
+}
+function patchNode(el4, id, status, timestamp) {
+  const node = el4.querySelector(`[data-id="${CSS.escape(id)}"]`);
+  if (!node) return;
+  node.className = node.className.replace(/mn-approval__node--\w+/, `mn-approval__node--${status}`);
+  const avatar = node.querySelector(".mn-approval__avatar");
+  if (avatar) {
+    avatar.className = avatar.className.replace(/mn-approval__avatar--\w+/, `mn-approval__avatar--${status}`);
+  }
+  const badge = node.querySelector(".mn-approval__badge");
+  if (badge) {
+    badge.className = badge.className.replace(/mn-approval__badge--\w+/, `mn-approval__badge--${status}`);
+    badge.textContent = STATUS_ICONS[status];
+    badge.setAttribute("aria-label", STATUS_LABELS2[status]);
+  }
+  if (timestamp) {
+    let ts = node.querySelector(".mn-approval__timestamp");
+    if (!ts) {
+      ts = document.createElement("span");
+      ts.className = "mn-approval__timestamp";
+      node.appendChild(ts);
+    }
+    ts.textContent = escapeHtml(timestamp);
+  }
+  if (status !== "current") {
+    node.querySelector(".mn-approval__actions")?.remove();
+  }
+}
+function approvalChain(el4, steps, opts) {
+  const options = {
+    editable: false,
+    orientation: "horizontal",
+    ...opts
+  };
+  const ac = new AbortController();
+  el4.setAttribute("role", "list");
+  el4.setAttribute("aria-label", "Approval chain");
+  el4.classList.add("mn-approval");
+  if (options.orientation === "vertical") {
+    el4.classList.add("mn-approval--vertical");
+  }
+  let currentSteps = [...steps];
+  render3(el4, currentSteps, options, ac);
+  return {
+    update(newSteps) {
+      currentSteps = [...newSteps];
+      render3(el4, currentSteps, options, ac);
+    },
+    setStatus(id, status, timestamp) {
+      const idx = currentSteps.findIndex((s) => s.id === id);
+      if (idx < 0) return;
+      currentSteps[idx] = { ...currentSteps[idx], status, timestamp: timestamp ?? currentSteps[idx].timestamp };
+      patchNode(el4, id, status, timestamp);
+    },
+    destroy() {
+      ac.abort();
+      el4.innerHTML = "";
+      el4.removeAttribute("role");
+      el4.removeAttribute("aria-label");
+      el4.classList.remove("mn-approval", "mn-approval--vertical");
+    }
+  };
+}
+
+// src/ts/agent-trace.ts
+var KIND_LABELS = {
+  tool: "T",
+  reasoning: "R",
+  result: "Res",
+  handoff: "H"
+};
+var MAX_DISPLAY_LEN = 500;
+function truncate2(text) {
+  if (!text) return "";
+  return text.length > MAX_DISPLAY_LEN ? text.slice(0, MAX_DISPLAY_LEN) + "..." : text;
+}
+function buildStepHtml(step, expanded) {
+  const kindLabel = escapeHtml(KIND_LABELS[step.kind]);
+  const label = escapeHtml(step.label);
+  const duration = step.durationMs != null ? `${step.durationMs}ms` : "";
+  const timestamp = step.timestamp ? escapeHtml(step.timestamp) : "";
+  const inputText = escapeHtml(truncate2(step.input));
+  const outputText = escapeHtml(truncate2(step.output));
+  const hasBody = step.input || step.output;
+  const ariaExp = hasBody ? ` aria-expanded="${expanded}"` : "";
+  const pulseClass = step.status === "running" ? " mn-agent-trace__pulse" : "";
+  let body = "";
+  if (hasBody && expanded) {
+    body = '<div class="mn-agent-trace__body">';
+    if (step.input) {
+      body += `<div class="mn-agent-trace__section"><span class="mn-agent-trace__section-label">Input</span><pre class="mn-agent-trace__pre">${inputText}</pre></div>`;
+    }
+    if (step.output) {
+      body += `<div class="mn-agent-trace__section"><span class="mn-agent-trace__section-label">Output</span><pre class="mn-agent-trace__pre">${outputText}</pre></div>`;
+    }
+    body += "</div>";
+  }
+  return `<div class="mn-agent-trace__header" role="button" tabindex="0"${ariaExp}><span class="mn-agent-trace__kind mn-agent-trace__kind--${step.kind}">${kindLabel}</span><span class="mn-agent-trace__label">${label}</span>` + (timestamp ? `<span class="mn-agent-trace__timestamp">${timestamp}</span>` : "") + (duration ? `<span class="mn-agent-trace__duration">${duration}</span>` : "") + `<span class="mn-agent-trace__dot mn-agent-trace__dot--${step.status}${pulseClass}"></span></div>${body}`;
+}
+function createStepEl(step) {
+  const div = document.createElement("div");
+  div.className = `mn-agent-trace__step mn-agent-trace__step--${step.status}`;
+  div.setAttribute("role", "listitem");
+  div.dataset.id = step.id;
+  div.innerHTML = buildStepHtml(step, false);
+  return div;
+}
+function agentTrace(el4, steps, opts) {
+  const ac = new AbortController();
+  const signal = ac.signal;
+  const stepsArr = [];
+  const expandedSet = /* @__PURE__ */ new Set();
+  el4.classList.add("mn-agent-trace");
+  el4.setAttribute("role", "list");
+  function toggleStep(stepId) {
+    if (expandedSet.has(stepId)) {
+      expandedSet.delete(stepId);
+    } else {
+      expandedSet.add(stepId);
+    }
+    const stepEl = el4.querySelector(`[data-id="${stepId}"]`);
+    const step = stepsArr.find((s) => s.id === stepId);
+    if (!stepEl || !step) return;
+    const isOpen = expandedSet.has(stepId);
+    stepEl.classList.toggle("mn-agent-trace__step--open", isOpen);
+    stepEl.innerHTML = buildStepHtml(step, isOpen);
+    if (opts?.onSelect && isOpen) opts.onSelect(step);
+  }
+  el4.addEventListener("click", (e) => {
+    const header = e.target.closest(".mn-agent-trace__header");
+    if (!header) return;
+    const stepEl = header.closest("[data-id]");
+    if (stepEl?.dataset.id) toggleStep(stepEl.dataset.id);
+  }, { signal });
+  el4.addEventListener("keydown", (e) => {
+    if (e.key !== "Enter" && e.key !== " ") return;
+    const header = e.target.closest(".mn-agent-trace__header");
+    if (!header) return;
+    e.preventDefault();
+    const stepEl = header.closest("[data-id]");
+    if (stepEl?.dataset.id) toggleStep(stepEl.dataset.id);
+  }, { signal });
+  function autoScroll() {
+    el4.scrollTop = el4.scrollHeight;
+  }
+  function add(step) {
+    stepsArr.push(step);
+    const node = createStepEl(step);
+    el4.appendChild(node);
+    autoScroll();
+  }
+  function update(id, partial) {
+    const idx = stepsArr.findIndex((s) => s.id === id);
+    if (idx === -1) return;
+    const step = { ...stepsArr[idx], ...partial };
+    stepsArr[idx] = step;
+    const node = el4.querySelector(`[data-id="${id}"]`);
+    if (!node) return;
+    node.className = `mn-agent-trace__step mn-agent-trace__step--${step.status}`;
+    if (expandedSet.has(id)) node.classList.add("mn-agent-trace__step--open");
+    node.innerHTML = buildStepHtml(step, expandedSet.has(id));
+  }
+  function clear() {
+    stepsArr.length = 0;
+    expandedSet.clear();
+    el4.innerHTML = "";
+  }
+  function destroy() {
+    ac.abort();
+    clear();
+    el4.classList.remove("mn-agent-trace");
+    el4.removeAttribute("role");
+  }
+  if (steps) {
+    for (const s of steps) add(s);
+  }
+  return { add, update, clear, destroy };
+}
+
+// src/ts/token-meter.ts
+var NUM_FMT = new Intl.NumberFormat("en-US");
+var COST_FMT = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+  minimumFractionDigits: 4,
+  maximumFractionDigits: 4
+});
+function pct2(value, total) {
+  return total > 0 ? value / total * 100 : 0;
+}
+function buildBar(usage) {
+  const total = usage.prompt + usage.completion;
+  const max = usage.budget ?? total;
+  const promptW = pct2(usage.prompt, max);
+  const compW = pct2(usage.completion, max);
+  const cachedW = usage.cached ? pct2(usage.cached, max) : 0;
+  const ariaLabel = `Token usage: ${NUM_FMT.format(total)} of ${NUM_FMT.format(max)}`;
+  return [
+    `<div class="mn-token-meter__bar" role="meter"`,
+    ` aria-valuenow="${total}" aria-valuemin="0"`,
+    ` aria-valuemax="${max}" aria-label="${escapeHtml(ariaLabel)}">`,
+    `<div class="mn-token-meter__seg mn-token-meter__seg--prompt"`,
+    ` style="width:${promptW.toFixed(2)}%">`,
+    cachedW > 0 ? `<div class="mn-token-meter__seg--cached" style="width:${pct2(usage.cached, usage.prompt).toFixed(2)}%"></div>` : "",
+    `</div>`,
+    `<div class="mn-token-meter__seg mn-token-meter__seg--completion"`,
+    ` style="width:${compW.toFixed(2)}%"></div>`,
+    `</div>`
+  ].join("");
+}
+function costStr(usage) {
+  if (!usage.costPerMToken) return "";
+  const total = usage.prompt + usage.completion;
+  return COST_FMT.format(total / 1e6 * usage.costPerMToken);
+}
+function buildBreakdown(usage) {
+  const total = usage.prompt + usage.completion;
+  const rows = [
+    { cls: "prompt", label: "Prompt", value: usage.prompt },
+    { cls: "completion", label: "Completion", value: usage.completion }
+  ];
+  if (usage.cached !== void 0 && usage.cached > 0) {
+    rows.push({ cls: "cached", label: "Cached", value: usage.cached });
+  }
+  const html = rows.map((r) => [
+    `<span class="mn-token-meter__swatch mn-token-meter__swatch--${r.cls}"></span>`,
+    `<span class="mn-token-meter__label">${r.label}</span>`,
+    `<span class="mn-token-meter__count">${NUM_FMT.format(r.value)}</span>`,
+    `<span class="mn-token-meter__pct">${total > 0 ? pct2(r.value, total).toFixed(1) : "0.0"}%</span>`
+  ].join("")).join("");
+  return `<div class="mn-token-meter__breakdown">${html}</div>`;
+}
+function render4(el4, usage, opts) {
+  const costHtml = opts.showCost && usage.costPerMToken ? `<span class="mn-token-meter__cost">${escapeHtml(costStr(usage))}</span>` : "";
+  const safeLabel = escapeHtml(opts.label);
+  el4.innerHTML = [
+    `<div class="mn-token-meter${opts.animate ? "" : " mn-token-meter--no-anim"}">`,
+    `<div class="mn-token-meter__header">`,
+    `<span class="mn-token-meter__title">${safeLabel}</span>`,
+    costHtml,
+    `</div>`,
+    buildBar(usage),
+    opts.showBreakdown ? buildBreakdown(usage) : "",
+    `</div>`
+  ].join("");
+}
+function updateDom(el4, usage, showCost) {
+  const total = usage.prompt + usage.completion;
+  const max = usage.budget ?? total;
+  const bar = el4.querySelector(".mn-token-meter__bar");
+  if (bar) {
+    bar.setAttribute("aria-valuenow", String(total));
+    bar.setAttribute("aria-valuemax", String(max));
+    const ariaLabel = `Token usage: ${NUM_FMT.format(total)} of ${NUM_FMT.format(max)}`;
+    bar.setAttribute("aria-label", ariaLabel);
+  }
+  const promptSeg = el4.querySelector(".mn-token-meter__seg--prompt");
+  if (promptSeg) {
+    promptSeg.style.width = `${pct2(usage.prompt, max).toFixed(2)}%`;
+    const cachedEl = promptSeg.querySelector(".mn-token-meter__seg--cached");
+    if (cachedEl && usage.cached) {
+      cachedEl.style.width = `${pct2(usage.cached, usage.prompt).toFixed(2)}%`;
+    }
+  }
+  const compSeg = el4.querySelector(".mn-token-meter__seg--completion");
+  if (compSeg) {
+    compSeg.style.width = `${pct2(usage.completion, max).toFixed(2)}%`;
+  }
+  if (showCost) {
+    const costEl = el4.querySelector(".mn-token-meter__cost");
+    if (costEl) costEl.textContent = costStr(usage);
+  }
+  const breakdown = el4.querySelector(".mn-token-meter__breakdown");
+  if (breakdown) {
+    const counts = breakdown.querySelectorAll(".mn-token-meter__count");
+    const pcts = breakdown.querySelectorAll(".mn-token-meter__pct");
+    const values = [usage.prompt, usage.completion];
+    if (usage.cached !== void 0 && usage.cached > 0) values.push(usage.cached);
+    values.forEach((v, i) => {
+      if (counts[i]) counts[i].textContent = NUM_FMT.format(v);
+      if (pcts[i]) pcts[i].textContent = `${total > 0 ? pct2(v, total).toFixed(1) : "0.0"}%`;
+    });
+  }
+}
+function tokenMeter(el4, usage, opts) {
+  const resolved = {
+    label: opts?.label ?? "Token Usage",
+    showCost: opts?.showCost ?? usage?.costPerMToken !== void 0,
+    showBreakdown: opts?.showBreakdown ?? true,
+    animate: opts?.animate ?? true
+  };
+  let current = usage ?? { prompt: 0, completion: 0 };
+  render4(el4, current, resolved);
+  return {
+    update(next) {
+      current = next;
+      resolved.showCost = opts?.showCost ?? next.costPerMToken !== void 0;
+      updateDom(el4, current, resolved.showCost);
+      opts?.onChange?.(current);
+    },
+    reset() {
+      current = { prompt: 0, completion: 0 };
+      render4(el4, current, resolved);
+    },
+    destroy() {
+      el4.innerHTML = "";
+    }
+  };
+}
+
+// src/ts/streaming-text.ts
+var SEGMENT_RE = /(\*\*(.+?)\*\*|`([^`]+)`|\[(\d+)\])/g;
+function renderBuffer(raw, processMarkdown) {
+  if (!processMarkdown) return escapeHtml(raw);
+  let result = "";
+  let lastIndex = 0;
+  SEGMENT_RE.lastIndex = 0;
+  let match = SEGMENT_RE.exec(raw);
+  while (match !== null) {
+    if (match.index > lastIndex) {
+      result += escapeHtml(raw.slice(lastIndex, match.index));
+    }
+    if (match[2] !== void 0) {
+      result += `<strong class="mn-stream__bold">${escapeHtml(match[2])}</strong>`;
+    } else if (match[3] !== void 0) {
+      result += `<code class="mn-stream__code">${escapeHtml(match[3])}</code>`;
+    } else if (match[4] !== void 0) {
+      const idx = match[4];
+      result += `<button class="mn-stream__cite" data-idx="${escapeHtml(idx)}" type="button">[${escapeHtml(idx)}]</button>`;
+    }
+    lastIndex = match.index + match[0].length;
+    match = SEGMENT_RE.exec(raw);
+  }
+  if (lastIndex < raw.length) {
+    result += escapeHtml(raw.slice(lastIndex));
+  }
+  return result;
+}
+var CURSOR_HTML = '<span class="mn-stream__cursor" aria-hidden="true">|</span>';
+function streamingText(el4, opts) {
+  const options = {
+    onCitationClick: opts?.onCitationClick ?? (() => {
+    }),
+    onDone: opts?.onDone ?? (() => {
+    }),
+    typingCursor: opts?.typingCursor ?? true,
+    processMarkdown: opts?.processMarkdown ?? true
+  };
+  let buffer = "";
+  let finished = false;
+  const ac = new AbortController();
+  el4.setAttribute("role", "log");
+  el4.setAttribute("aria-live", "polite");
+  el4.setAttribute("aria-atomic", "false");
+  el4.setAttribute("aria-label", "Streaming response");
+  el4.classList.add("mn-stream");
+  const liveRegion = document.createElement("span");
+  liveRegion.className = "mn-sr-only";
+  liveRegion.setAttribute("aria-live", "polite");
+  el4.appendChild(liveRegion);
+  el4.addEventListener(
+    "click",
+    (e) => {
+      const target = e.target;
+      if (target.classList.contains("mn-stream__cite")) {
+        const idx = parseInt(target.dataset.idx ?? "0", 10);
+        options.onCitationClick(idx);
+      }
+    },
+    { signal: ac.signal }
+  );
+  function render5(showCursor) {
+    const html = renderBuffer(buffer, options.processMarkdown);
+    const cursor = showCursor && options.typingCursor ? CURSOR_HTML : "";
+    el4.innerHTML = `<span class="mn-stream__content">${html}${cursor}</span>`;
+    el4.appendChild(liveRegion);
+  }
+  function append(chunk) {
+    if (finished) return;
+    buffer += chunk;
+    render5(true);
+    liveRegion.textContent = chunk;
+  }
+  function done() {
+    if (finished) return;
+    finished = true;
+    el4.classList.add("mn-stream--done");
+    render5(false);
+    liveRegion.textContent = "";
+    options.onDone();
+  }
+  function reset() {
+    buffer = "";
+    finished = false;
+    el4.classList.remove("mn-stream--done");
+    render5(true);
+    liveRegion.textContent = "";
+  }
+  function setText(text) {
+    buffer = text;
+    finished = true;
+    el4.classList.add("mn-stream--done");
+    render5(false);
+    liveRegion.textContent = "";
+  }
+  function destroy() {
+    ac.abort();
+    el4.innerHTML = "";
+    el4.removeAttribute("role");
+    el4.removeAttribute("aria-live");
+    el4.removeAttribute("aria-atomic");
+    el4.removeAttribute("aria-label");
+    el4.classList.remove("mn-stream", "mn-stream--done");
+    buffer = "";
+    finished = true;
+  }
+  render5(true);
+  return { append, done, reset, setText, destroy };
+}
+
+// src/ts/charts-risk-matrix.ts
+var ML = 52;
+var MT = 12;
+var MR = 12;
+var MB = 52;
+var CIRCLE_R = 10;
+var ANIM_MS = 400;
+var OFFSETS = [[0, 0], [-8, -8], [8, -8], [-8, 8]];
+function severityColor(score) {
+  const ok = cssVar("--signal-ok", "#00A651");
+  const warn = cssVar("--signal-warning", "#FFC72C");
+  const danger = cssVar("--signal-danger", "#DC0000");
+  if (score <= 4) return hexToRgba(ok, 0.2);
+  if (score <= 9) return hexToRgba(warn, 0.2);
+  if (score <= 16) return hexToRgba(danger, 0.2);
+  return hexToRgba(danger, 0.35);
+}
+function riskLevel(s) {
+  if (s <= 4) return "Low";
+  if (s <= 9) return "Medium";
+  if (s <= 16) return "High";
+  return "Critical";
+}
+function truncate3(s, n) {
+  return s.length > n ? s.slice(0, n - 1) + "\u2026" : s;
+}
+function riskMatrix(canvas, opts) {
+  let items = [...opts.items];
+  let rafId = 0, hovered = null, animStart = 0;
+  const shouldAnimate = opts.animate !== false;
+  const w = canvas.getBoundingClientRect().width || 320;
+  const h = opts.height ?? 320;
+  const ctx = chartHiDpi(canvas, w, h);
+  const gw = w - ML - MR, gh = h - MT - MB;
+  const cellW = gw / 5, cellH = gh / 5;
+  function cc(col, row) {
+    return [ML + (col - 0.5) * cellW, MT + gh - (row - 0.5) * cellH];
+  }
+  function drawGrid(border, textMuted, textColor) {
+    for (let r = 1; r <= 5; r++) {
+      for (let c = 1; c <= 5; c++) {
+        const x = ML + (c - 1) * cellW, y = MT + gh - r * cellH;
+        ctx.fillStyle = severityColor(r * c);
+        ctx.fillRect(x, y, cellW, cellH);
+        ctx.strokeStyle = border;
+        ctx.lineWidth = 0.5;
+        ctx.strokeRect(x, y, cellW, cellH);
+      }
+    }
+    ctx.strokeStyle = border;
+    ctx.lineWidth = 1;
+    ctx.strokeRect(ML, MT, gw, gh);
+    ctx.font = "10px system-ui,sans-serif";
+    ctx.fillStyle = textMuted;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "top";
+    for (let i = 1; i <= 5; i++) ctx.fillText(String(i), ML + (i - 0.5) * cellW, MT + gh + 4);
+    ctx.textAlign = "right";
+    ctx.textBaseline = "middle";
+    for (let i = 1; i <= 5; i++) ctx.fillText(String(i), ML - 6, MT + gh - (i - 0.5) * cellH);
+    ctx.font = "11px system-ui,sans-serif";
+    ctx.fillStyle = textColor;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "top";
+    ctx.fillText("Impact", ML + gw / 2, h - 16);
+    ctx.save();
+    ctx.translate(14, MT + gh / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.fillText("Probability", 0, 0);
+    ctx.restore();
+    ctx.font = "9px system-ui,sans-serif";
+    ctx.fillStyle = textMuted;
+    ctx.globalAlpha = 0.6;
+    ctx.textAlign = "left";
+    ctx.textBaseline = "bottom";
+    ctx.fillText("Low", ML + 4, MT + gh - 4);
+    ctx.textAlign = "right";
+    ctx.textBaseline = "top";
+    ctx.fillText("Critical", ML + gw - 4, MT + 4);
+    ctx.globalAlpha = 1;
+  }
+  function drawItems(scale, accent, textColor, border) {
+    const cellMap = /* @__PURE__ */ new Map();
+    for (const item of items) {
+      const key = `${item.impact},${item.probability}`;
+      const arr = cellMap.get(key) ?? [];
+      arr.push(item);
+      cellMap.set(key, arr);
+    }
+    for (const [, group] of cellMap) {
+      for (let idx = 0; idx < Math.min(group.length, 4); idx++) {
+        const item = group[idx];
+        const [cx, cy] = cc(item.impact, item.probability);
+        const [ox, oy] = OFFSETS[idx];
+        const px = cx + ox, py = cy + oy, r = CIRCLE_R * scale;
+        ctx.beginPath();
+        ctx.arc(px, py, r, 0, Math.PI * 2);
+        ctx.fillStyle = item.color ?? accent;
+        ctx.fill();
+        if (hovered?.id === item.id) {
+          ctx.strokeStyle = accent;
+          ctx.lineWidth = 2;
+          ctx.stroke();
+        }
+        ctx.font = "9px system-ui,sans-serif";
+        ctx.fillStyle = textColor;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "top";
+        ctx.fillText(truncate3(item.label, 10), px, py + r + 2);
+      }
+    }
+    if (hovered) drawTooltip(accent, textColor, border);
+  }
+  function drawTooltip(accent, textColor, border) {
+    if (!hovered) return;
+    const [cx, cy] = cc(hovered.impact, hovered.probability);
+    const score = hovered.probability * hovered.impact;
+    const tip = `${escapeHtml(hovered.label)} (P${hovered.probability}\xD7I${hovered.impact}=${score})`;
+    ctx.font = "11px system-ui,sans-serif";
+    const tw = ctx.measureText(tip).width + 12, th = 22;
+    let tx = cx - tw / 2, ty = cy - CIRCLE_R - th - 6;
+    if (tx < 2) tx = 2;
+    if (tx + tw > w - 2) tx = w - tw - 2;
+    if (ty < 2) ty = cy + CIRCLE_R + 6;
+    ctx.fillStyle = cssVar("--mn-surface-raised", "#222");
+    ctx.strokeStyle = border;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.roundRect(tx, ty, tw, th, 4);
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = textColor;
+    ctx.textAlign = "left";
+    ctx.textBaseline = "middle";
+    ctx.fillText(tip, tx + 6, ty + th / 2);
+  }
+  function draw(scale) {
+    ctx.clearRect(0, 0, w, h);
+    const border = cssVar("--mn-border", "#333");
+    const textMuted = cssVar("--mn-text-muted", "#888");
+    const textColor = cssVar("--mn-text", "#ccc");
+    const accent = cssVar("--mn-accent", "#FFC72C");
+    drawGrid(border, textMuted, textColor);
+    drawItems(scale, accent, textColor, border);
+  }
+  function applyA11y() {
+    const rows = items.map((it) => ({
+      label: it.label,
+      value: `P${it.probability} I${it.impact} \u2014 ${riskLevel(it.probability * it.impact)}`
+    }));
+    applyChartA11y(canvas, `Risk matrix with ${items.length} items`, rows);
+  }
+  function animateIn() {
+    animStart = performance.now();
+    const tick = (now) => {
+      const t = Math.min((now - animStart) / ANIM_MS, 1);
+      draw(1 - Math.pow(1 - t, 3));
+      if (t < 1) rafId = requestAnimationFrame(tick);
+    };
+    rafId = requestAnimationFrame(tick);
+  }
+  function hitTest2(mx, my) {
+    const counts = /* @__PURE__ */ new Map();
+    for (const item of items) {
+      const key = `${item.impact},${item.probability}`;
+      const idx = counts.get(key) ?? 0;
+      counts.set(key, idx + 1);
+      const [cx, cy] = cc(item.impact, item.probability);
+      const [ox, oy] = OFFSETS[Math.min(idx, 3)];
+      const dx = mx - (cx + ox), dy = my - (cy + oy);
+      if (dx * dx + dy * dy <= CIRCLE_R * CIRCLE_R) return item;
+    }
+    return null;
+  }
+  function onMove(e) {
+    const rect = canvas.getBoundingClientRect();
+    const hit = hitTest2(e.clientX - rect.left, e.clientY - rect.top);
+    if (hit?.id !== hovered?.id) {
+      hovered = hit;
+      opts.onHover?.(hit);
+      draw(1);
+    }
+  }
+  function onClick(e) {
+    const rect = canvas.getBoundingClientRect();
+    const hit = hitTest2(e.clientX - rect.left, e.clientY - rect.top);
+    if (hit) opts.onClick?.(hit);
+  }
+  canvas.addEventListener("mousemove", onMove);
+  canvas.addEventListener("click", onClick);
+  applyA11y();
+  if (shouldAnimate) animateIn();
+  else draw(1);
+  return {
+    update(newItems) {
+      items = [...newItems];
+      hovered = null;
+      applyA11y();
+      if (shouldAnimate) animateIn();
+      else draw(1);
+    },
+    destroy() {
+      cancelAnimationFrame(rafId);
+      canvas.removeEventListener("mousemove", onMove);
+      canvas.removeEventListener("click", onClick);
+      const sr = canvas.nextElementSibling;
+      if (sr?.classList.contains("mn-sr-only")) sr.remove();
+    }
+  };
+}
+
+// src/ts/kpi-scorecard.ts
+var STATUS_LABELS3 = {
+  green: "On track",
+  yellow: "At risk",
+  red: "Off track",
+  neutral: "\u2014"
+};
+var STATUS_VARS = {
+  green: "--signal-ok",
+  yellow: "--signal-warning",
+  red: "--signal-danger",
+  neutral: "--mn-text-muted"
+};
+function resolveStatus(row) {
+  if (row.status) return row.status;
+  if (row.actual >= row.target) return "green";
+  if (row.actual >= row.target * 0.8) return "yellow";
+  return "red";
+}
+function fmtValue(val, fmt, currency) {
+  if (fmt === "percent") return `${val}%`;
+  if (fmt === "currency") {
+    return `${currency}${new Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 1 }).format(val)}`;
+  }
+  return new Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 1 }).format(val);
+}
+function fmtDelta(delta, fmt, currency) {
+  const sign = delta > 0 ? "+" : "";
+  return `${sign}${fmtValue(delta, fmt, currency)}`;
+}
+function drawSparkline(canvas, data, color) {
+  const w = 60;
+  const h = 24;
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
+  canvas.style.width = `${w}px`;
+  canvas.style.height = `${h}px`;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return;
+  ctx.scale(dpr, dpr);
+  const mn = Math.min(...data);
+  const mx = Math.max(...data);
+  const range = mx - mn || 1;
+  const pad2 = 2;
+  ctx.beginPath();
+  data.forEach((v, i) => {
+    const x = pad2 + i / (data.length - 1) * (w - pad2 * 2);
+    const y = h - pad2 - (v - mn) / range * (h - pad2 * 2);
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  });
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 1.5;
+  ctx.lineJoin = "round";
+  ctx.stroke();
+}
+function resolveColor3(varName, fallback) {
+  return cssVar(varName, fallback);
+}
+var HEADERS = ["Metric", "Target", "Actual", "Delta", "Trend", "Status"];
+function buildHead() {
+  const ths = HEADERS.map(
+    (h) => `<th class="mn-kpi__th" scope="col" role="columnheader">${h}</th>`
+  ).join("");
+  return `<thead><tr>${ths}</tr></thead>`;
+}
+function buildRow2(row, currency) {
+  const s = resolveStatus(row);
+  const delta = row.actual - row.target;
+  const deltaCls = delta >= 0 ? "mn-kpi__delta--pos" : "mn-kpi__delta--neg";
+  const dotCls = `mn-kpi__status-dot mn-kpi__status-dot--${s}`;
+  const label = escapeHtml(row.label);
+  const unit = row.unit ? ` <span class="mn-kpi__unit">${escapeHtml(row.unit)}</span>` : "";
+  const fmt = row.format ?? "number";
+  return [
+    `<tr class="mn-kpi__row" role="row" tabindex="0" data-id="${escapeHtml(row.id)}">`,
+    `<td class="mn-kpi__td mn-kpi__label">${label}${unit}</td>`,
+    `<td class="mn-kpi__td mn-kpi__value">${fmtValue(row.target, fmt, currency)}</td>`,
+    `<td class="mn-kpi__td mn-kpi__value">${fmtValue(row.actual, fmt, currency)}</td>`,
+    `<td class="mn-kpi__td ${deltaCls}">${fmtDelta(delta, fmt, currency)}</td>`,
+    `<td class="mn-kpi__td mn-kpi__trend"></td>`,
+    `<td class="mn-kpi__td"><span class="${dotCls}"></span> ${escapeHtml(STATUS_LABELS3[s])}</td>`,
+    "</tr>"
+  ].join("");
+}
+function kpiScorecard(el4, rows, opts) {
+  const currency = opts?.currency ?? "$";
+  const onSelect = opts?.onSelect;
+  const ac = new AbortController();
+  function render5(data) {
+    const bodyHtml = data.map((r) => buildRow2(r, currency)).join("");
+    el4.innerHTML = [
+      '<div class="mn-kpi">',
+      `<table class="mn-kpi__table" role="table" aria-label="KPI Scorecard">`,
+      buildHead(),
+      `<tbody>${bodyHtml}</tbody>`,
+      "</table></div>"
+    ].join("");
+    const trendCells = el4.querySelectorAll(".mn-kpi__trend");
+    data.forEach((row, i) => {
+      if (!row.trend || row.trend.length < 2) return;
+      const cell = trendCells[i];
+      if (!cell) return;
+      const canvas = document.createElement("canvas");
+      canvas.setAttribute("aria-hidden", "true");
+      const s = resolveStatus(row);
+      const color = resolveColor3(STATUS_VARS[s], "#FFC72C");
+      drawSparkline(canvas, row.trend, color);
+      cell.appendChild(canvas);
+    });
+    if (onSelect) {
+      el4.querySelectorAll(".mn-kpi__row").forEach((tr, i) => {
+        const row = data[i];
+        tr.addEventListener("click", () => onSelect(row), { signal: ac.signal });
+        tr.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            onSelect(row);
+          }
+        }, { signal: ac.signal });
+      });
+    }
+  }
+  render5(rows);
+  return {
+    update(newRows) {
+      render5(newRows);
+    },
+    destroy() {
+      ac.abort();
+      el4.innerHTML = "";
+    }
+  };
+}
+
+// src/ts/cohort-grid.ts
+function parseHex(hex) {
+  const h = hex.replace("#", "");
+  if (h.length === 3) {
+    return [
+      parseInt(h[0] + h[0], 16),
+      parseInt(h[1] + h[1], 16),
+      parseInt(h[2] + h[2], 16)
+    ];
+  }
+  return [
+    parseInt(h.slice(0, 2), 16),
+    parseInt(h.slice(2, 4), 16),
+    parseInt(h.slice(4, 6), 16)
+  ];
+}
+function resolveColor4(color, cssVarName, fallback) {
+  if (color && color.startsWith("#")) return color;
+  if (color && color.startsWith("--")) return cssVar(color, fallback);
+  return cssVar(cssVarName, fallback);
+}
+function lerpColor(low, high, t) {
+  const ct = clamp(t, 0, 1);
+  const r = Math.round(lerp(low[0], high[0], ct));
+  const g = Math.round(lerp(low[1], high[1], ct));
+  const b = Math.round(lerp(low[2], high[2], ct));
+  return `rgb(${r},${g},${b})`;
+}
+function contrastText(r, g, b) {
+  const lum = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+  return lum > 0.5 ? "var(--nero-assoluto, #050505)" : "var(--bianco-caldo, #fafafa)";
+}
+function formatCellValue(retention, initialSize, showAbsolute) {
+  if (showAbsolute) return formatNumber(Math.round(initialSize * retention));
+  return `${(retention * 100).toFixed(0)}%`;
+}
+function periodLabel(labels, idx) {
+  if (labels && labels[idx]) return labels[idx];
+  return `Period ${idx}`;
+}
+function maxPeriods(rows) {
+  let max = 0;
+  for (const row of rows) {
+    if (row.retention.length > max) max = row.retention.length;
+  }
+  return max;
+}
+function buildTable(el4, rows, opts, ac) {
+  const showAbs = opts.showAbsolute ?? false;
+  const highHex = resolveColor4(opts.colorHigh, "--signal-ok", "#00A651");
+  const lowHex = resolveColor4(opts.colorLow, "--signal-danger", "#DC0000");
+  const rgbHigh = parseHex(highHex);
+  const rgbLow = parseHex(lowHex);
+  const periods = maxPeriods(rows);
+  const wrapper = document.createElement("div");
+  wrapper.className = "mn-cohort";
+  const table = document.createElement("table");
+  table.className = "mn-cohort__table";
+  table.setAttribute("role", "table");
+  table.setAttribute("aria-label", "Cohort retention grid");
+  const thead = document.createElement("thead");
+  const headerRow = document.createElement("tr");
+  const thCohort = document.createElement("th");
+  thCohort.className = "mn-cohort__th mn-cohort__cell-label";
+  thCohort.setAttribute("scope", "col");
+  thCohort.setAttribute("role", "columnheader");
+  thCohort.textContent = "Cohort";
+  headerRow.appendChild(thCohort);
+  for (let i = 0; i < periods; i++) {
+    const th = document.createElement("th");
+    th.className = "mn-cohort__th";
+    th.setAttribute("scope", "col");
+    th.setAttribute("role", "columnheader");
+    th.textContent = periodLabel(opts.periodLabels, i);
+    headerRow.appendChild(th);
+  }
+  thead.appendChild(headerRow);
+  table.appendChild(thead);
+  const tbody = document.createElement("tbody");
+  for (const row of rows) {
+    const tr = document.createElement("tr");
+    tr.className = "mn-cohort__row";
+    const labelCell = document.createElement("td");
+    labelCell.className = "mn-cohort__cell-label";
+    labelCell.innerHTML = `${escapeHtml(row.label)} <span class="mn-cohort__size">(n=${escapeHtml(formatNumber(row.initialSize))})</span>`;
+    tr.appendChild(labelCell);
+    for (let i = 0; i < periods; i++) {
+      const td = document.createElement("td");
+      const retention = row.retention[i];
+      if (retention === void 0 || retention === null) {
+        td.className = "mn-cohort__cell mn-cohort__cell--empty";
+        td.textContent = "\u2014";
+        td.setAttribute(
+          "aria-label",
+          `${escapeHtml(row.label)} ${periodLabel(opts.periodLabels, i)}: no data`
+        );
+      } else {
+        const value = formatCellValue(retention, row.initialSize, showAbs);
+        const bg = lerpColor(rgbLow, rgbHigh, retention);
+        const ct = clamp(retention, 0, 1);
+        const r = Math.round(lerp(rgbLow[0], rgbHigh[0], ct));
+        const g = Math.round(lerp(rgbLow[1], rgbHigh[1], ct));
+        const b = Math.round(lerp(rgbLow[2], rgbHigh[2], ct));
+        td.className = i === 0 ? "mn-cohort__cell mn-cohort__cell--base" : "mn-cohort__cell";
+        td.textContent = value;
+        td.style.backgroundColor = bg;
+        td.style.color = contrastText(r, g, b);
+        td.setAttribute(
+          "aria-label",
+          `${escapeHtml(row.label)} ${periodLabel(opts.periodLabels, i)}: ${value}`
+        );
+        if (opts.onHover) {
+          const capturedRow = row;
+          const capturedIdx = i;
+          td.addEventListener("mouseover", () => {
+            opts.onHover(capturedRow, capturedIdx, retention);
+          }, { signal: ac.signal });
+        }
+      }
+      tr.appendChild(td);
+    }
+    tbody.appendChild(tr);
+  }
+  table.appendChild(tbody);
+  wrapper.appendChild(table);
+  el4.appendChild(wrapper);
+}
+function cohortGrid(el4, rows, opts) {
+  let ac = new AbortController();
+  const resolved = opts ?? {};
+  buildTable(el4, rows, resolved, ac);
+  return {
+    update(newRows, newOpts) {
+      ac.abort();
+      ac = new AbortController();
+      el4.innerHTML = "";
+      const merged = { ...resolved, ...newOpts };
+      buildTable(el4, newRows, merged, ac);
+    },
+    destroy() {
+      ac.abort();
+      el4.innerHTML = "";
+    }
+  };
+}
+
 // src/ts/maranello-exports.ts
 function registerExtras(M2) {
   M2.SPEEDO_FONT = SPEEDO_FONT;
@@ -9002,6 +10002,13 @@ function registerExtras(M2) {
   M2.bcgMatrix = bcgMatrix;
   M2.nineBoxMatrix = nineBoxMatrix;
   M2.swotMatrix = swotMatrix;
+  M2.approvalChain = approvalChain;
+  M2.agentTrace = agentTrace;
+  M2.tokenMeter = tokenMeter;
+  M2.streamingText = streamingText;
+  M2.riskMatrix = riskMatrix;
+  M2.kpiScorecard = kpiScorecard;
+  M2.cohortGrid = cohortGrid;
 }
 
 // src/ts/maranello.ts
@@ -9202,7 +10209,9 @@ export {
   activityFeed,
   addListener,
   addValidator,
+  agentTrace,
   applySettings,
+  approvalChain,
   areaChart,
   attachEvents,
   autoBind,
@@ -9234,6 +10243,7 @@ export {
   closeDrawer,
   closeModal,
   clusterMarkers,
+  cohortGrid,
   commandPalette,
   confidenceChart,
   createDetailPanel,
@@ -9310,6 +10320,7 @@ export {
   initTagInput,
   initTagsField,
   initThemeToggle,
+  kpiScorecard,
   lerp,
   liveGraph,
   loadSettings,
@@ -9353,6 +10364,7 @@ export {
   renderSourceCards,
   renderers,
   resolveContainer3 as resolveContainer,
+  riskMatrix,
   saveSettings,
   setTheme,
   showTip,
@@ -9364,6 +10376,7 @@ export {
   speedometer,
   statusIcons,
   steppedRotary,
+  streamingText,
   swotMatrix,
   systemStatus,
   themeRotary,
@@ -9371,6 +10384,7 @@ export {
   toast,
   toggleLever,
   toggleNotifications,
+  tokenMeter,
   updateGauge,
   updateStatusSelectColor,
   validateField,

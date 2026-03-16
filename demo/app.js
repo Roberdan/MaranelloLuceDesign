@@ -46,6 +46,8 @@ const SECTIONS = new Map([
   ['dashboard-widgets', () => import('./sections/dashboard-widgets.js').then(m => m.createDashboardWidgetsSection)],
   ['analytics',         () => import('./sections/analytics.js').then(m => m.createAnalyticsSection)],
   ['strategy',          () => import('./sections/strategy.js').then(m => m.createStrategySection)],
+  ['agentic',           () => import('./sections/agentic.js').then(m => m.createAgenticSection)],
+  ['bi-dashboard',      () => import('./sections/bi-dashboard.js').then(m => m.createBiDashboardSection)],
 ]);
 
 const SECTION_KEYS = [...SECTIONS.keys()];
@@ -64,6 +66,8 @@ const SECTION_LABELS = {
   'dashboard-widgets': 'Widgets',
   'analytics': 'Analytics',
   'strategy': 'Strategy',
+  'agentic': 'Agentic',
+  'bi-dashboard': 'BI',
 };
 
 function safeErr(name, err) {

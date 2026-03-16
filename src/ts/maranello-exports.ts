@@ -37,6 +37,13 @@ import { activityFeed } from './activity-feed';
 import { bcgMatrix } from './charts-bcg-matrix';
 import { nineBoxMatrix } from './nine-box-matrix';
 import { swotMatrix } from './swot-matrix';
+import { approvalChain } from './approval-chain';
+import { agentTrace } from './agent-trace';
+import { tokenMeter } from './token-meter';
+import { streamingText } from './streaming-text';
+import { riskMatrix } from './charts-risk-matrix';
+import { kpiScorecard } from './kpi-scorecard';
+import { cohortGrid } from './cohort-grid';
 import { dateRangePicker } from './date-range-picker';
 import { bulletChart } from './charts-bullet';
 import { notificationCenter } from './notification-center';
@@ -121,4 +128,13 @@ export function registerExtras(M: Record<string, unknown>): void {
   M.bcgMatrix = bcgMatrix;
   M.nineBoxMatrix = nineBoxMatrix;
   M.swotMatrix = swotMatrix;
+  M.approvalChain = approvalChain;
+
+  // Agentic AI + BI (v4.9)
+  M.agentTrace = agentTrace;
+  M.tokenMeter = tokenMeter;
+  M.streamingText = streamingText;
+  M.riskMatrix = riskMatrix;
+  M.kpiScorecard = kpiScorecard;
+  M.cohortGrid = cohortGrid;
 }

@@ -42,3 +42,5 @@
 @import "./layouts-notification-center.css";
 @import "./layouts-decision-matrix.css";
 @import "./layouts-nine-box-matrix.css";
+@import "./layouts-approval-chain.css";
+@import "./layouts-agent-trace.css";

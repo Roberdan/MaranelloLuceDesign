@@ -1,0 +1,135 @@
+/* Maranello Luce Design - Token Usage Meter */
+
+@layer components {
+
+/* ── Container ── */
+.mn-token-meter {
+  padding: var(--space-md);
+  border: 1px solid var(--mn-border);
+  border-radius: var(--radius-md);
+  background: var(--mn-surface);
+  font-family: var(--font-body);
+}
+
+/* ── Header ── */
+.mn-token-meter__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: var(--space-sm);
+}
+
+.mn-token-meter__title {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--mn-text);
+}
+
+.mn-token-meter__cost {
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  color: var(--mn-accent);
+  letter-spacing: 0.02em;
+}
+
+/* ── Bar ── */
+.mn-token-meter__bar {
+  display: flex;
+  height: 10px;
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--mn-border) 30%, transparent);
+  overflow: hidden;
+}
+
+.mn-token-meter__seg {
+  height: 100%;
+  min-width: 0;
+  transition: width 400ms ease;
+}
+
+.mn-token-meter--no-anim .mn-token-meter__seg,
+.mn-token-meter--no-anim .mn-token-meter__seg--cached {
+  transition: none;
+}
+
+/* Prompt segment: muted text tone */
+.mn-token-meter__seg--prompt {
+  position: relative;
+  background: color-mix(in srgb, var(--mn-text-muted) 40%, transparent);
+  border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+}
+
+/* Cached overlay: green tint inside prompt segment */
+.mn-token-meter__seg--cached {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: color-mix(in srgb, var(--signal-ok) 50%, transparent);
+  border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+  transition: width 400ms ease;
+}
+
+/* Completion segment: accent color */
+.mn-token-meter__seg--completion {
+  background: var(--mn-accent);
+}
+
+/* ── Breakdown grid ── */
+.mn-token-meter__breakdown {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  gap: var(--space-xs) var(--space-sm);
+  margin-top: var(--space-sm);
+  align-items: center;
+}
+
+/* Color swatches */
+.mn-token-meter__swatch {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+}
+
+.mn-token-meter__swatch--prompt {
+  background: color-mix(in srgb, var(--mn-text-muted) 40%, transparent);
+}
+
+.mn-token-meter__swatch--completion {
+  background: var(--mn-accent);
+}
+
+.mn-token-meter__swatch--cached {
+  background: color-mix(in srgb, var(--signal-ok) 50%, transparent);
+}
+
+/* Labels */
+.mn-token-meter__label {
+  font-size: var(--text-micro);
+  color: var(--mn-text-muted);
+}
+
+/* Counts */
+.mn-token-meter__count {
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  color: var(--mn-text);
+  text-align: right;
+}
+
+/* Percentages */
+.mn-token-meter__pct {
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  color: var(--mn-text-muted);
+  text-align: right;
+  min-width: 3.5em;
+}
+
+/* ── Avorio theme override ── */
+body.mn-avorio .mn-token-meter__bar {
+  background: color-mix(in srgb, var(--mn-border) 20%, transparent);
+}
+
+} /* end @layer components */

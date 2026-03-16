@@ -1,0 +1,212 @@
+@layer layouts {
+/* layouts — Agent Trace | Maranello Design System v1.4.0 */
+
+/* ── Container ──────────────────────────────────────────── */
+.mn-agent-trace {
+  max-height: 400px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  padding: var(--space-sm);
+  font-family: var(--font-body);
+  color: var(--mn-text);
+}
+
+/* ── Step ────────────────────────────────────────────────── */
+.mn-agent-trace__step {
+  border-left: 3px solid var(--mn-border);
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--mn-surface) 90%, transparent);
+  transition: border-color 0.2s;
+}
+
+.mn-agent-trace__step--pending {
+  border-left-color: var(--mn-border);
+}
+
+.mn-agent-trace__step--running {
+  border-left-color: var(--signal-info);
+  background: color-mix(in srgb, var(--signal-info) 8%, transparent);
+}
+
+.mn-agent-trace__step--done {
+  border-left-color: var(--signal-ok);
+}
+
+.mn-agent-trace__step--error {
+  border-left-color: var(--signal-danger);
+  background: color-mix(in srgb, var(--signal-danger) 6%, transparent);
+}
+
+/* ── Header ──────────────────────────────────────────────── */
+.mn-agent-trace__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  cursor: pointer;
+  user-select: none;
+  border-radius: var(--radius-sm);
+}
+
+.mn-agent-trace__header:focus-visible {
+  outline: 2px solid var(--mn-accent);
+  outline-offset: -2px;
+}
+
+/* ── Kind badge ──────────────────────────────────────────── */
+.mn-agent-trace__kind {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2rem;
+  padding: var(--space-2xs) var(--space-xs);
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  font-weight: 600;
+  border-radius: var(--radius-full);
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.mn-agent-trace__kind--tool {
+  background: color-mix(in srgb, var(--signal-info) 15%, transparent);
+  color: var(--signal-info);
+}
+
+.mn-agent-trace__kind--reasoning {
+  background: color-mix(in srgb, var(--signal-warning) 15%, transparent);
+  color: var(--signal-warning);
+}
+
+.mn-agent-trace__kind--result {
+  background: color-mix(in srgb, var(--signal-ok) 15%, transparent);
+  color: var(--signal-ok);
+}
+
+.mn-agent-trace__kind--handoff {
+  background: color-mix(in srgb, var(--mn-accent) 15%, transparent);
+  color: var(--mn-accent);
+}
+
+/* ── Label ───────────────────────────────────────────────── */
+.mn-agent-trace__label {
+  flex: 1;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--mn-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Timestamp ───────────────────────────────────────────── */
+.mn-agent-trace__timestamp {
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  color: var(--mn-text-muted);
+  flex-shrink: 0;
+}
+
+/* ── Duration badge ──────────────────────────────────────── */
+.mn-agent-trace__duration {
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  color: var(--mn-text-muted);
+  flex-shrink: 0;
+}
+
+/* ── Status dot ──────────────────────────────────────────── */
+.mn-agent-trace__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+  background: var(--mn-border);
+}
+
+.mn-agent-trace__dot--pending {
+  background: var(--mn-border);
+}
+
+.mn-agent-trace__dot--running {
+  background: var(--signal-info);
+}
+
+.mn-agent-trace__dot--done {
+  background: var(--signal-ok);
+}
+
+.mn-agent-trace__dot--error {
+  background: var(--signal-danger);
+}
+
+/* ── Pulse animation ─────────────────────────────────────── */
+@keyframes mn-trace-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.mn-agent-trace__pulse {
+  animation: mn-trace-pulse 1.5s ease-in-out infinite;
+}
+
+/* ── Expandable body ─────────────────────────────────────── */
+.mn-agent-trace__body {
+  padding: 0 var(--space-md) var(--space-sm);
+}
+
+.mn-agent-trace__section {
+  border-top: 1px solid var(--mn-border);
+  padding-top: var(--space-xs);
+  margin-top: var(--space-xs);
+}
+
+.mn-agent-trace__section-label {
+  display: block;
+  font-size: var(--text-micro);
+  font-weight: 600;
+  color: var(--mn-text-muted);
+  margin-bottom: var(--space-2xs);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.mn-agent-trace__pre {
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  color: var(--mn-text-muted);
+  background: color-mix(in srgb, var(--mn-surface) 60%, transparent);
+  border-radius: var(--radius-sm);
+  padding: var(--space-xs) var(--space-sm);
+  margin: 0;
+  overflow-x: auto;
+  max-height: 120px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+/* ── Mobile ──────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .mn-agent-trace {
+    padding: var(--space-xs);
+  }
+
+  .mn-agent-trace__header {
+    padding: var(--space-xs) var(--space-sm);
+    gap: var(--space-xs);
+  }
+
+  .mn-agent-trace__body {
+    padding: 0 var(--space-sm) var(--space-xs);
+  }
+
+  .mn-agent-trace__pre {
+    max-height: 80px;
+    font-size: var(--text-micro);
+  }
+}
+
+} /* end @layer layouts */

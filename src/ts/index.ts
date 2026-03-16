@@ -225,22 +225,8 @@ export * from './map-view-helpers';
 export { gridLayout } from './grid-layout';
 export type { GridTemplateName, GridLayoutOptions, GridLayoutController } from './grid-layout';
 
-// Search / activity / date range / charts / notifications / analytics
-export { openSearchDrawer } from './search-drawer';
-export type { SearchDrawerOptions, SearchDrawerResult, SearchDrawerController } from './search-drawer';
-export { activityFeed } from './activity-feed'; export type { ActivityItem, ActivityFeedOptions, ActivityFeedController } from './activity-feed';
-export { dateRangePicker } from './date-range-picker'; export type { DateRange, DateRangePickerOptions, DateRangePickerController } from './date-range-picker';
-export { bulletChart } from './charts-bullet'; export type { BulletRange, BulletChartOptions } from './charts-bullet';
-export { notificationCenter } from './notification-center'; export type { MnNotification, NotificationCenterOptions, NotificationCenterController } from './notification-center';
-export { waterfallChart } from './charts-waterfall'; export type { WaterfallSegment, WaterfallChartOptions } from './charts-waterfall';
-export { confidenceChart } from './charts-confidence'; export type { ConfidenceChartOptions } from './charts-confidence';
-export { decisionMatrix } from './decision-matrix'; export type { DecisionCriterion, DecisionAlternative, DecisionMatrixOptions, DecisionMatrixController } from './decision-matrix';
-export { renderSourceCards } from './source-card'; export type { SourceCard, SourceCardsOptions, SourceCardsController } from './source-card';
-export { bcgMatrix } from './charts-bcg-matrix';
-export type { BCGItem, BCGMatrixOptions, BCGMatrixController } from './charts-bcg-matrix';
-export { nineBoxMatrix } from './nine-box-matrix';
-export type { NineBoxItem, NineBoxMatrixOptions, NineBoxMatrixController } from './nine-box-matrix';
-export { swotMatrix } from './swot-matrix';
-export type { SwotItem, SwotMatrixOptions, SwotMatrixController, SwotQuadrant } from './swot-matrix';
+// v4.5–v4.9 components — kept in barrel to stay under 250-line limit
+export * from './index-extras';
+
 // Maranello facade (auto-init)
 export { Maranello } from './maranello';
