@@ -1,11 +1,11 @@
-/* Maranello Luce Design v3.3.0 | MPL-2.0 | github.com/Roberdan/MaranelloLuceDesign */
+/* Maranello Luce Design v4.10.2 | MPL-2.0 | github.com/Roberdan/MaranelloLuceDesign */
 import {
   clamp,
   createElement
-} from "./chunk-KU7IG4OX.js";
+} from "./chunk-SLWVRXQS.js";
 import {
   eventBus
-} from "./chunk-HHVWQPGK.js";
+} from "./chunk-3A2VSTXA.js";
 
 // src/ts/controls.ts
 function openDetailPanel(id) {
@@ -551,4 +551,4 @@ export {
   manettino,
   steppedRotary
 };
-//# sourceMappingURL=chunk-LI7BBD4V.js.map
+//# sourceMappingURL=chunk-DCFMQS5B.js.map
