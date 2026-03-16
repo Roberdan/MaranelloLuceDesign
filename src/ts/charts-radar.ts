@@ -26,6 +26,7 @@ export function radar(
   const sz = getCanvasSize(canvas, 200, 200);
   const s = Math.min(sz.width, sz.height);
   const ctx = chartHiDpi(canvas, s, s);
+  if (!ctx) return undefined;
   const cx = s / 2;
   const cy = s / 2;
   const radius = s / 2 - 30;

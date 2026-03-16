@@ -1077,7 +1077,12 @@ function speedometer(canvas, opts) {
   canvas.height = dim * dpr;
   canvas.style.width = dim + "px";
   canvas.style.height = dim + "px";
-  const ctx = canvas.getContext("2d");
+  const _ctx = canvas.getContext("2d");
+  if (!_ctx) {
+    console.warn("[Maranello] speedometer: 2D context unavailable");
+    return;
+  }
+  const ctx = _ctx;
   ctx.scale(dpr, dpr);
   const s = dim / 220;
   const cx = dim / 2, cy = dim / 2, R = dim * 0.4;
@@ -1171,4 +1176,4 @@ export {
   FerrariGauge,
   speedometer
 };
-//# sourceMappingURL=chunk-6LNMM2NK.js.map
+//# sourceMappingURL=chunk-5GGB2XTL.js.map

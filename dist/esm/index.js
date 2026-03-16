@@ -19,15 +19,15 @@ import {
   radar,
   sparkline,
   sparklineInteract
-} from "./chunks/chunk-5FJQBXPP.js";
+} from "./chunks/chunk-NUZGSFDQ.js";
 import {
   FerrariGauge,
   buildGaugePalette,
   speedometer
-} from "./chunks/chunk-6LNMM2NK.js";
+} from "./chunks/chunk-5GGB2XTL.js";
 import {
   gantt
-} from "./chunks/chunk-PGRIGR2U.js";
+} from "./chunks/chunk-RQ7LCVEY.js";
 import {
   closeDetailPanel,
   closeDrawer,
@@ -115,7 +115,12 @@ function networkMessages(container, opts = { nodes: [], connections: [] }) {
   const messages = [];
   const flashes = [];
   const canvas = document.createElement("canvas");
-  const ctx = canvas.getContext("2d");
+  const _ctx = canvas.getContext("2d");
+  if (!_ctx) {
+    console.warn("[Maranello] networkMessages: 2D context unavailable");
+    return null;
+  }
+  const ctx = _ctx;
   let raf = 0;
   let last = performance.now();
   host.innerHTML = "";
@@ -561,7 +566,12 @@ function neuralNodes(container, opts = {}) {
     ...opts
   };
   const canvas = document.createElement("canvas");
-  const ctx = canvas.getContext("2d");
+  const _ctx = canvas.getContext("2d");
+  if (!_ctx) {
+    console.warn("[Maranello] neuralNodes: 2D context unavailable");
+    return null;
+  }
+  const ctx = _ctx;
   let nodes = [], connections = [], particles = [];
   const waves = [], activations = [];
   let activity = 0.55, hovered = -1, raf = 0, frame = 0, last = performance.now();
@@ -8379,7 +8389,9 @@ function bcgMatrix(canvas, opts) {
   const rect = canvas.getBoundingClientRect();
   const w = Math.max(rect.width, 200);
   const h = opts.height ?? 320;
-  const ctx = chartHiDpi(canvas, w, h);
+  const _ctx = chartHiDpi(canvas, w, h);
+  if (!_ctx) return void 0;
+  const ctx = _ctx;
   const pL = MARGIN.left, pT = MARGIN.top;
   const pW = w - MARGIN.left - MARGIN.right;
   const pH = h - MARGIN.top - MARGIN.bottom;
@@ -9480,7 +9492,9 @@ function riskMatrix(canvas, opts) {
   const shouldAnimate = opts.animate !== false;
   const w = canvas.getBoundingClientRect().width || 320;
   const h = opts.height ?? 320;
-  const ctx = chartHiDpi(canvas, w, h);
+  const _ctx = chartHiDpi(canvas, w, h);
+  if (!_ctx) return void 0;
+  const ctx = _ctx;
   const gw = w - ML - MR, gh = h - MT - MB;
   const cellW = gw / 5, cellH = gh / 5;
   function cc(col, row) {
@@ -10337,6 +10351,7 @@ function costTimeline(canvas, opts) {
     const w = Math.max(canvas.getBoundingClientRect().width, 200);
     const h = cfg.height;
     const ctx = chartHiDpi(canvas, w, h);
+    if (!ctx) return;
     const n = cfg.labels.length;
     if (n < 2 || cfg.series.length === 0) return;
     const plotW = w - PAD2.left - PAD2.right;

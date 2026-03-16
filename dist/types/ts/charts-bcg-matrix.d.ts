@@ -20,4 +20,4 @@ export interface BCGMatrixController {
     destroy: () => void;
 }
 /** Render an interactive BCG Matrix on a canvas element. */
-export declare function bcgMatrix(canvas: HTMLCanvasElement, opts: BCGMatrixOptions): BCGMatrixController;
+export declare function bcgMatrix(canvas: HTMLCanvasElement, opts: BCGMatrixOptions): BCGMatrixController | undefined;

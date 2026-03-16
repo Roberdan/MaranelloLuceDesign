@@ -1,0 +1,73 @@
+/* Streaming text component — progressive text rendering with cursor animation */
+
+@layer components {
+  .mn-stream {
+    font-family: var(--font-body);
+    line-height: 1.6;
+    color: var(--mn-text);
+    word-break: break-word;
+    position: relative;
+  }
+
+  .mn-stream__content {
+    display: inline;
+  }
+
+  .mn-stream__bold {
+    font-weight: 600;
+  }
+
+  .mn-stream__code {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    background: color-mix(in srgb, var(--mn-accent) 10%, transparent);
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: var(--radius-sm);
+    vertical-align: baseline;
+  }
+
+  .mn-stream__cite {
+    all: unset;
+    display: inline;
+    font-family: var(--font-mono);
+    font-size: var(--text-micro);
+    color: var(--mn-accent);
+    cursor: pointer;
+    vertical-align: baseline;
+    text-decoration: none;
+    border-radius: var(--radius-sm);
+    padding: 0 2px;
+  }
+
+  .mn-stream__cite:hover {
+    text-decoration: underline;
+  }
+
+  .mn-stream__cite:focus-visible {
+    outline: 2px solid var(--mn-accent);
+    outline-offset: 2px;
+  }
+
+  @keyframes mn-cursor-blink {
+    0%,
+    100% {
+      opacity: 1;
+    }
+
+    50% {
+      opacity: 0;
+    }
+  }
+
+  .mn-stream__cursor {
+    font-weight: 300;
+    color: var(--mn-accent);
+    animation: mn-cursor-blink 1s step-end infinite;
+    user-select: none;
+    margin-inline-start: 1px;
+  }
+
+  .mn-stream--done .mn-stream__cursor {
+    display: none;
+  }
+}

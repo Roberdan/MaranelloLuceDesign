@@ -24,6 +24,7 @@ export function bubble(
   const w = size.width;
   const h = size.height;
   const ctx = chartHiDpi(canvas, w, h);
+  if (!ctx) return undefined;
 
   if (!data || data.length === 0) return undefined;
 

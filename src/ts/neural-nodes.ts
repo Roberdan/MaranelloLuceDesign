@@ -35,7 +35,9 @@ export function neuralNodes(
   };
 
   const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d')!;
+  const _ctx = canvas.getContext('2d');
+  if (!_ctx) { console.warn('[Maranello] neuralNodes: 2D context unavailable'); return null; }
+  const ctx = _ctx;
   let nodes: InternalNode[] = [], connections: InternalConnection[] = [], particles: Particle[] = [];
   const waves: Wave[] = [], activations: Activation[] = [];
   let activity = 0.55, hovered = -1, raf = 0, frame = 0, last = performance.now();

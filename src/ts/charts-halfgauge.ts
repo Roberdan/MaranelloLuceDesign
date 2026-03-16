@@ -9,7 +9,7 @@ import { chartHiDpi, getCanvasSize, applyChartA11y } from './charts-helpers';
 export function halfGauge(
   canvas: HTMLCanvasElement,
   opts?: HalfGaugeOptions,
-): HTMLCanvasElement {
+): HTMLCanvasElement | undefined {
   const o = {
     value: 0,
     min: 0,
@@ -29,7 +29,9 @@ export function halfGauge(
   const size = getCanvasSize(canvas, 200, 120);
   const w = size.width;
   const h = Math.round(w * 0.6);
-  const ctx = chartHiDpi(canvas, w, h);
+  const _ctx = chartHiDpi(canvas, w, h);
+  if (!_ctx) return undefined;
+  const ctx = _ctx;
 
   const cx = w / 2;
   const cy = h - 10;

@@ -153,7 +153,7 @@ function drawSpeedo(
 /** Create an animated speedometer gauge on a canvas element. */
 export function speedometer(
   canvas: HTMLCanvasElement, opts?: SpeedometerOptions,
-): SpeedometerController {
+): SpeedometerController | undefined {
   const options: Record<string, unknown> = {
     value: 0, max: 100, unit: '', size: 'md',
     ticks: [0, 25, 50, 75, 100], minorTicks: 4,
@@ -178,7 +178,9 @@ export function speedometer(
   canvas.height = dim * dpr;
   canvas.style.width = dim + 'px';
   canvas.style.height = dim + 'px';
-  const ctx = canvas.getContext('2d')!;
+  const _ctx = canvas.getContext('2d');
+  if (!_ctx) { console.warn('[Maranello] speedometer: 2D context unavailable'); return; }
+  const ctx = _ctx;
   ctx.scale(dpr, dpr);
   const s = dim / 220;
   const cx = dim / 2, cy = dim / 2, R = dim * 0.4;

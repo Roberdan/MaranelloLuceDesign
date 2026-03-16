@@ -54,13 +54,15 @@ function truncate(s: string, n: number): string {
 
 export function riskMatrix(
   canvas: HTMLCanvasElement, opts: RiskMatrixOptions,
-): RiskMatrixController {
+): RiskMatrixController | undefined {
   let items = [...opts.items];
   let rafId = 0, hovered: RiskItem | null = null, animStart = 0;
   const shouldAnimate = opts.animate !== false;
   const w = canvas.getBoundingClientRect().width || 320;
   const h = opts.height ?? 320;
-  const ctx = chartHiDpi(canvas, w, h);
+  const _ctx = chartHiDpi(canvas, w, h);
+  if (!_ctx) return undefined;
+  const ctx = _ctx;
   const gw = w - ML - MR, gh = h - MT - MB;
   const cellW = gw / 5, cellH = gh / 5;
 

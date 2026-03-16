@@ -1,0 +1,130 @@
+/* Maranello Luce Design - Activity Feed Timeline */
+
+@layer patterns {
+  .mn-feed {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .mn-feed__item {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    gap: 0.75rem;
+    padding: 0.75rem 0 0.75rem 1.5rem;
+    transition: opacity var(--duration-md, 200ms) var(--ease-out, ease-out),
+                transform var(--duration-md, 200ms) var(--ease-out, ease-out);
+  }
+
+  /* Vertical connecting line on the left */
+  .mn-feed__item::before {
+    content: '';
+    position: absolute;
+    left: 0.3125rem;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: var(--mn-border);
+  }
+
+  /* Hide line above first item */
+  .mn-feed__item:first-child::before {
+    top: 50%;
+  }
+
+  /* Hide line below last item */
+  .mn-feed__item:last-child::before {
+    bottom: 50%;
+  }
+
+  /* Colored indicator dot */
+  .mn-feed__indicator {
+    position: absolute;
+    left: 0;
+    top: 0.9375rem;
+    width: 0.625rem;
+    height: 0.625rem;
+    border-radius: 50%;
+    background: var(--mn-border);
+    z-index: 1;
+    flex-shrink: 0;
+  }
+
+  /* Type-based indicator colors */
+  .mn-feed__item--default .mn-feed__indicator {
+    background: var(--mn-border);
+  }
+
+  .mn-feed__item--success .mn-feed__indicator {
+    background: var(--signal-ok);
+  }
+
+  .mn-feed__item--warning .mn-feed__indicator {
+    background: var(--signal-warning);
+  }
+
+  .mn-feed__item--danger .mn-feed__indicator {
+    background: var(--signal-danger);
+  }
+
+  .mn-feed__item--info .mn-feed__indicator {
+    background: var(--mn-accent);
+  }
+
+  /* Optional icon */
+  .mn-feed__icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--mn-text-muted);
+  }
+
+  .mn-feed__icon svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  /* Content area */
+  .mn-feed__content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .mn-feed__title {
+    font-weight: 500;
+    font-size: 0.875rem;
+    color: var(--mn-text);
+    line-height: 1.4;
+  }
+
+  .mn-feed__body {
+    font-size: 0.8125rem;
+    color: var(--mn-text-muted);
+    line-height: 1.4;
+  }
+
+  .mn-feed__meta {
+    font-size: 0.75rem;
+    color: var(--mn-text-muted);
+    line-height: 1.4;
+  }
+
+  /* Slide-in animation state */
+  .mn-feed__item--entering {
+    opacity: 0;
+    transform: translateY(-0.25rem);
+  }
+
+  /* Avorio theme: ensure default dot is visible on light background */
+  body.mn-avorio .mn-feed__item--default .mn-feed__indicator {
+    background: var(--grigio-alluminio);
+  }
+}

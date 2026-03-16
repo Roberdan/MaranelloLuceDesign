@@ -49,7 +49,9 @@ export function networkMessages(
   const messages: ActiveMessage[] = [];
   const flashes: Flash[] = [];
   const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d')!;
+  const _ctx = canvas.getContext('2d');
+  if (!_ctx) { console.warn('[Maranello] networkMessages: 2D context unavailable'); return null; }
+  const ctx = _ctx;
   let raf = 0;
   let last = performance.now();
   host.innerHTML = '';

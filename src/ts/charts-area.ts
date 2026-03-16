@@ -26,6 +26,7 @@ export function areaChart(
   const w = size.width;
   const h = size.height;
   const ctx = chartHiDpi(canvas, w, h);
+  if (!ctx) return undefined;
 
   if (!datasets || datasets.length === 0) return undefined;
 

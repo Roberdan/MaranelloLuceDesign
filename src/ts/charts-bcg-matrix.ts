@@ -69,7 +69,7 @@ function trunc(s: string, n: number): string {
 /** Render an interactive BCG Matrix on a canvas element. */
 export function bcgMatrix(
   canvas: HTMLCanvasElement, opts: BCGMatrixOptions,
-): BCGMatrixController {
+): BCGMatrixController | undefined {
   const sT = opts.shareThreshold ?? 0.5;
   const gT = opts.growthThreshold ?? 10;
   const doAnim = opts.animate !== false;
@@ -82,7 +82,9 @@ export function bcgMatrix(
   const rect = canvas.getBoundingClientRect();
   const w = Math.max(rect.width, 200);
   const h = opts.height ?? 320;
-  const ctx = chartHiDpi(canvas, w, h);
+  const _ctx = chartHiDpi(canvas, w, h);
+  if (!_ctx) return undefined;
+  const ctx = _ctx;
   const pL = MARGIN.left, pT = MARGIN.top;
   const pW = w - MARGIN.left - MARGIN.right;
   const pH = h - MARGIN.top - MARGIN.bottom;

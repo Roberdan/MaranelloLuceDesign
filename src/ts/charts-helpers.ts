@@ -18,17 +18,18 @@ export function buildSeries(): string[] {
 
 export const SERIES = buildSeries();
 
-/** Set up a hi-DPI canvas and return its 2D context. */
+/** Set up a hi-DPI canvas and return its 2D context, or null if unavailable. */
 export function chartHiDpi(
   canvas: HTMLCanvasElement, w: number, h: number,
-): CanvasRenderingContext2D {
+): CanvasRenderingContext2D | null {
   const cw = Math.max(w, 20);
   const ch = Math.max(h, 20);
   canvas.width = cw * dpr;
   canvas.height = ch * dpr;
   canvas.style.width = cw + 'px';
   canvas.style.height = ch + 'px';
-  const ctx = canvas.getContext('2d')!;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) { console.warn('[Maranello] chartHiDpi: 2D context unavailable'); return null; }
   ctx.scale(dpr, dpr);
   return ctx;
 }

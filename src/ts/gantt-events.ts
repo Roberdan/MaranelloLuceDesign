@@ -137,7 +137,11 @@ export function attachGanttEvents(s: GanttState): void {
     else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); const r = rows.find((r) => (r.task as Record<string, unknown>).id === s.selected); if (r && r.type === 'parent' && r.hasChildren) { const exp = s.expanded as Record<string, boolean>; const sid = s.selected as string; if (exp[sid]) delete exp[sid]; else exp[sid] = true; s.rows = buildRows(s.tasks as unknown[], exp); render(); } }
     else if (e.key === 'Escape') { s.selected = null; render(); }
   });
-  if (window.ResizeObserver) new ResizeObserver(() => render()).observe(s.wrap as HTMLElement);
+  if (window.ResizeObserver) {
+    const ro = new ResizeObserver(() => render());
+    ro.observe(s.wrap as HTMLElement);
+    s.resizeObs = ro;
+  }
   const themeObs = new MutationObserver(() => { s.pal = buildPalette(); s.cPal = buildChildPalette(); render(); });
   themeObs.observe(document.body, { attributes: true, attributeFilter: ['class'] });
   s.themeObs = themeObs;

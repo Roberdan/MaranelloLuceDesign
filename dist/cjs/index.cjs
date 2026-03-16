@@ -725,7 +725,12 @@ function networkMessages(container, opts = { nodes: [], connections: [] }) {
   const messages = [];
   const flashes = [];
   const canvas = document.createElement("canvas");
-  const ctx = canvas.getContext("2d");
+  const _ctx = canvas.getContext("2d");
+  if (!_ctx) {
+    console.warn("[Maranello] networkMessages: 2D context unavailable");
+    return null;
+  }
+  const ctx = _ctx;
   let raf = 0;
   let last = performance.now();
   host.innerHTML = "";
@@ -1171,7 +1176,12 @@ function neuralNodes(container, opts = {}) {
     ...opts
   };
   const canvas = document.createElement("canvas");
-  const ctx = canvas.getContext("2d");
+  const _ctx = canvas.getContext("2d");
+  if (!_ctx) {
+    console.warn("[Maranello] neuralNodes: 2D context unavailable");
+    return null;
+  }
+  const ctx = _ctx;
   let nodes = [], connections = [], particles = [];
   const waves = [], activations = [];
   let activity = 0.55, hovered = -1, raf = 0, frame = 0, last = performance.now();
@@ -2997,6 +3007,10 @@ function chartHiDpi(canvas, w, h) {
   canvas.style.width = cw + "px";
   canvas.style.height = ch + "px";
   const ctx = canvas.getContext("2d");
+  if (!ctx) {
+    console.warn("[Maranello] chartHiDpi: 2D context unavailable");
+    return null;
+  }
   ctx.scale(dpr, dpr);
   return ctx;
 }
@@ -3078,6 +3092,7 @@ function sparkline(canvas, data, opts) {
   const w = size.width;
   const h = size.height;
   const ctx = chartHiDpi(canvas, w, h);
+  if (!ctx) return void 0;
   if (!data || data.length < 2) return void 0;
   const mn = Math.min(...data);
   const mx = Math.max(...data);
@@ -3130,7 +3145,9 @@ function donut(canvas, segments, opts) {
   };
   const size = getCanvasSize(canvas, 140, 140);
   const s = Math.min(size.width, size.height);
-  const ctx = chartHiDpi(canvas, s, s);
+  const _ctx = chartHiDpi(canvas, s, s);
+  if (!_ctx) return void 0;
+  const ctx = _ctx;
   const cx = s / 2;
   const cy = s / 2;
   const outer = s / 2 - 4;
@@ -3188,7 +3205,9 @@ function halfGauge(canvas, opts) {
   const size = getCanvasSize(canvas, 200, 120);
   const w = size.width;
   const h = Math.round(w * 0.6);
-  const ctx = chartHiDpi(canvas, w, h);
+  const _ctx = chartHiDpi(canvas, w, h);
+  if (!_ctx) return void 0;
+  const ctx = _ctx;
   const cx = w / 2;
   const cy = h - 10;
   const radius = Math.min(w / 2, h) - 16;
@@ -3253,6 +3272,7 @@ function barChart(canvas, data, opts) {
   const w = size.width;
   const h = size.height;
   const ctx = chartHiDpi(canvas, w, h);
+  if (!ctx) return void 0;
   if (!data || data.length === 0) return void 0;
   const maxVal = o.maxY ?? Math.max(...data.map((d) => d.value)) * 1.15;
   const pad2 = { top: 8, bottom: o.showLabels ? 22 : 8, left: 8, right: 8 };
@@ -3316,6 +3336,7 @@ function liveGraph(canvas, data, opts) {
   const w = size.width;
   const h = size.height;
   const ctx = chartHiDpi(canvas, w, h);
+  if (!ctx) return void 0;
   if (!data || data.length < 2) return void 0;
   const maxVal = o.maxY ?? Math.max(...data) * 1.1;
   const pad2 = { top: 4, right: 4, bottom: 2, left: 2 };
@@ -3394,6 +3415,7 @@ function areaChart(canvas, datasets, opts) {
   const w = size.width;
   const h = size.height;
   const ctx = chartHiDpi(canvas, w, h);
+  if (!ctx) return void 0;
   if (!datasets || datasets.length === 0) return void 0;
   let allVals = [];
   datasets.forEach((ds) => {
@@ -3590,6 +3612,7 @@ function radar(canvas, data, opts) {
   const sz = getCanvasSize(canvas, 200, 200);
   const s = Math.min(sz.width, sz.height);
   const ctx = chartHiDpi(canvas, s, s);
+  if (!ctx) return void 0;
   const cx = s / 2;
   const cy = s / 2;
   const radius = s / 2 - 30;
@@ -3667,6 +3690,7 @@ function bubble(canvas, data, opts) {
   const w = size.width;
   const h = size.height;
   const ctx = chartHiDpi(canvas, w, h);
+  if (!ctx) return void 0;
   if (!data || data.length === 0) return void 0;
   const pad2 = { top: 12, bottom: 12, left: 12, right: 12 };
   const maxX = Math.max(...data.map((d) => d.x)) * 1.1;
@@ -3997,6 +4021,7 @@ function drawCrosshair(canvas, x, meta, series) {
   overlay.width = canvas.width;
   overlay.height = canvas.height;
   const ctx = overlay.getContext("2d");
+  if (!ctx) return;
   ctx.clearRect(0, 0, overlay.width, overlay.height);
   if (x < 0) return;
   ctx.save();
@@ -4160,6 +4185,7 @@ function sparklineInteract(canvas, data, opts) {
     overlay.width = canvas.width;
     overlay.height = canvas.height;
     const ctx = overlay.getContext("2d");
+    if (!ctx) return;
     ctx.clearRect(0, 0, overlay.width, overlay.height);
     ctx.save();
     ctx.scale(DPR, DPR);
@@ -4186,7 +4212,7 @@ function sparklineInteract(canvas, data, opts) {
   canvas.addEventListener("mouseleave", () => {
     tip.classList.remove("mn-chart-tooltip--visible");
     const overlay = canvas._mnSparkOverlay;
-    if (overlay) overlay.getContext("2d").clearRect(0, 0, overlay.width, overlay.height);
+    if (overlay) overlay.getContext("2d")?.clearRect(0, 0, overlay.width, overlay.height);
   });
 }
 
@@ -5319,7 +5345,12 @@ function speedometer(canvas, opts) {
   canvas.height = dim * dpr2;
   canvas.style.width = dim + "px";
   canvas.style.height = dim + "px";
-  const ctx = canvas.getContext("2d");
+  const _ctx = canvas.getContext("2d");
+  if (!_ctx) {
+    console.warn("[Maranello] speedometer: 2D context unavailable");
+    return;
+  }
+  const ctx = _ctx;
   ctx.scale(dpr2, dpr2);
   const s = dim / 220;
   const cx = dim / 2, cy = dim / 2, R = dim * 0.4;
@@ -6238,7 +6269,11 @@ function attachGanttEvents(s) {
       render5();
     }
   });
-  if (window.ResizeObserver) new ResizeObserver(() => render5()).observe(s.wrap);
+  if (window.ResizeObserver) {
+    const ro = new ResizeObserver(() => render5());
+    ro.observe(s.wrap);
+    s.resizeObs = ro;
+  }
   const themeObs = new MutationObserver(() => {
     s.pal = buildPalette();
     s.cPal = buildChildPalette();
@@ -6302,6 +6337,7 @@ function gantt(container, tasks, userOpts) {
     onDocMove: null,
     onDocUp: null,
     themeObs: null,
+    resizeObs: null,
     _buildRows: (t, exp) => buildRows(t, exp)
   };
   container.innerHTML = "";
@@ -6364,6 +6400,7 @@ function gantt(container, tasks, userOpts) {
     canvas.style.width = vw + "px";
     canvas.style.height = vh + "px";
     const ctx = canvas.getContext("2d");
+    if (!ctx) return;
     ctx.scale(DPR2, DPR2);
     const lw = o.labelWidth, hh = o.headerHeight;
     const tw = s.timelineW();
@@ -6465,6 +6502,7 @@ function gantt(container, tasks, userOpts) {
       document.removeEventListener("mousemove", s.onDocMove);
       document.removeEventListener("mouseup", s.onDocUp);
       if (s.themeObs) s.themeObs.disconnect();
+      if (s.resizeObs) s.resizeObs.disconnect();
       container.innerHTML = "";
       if (tip.parentNode) tip.parentNode.removeChild(tip);
     }
@@ -13412,7 +13450,9 @@ function bcgMatrix(canvas, opts) {
   const rect = canvas.getBoundingClientRect();
   const w = Math.max(rect.width, 200);
   const h = opts.height ?? 320;
-  const ctx = chartHiDpi(canvas, w, h);
+  const _ctx = chartHiDpi(canvas, w, h);
+  if (!_ctx) return void 0;
+  const ctx = _ctx;
   const pL = MARGIN.left, pT = MARGIN.top;
   const pW = w - MARGIN.left - MARGIN.right;
   const pH = h - MARGIN.top - MARGIN.bottom;
@@ -14513,7 +14553,9 @@ function riskMatrix(canvas, opts) {
   const shouldAnimate = opts.animate !== false;
   const w = canvas.getBoundingClientRect().width || 320;
   const h = opts.height ?? 320;
-  const ctx = chartHiDpi(canvas, w, h);
+  const _ctx = chartHiDpi(canvas, w, h);
+  if (!_ctx) return void 0;
+  const ctx = _ctx;
   const gw = w - ML - MR, gh = h - MT - MB;
   const cellW = gw / 5, cellH = gh / 5;
   function cc(col, row) {
@@ -15370,6 +15412,7 @@ function costTimeline(canvas, opts) {
     const w = Math.max(canvas.getBoundingClientRect().width, 200);
     const h = cfg.height;
     const ctx = chartHiDpi(canvas, w, h);
+    if (!ctx) return;
     const n = cfg.labels.length;
     if (n < 2 || cfg.series.length === 0) return;
     const plotW = w - PAD2.left - PAD2.right;

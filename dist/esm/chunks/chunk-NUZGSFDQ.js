@@ -32,6 +32,10 @@ function chartHiDpi(canvas, w, h) {
   canvas.style.width = cw + "px";
   canvas.style.height = ch + "px";
   const ctx = canvas.getContext("2d");
+  if (!ctx) {
+    console.warn("[Maranello] chartHiDpi: 2D context unavailable");
+    return null;
+  }
   ctx.scale(dpr, dpr);
   return ctx;
 }
@@ -113,6 +117,7 @@ function sparkline(canvas, data, opts) {
   const w = size.width;
   const h = size.height;
   const ctx = chartHiDpi(canvas, w, h);
+  if (!ctx) return void 0;
   if (!data || data.length < 2) return void 0;
   const mn = Math.min(...data);
   const mx = Math.max(...data);
@@ -165,7 +170,9 @@ function donut(canvas, segments, opts) {
   };
   const size = getCanvasSize(canvas, 140, 140);
   const s = Math.min(size.width, size.height);
-  const ctx = chartHiDpi(canvas, s, s);
+  const _ctx = chartHiDpi(canvas, s, s);
+  if (!_ctx) return void 0;
+  const ctx = _ctx;
   const cx = s / 2;
   const cy = s / 2;
   const outer = s / 2 - 4;
@@ -223,7 +230,9 @@ function halfGauge(canvas, opts) {
   const size = getCanvasSize(canvas, 200, 120);
   const w = size.width;
   const h = Math.round(w * 0.6);
-  const ctx = chartHiDpi(canvas, w, h);
+  const _ctx = chartHiDpi(canvas, w, h);
+  if (!_ctx) return void 0;
+  const ctx = _ctx;
   const cx = w / 2;
   const cy = h - 10;
   const radius = Math.min(w / 2, h) - 16;
@@ -288,6 +297,7 @@ function barChart(canvas, data, opts) {
   const w = size.width;
   const h = size.height;
   const ctx = chartHiDpi(canvas, w, h);
+  if (!ctx) return void 0;
   if (!data || data.length === 0) return void 0;
   const maxVal = o.maxY ?? Math.max(...data.map((d) => d.value)) * 1.15;
   const pad = { top: 8, bottom: o.showLabels ? 22 : 8, left: 8, right: 8 };
@@ -351,6 +361,7 @@ function liveGraph(canvas, data, opts) {
   const w = size.width;
   const h = size.height;
   const ctx = chartHiDpi(canvas, w, h);
+  if (!ctx) return void 0;
   if (!data || data.length < 2) return void 0;
   const maxVal = o.maxY ?? Math.max(...data) * 1.1;
   const pad = { top: 4, right: 4, bottom: 2, left: 2 };
@@ -429,6 +440,7 @@ function areaChart(canvas, datasets, opts) {
   const w = size.width;
   const h = size.height;
   const ctx = chartHiDpi(canvas, w, h);
+  if (!ctx) return void 0;
   if (!datasets || datasets.length === 0) return void 0;
   let allVals = [];
   datasets.forEach((ds) => {
@@ -625,6 +637,7 @@ function radar(canvas, data, opts) {
   const sz = getCanvasSize(canvas, 200, 200);
   const s = Math.min(sz.width, sz.height);
   const ctx = chartHiDpi(canvas, s, s);
+  if (!ctx) return void 0;
   const cx = s / 2;
   const cy = s / 2;
   const radius = s / 2 - 30;
@@ -702,6 +715,7 @@ function bubble(canvas, data, opts) {
   const w = size.width;
   const h = size.height;
   const ctx = chartHiDpi(canvas, w, h);
+  if (!ctx) return void 0;
   if (!data || data.length === 0) return void 0;
   const pad = { top: 12, bottom: 12, left: 12, right: 12 };
   const maxX = Math.max(...data.map((d) => d.x)) * 1.1;
@@ -1032,6 +1046,7 @@ function drawCrosshair(canvas, x, meta, series) {
   overlay.width = canvas.width;
   overlay.height = canvas.height;
   const ctx = overlay.getContext("2d");
+  if (!ctx) return;
   ctx.clearRect(0, 0, overlay.width, overlay.height);
   if (x < 0) return;
   ctx.save();
@@ -1195,6 +1210,7 @@ function sparklineInteract(canvas, data, opts) {
     overlay.width = canvas.width;
     overlay.height = canvas.height;
     const ctx = overlay.getContext("2d");
+    if (!ctx) return;
     ctx.clearRect(0, 0, overlay.width, overlay.height);
     ctx.save();
     ctx.scale(DPR, DPR);
@@ -1221,7 +1237,7 @@ function sparklineInteract(canvas, data, opts) {
   canvas.addEventListener("mouseleave", () => {
     tip.classList.remove("mn-chart-tooltip--visible");
     const overlay = canvas._mnSparkOverlay;
-    if (overlay) overlay.getContext("2d").clearRect(0, 0, overlay.width, overlay.height);
+    if (overlay) overlay.getContext("2d")?.clearRect(0, 0, overlay.width, overlay.height);
   });
 }
 
@@ -1246,4 +1262,4 @@ export {
   chartInteract,
   sparklineInteract
 };
-//# sourceMappingURL=chunk-5FJQBXPP.js.map
+//# sourceMappingURL=chunk-NUZGSFDQ.js.map

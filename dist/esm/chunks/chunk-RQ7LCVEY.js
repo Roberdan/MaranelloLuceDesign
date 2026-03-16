@@ -835,7 +835,11 @@ function attachGanttEvents(s) {
       render();
     }
   });
-  if (window.ResizeObserver) new ResizeObserver(() => render()).observe(s.wrap);
+  if (window.ResizeObserver) {
+    const ro = new ResizeObserver(() => render());
+    ro.observe(s.wrap);
+    s.resizeObs = ro;
+  }
   const themeObs = new MutationObserver(() => {
     s.pal = buildPalette();
     s.cPal = buildChildPalette();
@@ -899,6 +903,7 @@ function gantt(container, tasks, userOpts) {
     onDocMove: null,
     onDocUp: null,
     themeObs: null,
+    resizeObs: null,
     _buildRows: (t, exp) => buildRows(t, exp)
   };
   container.innerHTML = "";
@@ -961,6 +966,7 @@ function gantt(container, tasks, userOpts) {
     canvas.style.width = vw + "px";
     canvas.style.height = vh + "px";
     const ctx = canvas.getContext("2d");
+    if (!ctx) return;
     ctx.scale(DPR, DPR);
     const lw = o.labelWidth, hh = o.headerHeight;
     const tw = s.timelineW();
@@ -1062,6 +1068,7 @@ function gantt(container, tasks, userOpts) {
       document.removeEventListener("mousemove", s.onDocMove);
       document.removeEventListener("mouseup", s.onDocUp);
       if (s.themeObs) s.themeObs.disconnect();
+      if (s.resizeObs) s.resizeObs.disconnect();
       container.innerHTML = "";
       if (tip.parentNode) tip.parentNode.removeChild(tip);
     }
@@ -1071,4 +1078,4 @@ function gantt(container, tasks, userOpts) {
 export {
   gantt
 };
-//# sourceMappingURL=chunk-PGRIGR2U.js.map
+//# sourceMappingURL=chunk-RQ7LCVEY.js.map

@@ -35,7 +35,7 @@ export function gantt(
     ppm: () => (o.basePxPerMonth as number) / (s.zoom as number),
     timelineW: () => (range.months.length * (s.ppm as () => number)()),
     dateToX: (d: Date) => daysBetween(range.min, d) / daysBetween(range.min, range.max) * (s.timelineW as () => number)(),
-    render: null, onDocMove: null, onDocUp: null, themeObs: null,
+    render: null, onDocMove: null, onDocUp: null, themeObs: null, resizeObs: null,
     _buildRows: (t: unknown[], exp: Record<string, boolean>) => buildRows(t, exp),
   };
 
@@ -94,7 +94,8 @@ export function gantt(
     const vw = Math.max(cr.width, 400), vh = Math.max(cr.height, 200);
     canvas.width = vw * DPR; canvas.height = vh * DPR;
     canvas.style.width = vw + 'px'; canvas.style.height = vh + 'px';
-    const ctx = canvas.getContext('2d')!;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
     ctx.scale(DPR, DPR);
     const lw = o.labelWidth as number, hh = o.headerHeight as number;
     const tw = (s.timelineW as () => number)();
@@ -146,6 +147,6 @@ export function gantt(
     select: (id) => { s.selected = id; render(); },
     scrollToToday: () => { const vw = wrap.getBoundingClientRect().width || 800; s.scrollX = (s.dateToX as (d: Date) => number)(today) - (vw - (o.labelWidth as number)) / 2; render(); },
     render,
-    destroy: () => { document.removeEventListener('mousemove', s.onDocMove as EventListener); document.removeEventListener('mouseup', s.onDocUp as EventListener); if (s.themeObs) (s.themeObs as MutationObserver).disconnect(); container.innerHTML = ''; if (tip.parentNode) tip.parentNode.removeChild(tip); },
+    destroy: () => { document.removeEventListener('mousemove', s.onDocMove as EventListener); document.removeEventListener('mouseup', s.onDocUp as EventListener); if (s.themeObs) (s.themeObs as MutationObserver).disconnect(); if (s.resizeObs) (s.resizeObs as ResizeObserver).disconnect(); container.innerHTML = ''; if (tip.parentNode) tip.parentNode.removeChild(tip); },
   };
 }

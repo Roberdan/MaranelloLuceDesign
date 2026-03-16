@@ -1,8 +1,8 @@
 /** Build the default chart color series from CSS custom properties. */
 export declare function buildSeries(): string[];
 export declare const SERIES: string[];
-/** Set up a hi-DPI canvas and return its 2D context. */
-export declare function chartHiDpi(canvas: HTMLCanvasElement, w: number, h: number): CanvasRenderingContext2D;
+/** Set up a hi-DPI canvas and return its 2D context, or null if unavailable. */
+export declare function chartHiDpi(canvas: HTMLCanvasElement, w: number, h: number): CanvasRenderingContext2D | null;
 /** Get usable dimensions from canvas parent or data attributes. */
 export declare function getCanvasSize(canvas: HTMLCanvasElement, defaultW?: number, defaultH?: number): {
     width: number;

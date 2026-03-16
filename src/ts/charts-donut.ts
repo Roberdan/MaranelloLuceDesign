@@ -9,7 +9,7 @@ export function donut(
   canvas: HTMLCanvasElement,
   segments: DonutSegment[],
   opts?: DonutOptions,
-): HTMLCanvasElement {
+): HTMLCanvasElement | undefined {
   const o = {
     thickness: 0.25,
     gap: 0.02,
@@ -21,7 +21,9 @@ export function donut(
 
   const size = getCanvasSize(canvas, 140, 140);
   const s = Math.min(size.width, size.height);
-  const ctx = chartHiDpi(canvas, s, s);
+  const _ctx = chartHiDpi(canvas, s, s);
+  if (!_ctx) return undefined;
+  const ctx = _ctx;
   const cx = s / 2;
   const cy = s / 2;
   const outer = s / 2 - 4;

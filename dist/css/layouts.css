@@ -39,3 +39,9 @@
 @import "./layouts-widget.css";
 @import "./layouts-grid-templates.css";
 @import "./layouts-search-drawer.css";
+@import "./layouts-notification-center.css";
+@import "./layouts-decision-matrix.css";
+@import "./layouts-nine-box-matrix.css";
+@import "./layouts-approval-chain.css";
+@import "./layouts-agent-trace.css";
+@import "./layouts-audit-log.css";

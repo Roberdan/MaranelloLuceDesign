@@ -24,6 +24,7 @@ export function sparkline(
   const w = size.width;
   const h = size.height;
   const ctx = chartHiDpi(canvas, w, h);
+  if (!ctx) return undefined;
 
   if (!data || data.length < 2) return undefined;
 

@@ -68,6 +68,7 @@ export function costTimeline(
     const w = Math.max(canvas.getBoundingClientRect().width, 200);
     const h = cfg.height;
     const ctx = chartHiDpi(canvas, w, h);
+    if (!ctx) return;
     const n = cfg.labels.length;
     if (n < 2 || cfg.series.length === 0) return;
 

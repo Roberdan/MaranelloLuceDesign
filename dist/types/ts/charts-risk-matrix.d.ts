@@ -17,4 +17,4 @@ export interface RiskMatrixController {
     update: (items: RiskItem[]) => void;
     destroy: () => void;
 }
-export declare function riskMatrix(canvas: HTMLCanvasElement, opts: RiskMatrixOptions): RiskMatrixController;
+export declare function riskMatrix(canvas: HTMLCanvasElement, opts: RiskMatrixOptions): RiskMatrixController | undefined;

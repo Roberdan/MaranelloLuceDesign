@@ -69,7 +69,8 @@ function drawCrosshair(canvas: HTMLCanvasElement, x: number, meta: ChartMeta, se
   overlay.style.left = (rect.left - parentRect.left) + 'px'; overlay.style.top = (rect.top - parentRect.top) + 'px';
   overlay.style.width = rect.width + 'px'; overlay.style.height = rect.height + 'px';
   overlay.width = canvas.width; overlay.height = canvas.height;
-  const ctx = overlay.getContext('2d')!;
+  const ctx = overlay.getContext('2d');
+  if (!ctx) return;
   ctx.clearRect(0, 0, overlay.width, overlay.height);
   if (x < 0) return;
   ctx.save(); ctx.scale(DPR, DPR);
@@ -200,7 +201,8 @@ export function sparklineInteract(
     overlay.style.left = (cRect.left - pRect.left) + 'px'; overlay.style.top = (cRect.top - pRect.top) + 'px';
     overlay.style.width = cRect.width + 'px'; overlay.style.height = cRect.height + 'px';
     overlay.width = canvas.width; overlay.height = canvas.height;
-    const ctx = overlay.getContext('2d')!;
+    const ctx = overlay.getContext('2d');
+    if (!ctx) return;
     ctx.clearRect(0, 0, overlay.width, overlay.height); ctx.save(); ctx.scale(DPR, DPR);
     const color = (opts!.color as string) || cssVar('--chart-default', '#FFC72C');
     const cr = parseInt(color.slice(1, 3), 16), cg = parseInt(color.slice(3, 5), 16), cb = parseInt(color.slice(5, 7), 16);
@@ -215,6 +217,6 @@ export function sparklineInteract(
   canvas.addEventListener('mouseleave', () => {
     tip.classList.remove('mn-chart-tooltip--visible');
     const overlay = (canvas as unknown as { _mnSparkOverlay?: HTMLCanvasElement })._mnSparkOverlay;
-    if (overlay) overlay.getContext('2d')!.clearRect(0, 0, overlay.width, overlay.height);
+    if (overlay) overlay.getContext('2d')?.clearRect(0, 0, overlay.width, overlay.height);
   });
 }
