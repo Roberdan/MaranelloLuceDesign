@@ -7475,99 +7475,114 @@ function dateRangePicker(el4, opts) {
 }
 
 // src/ts/charts-bullet.ts
-function resolveCssVar(varName) {
-  const raw = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
-  return raw || "#888";
+function resolve(varName) {
+  return getComputedStyle(document.documentElement).getPropertyValue(varName).trim() || "#888";
 }
-function resolveColor(color) {
+function parseColor(color) {
   if (color.startsWith("var(")) {
-    const varName = color.slice(4, color.indexOf(")")).split(",")[0].trim();
-    return resolveCssVar(varName);
+    const name = color.slice(4, color.indexOf(")")).split(",")[0].trim();
+    return resolve(name);
   }
   return color;
 }
-function easeOutCubic2(t) {
-  return 1 - Math.pow(1 - t, 3);
+function hexToRgb(hex) {
+  const clean = hex.trim().replace("#", "");
+  if (clean.length !== 6 && clean.length !== 3) return null;
+  const full = clean.length === 3 ? clean.split("").map((c) => c + c).join("") : clean;
+  const n = parseInt(full, 16);
+  return [n >> 16 & 255, n >> 8 & 255, n & 255];
 }
-function defaultRanges(max) {
-  return [
-    { max: max * 0.33, color: "var(--signal-danger)" },
-    { max: max * 0.67, color: "var(--signal-warning)" },
-    { max, color: "var(--signal-ok)" }
-  ];
+function colorAt(hex, alpha2) {
+  const rgb = hexToRgb(hex);
+  if (!rgb) return `rgba(128,128,128,${alpha2})`;
+  return `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${alpha2})`;
+}
+function easeOut(t) {
+  return 1 - (1 - t) ** 3;
 }
 function bulletChart(canvas, opts) {
   const dpr = window.devicePixelRatio || 1;
-  const barH = opts.height ?? 40;
-  const hasLabel = Boolean(opts.label);
-  const labelH = hasLabel ? 20 : 0;
-  const totalH = barH + labelH;
-  canvas.width = canvas.offsetWidth * dpr;
-  canvas.height = totalH * dpr;
-  canvas.style.width = `${canvas.offsetWidth}px`;
+  const trackH = opts.height ?? 32;
+  const labelH = opts.label ? 18 : 0;
+  const totalH = trackH + labelH + 4;
+  const logicalW = canvas.parentElement ? canvas.parentElement.getBoundingClientRect().width - 4 : canvas.offsetWidth || 400;
+  canvas.width = Math.round(logicalW * dpr);
+  canvas.height = Math.round(totalH * dpr);
+  canvas.style.width = `${logicalW}px`;
   canvas.style.height = `${totalH}px`;
+  canvas.setAttribute("role", "img");
+  const pct2 = opts.max > 0 ? Math.round(opts.value / opts.max * 100) : 0;
+  canvas.setAttribute(
+    "aria-label",
+    `${opts.label ?? "Bullet chart"}: value ${opts.value}${opts.unit ?? ""}, target ${opts.target}${opts.unit ?? ""} (${pct2}% of max)`
+  );
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
   ctx.scale(dpr, dpr);
-  const w = canvas.offsetWidth;
-  const ranges = opts.ranges ?? defaultRanges(opts.max);
-  const animate = opts.animate !== false;
-  const duration = 600;
-  const textColor = resolveCssVar("--mn-text");
-  const mutedColor = resolveCssVar("--mn-text-muted");
-  const accentColor = resolveCssVar("--mn-accent");
-  const resolvedRanges = ranges.map((r) => ({
-    max: r.max,
-    color: r.color ? resolveColor(r.color) : "#888"
-  }));
+  const rightPad = 52;
+  const trackW = logicalW - rightPad;
+  const trackY = labelH + 2;
+  const borderHex = parseColor("var(--mn-border)");
+  const accentHex = parseColor("var(--mn-accent)");
+  const textHex = parseColor("var(--mn-text)");
+  const mutedHex = parseColor("var(--mn-text-muted)");
+  const bands = opts.ranges ?? [
+    { max: opts.max * 0.4, color: colorAt(borderHex, 0.45) },
+    { max: opts.max * 0.7, color: colorAt(borderHex, 0.28) },
+    { max: opts.max, color: colorAt(borderHex, 0.14) }
+  ];
   function draw(currentValue) {
     if (!ctx) return;
-    ctx.clearRect(0, 0, w, totalH);
-    if (hasLabel && opts.label) {
-      ctx.font = "11px system-ui, sans-serif";
-      ctx.fillStyle = mutedColor;
+    ctx.clearRect(0, 0, logicalW, totalH);
+    if (opts.label) {
+      ctx.font = `11px system-ui,sans-serif`;
+      ctx.fillStyle = mutedHex;
       ctx.textBaseline = "top";
-      ctx.fillText(opts.label, 0, 2);
+      ctx.textAlign = "left";
+      ctx.fillText(opts.label, 0, 0);
     }
-    const barTop = labelH;
-    const barW = w - 40;
-    let prevX = 0;
-    for (const r of resolvedRanges) {
-      const x = r.max / opts.max * barW;
-      ctx.globalAlpha = 0.15;
-      ctx.fillStyle = r.color;
-      ctx.fillRect(prevX, barTop, x - prevX, barH);
-      prevX = x;
+    const sortedBands = [...bands].sort((a, b) => b.max - a.max);
+    for (const band of sortedBands) {
+      const bw = Math.min(band.max / opts.max * trackW, trackW);
+      const color = typeof band.color === "string" && band.color.startsWith("rgba") ? band.color : colorAt(parseColor(band.color ?? "var(--mn-border)"), 0.3);
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.roundRect(0, trackY, bw, trackH, 3);
+      ctx.fill();
     }
-    ctx.globalAlpha = 1;
-    const valBarH = barH * 0.5;
-    const valBarTop = barTop + (barH - valBarH) / 2;
-    const valW = Math.min(currentValue / opts.max * barW, barW);
-    ctx.fillStyle = accentColor;
-    ctx.fillRect(0, valBarTop, valW, valBarH);
-    const targetX = opts.target / opts.max * barW;
-    ctx.fillStyle = textColor;
-    ctx.fillRect(targetX - 1, barTop, 2, barH);
-    const displayVal = Math.round(currentValue);
-    const valText = opts.unit ? `${displayVal}${opts.unit}` : `${displayVal}`;
-    ctx.font = "bold 12px system-ui, sans-serif";
-    ctx.fillStyle = textColor;
+    const valBarH = Math.round(trackH * 0.44);
+    const valBarY = trackY + Math.round((trackH - valBarH) / 2);
+    const valW = Math.max(2, Math.min(currentValue / opts.max * trackW, trackW));
+    ctx.fillStyle = accentHex;
+    ctx.beginPath();
+    ctx.roundRect(0, valBarY, valW, valBarH, 2);
+    ctx.fill();
+    const targetX = Math.round(opts.target / opts.max * trackW);
+    ctx.fillStyle = textHex;
+    ctx.fillRect(targetX - 1, trackY, 3, trackH);
+    const displayVal = Number.isInteger(opts.value) ? Math.round(currentValue) : currentValue.toFixed(1);
+    const label = `${displayVal}${opts.unit ?? ""}`;
+    ctx.font = `bold 11px system-ui,sans-serif`;
+    ctx.fillStyle = textHex;
     ctx.textBaseline = "middle";
     ctx.textAlign = "left";
-    ctx.fillText(valText, barW + 4, barTop + barH / 2);
+    ctx.fillText(label, trackW + 6, trackY + trackH / 2);
+    const targetLabel = `${opts.target}${opts.unit ?? ""}`;
+    ctx.font = `9px system-ui,sans-serif`;
+    ctx.fillStyle = mutedHex;
+    ctx.textAlign = "center";
+    ctx.fillText(targetLabel, targetX, trackY + trackH + 2);
   }
-  if (!animate) {
+  if (opts.animate === false) {
     draw(opts.value);
     return;
   }
   let start = null;
   function frame(ts) {
     if (start === null) start = ts;
-    const elapsed = ts - start;
-    const progress = Math.min(elapsed / duration, 1);
-    const eased = easeOutCubic2(progress);
-    draw(eased * opts.value);
-    if (progress < 1) requestAnimationFrame(frame);
+    const p = Math.min((ts - start) / 600, 1);
+    draw(easeOut(p) * opts.value);
+    if (p < 1) requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);
 }
@@ -7739,6 +7754,582 @@ function notificationCenter(triggerEl, opts) {
   };
 }
 
+// src/ts/charts-waterfall.ts
+function resolveCssVar(name, fallback) {
+  const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  return v || fallback;
+}
+function easeOutCubic2(t) {
+  return 1 - Math.pow(1 - t, 3);
+}
+function injectSrTable(canvas, caption, headers, rows) {
+  if (!canvas.parentElement) return;
+  let srEl = canvas.nextElementSibling;
+  if (!srEl || !srEl.classList.contains("mn-sr-only")) {
+    srEl = document.createElement("span");
+    srEl.className = "mn-sr-only";
+    canvas.parentElement.insertBefore(srEl, canvas.nextSibling);
+  }
+  const th = headers.map((h) => `<th scope="col">${escapeHtml(h)}</th>`).join("");
+  const body = rows.map((r) => `<tr>${r.map((c) => `<td>${escapeHtml(c)}</td>`).join("")}</tr>`).join("");
+  srEl.innerHTML = `<table><caption>${escapeHtml(caption)}</caption><thead><tr>${th}</tr></thead><tbody>${body}</tbody></table>`;
+}
+function waterfallChart(canvas, opts) {
+  const dpr = window.devicePixelRatio || 1;
+  const segments = opts.segments;
+  if (!segments || segments.length === 0) return;
+  const logicalW = canvas.offsetWidth || 600;
+  const logicalH = opts.height ?? 200;
+  canvas.width = logicalW * dpr;
+  canvas.height = logicalH * dpr;
+  canvas.style.width = `${logicalW}px`;
+  canvas.style.height = `${logicalH}px`;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return;
+  ctx.scale(dpr, dpr);
+  const colorUp = resolveCssVar("--signal-ok", "#00A651");
+  const colorDown = resolveCssVar("--signal-danger", "#DC0000");
+  const colorAccent = resolveCssVar("--mn-accent", "#FFC72C");
+  const colorBorder = resolveCssVar("--mn-border", "#555555");
+  const colorMuted = resolveCssVar("--mn-text-muted", "#999999");
+  const totals = [];
+  let running = 0;
+  for (const seg of segments) {
+    if (seg.isTotal) {
+      running = seg.value;
+    } else {
+      running += seg.value;
+    }
+    totals.push(running);
+  }
+  const allVals = [0, ...totals];
+  segments.forEach((s, i) => {
+    if (!s.isTotal && i > 0) allVals.push(totals[i] - s.value);
+  });
+  const minVal = Math.min(...allVals);
+  const maxVal = Math.max(...allVals);
+  const range = maxVal - minVal || 1;
+  const pad2 = { top: 24, bottom: 30, left: 12, right: 12 };
+  const chartW = logicalW - pad2.left - pad2.right;
+  const chartH = logicalH - pad2.top - pad2.bottom;
+  const n = segments.length;
+  const barGap = chartW * 0.15 / n;
+  const barW = (chartW - barGap * (n + 1)) / n;
+  const yScale = (v) => pad2.top + chartH - (v - minVal) / range * chartH;
+  const xBar = (i) => pad2.left + barGap + i * (barW + barGap);
+  const animate = opts.animate !== false;
+  const duration = 600;
+  function drawBars(progress) {
+    if (!ctx) return;
+    ctx.clearRect(0, 0, logicalW, logicalH);
+    const zeroY = yScale(0);
+    ctx.strokeStyle = colorBorder;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(pad2.left, zeroY);
+    ctx.lineTo(logicalW - pad2.right, zeroY);
+    ctx.stroke();
+    let prevTop = 0;
+    for (let i = 0; i < n; i++) {
+      const seg = segments[i];
+      const base = seg.isTotal ? 0 : i === 0 ? 0 : totals[i] - seg.value;
+      const top = totals[i];
+      const fullBarBottom = yScale(base);
+      const fullBarTop = yScale(top);
+      const barHeight = fullBarBottom - fullBarTop;
+      const animH = barHeight * progress;
+      const drawTop = fullBarBottom - animH;
+      const x = xBar(i);
+      let barColor;
+      if (seg.isTotal) {
+        barColor = colorAccent;
+      } else if (seg.value >= 0) {
+        barColor = colorUp;
+      } else {
+        barColor = colorDown;
+      }
+      ctx.globalAlpha = 0.8;
+      ctx.fillStyle = barColor;
+      ctx.fillRect(x, drawTop, barW, animH);
+      ctx.globalAlpha = 1;
+      if (i > 0 && !seg.isTotal) {
+        const prevSegTop = yScale(totals[i - 1]);
+        ctx.save();
+        ctx.setLineDash([3, 3]);
+        ctx.strokeStyle = colorBorder;
+        ctx.lineWidth = 0.8;
+        ctx.beginPath();
+        ctx.moveTo(xBar(i - 1) + barW, prevSegTop);
+        ctx.lineTo(x, fullBarBottom);
+        ctx.stroke();
+        ctx.restore();
+      }
+      ctx.font = "bold 10px system-ui, sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = seg.value >= 0 || seg.isTotal ? "bottom" : "top";
+      ctx.fillStyle = colorMuted;
+      const valStr = (seg.value >= 0 && !seg.isTotal ? "+" : "") + seg.value + (opts.unit ?? "");
+      const labelY = seg.value >= 0 || seg.isTotal ? drawTop - 3 : drawTop + animH + 12;
+      ctx.fillText(valStr, x + barW / 2, labelY);
+      ctx.font = "11px system-ui, sans-serif";
+      ctx.fillStyle = colorMuted;
+      ctx.textBaseline = "top";
+      ctx.fillText(seg.label, x + barW / 2, logicalH - pad2.bottom + 6);
+      prevTop = top;
+    }
+  }
+  if (!animate) {
+    drawBars(1);
+  } else {
+    let frame2 = function(ts) {
+      if (start === null) start = ts;
+      const elapsed = ts - start;
+      const p = Math.min(elapsed / duration, 1);
+      drawBars(easeOutCubic2(p));
+      if (p < 1) requestAnimationFrame(frame2);
+    };
+    var frame = frame2;
+    let start = null;
+    requestAnimationFrame(frame2);
+  }
+  const ariaLabel = `Waterfall chart: ${segments.map((s) => s.label + " " + s.value).join(", ")}`;
+  canvas.setAttribute("role", "img");
+  canvas.setAttribute("aria-label", ariaLabel);
+  const rows = segments.map((s, i) => [
+    s.label,
+    String(s.value),
+    String(totals[i])
+  ]);
+  injectSrTable(canvas, ariaLabel, ["Segment", "Value", "Running Total"], rows);
+}
+
+// src/ts/charts-confidence.ts
+function resolveCssVar2(name, fallback) {
+  const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  return v || fallback;
+}
+function resolveColor(color) {
+  if (color.startsWith("var(")) {
+    const varName = color.slice(4, color.indexOf(")")).split(",")[0].trim();
+    return resolveCssVar2(varName, "#FFC72C");
+  }
+  if (color.startsWith("--")) {
+    return resolveCssVar2(color, "#FFC72C");
+  }
+  return color;
+}
+function hexToRgba2(hex, alpha2) {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r},${g},${b},${alpha2})`;
+}
+function injectSrTable2(canvas, caption, headers, rows) {
+  if (!canvas.parentElement) return;
+  let srEl = canvas.nextElementSibling;
+  if (!srEl || !srEl.classList.contains("mn-sr-only")) {
+    srEl = document.createElement("span");
+    srEl.className = "mn-sr-only";
+    canvas.parentElement.insertBefore(srEl, canvas.nextSibling);
+  }
+  const th = headers.map((h) => `<th scope="col">${escapeHtml(h)}</th>`).join("");
+  const body = rows.map((r) => `<tr>${r.map((c) => `<td>${escapeHtml(c)}</td>`).join("")}</tr>`).join("");
+  srEl.innerHTML = `<table><caption>${escapeHtml(caption)}</caption><thead><tr>${th}</tr></thead><tbody>${body}</tbody></table>`;
+}
+function confidenceChart(canvas, opts) {
+  const dpr = window.devicePixelRatio || 1;
+  const n = opts.labels.length;
+  if (n === 0 || opts.values.length < n) return;
+  const logicalW = canvas.offsetWidth || 600;
+  const logicalH = opts.height ?? 200;
+  canvas.width = logicalW * dpr;
+  canvas.height = logicalH * dpr;
+  canvas.style.width = `${logicalW}px`;
+  canvas.style.height = `${logicalH}px`;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return;
+  ctx.scale(dpr, dpr);
+  const rawColor = opts.color ?? "var(--mn-accent)";
+  const lineColor = resolveColor(rawColor);
+  const borderColor = resolveCssVar2("--mn-border", "#555555");
+  const mutedColor = resolveCssVar2("--mn-text-muted", "#999999");
+  const dataMin = Math.min(...opts.lower);
+  const dataMax = Math.max(...opts.upper);
+  const rangePad = (dataMax - dataMin) * 0.1 || 1;
+  const yMin = dataMin - rangePad;
+  const yMax = dataMax + rangePad;
+  const pad2 = { top: 16, bottom: 40, left: 48, right: 12 };
+  const chartW = logicalW - pad2.left - pad2.right;
+  const chartH = logicalH - pad2.top - pad2.bottom;
+  const xAt = (i) => pad2.left + (n > 1 ? i / (n - 1) * chartW : chartW / 2);
+  const yAt = (v) => pad2.top + chartH - (v - yMin) / (yMax - yMin) * chartH;
+  const animate = opts.animate !== false;
+  const duration = 500;
+  function drawFrame2(revealCount) {
+    if (!ctx) return;
+    ctx.clearRect(0, 0, logicalW, logicalH);
+    const gridRows = 4;
+    ctx.strokeStyle = hexToRgba2(borderColor.startsWith("#") ? borderColor : "#888888", 0.5);
+    ctx.lineWidth = 0.5;
+    ctx.font = "10px system-ui, sans-serif";
+    ctx.fillStyle = mutedColor;
+    ctx.textAlign = "right";
+    ctx.textBaseline = "middle";
+    for (let r = 0; r <= gridRows; r++) {
+      const val = yMin + r / gridRows * (yMax - yMin);
+      const y = yAt(val);
+      ctx.beginPath();
+      ctx.moveTo(pad2.left, y);
+      ctx.lineTo(logicalW - pad2.right, y);
+      ctx.stroke();
+      ctx.fillText(val.toFixed(1), pad2.left - 6, y);
+    }
+    const visible = Math.min(Math.ceil(revealCount), n);
+    if (visible < 1) return;
+    ctx.beginPath();
+    for (let i = 0; i < visible; i++) ctx.lineTo(xAt(i), yAt(opts.upper[i]));
+    for (let i = visible - 1; i >= 0; i--) ctx.lineTo(xAt(i), yAt(opts.lower[i]));
+    ctx.closePath();
+    ctx.fillStyle = hexToRgba2(lineColor.startsWith("#") ? lineColor : "#FFC72C", 0.15);
+    ctx.fill();
+    ctx.beginPath();
+    for (let i = 0; i < visible; i++) {
+      const x = xAt(i);
+      const y = yAt(opts.values[i]);
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.strokeStyle = lineColor;
+    ctx.lineWidth = 2;
+    ctx.lineJoin = "round";
+    ctx.stroke();
+    for (let i = 0; i < visible; i++) {
+      ctx.beginPath();
+      ctx.arc(xAt(i), yAt(opts.values[i]), 4, 0, Math.PI * 2);
+      ctx.fillStyle = lineColor;
+      ctx.fill();
+    }
+    ctx.font = "10px system-ui, sans-serif";
+    ctx.fillStyle = mutedColor;
+    ctx.textBaseline = "top";
+    const rotateLabels = n > 6;
+    for (let i = 0; i < visible; i++) {
+      const x = xAt(i);
+      const y = logicalH - pad2.bottom + 8;
+      if (rotateLabels) {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(-Math.PI / 6);
+        ctx.textAlign = "right";
+        ctx.fillText(opts.labels[i], 0, 0);
+        ctx.restore();
+      } else {
+        ctx.textAlign = "center";
+        ctx.fillText(opts.labels[i], x, y);
+      }
+    }
+  }
+  if (!animate) {
+    drawFrame2(n);
+  } else {
+    let frame2 = function(ts) {
+      if (start === null) start = ts;
+      const elapsed = ts - start;
+      const p = Math.min(elapsed / duration, 1);
+      const revealCount = 1 + p * (n - 1);
+      drawFrame2(revealCount);
+      if (p < 1) requestAnimationFrame(frame2);
+    };
+    var frame = frame2;
+    let start = null;
+    requestAnimationFrame(frame2);
+  }
+  const trend = opts.values[n - 1] >= opts.values[0] ? "upward" : "downward";
+  const ariaLabel = `Confidence chart: ${n} points, range ${dataMin} to ${dataMax}, ${trend} trend`;
+  canvas.setAttribute("role", "img");
+  canvas.setAttribute("aria-label", ariaLabel);
+  const unit = opts.unit ?? "";
+  const rows = opts.labels.map((lbl, i) => [
+    lbl,
+    `${opts.values[i]}${unit}`,
+    `${opts.lower[i]}${unit}`,
+    `${opts.upper[i]}${unit}`
+  ]);
+  injectSrTable2(canvas, ariaLabel, ["Label", "Value", "Lower", "Upper"], rows);
+}
+
+// src/ts/decision-matrix.ts
+function clamp2(v, lo, hi) {
+  return Math.max(lo, Math.min(hi, v));
+}
+function weightedTotal(alt, criteria) {
+  let num = 0;
+  let den = 0;
+  for (const c of criteria) {
+    const s = alt.scores[c.id] ?? 0;
+    num += s * c.weight;
+    den += c.weight;
+  }
+  return den > 0 ? num / den * 10 : 0;
+}
+function scoreBg(score) {
+  if (score >= 7) {
+    return "background:color-mix(in srgb, var(--signal-ok) 15%, transparent)";
+  }
+  if (score >= 4) {
+    return "background:color-mix(in srgb, var(--signal-warning) 15%, transparent)";
+  }
+  return "background:color-mix(in srgb, var(--signal-danger) 15%, transparent)";
+}
+function rankAlternatives(alts, criteria) {
+  const totals = alts.map((a) => ({
+    id: a.id,
+    total: weightedTotal(a, criteria)
+  }));
+  totals.sort((a, b) => b.total - a.total);
+  const ranks = /* @__PURE__ */ new Map();
+  totals.forEach((t, i) => ranks.set(t.id, i + 1));
+  return ranks;
+}
+function decisionMatrix(el4, opts) {
+  let alternatives = structuredClone(opts.alternatives);
+  const { criteria, editable = false, onChange } = opts;
+  let activeInput = null;
+  function commitEdit() {
+    if (!activeInput) return;
+    const altId = activeInput.dataset.alt ?? "";
+    const critId = activeInput.dataset.crit ?? "";
+    const val = clamp2(parseInt(activeInput.value, 10) || 1, 1, 10);
+    const alt = alternatives.find((a) => a.id === altId);
+    if (alt) {
+      alt.scores[critId] = val;
+      onChange?.(structuredClone(alternatives));
+    }
+    activeInput = null;
+    render3();
+  }
+  function openEdit(td, altId, critId) {
+    if (activeInput) commitEdit();
+    const current = alternatives.find((a) => a.id === altId)?.scores[critId] ?? 5;
+    td.textContent = "";
+    const input = document.createElement("input");
+    input.type = "number";
+    input.min = "1";
+    input.max = "10";
+    input.value = String(current);
+    input.className = "mn-decision-matrix__edit-input";
+    input.dataset.alt = altId;
+    input.dataset.crit = critId;
+    input.setAttribute("aria-label", `Edit score for ${critId}: 1-10`);
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") commitEdit();
+      if (e.key === "Escape") {
+        activeInput = null;
+        render3();
+      }
+    });
+    input.addEventListener("blur", () => commitEdit());
+    td.appendChild(input);
+    activeInput = input;
+    input.focus();
+    input.select();
+  }
+  function handleKeydown(e) {
+    const target = e.target;
+    if (!target.matches("td[data-alt]")) return;
+    if (e.key === "Enter" && editable) {
+      const altId = target.dataset.alt ?? "";
+      const critId = target.dataset.crit ?? "";
+      openEdit(target, altId, critId);
+    }
+  }
+  function handleClick(e) {
+    if (!editable) return;
+    const target = e.target.closest("td[data-alt]");
+    if (!target) return;
+    const altId = target.dataset.alt ?? "";
+    const critId = target.dataset.crit ?? "";
+    if (altId && critId) openEdit(target, altId, critId);
+  }
+  function render3() {
+    const ranks = rankAlternatives(alternatives, criteria);
+    const winnerId = [...ranks.entries()].find(([, r]) => r === 1)?.[0] ?? "";
+    const headCells = criteria.map(
+      (c) => `<th scope="col">${escapeHtml(c.label)}<br><span class="mn-decision-matrix__weight">(w:${c.weight})</span></th>`
+    ).join("");
+    const rows = alternatives.map((alt) => {
+      const isWinner = alt.id === winnerId;
+      const cls = isWinner ? ' class="mn-decision-matrix__row--winner"' : "";
+      const total = weightedTotal(alt, criteria).toFixed(1);
+      const rank = ranks.get(alt.id) ?? 0;
+      const scoreCells = criteria.map((c) => {
+        const s = alt.scores[c.id] ?? 0;
+        const label = `${escapeHtml(c.label)}: ${s}/10`;
+        const tab = editable ? ' tabindex="0"' : "";
+        return `<td data-alt="${escapeHtml(alt.id)}" data-crit="${escapeHtml(c.id)}" aria-label="${label}" style="${scoreBg(s)}"${tab}><span class="mn-decision-matrix__score">${s}</span></td>`;
+      }).join("");
+      return `<tr${cls}><td>${escapeHtml(alt.label)}</td>${scoreCells}<td><span class="mn-decision-matrix__total">${total}</span> <span class="mn-decision-matrix__rank">#${rank}</span></td></tr>`;
+    }).join("");
+    el4.innerHTML = `<div class="mn-decision-matrix__wrap"><table class="mn-decision-matrix" role="grid" aria-label="Decision matrix"><thead><tr><th scope="col">Alternative</th>${headCells}<th scope="col">Score</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+    el4.querySelector("table")?.addEventListener("keydown", handleKeydown);
+    el4.querySelector("table")?.addEventListener("click", handleClick);
+  }
+  render3();
+  return {
+    update(alts) {
+      alternatives = structuredClone(alts);
+      render3();
+    },
+    getScores() {
+      return structuredClone(alternatives);
+    },
+    destroy() {
+      el4.innerHTML = "";
+    }
+  };
+}
+
+// src/ts/source-card.ts
+function scoreClass(score) {
+  if (score >= 0.8) return "mn-source-card__score--high";
+  if (score >= 0.5) return "mn-source-card__score--mid";
+  return "mn-source-card__score--low";
+}
+function formatScore(score) {
+  return `${(score * 100).toFixed(0)}%`;
+}
+function buildCard(card, onSelect) {
+  const article = document.createElement("article");
+  article.className = "mn-source-card";
+  article.tabIndex = 0;
+  article.dataset.id = card.id;
+  const ariaParts = [escapeHtml(card.title)];
+  if (card.score !== void 0) {
+    ariaParts.push(`relevance ${formatScore(card.score)}`);
+  }
+  article.setAttribute("aria-label", ariaParts.join(" - "));
+  if (card.badge || card.score !== void 0) {
+    const header = document.createElement("header");
+    header.className = "mn-source-card__header";
+    if (card.badge) {
+      const badge = document.createElement("span");
+      badge.className = "mn-source-card__badge mn-badge";
+      badge.textContent = card.badge;
+      header.appendChild(badge);
+    }
+    if (card.score !== void 0) {
+      const score = document.createElement("span");
+      const pct2 = formatScore(card.score);
+      score.className = `mn-source-card__score ${scoreClass(card.score)}`;
+      score.textContent = pct2;
+      score.setAttribute("aria-label", `Relevance: ${pct2}`);
+      header.appendChild(score);
+    }
+    article.appendChild(header);
+  }
+  const title = document.createElement("h4");
+  title.className = "mn-source-card__title";
+  title.textContent = card.title;
+  article.appendChild(title);
+  if (card.excerpt) {
+    const excerpt = document.createElement("p");
+    excerpt.className = "mn-source-card__excerpt";
+    excerpt.textContent = card.excerpt;
+    article.appendChild(excerpt);
+  }
+  if (card.source || card.date) {
+    const footer = document.createElement("footer");
+    footer.className = "mn-source-card__footer";
+    if (card.source) {
+      const src = document.createElement("span");
+      src.className = "mn-source-card__source";
+      src.textContent = card.source;
+      footer.appendChild(src);
+    }
+    if (card.date) {
+      const date = document.createElement("span");
+      date.className = "mn-source-card__date";
+      date.textContent = card.date;
+      footer.appendChild(date);
+    }
+    article.appendChild(footer);
+  }
+  if (card.action) {
+    const btn = document.createElement("button");
+    btn.className = "mn-btn mn-btn--ghost mn-source-card__action";
+    btn.textContent = card.action.label;
+    btn.setAttribute(
+      "aria-label",
+      `${card.action.label} for ${escapeHtml(card.title)}`
+    );
+    const handler = card.action.onClick;
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      handler();
+    });
+    article.appendChild(btn);
+  }
+  if (onSelect) {
+    article.addEventListener("click", () => onSelect(card));
+    article.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        onSelect(card);
+      }
+    });
+  }
+  return article;
+}
+function buildShowMore(count, onClick) {
+  const btn = document.createElement("button");
+  btn.className = "mn-source-cards__show-more";
+  btn.textContent = `Show ${count} more`;
+  btn.setAttribute("aria-label", `Show ${count} more source citations`);
+  btn.addEventListener("click", onClick);
+  return btn;
+}
+function renderSourceCards(container, cards, opts) {
+  const layout = opts?.layout ?? "list";
+  const maxVisible = opts?.maxVisible;
+  const onSelect = opts?.onSelect;
+  function render3(data) {
+    container.innerHTML = "";
+    container.className = `mn-source-cards mn-source-cards--${layout}`;
+    container.setAttribute("role", "list");
+    container.setAttribute("aria-label", "Source citations");
+    const limit = maxVisible && maxVisible < data.length ? maxVisible : data.length;
+    for (let i = 0; i < limit; i++) {
+      const el4 = buildCard(data[i], onSelect);
+      el4.setAttribute("role", "listitem");
+      container.appendChild(el4);
+    }
+    if (maxVisible && maxVisible < data.length) {
+      const remaining = data.length - maxVisible;
+      const showMoreBtn = buildShowMore(remaining, () => {
+        showMoreBtn.remove();
+        for (let i = limit; i < data.length; i++) {
+          const el4 = buildCard(data[i], onSelect);
+          el4.setAttribute("role", "listitem");
+          container.appendChild(el4);
+        }
+      });
+      container.appendChild(showMoreBtn);
+    }
+  }
+  render3(cards);
+  return {
+    update(newCards) {
+      render3(newCards);
+    },
+    destroy() {
+      container.innerHTML = "";
+      container.className = "";
+      container.removeAttribute("role");
+      container.removeAttribute("aria-label");
+    }
+  };
+}
+
 // src/ts/maranello-exports.ts
 function registerExtras(M2) {
   M2.SPEEDO_FONT = SPEEDO_FONT;
@@ -7795,6 +8386,10 @@ function registerExtras(M2) {
   M2.dateRangePicker = dateRangePicker;
   M2.bulletChart = bulletChart;
   M2.notificationCenter = notificationCenter;
+  M2.waterfallChart = waterfallChart;
+  M2.confidenceChart = confidenceChart;
+  M2.decisionMatrix = decisionMatrix;
+  M2.renderSourceCards = renderSourceCards;
 }
 
 // src/ts/maranello.ts
@@ -8027,6 +8622,7 @@ export {
   closeModal,
   clusterMarkers,
   commandPalette,
+  confidenceChart,
   createDetailPanel,
   createEl,
   createElement,
@@ -8040,6 +8636,7 @@ export {
   datePicker,
   dateRangePicker,
   debounce,
+  decisionMatrix,
   defaultMessages,
   detectTheme,
   donut,
@@ -8139,6 +8736,7 @@ export {
   renderLegend,
   renderPersonResults,
   renderSkeleton,
+  renderSourceCards,
   renderers,
   resolveContainer3 as resolveContainer,
   saveSettings,
@@ -8163,6 +8761,7 @@ export {
   validateField,
   validateForm,
   validators,
-  valueToAngle
+  valueToAngle,
+  waterfallChart
 };
 //# sourceMappingURL=index.js.map

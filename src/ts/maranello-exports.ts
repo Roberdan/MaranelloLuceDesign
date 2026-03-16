@@ -37,6 +37,10 @@ import { activityFeed } from './activity-feed';
 import { dateRangePicker } from './date-range-picker';
 import { bulletChart } from './charts-bullet';
 import { notificationCenter } from './notification-center';
+import { waterfallChart } from './charts-waterfall';
+import { confidenceChart } from './charts-confidence';
+import { decisionMatrix } from './decision-matrix';
+import { renderSourceCards } from './source-card';
 
 /** Register W3/W4 primitives on the window.Maranello namespace object. */
 export function registerExtras(M: Record<string, unknown>): void {
@@ -100,9 +104,13 @@ export function registerExtras(M: Record<string, unknown>): void {
   M.hideMapTip = hideMapTip;
   M.attachMapEvents = attachEvents;
 
-  // New dashboard components (v4.6)
+  // Dashboard components (v4.6 / v4.7)
   M.activityFeed = activityFeed;
   M.dateRangePicker = dateRangePicker;
   M.bulletChart = bulletChart;
   M.notificationCenter = notificationCenter;
+  M.waterfallChart = waterfallChart;
+  M.confidenceChart = confidenceChart;
+  M.decisionMatrix = decisionMatrix;
+  M.renderSourceCards = renderSourceCards;
 }

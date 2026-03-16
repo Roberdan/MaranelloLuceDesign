@@ -225,24 +225,24 @@ export * from './map-view-helpers';
 export { gridLayout } from './grid-layout';
 export type { GridTemplateName, GridLayoutOptions, GridLayoutController } from './grid-layout';
 
-// Search drawer
+// Search / activity / date range / charts / notifications / analytics
 export { openSearchDrawer } from './search-drawer';
-export type {
-  SearchDrawerOptions, SearchDrawerResult, SearchDrawerController,
-} from './search-drawer';
-
-// Activity feed
+export type { SearchDrawerOptions, SearchDrawerResult, SearchDrawerController } from './search-drawer';
 export { activityFeed } from './activity-feed';
 export type { ActivityItem, ActivityFeedOptions, ActivityFeedController } from './activity-feed';
-// Date range picker
 export { dateRangePicker } from './date-range-picker';
 export type { DateRange, DateRangePickerOptions, DateRangePickerController } from './date-range-picker';
-// Bullet chart
 export { bulletChart } from './charts-bullet';
 export type { BulletRange, BulletChartOptions } from './charts-bullet';
-// Notification center
 export { notificationCenter } from './notification-center';
 export type { MnNotification, NotificationCenterOptions, NotificationCenterController } from './notification-center';
-
+export { waterfallChart } from './charts-waterfall';
+export type { WaterfallSegment, WaterfallChartOptions } from './charts-waterfall';
+export { confidenceChart } from './charts-confidence';
+export type { ConfidenceChartOptions } from './charts-confidence';
+export { decisionMatrix } from './decision-matrix';
+export type { DecisionCriterion, DecisionAlternative, DecisionMatrixOptions, DecisionMatrixController } from './decision-matrix';
+export { renderSourceCards } from './source-card';
+export type { SourceCard, SourceCardsOptions, SourceCardsController } from './source-card';
 // Maranello facade (auto-init)
 export { Maranello } from './maranello';

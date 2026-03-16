@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.7.0] - 16 Mar 2026
+
+### Added
+- `waterfallChart(canvas, opts)` — canvas waterfall chart with positive/negative segments, running totals, connector lines, animated; `M.waterfallChart` on IIFE
+- `confidenceChart(canvas, opts)` — canvas forecast chart with central line + shaded confidence band, animated left-to-right reveal; `M.confidenceChart` on IIFE
+- `decisionMatrix(el, opts)` — weighted criteria × alternatives table, inline editable scores, auto-ranking, color-coded cells, full keyboard nav + aria; `M.decisionMatrix` on IIFE
+- `renderSourceCards(container, cards, opts)` — RAG source citation cards with relevance score badge, excerpt clamp, maxVisible/show-more, onSelect callback, full a11y; `M.renderSourceCards` on IIFE
+- `bulletChart` redesigned: proper Stephen Few layering (tonal bands → narrow value bar → target marker), theme-adaptive colors resolved at draw time, `getBoundingClientRect` sizing
+- Demo: new sections `#dashboard-widgets` and `#analytics` added to header nav
+- CSS: `layouts-decision-matrix.css`, `components-source-card.css` — all `@layer`, `mn-` prefix, theme-responsive
+
+### Fixed
+- `bulletChart` canvas sizing used `offsetWidth` (often 0 before layout) → now uses `parentElement.getBoundingClientRect()`
+- `bulletChart` range bands now use neutral tonal shades instead of saturated signal colors
+
 ## [4.6.0] - 16 Mar 2026
 
 ### Added

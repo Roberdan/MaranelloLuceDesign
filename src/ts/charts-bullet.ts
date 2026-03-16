@@ -1,11 +1,12 @@
 /**
  * Maranello Luce Design - Bullet Chart
- * Target-vs-actual comparison chart rendered on canvas.
+ * Stephen Few-style target-vs-actual chart.
+ * Three layers: qualitative bands → value bar (centered, narrower) → target marker.
  */
 
 export interface BulletRange {
   max: number;
-  color?: string;
+  color?: string;   // CSS color or var() string
   label?: string;
 }
 
@@ -15,141 +16,154 @@ export interface BulletChartOptions {
   max: number;
   label?: string;
   unit?: string;
-  ranges?: BulletRange[];
-  height?: number;
-  animate?: boolean;
+  ranges?: BulletRange[];  // custom qualitative bands; default: 3 tonal bands
+  height?: number;         // logical track height px, default: 32
+  animate?: boolean;       // default: true
 }
 
-/** Resolve a CSS variable name to its computed value. */
-function resolveCssVar(varName: string): string {
-  const raw = getComputedStyle(document.documentElement)
-    .getPropertyValue(varName)
-    .trim();
-  return raw || '#888';
+function resolve(varName: string): string {
+  return getComputedStyle(document.documentElement).getPropertyValue(varName).trim() || '#888';
 }
 
-/** Resolve a color string — handles var(--x) syntax and plain colors. */
-function resolveColor(color: string): string {
+function parseColor(color: string): string {
   if (color.startsWith('var(')) {
-    const varName = color.slice(4, color.indexOf(')')).split(',')[0].trim();
-    return resolveCssVar(varName);
+    const name = color.slice(4, color.indexOf(')')).split(',')[0].trim();
+    return resolve(name);
   }
   return color;
 }
 
-/** Ease-out cubic for smooth animation deceleration. */
-function easeOutCubic(t: number): number {
-  return 1 - Math.pow(1 - t, 3);
+function hexToRgb(hex: string): [number, number, number] | null {
+  const clean = hex.trim().replace('#', '');
+  if (clean.length !== 6 && clean.length !== 3) return null;
+  const full = clean.length === 3
+    ? clean.split('').map(c => c + c).join('')
+    : clean;
+  const n = parseInt(full, 16);
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
 }
 
-function defaultRanges(max: number): BulletRange[] {
-  return [
-    { max: max * 0.33, color: 'var(--signal-danger)' },
-    { max: max * 0.67, color: 'var(--signal-warning)' },
-    { max: max, color: 'var(--signal-ok)' },
-  ];
+function colorAt(hex: string, alpha: number): string {
+  const rgb = hexToRgb(hex);
+  if (!rgb) return `rgba(128,128,128,${alpha})`;
+  return `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${alpha})`;
 }
 
-/**
- * Render a bullet chart (target-vs-actual) on a canvas element.
- * Draws qualitative background bands, a value bar, and a target marker.
- */
+function easeOut(t: number): number { return 1 - (1 - t) ** 3; }
+
 export function bulletChart(
   canvas: HTMLCanvasElement,
   opts: BulletChartOptions,
 ): void {
   const dpr = window.devicePixelRatio || 1;
-  const barH = opts.height ?? 40;
-  const hasLabel = Boolean(opts.label);
-  const labelH = hasLabel ? 20 : 0;
-  const totalH = barH + labelH;
+  const trackH = opts.height ?? 32;
+  const labelH = opts.label ? 18 : 0;
+  const totalH = trackH + labelH + 4;  // 4px bottom margin for value text
 
-  canvas.width = canvas.offsetWidth * dpr;
-  canvas.height = totalH * dpr;
-  canvas.style.width = `${canvas.offsetWidth}px`;
+  /* Use clientWidth for accurate flex-resolved width */
+  const logicalW = canvas.parentElement
+    ? canvas.parentElement.getBoundingClientRect().width - 4
+    : (canvas.offsetWidth || 400);
+
+  canvas.width = Math.round(logicalW * dpr);
+  canvas.height = Math.round(totalH * dpr);
+  canvas.style.width = `${logicalW}px`;
   canvas.style.height = `${totalH}px`;
+
+  /* A11y */
+  canvas.setAttribute('role', 'img');
+  const pct = opts.max > 0 ? Math.round((opts.value / opts.max) * 100) : 0;
+  canvas.setAttribute('aria-label',
+    `${opts.label ?? 'Bullet chart'}: value ${opts.value}${opts.unit ?? ''}, target ${opts.target}${opts.unit ?? ''} (${pct}% of max)`);
 
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
   ctx.scale(dpr, dpr);
 
-  const w = canvas.offsetWidth;
-  const ranges = opts.ranges ?? defaultRanges(opts.max);
-  const animate = opts.animate !== false;
-  const duration = 600;
+  /* Reserve space: left padding for nothing, right for value text */
+  const rightPad = 52;
+  const trackW = logicalW - rightPad;
+  const trackY = labelH + 2;
 
-  const textColor = resolveCssVar('--mn-text');
-  const mutedColor = resolveCssVar('--mn-text-muted');
-  const accentColor = resolveCssVar('--mn-accent');
+  /* Qualitative ranges — three neutral tonal bands using border/surface tokens.
+     We intentionally avoid signal colors in the bands to keep visual noise low;
+     the value bar position conveys status relative to the target marker. */
+  const borderHex = parseColor('var(--mn-border)');
+  const accentHex = parseColor('var(--mn-accent)');
+  const textHex    = parseColor('var(--mn-text)');
+  const mutedHex   = parseColor('var(--mn-text-muted)');
 
-  const resolvedRanges = ranges.map((r) => ({
-    max: r.max,
-    color: r.color ? resolveColor(r.color) : '#888',
-  }));
+  const bands = opts.ranges ?? [
+    { max: opts.max * 0.40, color: colorAt(borderHex, 0.45) },
+    { max: opts.max * 0.70, color: colorAt(borderHex, 0.28) },
+    { max: opts.max,        color: colorAt(borderHex, 0.14) },
+  ];
 
   function draw(currentValue: number): void {
     if (!ctx) return;
-    ctx.clearRect(0, 0, w, totalH);
+    ctx.clearRect(0, 0, logicalW, totalH);
 
-    /* Label above the bar */
-    if (hasLabel && opts.label) {
-      ctx.font = '11px system-ui, sans-serif';
-      ctx.fillStyle = mutedColor;
+    /* Label */
+    if (opts.label) {
+      ctx.font = `11px system-ui,sans-serif`;
+      ctx.fillStyle = mutedHex;
       ctx.textBaseline = 'top';
-      ctx.fillText(opts.label, 0, 2);
+      ctx.textAlign = 'left';
+      ctx.fillText(opts.label, 0, 0);
     }
 
-    const barTop = labelH;
-    const barW = w - 40;
-
-    /* Background ranges at 15% opacity */
-    let prevX = 0;
-    for (const r of resolvedRanges) {
-      const x = (r.max / opts.max) * barW;
-      ctx.globalAlpha = 0.15;
-      ctx.fillStyle = r.color;
-      ctx.fillRect(prevX, barTop, x - prevX, barH);
-      prevX = x;
+    /* 1 — qualitative bands (full track height, drawn from widest to narrowest) */
+    const sortedBands = [...bands].sort((a, b) => b.max - a.max);
+    for (const band of sortedBands) {
+      const bw = Math.min((band.max / opts.max) * trackW, trackW);
+      const color = typeof band.color === 'string' && band.color.startsWith('rgba')
+        ? band.color
+        : colorAt(parseColor(band.color ?? 'var(--mn-border)'), 0.3);
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.roundRect(0, trackY, bw, trackH, 3);
+      ctx.fill();
     }
-    ctx.globalAlpha = 1;
 
-    /* Value bar — centered vertically, 50% of bar height */
-    const valBarH = barH * 0.5;
-    const valBarTop = barTop + (barH - valBarH) / 2;
-    const valW = Math.min((currentValue / opts.max) * barW, barW);
-    ctx.fillStyle = accentColor;
-    ctx.fillRect(0, valBarTop, valW, valBarH);
+    /* 2 — value bar: 44% of track height, vertically centered, rounded, accent */
+    const valBarH = Math.round(trackH * 0.44);
+    const valBarY = trackY + Math.round((trackH - valBarH) / 2);
+    const valW = Math.max(2, Math.min((currentValue / opts.max) * trackW, trackW));
+    ctx.fillStyle = accentHex;
+    ctx.beginPath();
+    ctx.roundRect(0, valBarY, valW, valBarH, 2);
+    ctx.fill();
 
-    /* Target marker — vertical line, full bar height, 2px */
-    const targetX = (opts.target / opts.max) * barW;
-    ctx.fillStyle = textColor;
-    ctx.fillRect(targetX - 1, barTop, 2, barH);
+    /* 3 — target marker: 3px wide, full track height, high-contrast */
+    const targetX = Math.round((opts.target / opts.max) * trackW);
+    ctx.fillStyle = textHex;
+    ctx.fillRect(targetX - 1, trackY, 3, trackH);
 
-    /* Value text at right end */
-    const displayVal = Math.round(currentValue);
-    const valText = opts.unit ? `${displayVal}${opts.unit}` : `${displayVal}`;
-    ctx.font = 'bold 12px system-ui, sans-serif';
-    ctx.fillStyle = textColor;
+    /* 4 — value label at right */
+    const displayVal = Number.isInteger(opts.value) ? Math.round(currentValue) : currentValue.toFixed(1);
+    const label = `${displayVal}${opts.unit ?? ''}`;
+    ctx.font = `bold 11px system-ui,sans-serif`;
+    ctx.fillStyle = textHex;
     ctx.textBaseline = 'middle';
     ctx.textAlign = 'left';
-    ctx.fillText(valText, barW + 4, barTop + barH / 2);
+    ctx.fillText(label, trackW + 6, trackY + trackH / 2);
+
+    /* 5 — target value label (smaller, under the marker) */
+    const targetLabel = `${opts.target}${opts.unit ?? ''}`;
+    ctx.font = `9px system-ui,sans-serif`;
+    ctx.fillStyle = mutedHex;
+    ctx.textAlign = 'center';
+    ctx.fillText(targetLabel, targetX, trackY + trackH + 2);
   }
 
-  if (!animate) {
-    draw(opts.value);
-    return;
-  }
+  if (opts.animate === false) { draw(opts.value); return; }
 
   let start: number | null = null;
-
   function frame(ts: number): void {
     if (start === null) start = ts;
-    const elapsed = ts - start;
-    const progress = Math.min(elapsed / duration, 1);
-    const eased = easeOutCubic(progress);
-    draw(eased * opts.value);
-    if (progress < 1) requestAnimationFrame(frame);
+    const p = Math.min((ts - start) / 600, 1);
+    draw(easeOut(p) * opts.value);
+    if (p < 1) requestAnimationFrame(frame);
   }
-
   requestAnimationFrame(frame);
 }

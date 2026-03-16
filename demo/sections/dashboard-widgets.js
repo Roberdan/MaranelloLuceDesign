@@ -140,14 +140,21 @@ nc.add({ id, title, type: 'warning', body: '…' });</pre>
     const bulletsEl = section.querySelector('#dwg-bullets');
     BULLET_KPIS.forEach(kpi => {
       const row = document.createElement('div');
-      row.style.cssText = 'display:flex;align-items:center;gap:var(--space-md)';
+      row.style.cssText = 'display:grid;grid-template-columns:120px 1fr;align-items:center;gap:var(--space-md)';
+      const labelEl = document.createElement('span');
+      labelEl.className = 'mn-micro';
+      labelEl.style.color = 'var(--mn-text-muted)';
+      labelEl.textContent = kpi.label;
+      const canvasWrap = document.createElement('div');
+      canvasWrap.style.cssText = 'position:relative;height:36px;width:100%';
       const canvas = document.createElement('canvas');
-      canvas.style.cssText = 'flex:1;height:40px';
-      canvas.width = 400;
-      canvas.height = 40;
-      row.appendChild(canvas);
+      canvas.style.cssText = 'display:block;width:100%;height:36px';
+      canvasWrap.appendChild(canvas);
+      row.appendChild(labelEl);
+      row.appendChild(canvasWrap);
       bulletsEl.appendChild(row);
-      M.bulletChart(canvas, kpi);
+      // No label in opts since we show it in the grid label col
+      M.bulletChart(canvas, { ...kpi, label: undefined });
     });
 
     /* Date Range Picker */

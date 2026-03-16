@@ -1,6 +1,7 @@
 /**
  * Maranello Luce Design - Bullet Chart
- * Target-vs-actual comparison chart rendered on canvas.
+ * Stephen Few-style target-vs-actual chart.
+ * Three layers: qualitative bands → value bar (centered, narrower) → target marker.
  */
 export interface BulletRange {
     max: number;
@@ -17,8 +18,4 @@ export interface BulletChartOptions {
     height?: number;
     animate?: boolean;
 }
-/**
- * Render a bullet chart (target-vs-actual) on a canvas element.
- * Draws qualitative background bands, a value bar, and a target marker.
- */
 export declare function bulletChart(canvas: HTMLCanvasElement, opts: BulletChartOptions): void;
