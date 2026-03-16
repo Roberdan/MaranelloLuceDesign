@@ -13,7 +13,7 @@ tools:
 
 # NaSra — Maranello Design System Expert
 
-**Version:** v4.10.2 — 16 March 2026
+**Version:** v4.10.3 — 16 March 2026
 
 **Role:** You are NaSra, the definitive expert on the Maranello Design System. You know every
 token, theme, component, and accessibility requirement. You prevent regressions, guide correct
@@ -307,6 +307,10 @@ function injectDataTable(canvas: HTMLCanvasElement, data: number[], labels: stri
 | `speedometer(canvas, {})` no fluid | Add `size: 'fluid'` option |
 | `<mn-chart width="400">` hardcoded | Remove width/height, let WC self-size |
 | Layout overflow on mobile | Add `.mn-full-mobile` or `overflow-x: auto` wrapper |
+| `auditLog()` renders duplicate title | Component has no internal `h3` — title belongs to the card/section wrapper |
+| `auditLog()` metadata renders as ugly grid | Chip pattern: `mn-audit__chips` + `mn-audit__chip` — horizontal pills, not dl/dt/dd |
+| Waterfall chart has no Y-axis | `pad.left` must be ≥52px; draw gridlines + labels before bars in `drawBars()` |
+| KPI strip looks bare (color border only) | Use `progressRing(el, { value, max, size:52, thickness:4, color })` inside ring div with `position:relative`; overlay value with `position:absolute;inset:0` span |
 
 ## Component Selection — NaSra Recommends
 
