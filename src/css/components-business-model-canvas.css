@@ -1,0 +1,191 @@
+/** Maranello Luce Design - Business Model Canvas (Osterwalder 9-block) */
+@layer components {
+
+  .mn-bmc {
+    display: grid;
+    grid-template-areas:
+      "kp ka vp cr cs"
+      "kp kr vp ch cs"
+      "co co co rs rs";
+    grid-template-columns: 1fr 1fr 1.4fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr auto;
+    gap: 2px;
+    min-height: 520px;
+  }
+
+  .mn-bmc__block {
+    display: flex;
+    flex-direction: column;
+    background: var(--mn-surface);
+    border: 1px solid var(--mn-border);
+    padding: var(--space-md);
+    gap: var(--space-sm);
+    overflow: hidden;
+    min-height: 120px;
+  }
+
+  /* Grid area assignments */
+  .mn-bmc__block--kp { grid-area: kp; }
+  .mn-bmc__block--ka { grid-area: ka; }
+  .mn-bmc__block--kr { grid-area: kr; }
+  .mn-bmc__block--vp { grid-area: vp; }
+  .mn-bmc__block--cr { grid-area: cr; }
+  .mn-bmc__block--ch { grid-area: ch; }
+  .mn-bmc__block--cs { grid-area: cs; }
+  .mn-bmc__block--co { grid-area: co; }
+  .mn-bmc__block--rs { grid-area: rs; }
+
+  /* Value Proposition — highlighted center block */
+  .mn-bmc__block--vp {
+    background: color-mix(in srgb, var(--mn-accent) 5%, var(--mn-surface));
+    border-color: color-mix(in srgb, var(--mn-accent) 30%, var(--mn-border));
+  }
+
+  /* Bottom row accent borders: cost = danger, revenue = success */
+  .mn-bmc__block--co { border-top: 3px solid var(--signal-danger); }
+  .mn-bmc__block--rs { border-top: 3px solid var(--signal-ok); }
+
+  /* Outer corner radii */
+  .mn-bmc__block--kp { border-radius: var(--radius-md) 0 0 0; }
+  .mn-bmc__block--cs { border-radius: 0 var(--radius-md) 0 0; }
+  .mn-bmc__block--co { border-radius: 0 0 0 var(--radius-md); }
+  .mn-bmc__block--rs { border-radius: 0 0 var(--radius-md) 0; }
+
+  /* Header row */
+  .mn-bmc__header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-xs);
+    padding-bottom: var(--space-xs);
+    border-bottom: 1px solid var(--mn-border);
+  }
+
+  .mn-bmc__icon {
+    width: 28px; height: 28px; border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 0.6875rem; flex-shrink: 0;
+    font-family: var(--font-mono, monospace); letter-spacing: -0.02em;
+  }
+
+  .mn-bmc__title { font-weight: 600; font-size: var(--text-sm); color: var(--mn-text); }
+
+  /* Per-block icon badge tints — info / ok / accent / warning / danger / muted */
+  .mn-bmc__block--kp .mn-bmc__icon {
+    background: color-mix(in srgb, var(--signal-info) 20%, transparent); color: var(--signal-info);
+  }
+  .mn-bmc__block--ka .mn-bmc__icon {
+    background: color-mix(in srgb, var(--signal-ok) 20%, transparent); color: var(--signal-ok);
+  }
+  .mn-bmc__block--kr .mn-bmc__icon {
+    background: color-mix(in srgb, var(--signal-ok) 12%, transparent); color: var(--signal-ok);
+  }
+  .mn-bmc__block--vp .mn-bmc__icon {
+    background: color-mix(in srgb, var(--mn-accent) 25%, transparent); color: var(--mn-accent);
+  }
+  .mn-bmc__block--cr .mn-bmc__icon {
+    background: color-mix(in srgb, var(--signal-warning) 20%, transparent); color: var(--signal-warning);
+  }
+  .mn-bmc__block--ch .mn-bmc__icon {
+    background: color-mix(in srgb, var(--signal-warning) 12%, transparent); color: var(--signal-warning);
+  }
+  .mn-bmc__block--cs .mn-bmc__icon {
+    background: color-mix(in srgb, var(--signal-danger) 18%, transparent); color: var(--signal-danger);
+  }
+  .mn-bmc__block--co .mn-bmc__icon,
+  .mn-bmc__block--rs .mn-bmc__icon {
+    background: color-mix(in srgb, var(--mn-text) 10%, transparent); color: var(--mn-text-muted);
+  }
+
+  /* Item list */
+  .mn-bmc__list {
+    list-style: none; margin: 0; padding: 0; flex: 1;
+    overflow-y: auto; display: flex; flex-direction: column; gap: 4px;
+  }
+
+  .mn-bmc__item {
+    display: flex; align-items: flex-start; gap: var(--space-xs);
+    padding: 4px 6px; border-radius: var(--radius-sm);
+    transition: background 0.15s ease, opacity 0.2s ease;
+  }
+
+  .mn-bmc__item:hover { background: color-mix(in srgb, var(--mn-text) 6%, transparent); }
+  .mn-bmc__item--removing { opacity: 0; pointer-events: none; }
+
+  .mn-bmc__text { font-size: 0.8125rem; color: var(--mn-text); flex: 1; line-height: 1.4; }
+
+  /* Remove button — visible on hover/focus */
+  .mn-bmc__remove {
+    flex-shrink: 0; opacity: 0; background: transparent; border: none;
+    color: var(--mn-text-muted); cursor: pointer; font-size: 0.875rem;
+    padding: 0 4px; line-height: 1; border-radius: var(--radius-sm);
+    transition: opacity 0.15s ease, color 0.15s ease;
+  }
+
+  .mn-bmc__item:hover .mn-bmc__remove { opacity: 1; }
+  .mn-bmc__remove:hover { color: var(--signal-danger); }
+
+  .mn-bmc__remove:focus-visible {
+    opacity: 1; outline: 2px solid var(--mn-accent); outline-offset: 1px;
+  }
+
+  /* Add button */
+  .mn-bmc__add {
+    margin-top: auto; align-self: flex-start; background: transparent;
+    border: 1px dashed var(--mn-border); color: var(--mn-accent);
+    font-size: 0.75rem; padding: 3px 10px; border-radius: var(--radius-sm);
+    cursor: pointer; transition: background 0.15s ease;
+  }
+
+  .mn-bmc__add:hover { background: color-mix(in srgb, var(--mn-accent) 8%, transparent); }
+
+  .mn-bmc__add:focus-visible {
+    outline: 2px solid var(--mn-accent); outline-offset: 1px;
+  }
+
+  /* Input wrap */
+  .mn-bmc__input-wrap { display: flex; gap: var(--space-xs); margin-top: var(--space-xs); }
+  .mn-bmc__input-wrap[hidden] { display: none; }
+  .mn-bmc__input { flex: 1; font-size: 0.8125rem; }
+
+  .mn-bmc__confirm {
+    background: var(--mn-accent); color: var(--mn-accent-text); border: none;
+    border-radius: var(--radius-sm); padding: 4px 8px; cursor: pointer; font-size: 0.875rem;
+  }
+
+  .mn-bmc__confirm:focus-visible {
+    outline: 2px solid var(--mn-accent); outline-offset: 2px;
+  }
+
+  /* Avorio theme */
+  body.mn-avorio .mn-bmc__block { background: var(--superficie-card, var(--bianco-puro)); }
+
+  body.mn-avorio .mn-bmc__block--vp {
+    background: color-mix(in srgb, var(--mn-accent) 5%, var(--superficie-card, var(--bianco-puro)));
+  }
+
+  /* Tablet: 2-column fallback */
+  @media (max-width: 1024px) {
+    .mn-bmc {
+      grid-template-areas: "kp vp" "ka vp" "kr cr" "ch cs" "co rs";
+      grid-template-columns: 1fr 1fr; grid-template-rows: auto; min-height: auto;
+    }
+    .mn-bmc__block--kp { border-radius: var(--radius-md) 0 0 0; }
+    .mn-bmc__block--vp { border-radius: 0 var(--radius-md) 0 0; }
+    .mn-bmc__block--cs { border-radius: 0; }
+    .mn-bmc__block--co { border-radius: 0 0 0 var(--radius-md); }
+    .mn-bmc__block--rs { border-radius: 0 0 var(--radius-md) 0; }
+  }
+
+  /* Mobile: single column, VP first */
+  @media (max-width: 640px) {
+    .mn-bmc {
+      grid-template-areas: "vp" "kp" "ka" "kr" "cr" "ch" "cs" "co" "rs";
+      grid-template-columns: 1fr; padding: var(--space-xs);
+    }
+    .mn-bmc__block { padding: var(--space-sm); min-height: 80px; border-radius: 0; }
+    .mn-bmc__block:first-child { border-radius: var(--radius-md) var(--radius-md) 0 0; }
+    .mn-bmc__block:last-child { border-radius: 0 0 var(--radius-md) var(--radius-md); }
+  }
+
+}

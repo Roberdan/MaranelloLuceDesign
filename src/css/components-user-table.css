@@ -1,0 +1,169 @@
+/* Maranello Luce Design - Admin User Table */
+@layer components {
+
+/* ─── Toolbar ─── */
+.mn-user-table__toolbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: var(--space-sm) 0 var(--space-md); gap: var(--space-md);
+}
+.mn-user-table__search {
+  width: 240px; padding: var(--space-xs) var(--space-sm);
+  font: 500 var(--text-sm) var(--font-body); color: var(--mn-text);
+  background: var(--mn-surface); border: 1px solid var(--mn-border);
+  border-radius: var(--radius-md); outline: none;
+  transition: border-color var(--duration-sm) var(--ease-out), box-shadow var(--duration-sm) var(--ease-out);
+}
+.mn-user-table__search::placeholder { color: var(--mn-text-muted); opacity: 0.6; }
+.mn-user-table__search:focus {
+  border-color: var(--mn-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--mn-accent) 20%, transparent);
+}
+.mn-user-table__count {
+  font-size: var(--text-micro); color: var(--mn-text-muted);
+  background: color-mix(in srgb, var(--mn-text) 6%, transparent);
+  padding: 2px var(--space-sm); border-radius: var(--radius-pill); white-space: nowrap;
+}
+
+/* ─── Table wrapper ─── */
+.mn-user-table__wrap {
+  overflow-x: auto; border: 1px solid var(--mn-border); border-radius: var(--radius-md);
+}
+.mn-user-table { width: 100%; border-collapse: collapse; table-layout: auto; }
+
+/* ─── Header ─── */
+.mn-user-table__th {
+  padding: 10px 16px; font-size: var(--text-micro); font-family: var(--font-body);
+  font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;
+  color: var(--mn-text-muted); text-align: left;
+  border-bottom: 1px solid var(--mn-border);
+  background: color-mix(in srgb, var(--mn-text) 3%, transparent);
+  white-space: nowrap; user-select: none;
+}
+.mn-user-table__th--check { width: 40px; text-align: center; }
+.mn-user-table__th--actions { width: 100px; }
+
+/* ─── Rows ─── */
+.mn-user-table__row {
+  border-bottom: 1px solid color-mix(in srgb, var(--mn-border) 50%, transparent);
+  cursor: pointer; transition: background var(--duration-sm) var(--ease-out);
+}
+.mn-user-table__row:hover { background: color-mix(in srgb, var(--mn-text) 4%, transparent); }
+.mn-user-table__row:focus-visible { outline: 2px solid var(--mn-accent); outline-offset: -2px; }
+.mn-user-table__td {
+  padding: 12px 16px; font-size: var(--text-sm); font-family: var(--font-body);
+  color: var(--mn-text); vertical-align: middle;
+}
+.mn-user-table__td--check { width: 40px; text-align: center; }
+
+/* ─── Avatar ─── */
+.mn-user-table__avatar {
+  width: 40px; height: 40px; border-radius: var(--radius-full);
+  object-fit: cover; flex-shrink: 0;
+}
+.mn-user-table__avatar--initials {
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 600; font-size: 0.875rem; font-family: var(--font-body);
+  color: var(--mn-accent-text);
+}
+/* 6 avatar palette slots using paired color tokens */
+.mn-user-table__avatar--initials[data-color="0"] { background: var(--mn-pair-1-bg); color: var(--mn-pair-1-text); }
+.mn-user-table__avatar--initials[data-color="1"] { background: var(--mn-pair-3-bg); color: var(--mn-pair-3-text); }
+.mn-user-table__avatar--initials[data-color="2"] { background: var(--mn-pair-6-bg); color: var(--mn-pair-6-text); }
+.mn-user-table__avatar--initials[data-color="3"] { background: var(--mn-pair-9-bg); color: var(--mn-pair-9-text); }
+.mn-user-table__avatar--initials[data-color="4"] { background: var(--mn-pair-2-bg); color: var(--mn-pair-2-text); }
+.mn-user-table__avatar--initials[data-color="5"] { background: var(--mn-pair-12-bg); color: var(--mn-pair-12-text); }
+
+/* ─── Identity cell (avatar + name/email) ─── */
+.mn-user-table__identity { display: flex; align-items: center; gap: var(--space-sm); }
+.mn-user-table__name-group { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.mn-user-table__name {
+  font-weight: 600; font-size: var(--text-sm); color: var(--mn-text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.mn-user-table__email {
+  font-size: var(--text-micro); color: var(--mn-text-muted);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* ─── Status pills ─── */
+.mn-user-table__status {
+  display: inline-block; padding: 2px var(--space-sm);
+  font-size: var(--text-micro); font-weight: 500;
+  border-radius: var(--radius-pill); white-space: nowrap;
+}
+.mn-user-table__status--active {
+  background: color-mix(in srgb, var(--signal-ok) 15%, transparent); color: var(--signal-ok);
+}
+.mn-user-table__status--inactive {
+  background: color-mix(in srgb, var(--mn-text-muted) 12%, transparent); color: var(--mn-text-muted);
+}
+.mn-user-table__status--suspended {
+  background: color-mix(in srgb, var(--signal-danger) 15%, transparent); color: var(--signal-danger);
+}
+.mn-user-table__status--invited {
+  background: color-mix(in srgb, var(--signal-info) 15%, transparent); color: var(--signal-info);
+}
+
+/* ─── Role pills ─── */
+.mn-user-table__role {
+  display: inline-block; padding: 2px var(--space-sm);
+  font-size: var(--text-micro); font-weight: 500;
+  border: 1px solid var(--mn-border); border-radius: var(--radius-pill);
+  color: var(--mn-text-muted); text-transform: capitalize; white-space: nowrap;
+}
+
+/* ─── Team badges ─── */
+.mn-user-table__team {
+  display: inline-block; padding: 2px var(--space-xs); font-size: var(--text-micro);
+  background: color-mix(in srgb, var(--mn-accent) 10%, transparent);
+  color: var(--mn-text); border-radius: var(--radius-sm);
+  margin-right: var(--space-2xs); white-space: nowrap;
+}
+.mn-user-table__team--more { background: color-mix(in srgb, var(--mn-text) 8%, transparent); color: var(--mn-text-muted); }
+.mn-user-table__empty { color: var(--mn-text-muted); }
+
+/* ─── Action buttons ─── */
+.mn-user-table__actions {
+  display: flex; gap: var(--space-xs); opacity: 0;
+  transition: opacity var(--duration-sm) var(--ease-out);
+}
+.mn-user-table__row:hover .mn-user-table__actions,
+.mn-user-table__row:focus-within .mn-user-table__actions { opacity: 1; }
+.mn-user-table__action {
+  width: 28px; height: 28px; display: inline-flex; align-items: center;
+  justify-content: center; border: none; border-radius: var(--radius-full);
+  background: transparent; color: var(--mn-text-muted); font-size: var(--text-sm);
+  cursor: pointer;
+  transition: color var(--duration-sm) var(--ease-out), background var(--duration-sm) var(--ease-out);
+}
+.mn-user-table__action:hover {
+  color: var(--mn-text); background: color-mix(in srgb, var(--mn-text) 8%, transparent);
+}
+.mn-user-table__action:focus-visible { outline: 2px solid var(--mn-accent); outline-offset: 2px; }
+.mn-user-table__action--danger:hover {
+  color: var(--signal-danger); background: color-mix(in srgb, var(--signal-danger) 10%, transparent);
+}
+
+/* ─── Checkboxes ─── */
+.mn-user-table__check,
+.mn-user-table__check-all { width: 16px; height: 16px; accent-color: var(--mn-accent); cursor: pointer; }
+
+/* ─── Last-active column ─── */
+.mn-user-table__td--last { font-size: var(--text-micro); color: var(--mn-text-muted); white-space: nowrap; }
+
+/* ─── Avorio theme overrides ─── */
+body.mn-avorio .mn-user-table__wrap { border-color: var(--avorio-scuro); }
+body.mn-avorio .mn-user-table__th { background: var(--avorio-chiaro); border-bottom-color: var(--avorio-scuro); }
+body.mn-avorio .mn-user-table__row:hover { background: var(--avorio-chiaro); }
+body.mn-avorio .mn-user-table__search { background: var(--bianco-puro); border-color: var(--avorio-scuro); }
+
+/* ─── Mobile responsive ─── */
+@media (max-width: 640px) {
+  .mn-user-table__th--teams, .mn-user-table__td--teams { display: none; }
+  .mn-user-table__td, .mn-user-table__th { padding: 8px 10px; }
+  .mn-user-table__search { width: 100%; }
+  .mn-user-table__toolbar { flex-wrap: wrap; }
+  .mn-user-table__actions { opacity: 1; }
+}
+
+} /* end @layer components */

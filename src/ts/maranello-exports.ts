@@ -44,6 +44,11 @@ import { streamingText } from './streaming-text';
 import { riskMatrix } from './charts-risk-matrix';
 import { kpiScorecard } from './kpi-scorecard';
 import { cohortGrid } from './cohort-grid';
+import { auditLog } from './audit-log';
+import { agentCostBreakdown } from './agent-cost-breakdown';
+import { costTimeline } from './charts-cost-timeline';
+import { businessModelCanvas } from './business-model-canvas';
+import { userTable } from './user-table';
 import { dateRangePicker } from './date-range-picker';
 import { bulletChart } from './charts-bullet';
 import { notificationCenter } from './notification-center';
@@ -137,4 +142,11 @@ export function registerExtras(M: Record<string, unknown>): void {
   M.riskMatrix = riskMatrix;
   M.kpiScorecard = kpiScorecard;
   M.cohortGrid = cohortGrid;
+
+  // Admin & FinOps (v4.10)
+  M.auditLog = auditLog;
+  M.agentCostBreakdown = agentCostBreakdown;
+  M.costTimeline = costTimeline;
+  M.businessModelCanvas = businessModelCanvas;
+  M.userTable = userTable;
 }

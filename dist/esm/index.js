@@ -3503,8 +3503,8 @@ var cellRenderers = {
   tag: (val) => !val ? "" : '<span class="mn-tag mn-tag--light mn-tag--xs">' + escHtml(val) + "</span>",
   person: (val) => {
     if (!val) return '<span class="mn-dt__cell-text">\u2014</span>';
-    const initials2 = String(val).split(/\s+/).map((w) => w[0]).join("").slice(0, 2).toUpperCase();
-    return '<div class="mn-dt__cell-person"><span class="mn-dt__avatar">' + initials2 + '</span><span class="mn-dt__cell-text">' + escHtml(val) + "</span></div>";
+    const initials3 = String(val).split(/\s+/).map((w) => w[0]).join("").slice(0, 2).toUpperCase();
+    return '<div class="mn-dt__cell-person"><span class="mn-dt__avatar">' + initials3 + '</span><span class="mn-dt__cell-text">' + escHtml(val) + "</span></div>";
   },
   badge: (val) => {
     if (val == null) return '<span class="mn-dt__cell-text">\u2014</span>';
@@ -4488,10 +4488,10 @@ function initPersonField(el4, opts) {
       item.className = "mn-person-field__item";
       item.setAttribute("role", "option");
       item.setAttribute("tabindex", "-1");
-      const initials2 = person.initials ?? deriveInitials(person.name);
+      const initials3 = person.initials ?? deriveInitials(person.name);
       const avatar = document.createElement("span");
       avatar.className = "mn-person__avatar";
-      avatar.textContent = initials2;
+      avatar.textContent = initials3;
       item.appendChild(avatar);
       const info = document.createElement("div");
       const nameSpan = document.createElement("span");
@@ -9939,6 +9939,951 @@ function cohortGrid(el4, rows, opts) {
   };
 }
 
+// src/ts/audit-log.ts
+var SEVERITIES = ["info", "warning", "error", "critical", "success"];
+var SEV_LABELS = {
+  all: "All",
+  info: "Info",
+  warning: "Warning",
+  error: "Error",
+  critical: "Critical",
+  success: "Success"
+};
+function buildEntry(entry, ac, onSelect) {
+  const li = document.createElement("li");
+  li.className = "mn-audit__entry";
+  li.dataset.severity = entry.severity;
+  li.dataset.id = entry.id;
+  li.setAttribute("role", "listitem");
+  li.setAttribute("tabindex", "0");
+  li.setAttribute("aria-expanded", "false");
+  const dot = document.createElement("span");
+  dot.className = "mn-audit__timeline-dot";
+  dot.setAttribute("aria-hidden", "true");
+  const body = document.createElement("div");
+  body.className = "mn-audit__body";
+  const meta = document.createElement("div");
+  meta.className = "mn-audit__meta";
+  const ts = document.createElement("time");
+  ts.className = "mn-audit__timestamp";
+  ts.textContent = entry.timestamp;
+  const actorSpan = document.createElement("span");
+  actorSpan.className = "mn-audit__actor";
+  actorSpan.innerHTML = escapeHtml(entry.actor) + (entry.actorRole ? ` <span class="mn-audit__actor-badge">${escapeHtml(entry.actorRole)}</span>` : "");
+  meta.append(ts, actorSpan);
+  const actionDiv = document.createElement("div");
+  actionDiv.className = "mn-audit__action";
+  actionDiv.innerHTML = `<strong>${escapeHtml(entry.action)}</strong>` + (entry.resource ? ` <span class="mn-audit__resource">${escapeHtml(entry.resource)}</span>` : "");
+  body.append(meta, actionDiv);
+  const expand = document.createElement("div");
+  expand.className = "mn-audit__expand";
+  expand.setAttribute("aria-hidden", "true");
+  if (entry.metadata || entry.ipAddress) {
+    const dl = document.createElement("dl");
+    dl.className = "mn-audit__meta-table";
+    if (entry.ipAddress) {
+      dl.innerHTML += `<dt>IP</dt><dd class="mn-audit__ip">${escapeHtml(entry.ipAddress)}</dd>`;
+    }
+    if (entry.metadata) {
+      for (const [k, v] of Object.entries(entry.metadata)) {
+        dl.innerHTML += `<dt>${escapeHtml(k)}</dt><dd>${escapeHtml(v)}</dd>`;
+      }
+    }
+    expand.appendChild(dl);
+  }
+  body.appendChild(expand);
+  li.append(dot, body);
+  const toggle = () => {
+    const open = li.getAttribute("aria-expanded") === "true";
+    li.setAttribute("aria-expanded", String(!open));
+    expand.setAttribute("aria-hidden", String(open));
+    if (!open) onSelect?.(entry);
+  };
+  li.addEventListener("click", toggle, { signal: ac.signal });
+  li.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      toggle();
+    }
+    if (e.key === "Escape" && li.getAttribute("aria-expanded") === "true") {
+      li.setAttribute("aria-expanded", "false");
+      expand.setAttribute("aria-hidden", "true");
+    }
+  }, { signal: ac.signal });
+  return li;
+}
+function updateCounts(header, list) {
+  const items = list.querySelectorAll(".mn-audit__entry");
+  const counts = { all: items.length };
+  for (const sev of SEVERITIES) counts[sev] = 0;
+  items.forEach((li) => {
+    const s = li.dataset.severity ?? "";
+    counts[s] = (counts[s] ?? 0) + 1;
+  });
+  header.querySelectorAll(".mn-audit__tab").forEach((tab) => {
+    const badge = tab.querySelector(".mn-audit__tab-count");
+    if (badge) badge.textContent = String(counts[tab.dataset.filter ?? "all"] ?? 0);
+  });
+}
+function prune(list, max) {
+  while (list.children.length > max) list.removeChild(list.lastChild);
+}
+function auditLog(el4, entries = [], opts = {}) {
+  const max = opts.maxEntries ?? 100;
+  const filterable = opts.filterable ?? true;
+  const ac = new AbortController();
+  let activeFilter = "all";
+  el4.classList.add("mn-audit");
+  el4.innerHTML = "";
+  const header = document.createElement("div");
+  header.className = "mn-audit__header";
+  const title = document.createElement("h3");
+  title.className = "mn-audit__title";
+  title.textContent = "Audit Log";
+  const tabBar = document.createElement("div");
+  tabBar.className = "mn-audit__tabs";
+  tabBar.setAttribute("role", "tablist");
+  if (filterable) {
+    for (const key of ["all", ...SEVERITIES]) {
+      const btn = document.createElement("button");
+      btn.className = "mn-audit__tab";
+      btn.dataset.filter = key;
+      btn.setAttribute("role", "tab");
+      btn.setAttribute("aria-selected", key === "all" ? "true" : "false");
+      btn.innerHTML = `${SEV_LABELS[key]} <span class="mn-audit__tab-count">0</span>`;
+      tabBar.appendChild(btn);
+    }
+  }
+  header.append(title, tabBar);
+  el4.appendChild(header);
+  const liveRegion = document.createElement("div");
+  liveRegion.setAttribute("aria-live", "polite");
+  liveRegion.setAttribute("aria-atomic", "true");
+  liveRegion.className = "mn-sr-only";
+  el4.appendChild(liveRegion);
+  const list = document.createElement("ul");
+  list.className = "mn-audit__list";
+  list.setAttribute("role", "list");
+  el4.appendChild(list);
+  for (const entry of entries) {
+    list.appendChild(buildEntry(entry, ac, opts.onSelect));
+  }
+  prune(list, max);
+  updateCounts(header, list);
+  const applyFilter = (sev) => {
+    activeFilter = sev;
+    tabBar.querySelectorAll(".mn-audit__tab").forEach((tab) => {
+      tab.setAttribute("aria-selected", tab.dataset.filter === sev ? "true" : "false");
+    });
+    list.querySelectorAll(".mn-audit__entry").forEach((li) => {
+      li.style.display = sev === "all" || li.dataset.severity === sev ? "" : "none";
+    });
+  };
+  tabBar.addEventListener("click", (e) => {
+    const tab = e.target.closest(".mn-audit__tab");
+    if (tab?.dataset.filter) applyFilter(tab.dataset.filter);
+  }, { signal: ac.signal });
+  const addEntry = (entry, position) => {
+    const node = buildEntry(entry, ac, opts.onSelect);
+    if (opts.live && position === "prepend") node.classList.add("mn-audit__entry--slide-in");
+    if (position === "prepend") {
+      list.insertBefore(node, list.firstChild);
+      liveRegion.textContent = `${entry.actor}: ${entry.action}`;
+    } else {
+      list.appendChild(node);
+    }
+    if (activeFilter !== "all" && entry.severity !== activeFilter) node.style.display = "none";
+    prune(list, max);
+    updateCounts(header, list);
+  };
+  return {
+    prepend: (entry) => addEntry(entry, "prepend"),
+    append: (entry) => addEntry(entry, "append"),
+    setFilter: applyFilter,
+    clear: () => {
+      list.innerHTML = "";
+      updateCounts(header, list);
+    },
+    destroy: () => {
+      ac.abort();
+      el4.innerHTML = "";
+      el4.classList.remove("mn-audit");
+    }
+  };
+}
+
+// src/ts/agent-cost-breakdown.ts
+var COMPACT_FMT = new Intl.NumberFormat("en-US", {
+  notation: "compact",
+  maximumFractionDigits: 1
+});
+var CURRENCY_FMT = (currency) => new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency,
+  minimumFractionDigits: 2
+});
+var COLS = [
+  { key: "agentName", label: "Agent", cls: "" },
+  { key: "model", label: "Model", cls: "" },
+  { key: "totalTokens", label: "Tokens", cls: "num" },
+  { key: "cachedPct", label: "Cached%", cls: "num" },
+  { key: "cost", label: "Cost", cls: "num" },
+  { key: "costDelta", label: "\u0394", cls: "num" },
+  { key: "calls", label: "Calls", cls: "num" },
+  { key: "avgLatencyMs", label: "Avg Latency", cls: "num hide-mobile" },
+  { key: "budget", label: "Budget", cls: "" },
+  { key: "tags", label: "Tags", cls: "hide-mobile" }
+];
+function cachedPct(row) {
+  if (!row.cachedTokens || !row.totalTokens) return 0;
+  return row.cachedTokens / row.totalTokens * 100;
+}
+function sortVal(row, key) {
+  if (key === "cachedPct") return cachedPct(row);
+  const v = row[key];
+  return v ?? 0;
+}
+function sortRows(rows, st) {
+  return [...rows].sort((a, b) => {
+    const va = sortVal(a, st.key);
+    const vb = sortVal(b, st.key);
+    const cmp = typeof va === "string" ? va.localeCompare(vb) : va - vb;
+    return st.dir === "asc" ? cmp : -cmp;
+  });
+}
+function modelAttr(model) {
+  const m = model.toLowerCase();
+  if (m.includes("sonnet")) return "sonnet";
+  if (m.includes("haiku")) return "haiku";
+  if (m.includes("opus")) return "opus";
+  return "other";
+}
+function cachedClass(pct3) {
+  if (pct3 > 30) return "mn-cost-breakdown__cached--high";
+  if (pct3 >= 10) return "mn-cost-breakdown__cached--mid";
+  return "mn-cost-breakdown__cached--low";
+}
+function budgetHtml(row) {
+  if (row.budget == null) return '<td class="mn-cost-breakdown__cell">&mdash;</td>';
+  const pct3 = Math.min(row.cost / row.budget * 100, 100);
+  const alert = pct3 > 80 ? " mn-cost-breakdown__budget--alert" : "";
+  return `<td class="mn-cost-breakdown__cell">
+    <span class="mn-cost-breakdown__budget-label">${COMPACT_FMT.format(row.budget)}</span>
+    <span class="mn-cost-breakdown__budget-bar">
+      <span class="mn-cost-breakdown__budget-fill${alert}" style="width:${pct3.toFixed(1)}%"></span>
+    </span></td>`;
+}
+function deltaHtml(delta) {
+  if (delta == null) return '<td class="mn-cost-breakdown__cell num">&mdash;</td>';
+  const cls = delta > 0 ? "mn-cost-breakdown__delta--up" : "mn-cost-breakdown__delta--down";
+  const arrow = delta > 0 ? "\u25B2" : "\u25BC";
+  return `<td class="mn-cost-breakdown__cell num ${cls}">${arrow} ${Math.abs(delta).toFixed(1)}%</td>`;
+}
+function tagsHtml(tags) {
+  if (!tags?.length) return '<td class="mn-cost-breakdown__cell hide-mobile">&mdash;</td>';
+  const pills = tags.slice(0, 2).map(
+    (t) => `<span class="mn-cost-breakdown__tag">${escapeHtml(t)}</span>`
+  ).join("");
+  return `<td class="mn-cost-breakdown__cell hide-mobile">${pills}</td>`;
+}
+function rowHtml(row, fmt) {
+  const cp = cachedPct(row);
+  const lat = row.avgLatencyMs != null ? `${row.avgLatencyMs.toLocaleString()}ms` : "&mdash;";
+  return `<tr data-id="${escapeHtml(row.id)}">
+    <td class="mn-cost-breakdown__cell"><strong>${escapeHtml(row.agentName)}</strong></td>
+    <td class="mn-cost-breakdown__cell">
+      <span class="mn-cost-breakdown__model" data-model="${modelAttr(row.model)}">${escapeHtml(row.model)}</span></td>
+    <td class="mn-cost-breakdown__cell num">${COMPACT_FMT.format(row.totalTokens)}</td>
+    <td class="mn-cost-breakdown__cell num">
+      <span class="${cachedClass(cp)}">${cp.toFixed(0)}%</span></td>
+    <td class="mn-cost-breakdown__cell num"><strong>${fmt.format(row.cost)}</strong></td>
+    ${deltaHtml(row.costDelta)}
+    <td class="mn-cost-breakdown__cell num">${row.calls.toLocaleString()}</td>
+    <td class="mn-cost-breakdown__cell num hide-mobile">${lat}</td>
+    ${budgetHtml(row)}
+    ${tagsHtml(row.tags)}</tr>`;
+}
+function footerHtml(rows, fmt) {
+  const totTokens = rows.reduce((s, r) => s + r.totalTokens, 0);
+  const totCost = rows.reduce((s, r) => s + r.cost, 0);
+  const totCalls = rows.reduce((s, r) => s + r.calls, 0);
+  return `<tr class="mn-cost-breakdown__footer-row">
+    <td class="mn-cost-breakdown__cell" colspan="2"><strong>Total</strong></td>
+    <td class="mn-cost-breakdown__cell num"><strong>${COMPACT_FMT.format(totTokens)}</strong></td>
+    <td class="mn-cost-breakdown__cell">&nbsp;</td>
+    <td class="mn-cost-breakdown__cell num"><strong>${fmt.format(totCost)}</strong></td>
+    <td class="mn-cost-breakdown__cell">&nbsp;</td>
+    <td class="mn-cost-breakdown__cell num"><strong>${totCalls.toLocaleString()}</strong></td>
+    <td class="mn-cost-breakdown__cell hide-mobile" colspan="3">&nbsp;</td></tr>`;
+}
+function agentCostBreakdown(el4, rows, opts) {
+  const currency = opts?.currency ?? "USD";
+  const period = opts?.period ?? "This period";
+  const sortable = opts?.sortable !== false;
+  const fmt = CURRENCY_FMT(currency);
+  const ac = new AbortController();
+  const sort = { key: "cost", dir: "desc" };
+  function renderAll(data) {
+    const sorted = sortRows(data, sort);
+    const totalCost = data.reduce((s, r) => s + r.cost, 0);
+    if (opts?.onBudgetAlert) {
+      for (const r of data) {
+        if (r.budget != null && r.cost > r.budget * 0.8) opts.onBudgetAlert(r);
+      }
+    }
+    const thCells = COLS.map((c) => {
+      const aria = sortable && sort.key === c.key ? ` aria-sort="${sort.dir === "asc" ? "ascending" : "descending"}"` : "";
+      const sortCls = sortable ? " sortable" : "";
+      return `<th class="mn-cost-breakdown__th ${c.cls}${sortCls}" data-sort="${c.key}"${aria}>${c.label}</th>`;
+    }).join("");
+    el4.innerHTML = `<div class="mn-cost-breakdown">
+      <div class="mn-cost-breakdown__header">
+        <div class="mn-cost-breakdown__title-group">
+          <h3 class="mn-cost-breakdown__title">Agent Cost Breakdown</h3>
+          <span class="mn-cost-breakdown__period">${escapeHtml(period)}</span>
+        </div>
+        <span class="mn-cost-breakdown__total">${fmt.format(totalCost)}</span>
+      </div>
+      <div class="mn-cost-breakdown__table-wrap">
+        <table class="mn-cost-breakdown__table" role="table">
+          <thead><tr>${thCells}</tr></thead>
+          <tbody>${sorted.map((r) => rowHtml(r, fmt)).join("")}</tbody>
+          <tfoot>${footerHtml(data, fmt)}</tfoot>
+        </table>
+      </div></div>`;
+  }
+  let current = rows.slice();
+  renderAll(current);
+  if (sortable) {
+    el4.addEventListener("click", (e) => {
+      const th = e.target.closest(".mn-cost-breakdown__th");
+      if (!th?.dataset.sort) return;
+      const key = th.dataset.sort;
+      sort.dir = sort.key === key && sort.dir === "asc" ? "desc" : "asc";
+      sort.key = key;
+      renderAll(current);
+    }, { signal: ac.signal });
+  }
+  if (opts?.onSelect) {
+    el4.addEventListener("click", (e) => {
+      const tr = e.target.closest("tbody tr[data-id]");
+      if (!tr) return;
+      const id = tr.dataset.id;
+      const row = current.find((r) => r.id === id);
+      if (row) opts.onSelect(row);
+    }, { signal: ac.signal });
+  }
+  return {
+    update(newRows) {
+      current = newRows.slice();
+      renderAll(current);
+    },
+    destroy() {
+      ac.abort();
+      el4.innerHTML = "";
+    }
+  };
+}
+
+// src/ts/charts-cost-timeline.ts
+var PAD2 = { top: 20, right: 16, bottom: 36, left: 52 };
+var GRID_LINES = 5;
+var ANIM_MS2 = 600;
+var COLOR_VARS = [
+  ["--mn-accent", "#FFC72C"],
+  ["--signal-info", "#3B82F6"],
+  ["--signal-ok", "#00A651"],
+  ["--signal-warning", "#FFC72C"],
+  ["--signal-danger", "#DC0000"],
+  ["--mn-text-muted", "#888888"]
+];
+function resolveColor5(series, idx) {
+  if (series.color) {
+    return series.color.startsWith("--") ? cssVar(series.color, "#888") : series.color;
+  }
+  const [v, fb] = COLOR_VARS[idx % COLOR_VARS.length];
+  return cssVar(v, fb);
+}
+function fmtY(val, unit) {
+  if (val >= 1e6) return `${unit}${(val / 1e6).toFixed(1)}M`;
+  if (val >= 1e3) return `${unit}${(val / 1e3).toFixed(1)}k`;
+  return `${unit}${Math.round(val)}`;
+}
+function buildStacks(series) {
+  const n = series[0]?.values.length ?? 0, stacks = [];
+  for (let s = 0; s < series.length; s++) {
+    stacks[s] = Array.from({ length: n }, (_, i) => (series[s].values[i] ?? 0) + (s > 0 ? stacks[s - 1][i] : 0));
+  }
+  return stacks;
+}
+function easeOut2(t) {
+  return 1 - (1 - t) ** 3;
+}
+function costTimeline(canvas, opts) {
+  let cfg = {
+    ...opts,
+    height: opts.height ?? 200,
+    stacked: opts.stacked ?? true,
+    animate: opts.animate ?? true,
+    unit: opts.unit ?? "$"
+  };
+  let rafId = 0;
+  let hoverX = -1;
+  function draw(clipFrac) {
+    const w = Math.max(canvas.getBoundingClientRect().width, 200);
+    const h = cfg.height;
+    const ctx = chartHiDpi(canvas, w, h);
+    const n = cfg.labels.length;
+    if (n < 2 || cfg.series.length === 0) return;
+    const plotW = w - PAD2.left - PAD2.right;
+    const plotH = h - PAD2.top - PAD2.bottom;
+    const xStep = plotW / (n - 1);
+    const gx = (i) => PAD2.left + i * xStep;
+    const stacks = cfg.stacked ? buildStacks(cfg.series) : [];
+    const maxVal = cfg.stacked ? Math.max(...stacks[stacks.length - 1] ?? [1]) * 1.1 : Math.max(...cfg.series.flatMap((s) => s.values)) * 1.1 || 1;
+    const gy = (v) => PAD2.top + plotH - v / maxVal * plotH;
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(0, 0, PAD2.left + plotW * clipFrac + PAD2.right, h);
+    ctx.clip();
+    const borderColor = cssVar("--mn-border", "#333");
+    ctx.strokeStyle = hexToRgba(borderColor.startsWith("#") ? borderColor : "#333333", 0.3);
+    ctx.setLineDash([4, 4]);
+    ctx.lineWidth = 0.5;
+    const mutedColor = cssVar("--mn-text-muted", "#888");
+    for (let g = 0; g <= GRID_LINES; g++) {
+      const val = maxVal / GRID_LINES * g;
+      const yy = gy(val);
+      ctx.beginPath();
+      ctx.moveTo(PAD2.left, yy);
+      ctx.lineTo(w - PAD2.right, yy);
+      ctx.stroke();
+      ctx.fillStyle = mutedColor;
+      ctx.font = "10px sans-serif";
+      ctx.textAlign = "right";
+      ctx.fillText(fmtY(val, cfg.unit), PAD2.left - 6, yy + 3);
+    }
+    ctx.setLineDash([]);
+    for (let s = cfg.series.length - 1; s >= 0; s--) {
+      const color = resolveColor5(cfg.series[s], s);
+      const hex = color.startsWith("#") ? color : "#888888";
+      const fillAlpha = cfg.stacked ? 0.25 : 0.15;
+      const top = cfg.stacked ? stacks[s] : cfg.series[s].values;
+      const bot = cfg.stacked && s > 0 ? stacks[s - 1] : null;
+      ctx.beginPath();
+      ctx.moveTo(gx(0), gy(top[0]));
+      for (let i = 1; i < n; i++) ctx.lineTo(gx(i), gy(top[i]));
+      for (let i = n - 1; i >= 0; i--) ctx.lineTo(gx(i), gy(bot ? bot[i] : 0));
+      ctx.closePath();
+      ctx.fillStyle = hexToRgba(hex, fillAlpha);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(gx(0), gy(top[0]));
+      for (let i = 1; i < n; i++) ctx.lineTo(gx(i), gy(top[i]));
+      ctx.strokeStyle = hexToRgba(hex, 0.8);
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    }
+    ctx.fillStyle = mutedColor;
+    ctx.font = "9px sans-serif";
+    ctx.textAlign = "center";
+    const skipX = Math.ceil(n / (plotW / 48));
+    for (let i = 0; i < n; i += skipX) {
+      ctx.fillText(cfg.labels[i], gx(i), h - PAD2.bottom + 14);
+    }
+    ctx.font = "9px sans-serif";
+    ctx.textAlign = "left";
+    const legY = h - 6;
+    const legItems = cfg.series.map((s, i) => ({
+      label: s.label,
+      color: resolveColor5(s, i),
+      width: ctx.measureText(s.label).width + 16
+    }));
+    const totalLegW = legItems.reduce((a, l) => a + l.width + 8, -8);
+    let legX = PAD2.left + (plotW - totalLegW) / 2;
+    for (const item of legItems) {
+      ctx.fillStyle = item.color;
+      ctx.fillRect(legX, legY - 6, 8, 8);
+      ctx.fillStyle = mutedColor;
+      ctx.fillText(item.label, legX + 12, legY);
+      legX += item.width + 8;
+    }
+    if (hoverX >= PAD2.left && hoverX <= w - PAD2.right) {
+      const idx = Math.round((hoverX - PAD2.left) / xStep);
+      const ci = Math.max(0, Math.min(n - 1, idx));
+      const rx = gx(ci);
+      ctx.strokeStyle = hexToRgba(cssVar("--mn-text", "#fff").startsWith("#") ? cssVar("--mn-text", "#fff") : "#ffffff", 0.4);
+      ctx.lineWidth = 1;
+      ctx.setLineDash([2, 2]);
+      ctx.beginPath();
+      ctx.moveTo(rx, PAD2.top);
+      ctx.lineTo(rx, h - PAD2.bottom);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      drawTooltip(ctx, cfg, ci, rx, w);
+      if (cfg.onHover) {
+        const vals = {};
+        cfg.series.forEach((s) => {
+          vals[s.id] = s.values[ci] ?? 0;
+        });
+        cfg.onHover(cfg.labels[ci], vals);
+      }
+    }
+    ctx.restore();
+  }
+  function drawTooltip(ctx, c, idx, rx, w) {
+    const lines = [c.labels[idx], ...c.series.map((s) => `${s.label}: ${c.unit}${(s.values[idx] ?? 0).toFixed(2)}`)];
+    ctx.font = "10px sans-serif";
+    const tw = Math.max(...lines.map((l) => ctx.measureText(l).width)) + 16;
+    const th = lines.length * 14 + 10;
+    const tx = rx + 12 + tw > w ? rx - tw - 8 : rx + 12;
+    const ty = PAD2.top + 4;
+    const bg = cssVar("--mn-surface", "#1a1a1a");
+    const border = cssVar("--mn-border", "#333");
+    ctx.fillStyle = bg.startsWith("#") ? bg : "#1a1a1a";
+    ctx.strokeStyle = border.startsWith("#") ? border : "#333333";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.roundRect(tx, ty, tw, th, 4);
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = cssVar("--mn-text", "#eee");
+    lines.forEach((l, i) => {
+      ctx.font = i === 0 ? "bold 10px sans-serif" : "10px sans-serif";
+      ctx.fillText(l, tx + 8, ty + 14 + i * 14);
+    });
+  }
+  function animate() {
+    if (!cfg.animate) {
+      draw(1);
+      return;
+    }
+    const start = performance.now();
+    const step = (now) => {
+      const t = Math.min((now - start) / ANIM_MS2, 1);
+      draw(easeOut2(t));
+      if (t < 1) rafId = requestAnimationFrame(step);
+    };
+    rafId = requestAnimationFrame(step);
+  }
+  const onMove = (e) => {
+    hoverX = e.offsetX;
+    draw(1);
+  };
+  const onLeave = () => {
+    hoverX = -1;
+    draw(1);
+  };
+  canvas.addEventListener("mousemove", onMove);
+  canvas.addEventListener("mouseleave", onLeave);
+  function applySrOnly() {
+    const hdrs = cfg.series.map((s) => escapeHtml(s.label));
+    const rows = cfg.labels.map((lbl, i) => {
+      const cells = cfg.series.map((s) => `<td>${cfg.unit}${(s.values[i] ?? 0).toFixed(2)}</td>`);
+      return `<tr><th scope="row">${escapeHtml(lbl)}</th>${cells.join("")}</tr>`;
+    }).join("");
+    const tbl = `<table><caption>Cost timeline</caption><thead><tr><th>Period</th>` + hdrs.map((h) => `<th>${h}</th>`).join("") + `</tr></thead><tbody>${rows}</tbody></table>`;
+    applyChartA11y(canvas, `Cost timeline: ${cfg.series.length} series over ${cfg.labels.length} periods`);
+    const sr = canvas.nextElementSibling;
+    if (sr?.classList.contains("mn-sr-only")) sr.innerHTML = tbl;
+  }
+  applySrOnly();
+  animate();
+  return {
+    update(partial) {
+      cfg = {
+        ...cfg,
+        ...partial,
+        height: partial.height ?? cfg.height,
+        stacked: partial.stacked ?? cfg.stacked,
+        animate: partial.animate ?? cfg.animate,
+        unit: partial.unit ?? cfg.unit
+      };
+      cancelAnimationFrame(rafId);
+      applySrOnly();
+      animate();
+    },
+    destroy() {
+      cancelAnimationFrame(rafId);
+      canvas.removeEventListener("mousemove", onMove);
+      canvas.removeEventListener("mouseleave", onLeave);
+      const sr = canvas.nextElementSibling;
+      if (sr?.classList.contains("mn-sr-only")) sr.remove();
+    }
+  };
+}
+
+// src/ts/business-model-canvas.ts
+var BLOCK_IDS = [
+  "key-partners",
+  "key-activities",
+  "key-resources",
+  "value-proposition",
+  "customer-relationships",
+  "channels",
+  "customer-segments",
+  "cost-structure",
+  "revenue-streams"
+];
+var DEFAULTS3 = {
+  "key-partners": { title: "Key Partners", icon: "KP" },
+  "key-activities": { title: "Key Activities", icon: "KA" },
+  "key-resources": { title: "Key Resources", icon: "KR" },
+  "value-proposition": { title: "Value Proposition", icon: "VP" },
+  "customer-relationships": { title: "Customer Relationships", icon: "CR" },
+  "channels": { title: "Channels", icon: "CH" },
+  "customer-segments": { title: "Customer Segments", icon: "CS" },
+  "cost-structure": { title: "Cost Structure", icon: "C$" },
+  "revenue-streams": { title: "Revenue Streams", icon: "R$" }
+};
+var AREA = {
+  "key-partners": "kp",
+  "key-activities": "ka",
+  "key-resources": "kr",
+  "value-proposition": "vp",
+  "customer-relationships": "cr",
+  "channels": "ch",
+  "customer-segments": "cs",
+  "cost-structure": "co",
+  "revenue-streams": "rs"
+};
+function genId2() {
+  if (typeof crypto !== "undefined" && crypto.randomUUID) return crypto.randomUUID();
+  return Date.now().toString(36) + Math.random().toString(36).slice(2);
+}
+function buildBlock(blockId, title, icon, uid, editable) {
+  const div = document.createElement("div");
+  div.className = `mn-bmc__block mn-bmc__block--${AREA[blockId]}`;
+  div.setAttribute("role", "group");
+  div.dataset.block = blockId;
+  const hdrId = `bmc-${uid}-${blockId}-hdr`;
+  div.setAttribute("aria-labelledby", hdrId);
+  const hdr = document.createElement("div");
+  hdr.className = "mn-bmc__header";
+  hdr.id = hdrId;
+  const badge = document.createElement("span");
+  badge.className = "mn-bmc__icon";
+  badge.textContent = icon;
+  const lbl = document.createElement("span");
+  lbl.className = "mn-bmc__title";
+  lbl.textContent = title;
+  hdr.append(badge, lbl);
+  const list = document.createElement("ul");
+  list.className = "mn-bmc__list";
+  list.setAttribute("role", "list");
+  list.setAttribute("aria-label", `${title} items`);
+  div.append(hdr, list);
+  if (editable) {
+    const addBtn = document.createElement("button");
+    addBtn.className = "mn-bmc__add";
+    addBtn.type = "button";
+    addBtn.setAttribute("aria-label", `Add ${title.toLowerCase()}`);
+    addBtn.textContent = "+ Add";
+    const wrap = document.createElement("div");
+    wrap.className = "mn-bmc__input-wrap";
+    wrap.hidden = true;
+    const input = document.createElement("input");
+    input.className = "mn-input mn-bmc__input";
+    input.type = "text";
+    input.placeholder = "Enter item\u2026";
+    input.setAttribute("aria-label", `New ${title.toLowerCase()}`);
+    const confirm = document.createElement("button");
+    confirm.className = "mn-bmc__confirm";
+    confirm.type = "button";
+    confirm.setAttribute("aria-label", "Confirm");
+    confirm.textContent = "\u21B5";
+    wrap.append(input, confirm);
+    div.append(addBtn, wrap);
+  }
+  return div;
+}
+function buildItemEl2(item, editable) {
+  const li = document.createElement("li");
+  li.className = "mn-bmc__item";
+  li.setAttribute("role", "listitem");
+  li.dataset.id = item.id;
+  const span = document.createElement("span");
+  span.className = "mn-bmc__text";
+  span.textContent = item.text;
+  li.append(span);
+  if (editable) {
+    const btn = document.createElement("button");
+    btn.className = "mn-bmc__remove";
+    btn.type = "button";
+    btn.setAttribute("aria-label", `Remove: ${escapeHtml(item.text)}`);
+    btn.textContent = "\xD7";
+    li.append(btn);
+  }
+  return li;
+}
+function businessModelCanvas(el4, opts) {
+  const editable = opts?.editable !== false;
+  const uid = genId2().slice(0, 8);
+  const blocks = BLOCK_IDS.map((id) => ({
+    id,
+    title: opts?.blocks?.[id]?.title ?? DEFAULTS3[id].title,
+    icon: opts?.blocks?.[id]?.icon ?? DEFAULTS3[id].icon,
+    items: [...opts?.blocks?.[id]?.items ?? []]
+  }));
+  el4.classList.add("mn-bmc");
+  el4.setAttribute("role", "region");
+  el4.setAttribute("aria-label", "Business Model Canvas");
+  const blockEls = /* @__PURE__ */ new Map();
+  for (const b of blocks) {
+    const bEl = buildBlock(b.id, b.title, b.icon, uid, editable);
+    blockEls.set(b.id, bEl);
+    el4.append(bEl);
+  }
+  function notify() {
+    opts?.onChange?.(blocks.map((b) => ({ ...b, items: [...b.items] })));
+  }
+  function findBlock(id) {
+    return blocks.find((b) => b.id === id);
+  }
+  function renderItems() {
+    for (const b of blocks) {
+      const list = blockEls.get(b.id).querySelector(".mn-bmc__list");
+      list.innerHTML = "";
+      for (const item of b.items) list.append(buildItemEl2(item, editable));
+    }
+  }
+  function addItem(blockId, text) {
+    const trimmed = text.trim();
+    if (!trimmed) return;
+    const item = { id: genId2(), text: trimmed, blockId };
+    findBlock(blockId).items.push(item);
+    const list = blockEls.get(blockId).querySelector(".mn-bmc__list");
+    list.append(buildItemEl2(item, editable));
+    notify();
+  }
+  function removeItem(id) {
+    const li = el4.querySelector(`[data-id="${CSS.escape(id)}"]`);
+    if (li) {
+      li.classList.add("mn-bmc__item--removing");
+      setTimeout(() => li.remove(), 200);
+    }
+    for (const b of blocks) b.items = b.items.filter((i) => i.id !== id);
+    notify();
+  }
+  function hideInput(bEl) {
+    const wrap = bEl.querySelector(".mn-bmc__input-wrap");
+    const addBtn = bEl.querySelector(".mn-bmc__add");
+    if (wrap) wrap.hidden = true;
+    if (addBtn) addBtn.hidden = false;
+  }
+  function handleClick(e) {
+    const target = e.target;
+    if (target.closest(".mn-bmc__remove")) {
+      const li = target.closest(".mn-bmc__item");
+      if (li?.dataset.id) removeItem(li.dataset.id);
+      return;
+    }
+    if (target.closest(".mn-bmc__add")) {
+      const bEl = target.closest(".mn-bmc__block");
+      const wrap = bEl.querySelector(".mn-bmc__input-wrap");
+      const addBtn = bEl.querySelector(".mn-bmc__add");
+      wrap.hidden = false;
+      addBtn.hidden = true;
+      const input = wrap.querySelector("input");
+      input.value = "";
+      input.focus();
+      return;
+    }
+    if (target.closest(".mn-bmc__confirm")) {
+      const bEl = target.closest(".mn-bmc__block");
+      const input = bEl.querySelector(".mn-bmc__input");
+      addItem(bEl.dataset.block, input.value);
+      hideInput(bEl);
+    }
+  }
+  function handleKeydown(e) {
+    const target = e.target;
+    if (!target.classList.contains("mn-bmc__input")) return;
+    const bEl = target.closest(".mn-bmc__block");
+    if (e.key === "Enter") {
+      e.preventDefault();
+      addItem(bEl.dataset.block, target.value);
+      hideInput(bEl);
+    } else if (e.key === "Escape") {
+      hideInput(bEl);
+      bEl.querySelector(".mn-bmc__add")?.focus();
+    }
+  }
+  el4.addEventListener("click", handleClick);
+  el4.addEventListener("keydown", handleKeydown);
+  renderItems();
+  return {
+    getBlocks: () => blocks.map((b) => ({ ...b, items: [...b.items] })),
+    addItem,
+    removeItem,
+    update(newBlocks) {
+      blocks.length = 0;
+      blocks.push(...newBlocks.map((b) => ({ ...b, items: [...b.items] })));
+      renderItems();
+      notify();
+    },
+    destroy() {
+      el4.removeEventListener("click", handleClick);
+      el4.removeEventListener("keydown", handleKeydown);
+      el4.innerHTML = "";
+      el4.classList.remove("mn-bmc");
+      el4.removeAttribute("role");
+      el4.removeAttribute("aria-label");
+    }
+  };
+}
+
+// src/ts/user-table.ts
+var CLS = "mn-user-table";
+var AVATAR_COLORS = 6;
+function initials2(name) {
+  const parts = name.trim().split(/\s+/);
+  if (parts.length >= 2) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  return name.slice(0, 2).toUpperCase();
+}
+function nameHash(name) {
+  let h = 0;
+  for (let i = 0; i < name.length; i++) h = (h << 5) - h + name.charCodeAt(i) | 0;
+  return Math.abs(h) % AVATAR_COLORS;
+}
+function statusLabel2(s) {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+function teamsHtml(teams) {
+  if (!teams || teams.length === 0) return '<span class="' + CLS + '__empty">&mdash;</span>';
+  const visible = teams.slice(0, 2).map(
+    (t) => `<span class="${CLS}__team">${escapeHtml(t)}</span>`
+  );
+  if (teams.length > 2) visible.push(`<span class="${CLS}__team ${CLS}__team--more">+${teams.length - 2}</span>`);
+  return visible.join("");
+}
+function avatarHtml(user) {
+  if (user.avatarUrl) {
+    return `<img class="${CLS}__avatar" src="${escapeHtml(user.avatarUrl)}" alt="${escapeHtml(user.name)}" />`;
+  }
+  const ci = nameHash(user.name);
+  return `<div class="${CLS}__avatar ${CLS}__avatar--initials" data-color="${ci}">${escapeHtml(initials2(user.name))}</div>`;
+}
+function actionsHtml(user) {
+  const sus = user.status === "invited" ? `<button class="${CLS}__action" data-act="resend-invite" title="Resend invite" aria-label="Resend invite to ${escapeHtml(user.name)}">&#8617;</button>` : `<button class="${CLS}__action" data-act="suspend" title="Suspend" aria-label="Suspend ${escapeHtml(user.name)}">&#8856;</button>`;
+  return `<div class="${CLS}__actions"><button class="${CLS}__action" data-act="edit" title="Edit" aria-label="Edit ${escapeHtml(user.name)}">&#9998;</button>` + sus + `<button class="${CLS}__action ${CLS}__action--danger" data-act="delete" title="Delete" aria-label="Delete ${escapeHtml(user.name)}">&#10005;</button></div>`;
+}
+function rowHtml2(user, selectable) {
+  const chk = selectable ? `<td class="${CLS}__td ${CLS}__td--check"><input type="checkbox" class="${CLS}__check" aria-label="Select ${escapeHtml(user.name)}" /></td>` : "";
+  return `<tr class="${CLS}__row" role="row" tabindex="0" data-uid="${escapeHtml(user.id)}">` + chk + `<td class="${CLS}__td ${CLS}__td--user"><div class="${CLS}__identity">${avatarHtml(user)}<div class="${CLS}__name-group"><span class="${CLS}__name">${escapeHtml(user.name)}</span><span class="${CLS}__email">${escapeHtml(user.email)}</span></div></div></td><td class="${CLS}__td"><span class="${CLS}__status ${CLS}__status--${user.status}" aria-label="Status: ${statusLabel2(user.status)}">${statusLabel2(user.status)}</span></td><td class="${CLS}__td"><span class="${CLS}__role">${escapeHtml(user.role)}</span></td><td class="${CLS}__td ${CLS}__td--teams">${teamsHtml(user.teams)}</td><td class="${CLS}__td ${CLS}__td--last">${user.lastActive ? escapeHtml(user.lastActive) : "&mdash;"}</td><td class="${CLS}__td ${CLS}__td--actions">${actionsHtml(user)}</td></tr>`;
+}
+function userTable(el4, users, opts) {
+  const o = { searchable: true, selectable: true, pageSize: 10, ...opts };
+  const ac = new AbortController();
+  const sig = ac.signal;
+  let data = users.slice();
+  let filtered = data;
+  let selected = /* @__PURE__ */ new Set();
+  let query = "";
+  function applyFilter() {
+    const q = query.toLowerCase();
+    filtered = q ? data.filter((u) => u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q)) : data;
+  }
+  function renderCount() {
+    const badge = el4.querySelector(`.${CLS}__count`);
+    if (badge) badge.textContent = `${filtered.length} user${filtered.length !== 1 ? "s" : ""}`;
+  }
+  function renderBody2() {
+    const tbody2 = el4.querySelector("tbody");
+    if (!tbody2) return;
+    tbody2.innerHTML = filtered.map((u) => rowHtml2(u, o.selectable)).join("");
+    renderCount();
+    if (o.selectable) {
+      tbody2.querySelectorAll(`.${CLS}__check`).forEach((cb) => {
+        const uid = cb.closest("tr")?.dataset.uid ?? "";
+        cb.checked = selected.has(uid);
+      });
+    }
+  }
+  const toolbar = o.searchable ? `<div class="${CLS}__toolbar"><input type="search" class="${CLS}__search" placeholder="Search users\u2026" aria-label="Search users" /><span class="${CLS}__count"></span></div>` : `<div class="${CLS}__toolbar"><span class="${CLS}__count"></span></div>`;
+  const thCheck = o.selectable ? `<th class="${CLS}__th ${CLS}__th--check" scope="col"><input type="checkbox" class="${CLS}__check-all" aria-label="Select all" /></th>` : "";
+  const head = `<thead><tr role="row">${thCheck}<th class="${CLS}__th" scope="col">User</th><th class="${CLS}__th" scope="col">Status</th><th class="${CLS}__th" scope="col">Role</th><th class="${CLS}__th ${CLS}__th--teams" scope="col">Teams</th><th class="${CLS}__th" scope="col">Last active</th><th class="${CLS}__th ${CLS}__th--actions" scope="col"><span class="mn-sr-only">Actions</span></th></tr></thead>`;
+  el4.innerHTML = toolbar + `<div class="${CLS}__wrap"><table class="${CLS}" role="table">${head}<tbody></tbody></table></div>`;
+  applyFilter();
+  renderBody2();
+  if (o.searchable) {
+    const input = el4.querySelector(`.${CLS}__search`);
+    const handler = debounce((e) => {
+      query = e.target.value;
+      applyFilter();
+      renderBody2();
+    }, 150);
+    input?.addEventListener("input", handler, { signal: sig });
+  }
+  const tbody = el4.querySelector("tbody");
+  tbody.addEventListener("click", (e) => {
+    const target = e.target;
+    const actionBtn = target.closest(`.${CLS}__action`);
+    if (actionBtn) {
+      e.stopPropagation();
+      const uid = actionBtn.closest("tr")?.dataset.uid ?? "";
+      const user = data.find((u) => u.id === uid);
+      const act = actionBtn.dataset.act;
+      if (user && o.onAction) o.onAction(user, act);
+      return;
+    }
+    const checkbox = target.closest(`.${CLS}__check`);
+    if (checkbox) {
+      const uid = checkbox.closest("tr")?.dataset.uid ?? "";
+      if (checkbox.checked) selected.add(uid);
+      else selected.delete(uid);
+      return;
+    }
+    const row = target.closest(`.${CLS}__row`);
+    if (row) {
+      const uid = row.dataset.uid ?? "";
+      const user = data.find((u) => u.id === uid);
+      if (user && o.onSelect) o.onSelect(user);
+    }
+  }, { signal: sig });
+  tbody.addEventListener("keydown", (e) => {
+    if (e.key !== "Enter" && e.key !== " ") return;
+    const row = e.target.closest(`.${CLS}__row`);
+    if (!row) return;
+    e.preventDefault();
+    const uid = row.dataset.uid ?? "";
+    const user = data.find((u) => u.id === uid);
+    if (user && o.onSelect) o.onSelect(user);
+  }, { signal: sig });
+  if (o.selectable) {
+    const checkAll = el4.querySelector(`.${CLS}__check-all`);
+    checkAll?.addEventListener("change", () => {
+      const checked = checkAll.checked;
+      selected = checked ? new Set(filtered.map((u) => u.id)) : /* @__PURE__ */ new Set();
+      tbody.querySelectorAll(`.${CLS}__check`).forEach((cb) => {
+        cb.checked = checked;
+      });
+    }, { signal: sig });
+  }
+  return {
+    update(users2) {
+      data = users2.slice();
+      selected.clear();
+      applyFilter();
+      renderBody2();
+    },
+    setFilter(q) {
+      query = q;
+      const input = el4.querySelector(`.${CLS}__search`);
+      if (input) input.value = q;
+      applyFilter();
+      renderBody2();
+    },
+    getSelected() {
+      return data.filter((u) => selected.has(u.id));
+    },
+    destroy() {
+      ac.abort();
+      el4.innerHTML = "";
+    }
+  };
+}
+
 // src/ts/maranello-exports.ts
 function registerExtras(M2) {
   M2.SPEEDO_FONT = SPEEDO_FONT;
@@ -10009,6 +10954,11 @@ function registerExtras(M2) {
   M2.riskMatrix = riskMatrix;
   M2.kpiScorecard = kpiScorecard;
   M2.cohortGrid = cohortGrid;
+  M2.auditLog = auditLog;
+  M2.agentCostBreakdown = agentCostBreakdown;
+  M2.costTimeline = costTimeline;
+  M2.businessModelCanvas = businessModelCanvas;
+  M2.userTable = userTable;
 }
 
 // src/ts/maranello.ts
@@ -10209,11 +11159,13 @@ export {
   activityFeed,
   addListener,
   addValidator,
+  agentCostBreakdown,
   agentTrace,
   applySettings,
   approvalChain,
   areaChart,
   attachEvents,
+  auditLog,
   autoBind,
   autoBindSliders,
   autoContrast,
@@ -10234,6 +11186,7 @@ export {
   buildTicks,
   buildUI,
   bulletChart,
+  businessModelCanvas,
   chartHiDpi,
   chartInteract,
   clamp,
@@ -10246,6 +11199,7 @@ export {
   cohortGrid,
   commandPalette,
   confidenceChart,
+  costTimeline,
   createDetailPanel,
   createEl,
   createElement,
@@ -10387,6 +11341,7 @@ export {
   tokenMeter,
   updateGauge,
   updateStatusSelectColor,
+  userTable,
   validateField,
   validateForm,
   validators,

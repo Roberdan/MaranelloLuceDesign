@@ -50,6 +50,12 @@ function getCanvasSize(canvas, defaultW = 200, defaultH = 100) {
   }
   return { width: defaultW, height: defaultH };
 }
+function hexToRgba(hex, alpha) {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
 function hexFillGradient(ctx, hex, h, opacity) {
   const r = parseInt(hex.slice(1, 3), 16);
   const g = parseInt(hex.slice(3, 5), 16);
@@ -1224,6 +1230,8 @@ export {
   SERIES,
   chartHiDpi,
   getCanvasSize,
+  hexToRgba,
+  applyChartA11y,
   sparkline,
   donut,
   halfGauge,
@@ -1238,4 +1246,4 @@ export {
   chartInteract,
   sparklineInteract
 };
-//# sourceMappingURL=chunk-WNYNHGOB.js.map
+//# sourceMappingURL=chunk-5FJQBXPP.js.map

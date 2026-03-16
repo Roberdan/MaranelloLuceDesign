@@ -1,5 +1,5 @@
 /**
- * Strategy section — BCG Matrix, Nine-Box (GE-McKinsey), SWOT Matrix
+ * Strategy section — BCG Matrix, Nine-Box (GE-McKinsey), SWOT Matrix, Business Model Canvas
  * Interactive strategic consulting frameworks for AI-driven platforms.
  */
 
@@ -78,6 +78,18 @@ export function createStrategySection() {
         </details>
       </div>
 
+      <div class="mn-card-dark mn-mb-2xl" style="padding:var(--space-xl)">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-lg)">
+          <span class="mn-label" style="color:var(--mn-accent)">Business Model Canvas — Osterwalder</span>
+          <button class="mn-btn mn-btn--ghost" id="str-bmc-export" style="font-size:var(--text-micro)">Export JSON</button>
+        </div>
+        <div id="str-bmc"></div>
+        <details class="mn-code-snippet" style="margin-top:var(--space-lg)">
+          <summary class="mn-micro" style="cursor:pointer;color:var(--mn-text-muted)">Usage</summary>
+          <pre style="font-family:var(--font-mono);font-size:var(--text-micro);padding:var(--space-sm) 0;color:var(--mn-text-muted);overflow-x:auto">const ctrl = M.businessModelCanvas(el, { editable: true, onChange });</pre>
+        </details>
+      </div>
+
       <div class="mn-card-dark" style="padding:var(--space-xl)">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-lg)">
           <span class="mn-label" style="color:var(--mn-accent)">SWOT Analysis</span>
@@ -149,6 +161,48 @@ export function createStrategySection() {
       swotCtrl.update(SWOT_ITEMS);
       M.toast({ type: 'info', title: 'SWOT reset', message: 'Restored default items' });
     });
+
+    /* ── Business Model Canvas ── */
+    const bmcEl = section.querySelector('#str-bmc');
+    if (bmcEl && M.businessModelCanvas) {
+      const bmcCtrl = M.businessModelCanvas(bmcEl, {
+        editable: true,
+        blocks: {
+          'value-proposition': { items: [
+            { id: 'vp1', text: 'Fastest frontier models at enterprise SLAs', blockId: 'value-proposition' },
+            { id: 'vp2', text: 'Agentic workflows with tool use + RAG', blockId: 'value-proposition' },
+            { id: 'vp3', text: 'Constitutional AI — safe by design', blockId: 'value-proposition' },
+          ]},
+          'customer-segments': { items: [
+            { id: 'cs1', text: 'Enterprise engineering teams', blockId: 'customer-segments' },
+            { id: 'cs2', text: 'B2B SaaS builders', blockId: 'customer-segments' },
+            { id: 'cs3', text: 'Regulated industries (finance, health)', blockId: 'customer-segments' },
+          ]},
+          'key-partners': { items: [
+            { id: 'kp1', text: 'Cloud providers (AWS, GCP, Azure)', blockId: 'key-partners' },
+            { id: 'kp2', text: 'Data annotation vendors', blockId: 'key-partners' },
+          ]},
+          'revenue-streams': { items: [
+            { id: 'rs1', text: 'Pay-per-token API pricing', blockId: 'revenue-streams' },
+            { id: 'rs2', text: 'Enterprise subscription tiers', blockId: 'revenue-streams' },
+            { id: 'rs3', text: 'Professional services + training', blockId: 'revenue-streams' },
+          ]},
+          'cost-structure': { items: [
+            { id: 'co1', text: 'GPU compute (training + inference)', blockId: 'cost-structure' },
+            { id: 'co2', text: 'R&D and safety research teams', blockId: 'cost-structure' },
+            { id: 'co3', text: 'Customer success and support', blockId: 'cost-structure' },
+          ]},
+        },
+        onChange: (blocks) => {
+          const total = blocks.reduce((n, b) => n + b.items.length, 0);
+          M.toast({ type: 'info', title: 'Canvas updated', message: `${total} items across 9 blocks` });
+        },
+      });
+      section.querySelector('#str-bmc-export')?.addEventListener('click', () => {
+        console.log('BMC:', JSON.stringify(bmcCtrl.getBlocks(), null, 2));
+        M.toast({ type: 'info', title: 'BMC exported', message: 'Check browser console' });
+      });
+    }
   });
 
   return section;

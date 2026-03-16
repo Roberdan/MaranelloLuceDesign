@@ -48,6 +48,8 @@ const SECTIONS = new Map([
   ['strategy',          () => import('./sections/strategy.js').then(m => m.createStrategySection)],
   ['agentic',           () => import('./sections/agentic.js').then(m => m.createAgenticSection)],
   ['bi-dashboard',      () => import('./sections/bi-dashboard.js').then(m => m.createBiDashboardSection)],
+  ['platform-admin',    () => import('./sections/platform-admin.js').then(m => m.createPlatformAdminSection)],
+  ['finops',            () => import('./sections/finops.js').then(m => m.createFinOpsSection)],
 ]);
 
 const SECTION_KEYS = [...SECTIONS.keys()];
@@ -68,6 +70,8 @@ const SECTION_LABELS = {
   'strategy': 'Strategy',
   'agentic': 'Agentic',
   'bi-dashboard': 'BI',
+  'platform-admin': 'Admin',
+  'finops': 'FinOps',
 };
 
 function safeErr(name, err) {

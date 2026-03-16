@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.10.0] - 16 Mar 2026
+
+### Added
+- `userTable(el, users, opts)` — Stripe-quality admin user table with search, avatar initials, status/role/team badges, inline row actions, select-all, keyboard nav; `M.userTable` on IIFE
+- `auditLog(el, entries, opts)` — GitHub-style audit timeline with severity filter tabs, expandable metadata, live `prepend()`, `clear()`, aria-live; `M.auditLog` on IIFE
+- `agentCostBreakdown(el, rows, opts)` — Datadog-quality FinOps table with per-agent token attribution, budget mini-bars (alert at 80%), sortable columns, cost delta indicators; `M.agentCostBreakdown` on IIFE
+- `costTimeline(canvas, opts)` — multi-series stacked/overlaid area chart for LLM cost over time, animated, hover tooltips; `M.costTimeline` on IIFE
+- `businessModelCanvas(el, opts)` — Osterwalder 9-block BMC with CSS named-grid, inline-editable items, export; `M.businessModelCanvas` on IIFE
+- Demo: new sections `#platform-admin` and `#finops` added to header nav; `#strategy` extended with Business Model Canvas
+- `src/ts/index-extras.ts` barrel consolidates all v4.5–v4.10 exports, keeping `index.ts` under 250-line limit
+
 ## [4.7.0] - 16 Mar 2026
 
 ### Added
