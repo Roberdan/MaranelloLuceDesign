@@ -39,7 +39,7 @@
 }
 .mn-comment-box__btn {
   background: var(--mn-accent);
-  color: var(--mn-surface-sunken);
+  color: var(--mn-text);
   border: none;
   border-radius: 4px;
   padding: 6px 14px;
@@ -187,7 +187,7 @@
   transform: translateY(-50%);
   font-size: 0.5rem;
   font-weight: 700;
-  color: var(--mn-surface-sunken);
+  color: var(--mn-text);
   z-index: 2;
 }
 

@@ -68,7 +68,7 @@
 .mn-toast__close:hover { background: var(--mn-hover-bg); color: var(--mn-text); }
 
 body.mn-avorio .mn-toast {
-  background: var(--mn-text);
+  background: var(--mn-surface);
   border-color: var(--mn-border-subtle);
   color: var(--mn-text-inverse);
   box-shadow: 0 8px 32px rgba(0,0,0,0.12);
@@ -169,7 +169,7 @@ body.mn-avorio .mn-dropdown__trigger {
   color: var(--mn-text-inverse);
 }
 body.mn-avorio .mn-dropdown__menu {
-  background: var(--mn-text);
+  background: var(--mn-surface);
   border-color: var(--mn-border-subtle);
   box-shadow: 0 8px 32px rgba(0,0,0,0.12);
 }

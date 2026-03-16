@@ -72,7 +72,7 @@
   transform: translateX(-50%);
   width: 2px;
   height: 14px;
-  background: var(--mn-text);
+  background: var(--mn-surface);
   border-radius: 1px;
 }
 .mn-ctrl-manettino__positions {

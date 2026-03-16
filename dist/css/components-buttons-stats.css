@@ -53,7 +53,7 @@
   color: var(--mn-text); /* intentional: white ghost btn for dark sections */
 }
 .mn-btn--ghost-light:hover {
-  background: var(--mn-text);
+  background: var(--mn-surface);
   color: var(--mn-text-inverse);
   border-color: var(--mn-text);
 }
@@ -78,12 +78,12 @@
 
 /* White button (on accent backgrounds) */
 .mn-btn--white {
-  background: var(--mn-text);
+  background: var(--mn-surface);
   border-color: var(--mn-text);
   color: var(--mn-text-inverse);
 }
 .mn-btn--white:hover {
-  background: var(--mn-text);
+  background: var(--mn-surface);
   border-color: var(--mn-text);
 }
 .mn-btn--white:active {

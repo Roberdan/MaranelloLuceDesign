@@ -87,7 +87,7 @@ body.mn-avorio .mn-layout__right { border-left-color: var(--mn-border-strong); }
 }
 body.mn-avorio .mn-layout__simulator.mn-sim-active {
   border-top-color: var(--mn-error);
-  background: var(--mn-text);
+  background: var(--mn-surface);
 }
 
 /* ── Responsive: medium screens ──────────────────────────── */

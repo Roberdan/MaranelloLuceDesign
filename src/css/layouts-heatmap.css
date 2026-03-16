@@ -160,7 +160,7 @@ body.mn-colorblind .mn-heatmap__delta--negative::before { content:"▼ "; }
 
 /* ═══ Avorio: new elements ═══ */
 body.mn-avorio .mn-heatmap__cell { color:var(--mn-text-inverse); }
-body.mn-avorio .mn-heatmap__cell[data-tooltip]:hover::after { background:var(--mn-text); border-color:var(--mn-border-strong); color:var(--mn-text-inverse); }
+body.mn-avorio .mn-heatmap__cell[data-tooltip]:hover::after { background:var(--mn-surface); border-color:var(--mn-border-strong); color:var(--mn-text-inverse); }
 body.mn-avorio .mn-heatmap__filter-bar { border-bottom-color:var(--mn-border-strong); }
 body.mn-avorio .mn-heatmap__legend { color:var(--mn-text-muted); }
 

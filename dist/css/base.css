@@ -13,8 +13,8 @@ body {
   font-family: var(--font-body);
   font-size: var(--text-body);
   line-height: 1.6;
-  color: var(--mn-text-inverse);
-  background: var(--mn-text);
+  color: var(--mn-text);
+  background: var(--mn-surface);
 }
 img { max-width: 100%; display: block; }
 a { color: inherit; text-decoration: none; }
@@ -25,7 +25,7 @@ a { color: inherit; text-decoration: none; }
    ============================================================ */
 
 .mn-section-dark {
-  background: var(--mn-text-inverse);
+  background: var(--mn-surface-sunken);
   color: var(--mn-text);
   padding: var(--space-5xl) var(--space-xl);
   position: relative;
@@ -33,8 +33,8 @@ a { color: inherit; text-decoration: none; }
 }
 
 .mn-section-light {
-  background: var(--mn-text);
-  color: var(--mn-text-inverse);
+  background: var(--mn-surface);
+  color: var(--mn-text);
   padding: var(--space-5xl) var(--space-xl);
   position: relative;
 }

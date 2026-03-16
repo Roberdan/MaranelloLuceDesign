@@ -147,7 +147,7 @@
 /* Double-class specificity beats generic link/button resets */
 .mn-detail-panel__ado-btn.mn-detail-panel__ado-btn {
   background: var(--mn-accent);
-  color: var(--mn-surface-sunken);
+  color: var(--mn-text);
   font-size: 0.7rem;
   font-weight: 700;
   padding: 4px 10px;

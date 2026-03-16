@@ -48,7 +48,7 @@
 .mn-convergio-pill:active { transform: translateY(1px); }
 .mn-convergio-pill--active {
   background: var(--giallo);
-  color: var(--mn-surface-sunken);
+  color: var(--mn-text);
   border-color: var(--giallo);
   font-weight: 600;
 }
@@ -171,7 +171,7 @@
   border: 1px solid transparent;
   border-radius: var(--radius-full);
   background: var(--giallo);
-  color: var(--mn-surface-sunken);
+  color: var(--mn-text);
   font-size: var(--text-small);
   font-weight: 600;
   font-family: var(--font-body);
@@ -196,7 +196,7 @@
   padding: var(--space-xs) var(--space-sm);
   border-radius: var(--radius-full);
   background: var(--verde);
-  color: var(--mn-surface-sunken);
+  color: var(--mn-text);
   font-size: var(--text-micro);
   font-weight: 600;
   line-height: 1;

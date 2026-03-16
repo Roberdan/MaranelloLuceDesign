@@ -55,7 +55,7 @@ body.mn-avorio .mn-segmented {
 }
 body.mn-avorio .mn-segmented__item { color: var(--mn-text-muted); }
 body.mn-avorio .mn-segmented__item--active {
-  background: var(--mn-text);
+  background: var(--mn-surface);
   color: var(--mn-text-inverse);
 }
 body.mn-avorio .mn-climate {

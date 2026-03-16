@@ -155,7 +155,7 @@
 body.mn-avorio .mn-user-table__wrap { border-color: var(--avorio-scuro); }
 body.mn-avorio .mn-user-table__th { background: var(--avorio-chiaro); border-bottom-color: var(--avorio-scuro); }
 body.mn-avorio .mn-user-table__row:hover { background: var(--avorio-chiaro); }
-body.mn-avorio .mn-user-table__search { background: var(--mn-text); border-color: var(--avorio-scuro); }
+body.mn-avorio .mn-user-table__search { background: var(--mn-surface); border-color: var(--avorio-scuro); }
 
 /* ─── Mobile responsive ─── */
 @media (max-width: 640px) {

@@ -118,7 +118,7 @@ body.mn-avorio .mn-form-toggle input:checked + .mn-form-toggle__track {
   background: var(--mn-error);
 }
 body.mn-avorio .mn-form-toggle input:checked + .mn-form-toggle__track .mn-form-toggle__thumb {
-  background: var(--mn-text);
+  background: var(--mn-surface);
 }
 body.mn-avorio .mn-tag-input__chip {
   background: rgba(220, 0, 0, 0.08);

@@ -125,23 +125,23 @@
 .mn-sim-empty { font-size:0.75rem; color:var(--mn-text-muted); text-align:center; padding:24px 0; font-style:italic; }
 
 /* ═══════════════ Avorio theme ═══════════════ */
-body.mn-avorio .mn-sim-panel { background:var(--mn-text); border-top:2px solid var(--mn-error); box-shadow:0 -4px 16px rgba(0,0,0,0.08); }
-body.mn-avorio .mn-sim-scenario { background:var(--mn-text); border-color:var(--mn-border); color:var(--mn-surface-sunken); }
+body.mn-avorio .mn-sim-panel { background:var(--mn-surface); border-top:2px solid var(--mn-error); box-shadow:0 -4px 16px rgba(0,0,0,0.08); }
+body.mn-avorio .mn-sim-scenario { background:var(--mn-surface); border-color:var(--mn-border); color:var(--mn-text); }
 body.mn-avorio .mn-sim-scenario:hover { border-color:var(--mn-error); background:var(--mn-text-tertiary); }
-body.mn-avorio .mn-sim-input { background:var(--mn-text); border-color:var(--mn-border); color:var(--mn-surface-sunken); }
+body.mn-avorio .mn-sim-input { background:var(--mn-surface); border-color:var(--mn-border); color:var(--mn-text); }
 body.mn-avorio .mn-sim-input:focus { border-color:var(--mn-error); }
-body.mn-avorio .mn-sim-select__trigger { background:var(--mn-text); border-color:var(--mn-border); color:var(--mn-surface-sunken); }
-body.mn-avorio .mn-sim-select__dropdown { background:var(--mn-text); border-color:var(--mn-border); }
-body.mn-avorio .mn-sim-select__search { color:var(--mn-surface-sunken); border-bottom-color:var(--mn-border); }
-body.mn-avorio .mn-sim-select__item { color:var(--mn-surface-sunken); }
+body.mn-avorio .mn-sim-select__trigger { background:var(--mn-surface); border-color:var(--mn-border); color:var(--mn-text); }
+body.mn-avorio .mn-sim-select__dropdown { background:var(--mn-surface); border-color:var(--mn-border); }
+body.mn-avorio .mn-sim-select__search { color:var(--mn-text); border-bottom-color:var(--mn-border); }
+body.mn-avorio .mn-sim-select__item { color:var(--mn-text); }
 body.mn-avorio .mn-sim-select__item:hover { background:var(--mn-text-tertiary); }
-body.mn-avorio .mn-sim-preview { background:var(--mn-text); border-left-color:var(--mn-error); }
-body.mn-avorio .mn-sim-preview strong { color:var(--mn-surface-sunken); }
-body.mn-avorio .mn-sim-kpi { background:var(--mn-text); border-color:var(--mn-border); }
-body.mn-avorio .mn-sim-kpi__val { color:var(--mn-surface-sunken); }
-body.mn-avorio .mn-sim-detail-row { color:var(--mn-surface-sunken); border-bottom-color:var(--mn-text-muted); }
+body.mn-avorio .mn-sim-preview { background:var(--mn-surface); border-left-color:var(--mn-error); }
+body.mn-avorio .mn-sim-preview strong { color:var(--mn-text); }
+body.mn-avorio .mn-sim-kpi { background:var(--mn-surface); border-color:var(--mn-border); }
+body.mn-avorio .mn-sim-kpi__val { color:var(--mn-text); }
+body.mn-avorio .mn-sim-detail-row { color:var(--mn-text); border-bottom-color:var(--mn-text-muted); }
 body.mn-avorio .mn-sim-btn--primary { background:var(--mn-error); color:var(--mn-text); border-color:var(--mn-error); }
-body.mn-avorio .mn-sim-btn--ghost { color:var(--mn-surface-raised); border-color:var(--mn-border); }
+body.mn-avorio .mn-sim-btn--ghost { color:var(--mn-text-muted); border-color:var(--mn-border); }
 
 /* ── Simulation mode banner ── */
 .mn-sim-banner {

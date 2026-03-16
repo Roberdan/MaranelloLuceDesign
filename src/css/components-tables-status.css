@@ -18,7 +18,7 @@
 }
 .mn-dot--active { background: var(--mn-text-inverse); }
 .mn-section-dark .mn-dot { background: var(--mn-border); }
-.mn-section-dark .mn-dot--active { background: var(--mn-text); }
+.mn-section-dark .mn-dot--active { background: var(--mn-surface); }
 
 
 /* ── DATA TABLE ── */
@@ -55,7 +55,7 @@
 .mn-table tbody tr {
   transition: background var(--duration-sm) var(--ease-out);
 }
-.mn-table tbody tr:hover { background: var(--mn-text); }
+.mn-table tbody tr:hover { background: var(--mn-hover-bg); }
 .mn-section-dark .mn-table tbody tr:hover { background: var(--mn-surface); }
 .mn-table tbody tr:last-child td { border-bottom: none; }
 

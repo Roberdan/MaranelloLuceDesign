@@ -109,7 +109,7 @@
 }
 
 body.mn-avorio .mn-panel {
-  background: var(--mn-text);
+  background: var(--mn-surface);
   color: var(--mn-text-inverse);
   border: 1px solid var(--mn-border-subtle);
 }

@@ -123,5 +123,5 @@ body.mn-nero .mn-gantt__label { color: var(--mn-text-tertiary); }
 .mn-avorio .mn-gauge__unit { color: var(--mn-text-muted); }
 .mn-avorio .mn-gauge__sublabel { color: var(--mn-border); }
 .mn-avorio .mn-gauge__arc-label { color: var(--mn-border); }
-.mn-avorio .mn-gauge__counter-digit { background: var(--mn-text); border-color: var(--mn-border-strong); color: var(--mn-text-inverse); }
+.mn-avorio .mn-gauge__counter-digit { background: var(--mn-surface); border-color: var(--mn-border-strong); color: var(--mn-text-inverse); }
 } /* end @layer charts */

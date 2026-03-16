@@ -61,7 +61,7 @@
 }
 .mn-tag--light:hover,
 .mn-tag--light.mn-tag--active {
-  background: var(--mn-text);
+  background: var(--mn-surface);
   color: var(--mn-text-inverse);
   border-color: var(--mn-text);
 }
@@ -76,7 +76,7 @@
 
 /* ── CARDS ── */
 .mn-card {
-  background: var(--mn-text);
+  background: var(--mn-surface);
   border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: var(--shadow-card);

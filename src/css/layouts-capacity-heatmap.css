@@ -66,12 +66,12 @@
 .mn-cap-tooltip--visible { opacity:1; }
 
 /* ── Avorio theme ── */
-body.mn-avorio .mn-cap-grid { background:var(--mn-border-strong); }
+body.mn-avorio .mn-cap-grid { background:var(--mn-border); }
 body.mn-avorio .mn-cap-grid__corner,
 body.mn-avorio .mn-cap-grid__month,
-body.mn-avorio .mn-cap-grid__label { background:var(--mn-text); }
-body.mn-avorio .mn-cap-grid__cell--empty { background:var(--mn-text-muted); color:var(--mn-border); }
-body.mn-avorio .mn-cap-tooltip { background:var(--mn-text); border-color:var(--mn-border-strong); color:var(--mn-surface-sunken); }
+body.mn-avorio .mn-cap-grid__label { background:var(--mn-surface-sunken); color:var(--mn-text); }
+body.mn-avorio .mn-cap-grid__cell--empty { background:var(--mn-surface-raised); color:var(--mn-text-muted); }
+body.mn-avorio .mn-cap-tooltip { background:var(--mn-surface); border-color:var(--mn-border); color:var(--mn-text); }
 
 /* ── Empty state ── */
 .mn-cap-heatmap__empty {
@@ -111,8 +111,8 @@ body.mn-avorio .mn-cap-tooltip { background:var(--mn-text); border-color:var(--m
 .mn-cap-grid__cell:active { transform:scale(0.95); }
 
 /* ── Avorio filter overrides ── */
-body.mn-avorio .mn-cap-heatmap__filter { border-bottom-color:var(--mn-text-muted); }
-body.mn-avorio .mn-chip { border-color:var(--mn-border-strong); color:var(--mn-surface-raised); }
-body.mn-avorio .mn-chip--active { background:var(--mn-error); color:var(--mn-text); border-color:var(--mn-error); }
-body.mn-avorio .mn-cap-heatmap__filter-input { background:var(--mn-text); border-color:var(--mn-border-strong); color:var(--mn-surface-sunken); }
+body.mn-avorio .mn-cap-heatmap__filter { border-bottom-color:var(--mn-border); }
+body.mn-avorio .mn-chip { border-color:var(--mn-border); color:var(--mn-text-muted); }
+body.mn-avorio .mn-chip--active { background:var(--mn-accent); color:var(--mn-surface-sunken); border-color:var(--mn-accent); }
+body.mn-avorio .mn-cap-heatmap__filter-input { background:var(--mn-surface); border-color:var(--mn-border); color:var(--mn-text); }
 } /* end @layer layouts */

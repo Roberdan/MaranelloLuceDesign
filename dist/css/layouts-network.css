@@ -8,13 +8,13 @@
 .mn-network__canvas { width:100%; flex:1; border-radius:var(--radius-sm); background:var(--mn-surface-sunken); }
 
 /* ── Avorio theme ── */
-body.mn-avorio .mn-network__canvas { background:var(--mn-text); }
+body.mn-avorio .mn-network__canvas { background:var(--mn-surface); }
 
 /* ── Resource Detail Card ── */
 .mn-detail-resource__avatar {
   width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center;
   font-family:var(--font-display,'Outfit',sans-serif); font-size:1rem; font-weight:700;
-  color:var(--mn-surface-sunken); flex-shrink:0;
+  color:var(--mn-text); flex-shrink:0;
 }
 .mn-detail-resource__name-block { display:flex; flex-direction:column; gap:2px; flex:1; min-width:0; }
 .mn-detail-resource__subtitle {
@@ -63,7 +63,7 @@ body.mn-avorio .mn-network__canvas { background:var(--mn-text); }
 .mn-detail-resource__mate:last-child { border-bottom:none; }
 .mn-detail-resource__mate-avatar {
   width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center;
-  font-size:0.6rem; font-weight:700; color:var(--mn-surface-sunken); flex-shrink:0;
+  font-size:0.6rem; font-weight:700; color:var(--mn-text); flex-shrink:0;
 }
 .mn-detail-resource__mate-info { display:flex; flex-direction:column; min-width:0; }
 .mn-detail-resource__mate-name { font-size:0.68rem; font-weight:600; color:var(--mn-text); }
@@ -76,13 +76,13 @@ body.mn-avorio .mn-network__canvas { background:var(--mn-text); }
 .mn-badge {
   display:inline-flex; align-items:center; justify-content:center;
   min-width:18px; height:18px; border-radius:9px; padding:0 5px;
-  background:var(--mn-accent); color:var(--mn-surface-sunken);
+  background:var(--mn-accent); color:var(--mn-text);
   font-family:var(--font-mono); font-size:0.6rem; font-weight:700;
 }
 
 /* ── Avorio overrides ── */
 body.mn-avorio .mn-detail-resource__fte-bar { background:var(--mn-text-tertiary); }
-body.mn-avorio .mn-detail-resource__eng { background:var(--mn-text); border-left-color:var(--mn-error); }
+body.mn-avorio .mn-detail-resource__eng { background:var(--mn-surface); border-left-color:var(--mn-error); }
 body.mn-avorio .mn-detail-resource__eng:hover { background:var(--mn-text-tertiary); }
 body.mn-avorio .mn-detail-resource__mate { border-bottom-color:var(--mn-text-muted); }
 } /* end @layer layouts */

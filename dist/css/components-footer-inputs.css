@@ -56,7 +56,7 @@
   padding: var(--space-md) var(--space-lg);
   border: 1.5px solid var(--mn-border-subtle);
   border-radius: 0;
-  background: var(--mn-text);
+  background: var(--mn-surface);
   color: var(--mn-text-inverse);
   width: 100%;
   transition: border-color var(--duration-sm) var(--ease-out);
@@ -132,7 +132,7 @@
   color: var(--mn-text-muted);
 }
 .mn-section-dark .mn-icon-btn:hover {
-  background: var(--mn-text);
+  background: var(--mn-surface);
   border-color: var(--mn-text);
   color: var(--mn-text-inverse);
 }

@@ -184,7 +184,7 @@
 .mn-login__env--development { color: var(--today-line, #4EA8DE); background: rgba(78,168,222,0.12); }
 
 /* Avorio theme */
-body.mn-avorio .mn-login { background: var(--mn-text); }
+body.mn-avorio .mn-login { background: var(--mn-surface); }
 body.mn-avorio .mn-login__glow { background: radial-gradient(circle, rgba(255,199,44,0.08) 0%, transparent 70%); }
 body.mn-avorio .mn-login__title { color: var(--mn-text-inverse); }
 body.mn-avorio .mn-login__subtitle { color: var(--mn-text-muted); }
