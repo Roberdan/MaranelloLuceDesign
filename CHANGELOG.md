@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.11.0] - 2026-03-16
+
+### Added
+- Colorblind theme: themes-colorblind-components.css + themes-colorblind-layouts.css (Okabe-Ito palette)
+- Unit tests for 22 new components (bcg, 9box, swot, decision, waterfall, confidence, activity-feed, bullet, notification-center, date-range-picker, user-table, audit-log, agent-cost, cost-timeline, bmc, agent-trace, token-meter, streaming-text, risk-matrix, kpi-scorecard, cohort-grid, approval-chain)
+- DATA_CONTRACTS.md v4.11.0 + docs/api-contracts-v4.md (22 component API contracts)
+- components.json v4.11.0 with 22 new entries
+- prefers-contrast media query mirroring .mn-high-contrast in accessibility.css
+- mn-section-nav registered in WC registerAll()
+
+### Fixed
+- XSS: isValidColor guard for badgeColor in search-drawer.ts
+- Strategy section rendering: bcgMatrix/nineBoxMatrix/decisionMatrix now init inside requestAnimationFrame; canvas pixel dims set before render
+- initOrgTree() returns { destroy() } with AbortController cleanup
+- mn-theme-toggle disconnectedCallback removes click listener
+- RGBA hardcoded values replaced with color-mix() across ai-chat-messages, integration-status, themes-avorio-layouts, forms-themes-misc
+- ai-chat-messages: try/catch around synchronous onSend handler
+
 ## [4.10.2] - 16 Mar 2026
 
 ### Fixed
