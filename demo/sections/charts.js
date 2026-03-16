@@ -52,7 +52,7 @@ Maranello.charts.donut(canvas, [{ label: 'A', value: 30 }, { label: 'B', value: 
         <div class="mn-card-dark" style="padding:var(--space-lg)">
           <div class="mn-label" style="margin-bottom:var(--space-md)">Pipeline Effectiveness — Radar</div>
           <canvas id="radar-demo" width="220" height="220"></canvas>
-          <div id="radar-score" class="mn-micro" style="color:var(--avorio);text-align:center;margin-top:var(--space-sm)">Overall score —</div>
+          <div id="radar-score" class="mn-micro" style="color:var(--mn-text-muted);text-align:center;margin-top:var(--space-sm)">Overall score —</div>
         </div>
         <div class="mn-card-dark" style="padding:var(--space-lg);flex:1;min-width:260px">
           <div class="mn-label" style="margin-bottom:var(--space-md)">Region Accuracy / Load — Bubble</div>
@@ -109,7 +109,7 @@ function sparkWrap(id, label, size) { return `<div style="text-align:center"><ca
 function donutWrap(id, w, h, val, label) { return `<div style="text-align:center"><canvas id="${id}" width="${w}" height="${h}"></canvas><div class="mn-micro" style="color:var(--mn-text-muted);margin-top:4px">${val} — ${label}</div></div>`; }
 function halfWrap(id, w, h, val, unit) { return `<div style="text-align:center"><canvas id="${id}" width="${w}" height="${h}"></canvas><div class="mn-micro" style="color:var(--mn-accent)">${val} <span style="color:var(--mn-text-muted)">${unit}</span></div></div>`; }
 function ringWrap(id, sz, pct, label) { return `<div style="text-align:center"><div id="${id}" style="width:${sz}px;height:${sz}px;display:inline-block"></div><div class="mn-micro" style="color:var(--mn-text-muted);margin-top:4px">${pct} ${label}</div></div>`; }
-function swatch(color, label) { return `<span class="mn-micro" style="display:inline-flex;align-items:center;gap:6px;color:var(--avorio);padding:2px 0"><span style="width:10px;height:10px;background:${color};border-radius:999px;box-shadow:0 0 0 1px rgba(255,255,255,0.12)"></span>${label}</span>`; }
+function swatch(color, label) { return `<span class="mn-micro" style="display:inline-flex;align-items:center;gap:6px;color:var(--mn-text);padding:2px 0"><span style="width:10px;height:10px;background:${color};border-radius:999px;box-shadow:0 0 0 1px rgba(255,255,255,0.12)"></span>${label}</span>`; }
 function legendRow(content, extra = '') { return `<div style="display:flex;flex-wrap:wrap;gap:var(--space-md);align-items:center;margin-top:var(--space-sm);padding-top:var(--space-xs);border-top:1px solid rgba(255,255,255,0.08);${extra}">${content}</div>`; }
 function axisLabel(kind = 'x') { return kind === 'y' ? 'min-width:18px;display:flex;align-items:center;justify-content:center;writing-mode:vertical-rl;transform:rotate(180deg);color:var(--mn-text-muted);font-size:0.68rem;letter-spacing:0.04em;text-transform:uppercase' : 'margin-top:var(--space-sm);text-align:center;color:var(--mn-text-muted);font-size:0.68rem;letter-spacing:0.04em;text-transform:uppercase'; }
 

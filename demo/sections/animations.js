@@ -105,7 +105,7 @@ export function createAnimationsSection() {
 
       <div class="mn-demo-section-label">Composable Dashboard Grid</div>
       <!-- Dashboard header toolbar -->
-      <div style="display:flex;align-items:center;gap:var(--space-md);padding:12px 16px;background:linear-gradient(180deg,rgba(255,199,44,0.06),transparent);border:1px solid var(--grigio-scuro,#333);border-radius:var(--radius-md) var(--radius-md) 0 0;margin-bottom:0">
+      <div style="display:flex;align-items:center;gap:var(--space-md);padding:12px 16px;background:linear-gradient(180deg,rgba(255,199,44,0.06),transparent);border:1px solid var(--mn-border);border-radius:var(--radius-md) var(--radius-md) 0 0;margin-bottom:0">
         <div style="display:flex;gap:var(--space-sm);align-items:center">
           <button class="mn-btn-cluster__item mn-btn-cluster__item--active" style="padding:6px 8px;display:flex;align-items:center;justify-content:center" title="Grid view" aria-label="Grid view">
             <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1.5" y="1.5" width="5" height="5"/><rect x="9.5" y="1.5" width="5" height="5"/><rect x="1.5" y="9.5" width="5" height="5"/><rect x="9.5" y="9.5" width="5" height="5"/></svg>
@@ -119,13 +119,13 @@ export function createAnimationsSection() {
           <button class="mn-btn mn-btn--ghost mn-btn--sm" style="padding:6px 10px">Filters</button>
         </div>
         <div style="flex:1;display:flex;justify-content:center">
-          <div style="display:flex;align-items:center;gap:var(--space-sm);max-width:400px;width:100%;background:var(--superficie-1);border:1px solid var(--grigio-scuro);border-radius:var(--radius-md);padding:var(--space-xs) var(--space-md)">
-            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="var(--grigio-medio)" stroke-width="1.4" stroke-linecap="round"><circle cx="7" cy="7" r="4.5"/><line x1="10.4" y1="10.4" x2="14" y2="14"/></svg>
+          <div style="display:flex;align-items:center;gap:var(--space-sm);max-width:400px;width:100%;background:var(--mn-surface);border:1px solid var(--mn-border);border-radius:var(--radius-md);padding:var(--space-xs) var(--space-md)">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="var(--mn-text-muted)" stroke-width="1.4" stroke-linecap="round"><circle cx="7" cy="7" r="4.5"/><line x1="10.4" y1="10.4" x2="14" y2="14"/></svg>
             <input type="text" placeholder="Filter by name, program..." style="flex:1;background:none;border:none;color:var(--mn-text-muted);font-family:var(--font-body);outline:none">
           </div>
         </div>
         <div style="display:flex;gap:var(--space-sm);align-items:center">
-          <kbd style="padding:2px 6px;border:1px solid var(--grigio-scuro);border-radius:4px;font-size:0.65rem;color:var(--grigio-medio)">⌘K</kbd>
+          <kbd style="padding:2px 6px;border:1px solid var(--mn-border);border-radius:4px;font-size:0.65rem;color:var(--mn-text-muted)">⌘K</kbd>
           <button class="mn-machined-btn" style="padding:4px 8px;display:flex;align-items:center;justify-content:center" title="Sort" aria-label="Sort">
             <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M4 3h8"/><path d="M6 8h6"/><path d="M8 13h4"/><path d="M4 3v10"/></svg>
           </button>
@@ -134,7 +134,7 @@ export function createAnimationsSection() {
           </button>
         </div>
       </div>
-      <div class="mn-dashboard mn-mb-2xl" style="border:1px solid var(--grigio-scuro,#333);border-top:0;border-radius:0 0 var(--radius-md) var(--radius-md);padding-top:var(--space-md)">
+      <div class="mn-dashboard mn-mb-2xl" style="border:1px solid var(--mn-border);border-top:0;border-radius:0 0 var(--radius-md) var(--radius-md);padding-top:var(--space-md)">
         <div class="mn-cell-3">
           <div class="mn-panel mn-hover-lift" style="text-align:center;padding:var(--space-md)">
             <div class="mn-shimmer mn-shimmer--bar mn-mb-sm" style="width:60%;margin:0 auto var(--space-sm)"></div>

@@ -1,6 +1,6 @@
 const TEMP_BADGES = [
   ['20°', '#DC0000', ''], ['18°', '#4EA8DE', ''], ['24°', '#FFC72C', ''],
-  ['–', 'var(--grigio-scuro)', ''], ['22°', '#DC0000', ' mn-temp-badge--lg'], ['16°', '#4EA8DE', ''],
+  ['–', 'var(--mn-border)', ''], ['22°', '#DC0000', ' mn-temp-badge--lg'], ['16°', '#4EA8DE', ''],
 ];
 
 export function createControlsSection() {
@@ -62,7 +62,7 @@ Maranello.initSlider(el);</code></pre>
       <div class="mn-demo-section-label">Drag Rotary</div>
       <div class="mn-flex-center mn-gap-2xl mn-mb-2xl">
         <div id="ctrl-drag-rotary" class="mn-rotary" style="width:140px">
-          <div class="mn-rotary__housing" style="width:120px;height:120px;border-radius:50%;background:var(--nero-2);border:2px solid var(--grigio-scuro);position:relative;margin:0 auto">
+          <div class="mn-rotary__housing" style="width:120px;height:120px;border-radius:50%;background:var(--mn-surface);border:2px solid var(--mn-border);position:relative;margin:0 auto">
             <div class="mn-rotary__dial" style="position:absolute;inset:0;border-radius:50%"></div>
             <div class="mn-rotary__pointer" style="position:absolute;top:10%;left:50%;width:2px;height:40%;background:var(--mn-accent);transform-origin:bottom center"></div>
             <div class="mn-rotary__notches"></div>
@@ -102,6 +102,6 @@ function activate(section, selector, activeClass, onSet = () => {}, onUnset = ()
 }
 function toggle(label, checked) { return `<label class="mn-toggle${checked ? ' mn-toggle--on' : ''}"><input type="checkbox"${checked ? ' checked' : ''}><span class="mn-toggle__track"><span class="mn-toggle__thumb"></span></span><span class="mn-toggle__label">${label}</span></label>`; }
 function led(tone, text) { return `<span class="mn-led mn-led--${tone}"><span class="mn-led__housing"><span class="mn-led__bulb"></span></span><span class="mn-led__text">${text}</span></span>`; }
-function slider(id, label, value) { return `<div><span class="mn-micro" style="color:var(--mn-text-muted);display:block;margin-bottom:var(--space-xs)">${label}</span><div id="${id}" class="mn-slider" style="height:8px;border-radius:4px;background:var(--grigio-scuro);cursor:pointer;position:relative"><div class="mn-slider__track" style="position:absolute;inset:0;border-radius:4px"></div></div><div class="mn-micro" style="color:var(--grigio-medio);margin-top:var(--space-xs)"><span id="${id.replace('ctrl-', '')}-val">${value}</span>%</div></div>`; }
+function slider(id, label, value) { return `<div><span class="mn-micro" style="color:var(--mn-text-muted);display:block;margin-bottom:var(--space-xs)">${label}</span><div id="${id}" class="mn-slider" style="height:8px;border-radius:4px;background:var(--mn-border);cursor:pointer;position:relative"><div class="mn-slider__track" style="position:absolute;inset:0;border-radius:4px"></div></div><div class="mn-micro" style="color:var(--mn-text-muted);margin-top:var(--space-xs)"><span id="${id.replace('ctrl-', '')}-val">${value}</span>%</div></div>`; }
 function controlSlot(label, id) { return `<div><div class="mn-demo-section-label mn-mb-sm">${label}</div><div id="${id}"></div></div>`; }
 function clusterButton(id, active = false) { return `<button class="mn-btn-cluster__item${active ? ' mn-btn-cluster__item--active' : ''}" aria-label="${id}"><span class="mn-icon mn-icon--sm" id="ic-cluster-${id}"></span></button>`; }

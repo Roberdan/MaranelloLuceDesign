@@ -1786,7 +1786,7 @@
   }
 
   .mn-swot__add:hover {
-    background: var(--grigio-30);
+    background: color-mix(in srgb, var(--mn-text) 8%, transparent);
   }
 
   .mn-swot__add:focus-visible {

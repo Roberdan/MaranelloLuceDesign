@@ -1,5 +1,5 @@
 const M = () => window.Maranello || {};
-const STATUS_COLORS = { Active: 'var(--mn-verde)', Paused: 'var(--mn-giallo)', Completed: 'var(--mn-accent)' };
+const STATUS_COLORS = { Active: 'var(--signal-ok)', Paused: 'var(--signal-warning)', Completed: 'var(--mn-accent)' };
 const DEPLOYMENTS = [
   { id: 'pipe-east', name: 'Pipeline Alpha', status: 'Active', region: 'us-east-1', lead: 'Agent Opus', start: '2026-01-15', runs: 47000, completion: '78%' },
   { id: 'pipe-west', name: 'Pipeline Beta', status: 'Paused', region: 'eu-west-1', lead: 'Agent Sonnet', start: '2026-02-01', runs: 32000, completion: '42%' },
@@ -82,13 +82,13 @@ function buildData(dep) {
 function initEditors(section) {
   const host = section.querySelector('#dp-editors-host'); if (!host) return; const eds = M().editors; if (!eds) return;
   const fields = [{ key: 'name', label: 'Pipeline Name', type: 'text', val: 'Pipeline Alpha' }, { key: 'status', label: 'Status', type: 'select', val: 'Active', options: ['Active', 'Paused', 'Completed'] }, { key: 'start', label: 'Start Date', type: 'date', val: '2026-01-15' }, { key: 'lead', label: 'Lead', type: 'text', val: 'Agent Opus' }];
-  const log = document.createElement('p'); log.className = 'mn-micro'; log.style.cssText = 'color:var(--mn-giallo);margin-top:var(--space-md);min-height:1.5em';
+  const log = document.createElement('p'); log.className = 'mn-micro'; log.style.cssText = 'color:var(--signal-warning);margin-top:var(--space-md);min-height:1.5em';
   fields.forEach((f) => {
     const row = document.createElement('div'); row.className = 'mn-detail-panel__field'; row.style.marginBottom = 'var(--space-md)';
     const label = document.createElement('span'); label.className = 'mn-detail-panel__field-label'; label.textContent = f.label;
     if (f.type === 'select') {
       const dd = document.createElement('div'); dd.className = 'mn-dropdown';
-      dd.innerHTML = `<button class="mn-dropdown__trigger" style="width:100%;text-align:left;padding:8px 12px;background:var(--nero-carbon,#111);border:1.5px solid var(--grigio-scuro,#333);border-radius:4px;color:var(--grigio-alluminio,#ccc);font-size:0.85rem;cursor:pointer">${f.val} ▾</button><div class="mn-dropdown__menu" style="min-width:100%">${f.options.map((o) => `<button class="mn-dropdown__item${o === f.val ? ' mn-dropdown__item--active' : ''}">${o}</button>`).join('')}</div>`;
+      dd.innerHTML = `<button class="mn-dropdown__trigger" style="width:100%;text-align:left;padding:8px 12px;background:var(--mn-surface);border:1.5px solid var(--mn-border);border-radius:4px;color:var(--mn-text);font-size:0.85rem;cursor:pointer">${f.val} ▾</button><div class="mn-dropdown__menu" style="min-width:100%">${f.options.map((o) => `<button class="mn-dropdown__item${o === f.val ? ' mn-dropdown__item--active' : ''}">${o}</button>`).join('')}</div>`;
       row.append(label, dd); host.appendChild(row); const M2 = window.Maranello; if (M2?.initDropdown) requestAnimationFrame(() => M2.initDropdown(dd)); dd.addEventListener('click', (e) => { const item = e.target.closest('.mn-dropdown__item'); if (item) log.textContent = `✎ ${f.label}: "${item.textContent}"`; });
     } else {
       const editorFn = eds[f.type] || eds.text; const input = editorFn(f.val, f, (val) => { log.textContent = `✎ ${f.label}: "${val}"`; }); row.append(label, input); host.appendChild(row);

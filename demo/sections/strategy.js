@@ -175,37 +175,43 @@ export function createStrategySection() {
 
   requestAnimationFrame(() => {
     /* ── BCG Matrix ── */
-    const bcgBadge = section.querySelector('#str-bcg-badge');
-    M.bcgMatrix(section.querySelector('#str-bcg'), {
-      items: BCG_ITEMS, shareThreshold: 0.5, growthThreshold: 10, animate: true,
-      onHover: (item) => { if (!item) return; bcgBadge.textContent = item.label; bcgBadge.style.display = ''; },
-      onClick: (item) => M.toast({ type: 'info', title: item.label, message: `Share: ${(item.marketShare*100).toFixed(0)}% | Growth: ${item.growthRate}%` }),
-    });
+    if (M.bcgMatrix) {
+      const bcgBadge = section.querySelector('#str-bcg-badge');
+      M.bcgMatrix(section.querySelector('#str-bcg'), {
+        items: BCG_ITEMS, shareThreshold: 0.5, growthThreshold: 10, animate: true,
+        onHover: (item) => { if (!item) return; bcgBadge.textContent = item.label; bcgBadge.style.display = ''; },
+        onClick: (item) => M.toast({ type: 'info', title: item.label, message: `Share: ${(item.marketShare*100).toFixed(0)}% | Growth: ${item.growthRate}%` }),
+      });
+    }
 
     /* ── Nine-Box Matrix ── */
-    const statusEl = section.querySelector('#str-9box-status');
-    M.nineBoxMatrix(section.querySelector('#str-9box'), {
-      items: NINE_BOX_ITEMS, xLabel: 'Competitive Strength', yLabel: 'Market Attractiveness',
-      xAxisLabels: ['Low', 'Medium', 'High'], yAxisLabels: ['Low', 'Medium', 'High'],
-      onSelect: (item) => { statusEl.textContent = `Selected: ${item.label} — use arrows or click cell to move`; },
-      onMove: (item, x, y) => {
-        const tierMap = { '3,3':'invest','3,2':'invest','2,3':'invest','2,2':'selective','1,3':'selective','3,1':'selective','1,2':'divest','2,1':'divest','1,1':'divest' };
-        const tier = { invest:'Invest', selective:'Selective', divest:'Divest' }[tierMap[`${x},${y}`]] || 'Selective';
-        statusEl.textContent = `Moved: ${item.label} → zone ${tier}`;
-        M.toast({ type: 'success', title: 'Item moved', message: `${item.label} → ${tier}` });
-      },
-    });
+    if (M.nineBoxMatrix) {
+      const statusEl = section.querySelector('#str-9box-status');
+      M.nineBoxMatrix(section.querySelector('#str-9box'), {
+        items: NINE_BOX_ITEMS, xLabel: 'Competitive Strength', yLabel: 'Market Attractiveness',
+        xAxisLabels: ['Low', 'Medium', 'High'], yAxisLabels: ['Low', 'Medium', 'High'],
+        onSelect: (item) => { statusEl.textContent = `Selected: ${item.label} — use arrows or click cell to move`; },
+        onMove: (item, x, y) => {
+          const tierMap = { '3,3':'invest','3,2':'invest','2,3':'invest','2,2':'selective','1,3':'selective','3,1':'selective','1,2':'divest','2,1':'divest','1,1':'divest' };
+          const tier = { invest:'Invest', selective:'Selective', divest:'Divest' }[tierMap[`${x},${y}`]] || 'Selective';
+          statusEl.textContent = `Moved: ${item.label} → zone ${tier}`;
+          M.toast({ type: 'success', title: 'Item moved', message: `${item.label} → ${tier}` });
+        },
+      });
+    }
 
     /* ── Decision Matrix ── */
-    const dmCtrl = M.decisionMatrix(section.querySelector('#str-dm'), {
-      criteria: DM_CRITERIA, alternatives: DM_ALTERNATIVES, scores: DM_SCORES,
-      editable: true,
-      onSelect: (alt) => M.toast({ type: 'info', title: alt.label, message: 'Weighted score updated in table' }),
-    });
-    section.querySelector('#str-dm-reset').addEventListener('click', () => {
-      dmCtrl.update({ scores: DM_SCORES });
-      M.toast({ type: 'info', title: 'Scores reset', message: 'Restored default vendor scores' });
-    });
+    if (M.decisionMatrix) {
+      const dmCtrl = M.decisionMatrix(section.querySelector('#str-dm'), {
+        criteria: DM_CRITERIA, alternatives: DM_ALTERNATIVES, scores: DM_SCORES,
+        editable: true,
+        onSelect: (alt) => M.toast({ type: 'info', title: alt.label, message: 'Weighted score updated in table' }),
+      });
+      section.querySelector('#str-dm-reset').addEventListener('click', () => {
+        dmCtrl.update({ scores: DM_SCORES });
+        M.toast({ type: 'info', title: 'Scores reset', message: 'Restored default vendor scores' });
+      });
+    }
 
     /* ── Business Model Canvas ── */
     if (M.businessModelCanvas) {
@@ -220,15 +226,17 @@ export function createStrategySection() {
     }
 
     /* ── SWOT Matrix ── */
-    const swotCtrl = M.swotMatrix(section.querySelector('#str-swot'), { items: SWOT_ITEMS, editable: true, onChange: () => {} });
-    section.querySelector('#str-swot-export').addEventListener('click', () => {
-      console.log('SWOT:', JSON.stringify(swotCtrl.getItems(), null, 2));
-      M.toast({ type: 'info', title: 'SWOT exported', message: `${swotCtrl.getItems().length} items — check console` });
-    });
-    section.querySelector('#str-swot-reset').addEventListener('click', () => {
-      swotCtrl.update(SWOT_ITEMS);
-      M.toast({ type: 'info', title: 'SWOT reset', message: 'Restored default items' });
-    });
+    if (M.swotMatrix) {
+      const swotCtrl = M.swotMatrix(section.querySelector('#str-swot'), { items: SWOT_ITEMS, editable: true, onChange: () => {} });
+      section.querySelector('#str-swot-export').addEventListener('click', () => {
+        console.log('SWOT:', JSON.stringify(swotCtrl.getItems(), null, 2));
+        M.toast({ type: 'info', title: 'SWOT exported', message: `${swotCtrl.getItems().length} items — check console` });
+      });
+      section.querySelector('#str-swot-reset').addEventListener('click', () => {
+        swotCtrl.update(SWOT_ITEMS);
+        M.toast({ type: 'info', title: 'SWOT reset', message: 'Restored default items' });
+      });
+    }
   });
 
   return section;

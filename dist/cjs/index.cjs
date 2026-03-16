@@ -12833,6 +12833,12 @@ function resolveCssVar(name, fallback) {
 function easeOutCubic3(t) {
   return 1 - Math.pow(1 - t, 3);
 }
+function hexToRgba3(hex, alpha2) {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r},${g},${b},${alpha2})`;
+}
 function injectSrTable(canvas, caption, headers, rows) {
   if (!canvas.parentElement) return;
   let srEl = canvas.nextElementSibling;
@@ -12880,7 +12886,7 @@ function waterfallChart(canvas, opts) {
   const minVal = Math.min(...allVals);
   const maxVal = Math.max(...allVals);
   const range = maxVal - minVal || 1;
-  const pad2 = { top: 24, bottom: 30, left: 12, right: 12 };
+  const pad2 = { top: 24, bottom: 30, left: 52, right: 12 };
   const chartW = logicalW - pad2.left - pad2.right;
   const chartH = logicalH - pad2.top - pad2.bottom;
   const n = segments.length;
@@ -12893,6 +12899,26 @@ function waterfallChart(canvas, opts) {
   function drawBars(progress) {
     if (!ctx) return;
     ctx.clearRect(0, 0, logicalW, logicalH);
+    const gridCount = 5;
+    ctx.font = "9px system-ui, sans-serif";
+    ctx.textAlign = "right";
+    ctx.textBaseline = "middle";
+    ctx.setLineDash([3, 3]);
+    ctx.lineWidth = 0.5;
+    for (let g = 0; g <= gridCount; g++) {
+      const v = minVal + range / gridCount * g;
+      const yy = yScale(v);
+      ctx.strokeStyle = hexToRgba3(colorBorder, 0.2);
+      ctx.beginPath();
+      ctx.moveTo(pad2.left, yy);
+      ctx.lineTo(logicalW - pad2.right, yy);
+      ctx.stroke();
+      const abs = Math.abs(v);
+      const lbl = abs >= 1e6 ? (v / 1e6).toFixed(1) + "M" : abs >= 1e3 ? (v / 1e3).toFixed(1) + "k" : String(Math.round(v));
+      ctx.fillStyle = colorMuted;
+      ctx.fillText(lbl, pad2.left - 4, yy);
+    }
+    ctx.setLineDash([]);
     const zeroY = yScale(0);
     ctx.strokeStyle = colorBorder;
     ctx.lineWidth = 1;
@@ -12989,7 +13015,7 @@ function resolveColor(color) {
   }
   return color;
 }
-function hexToRgba3(hex, alpha2) {
+function hexToRgba4(hex, alpha2) {
   const r = parseInt(hex.slice(1, 3), 16);
   const g = parseInt(hex.slice(3, 5), 16);
   const b = parseInt(hex.slice(5, 7), 16);
@@ -13040,7 +13066,7 @@ function confidenceChart(canvas, opts) {
     if (!ctx) return;
     ctx.clearRect(0, 0, logicalW, logicalH);
     const gridRows = 4;
-    ctx.strokeStyle = hexToRgba3(borderColor.startsWith("#") ? borderColor : "#888888", 0.5);
+    ctx.strokeStyle = hexToRgba4(borderColor.startsWith("#") ? borderColor : "#888888", 0.5);
     ctx.lineWidth = 0.5;
     ctx.font = "10px system-ui, sans-serif";
     ctx.fillStyle = mutedColor;
@@ -13061,7 +13087,7 @@ function confidenceChart(canvas, opts) {
     for (let i = 0; i < visible; i++) ctx.lineTo(xAt(i), yAt(opts.upper[i]));
     for (let i = visible - 1; i >= 0; i--) ctx.lineTo(xAt(i), yAt(opts.lower[i]));
     ctx.closePath();
-    ctx.fillStyle = hexToRgba3(lineColor.startsWith("#") ? lineColor : "#FFC72C", 0.15);
+    ctx.fillStyle = hexToRgba4(lineColor.startsWith("#") ? lineColor : "#FFC72C", 0.15);
     ctx.fill();
     ctx.beginPath();
     for (let i = 0; i < visible; i++) {
@@ -15052,17 +15078,17 @@ function buildEntry(entry, ac, onSelect) {
   expand.className = "mn-audit__expand";
   expand.setAttribute("aria-hidden", "true");
   if (entry.metadata || entry.ipAddress) {
-    const dl = document.createElement("dl");
-    dl.className = "mn-audit__meta-table";
-    if (entry.ipAddress) {
-      dl.innerHTML += `<dt>IP</dt><dd class="mn-audit__ip">${escapeHtml(entry.ipAddress)}</dd>`;
-    }
-    if (entry.metadata) {
-      for (const [k, v] of Object.entries(entry.metadata)) {
-        dl.innerHTML += `<dt>${escapeHtml(k)}</dt><dd>${escapeHtml(v)}</dd>`;
-      }
-    }
-    expand.appendChild(dl);
+    const chips = document.createElement("div");
+    chips.className = "mn-audit__chips";
+    const mkChip = (key, val) => {
+      const c = document.createElement("span");
+      c.className = "mn-audit__chip";
+      c.innerHTML = `<span class="mn-audit__chip-key">${escapeHtml(key)}</span> ${escapeHtml(val)}`;
+      chips.appendChild(c);
+    };
+    if (entry.ipAddress) mkChip("IP", entry.ipAddress);
+    if (entry.metadata) for (const [k, v] of Object.entries(entry.metadata)) mkChip(k, v);
+    expand.appendChild(chips);
   }
   body.appendChild(expand);
   li.append(dot, body);
@@ -15112,9 +15138,6 @@ function auditLog(el4, entries = [], opts = {}) {
   el4.innerHTML = "";
   const header = document.createElement("div");
   header.className = "mn-audit__header";
-  const title = document.createElement("h3");
-  title.className = "mn-audit__title";
-  title.textContent = "Audit Log";
   const tabBar = document.createElement("div");
   tabBar.className = "mn-audit__tabs";
   tabBar.setAttribute("role", "tablist");
@@ -15129,7 +15152,7 @@ function auditLog(el4, entries = [], opts = {}) {
       tabBar.appendChild(btn);
     }
   }
-  header.append(title, tabBar);
+  header.appendChild(tabBar);
   el4.appendChild(header);
   const liveRegion = document.createElement("div");
   liveRegion.setAttribute("aria-live", "polite");

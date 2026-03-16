@@ -26,7 +26,7 @@ function svgGauge(g) {
   return `<div class="mn-card-dark" style="padding:var(--space-lg);text-align:center;flex:1 1 160px;min-width:160px">
     <p class="mn-label" style="margin-bottom:var(--space-sm)">${g.label}</p>
     <svg width="120" height="120" viewBox="0 0 120 120" style="display:block;margin:0 auto">
-      <circle cx="60" cy="60" r="${r}" fill="none" stroke="var(--grigio-scuro,#333)" stroke-width="8"
+      <circle cx="60" cy="60" r="${r}" fill="none" style="stroke:var(--mn-border)" stroke-width="8"
         stroke-dasharray="${arc} ${circ}" stroke-dashoffset="0" stroke-linecap="round"
         transform="rotate(135 60 60)"/>
       <circle cx="60" cy="60" r="${r}" fill="none" stroke="${g.color}" stroke-width="8"
@@ -35,20 +35,20 @@ function svgGauge(g) {
         <animate attributeName="stroke-dasharray" from="0 ${circ}" to="${dash} ${circ}" dur="1.2s" fill="freeze" calcMode="spline" keySplines="0.25 0.46 0.45 0.94"/>
       </circle>
       <text x="60" y="56" text-anchor="middle" fill="${g.color}" font-family="var(--font-display,Outfit,sans-serif)" font-size="22" font-weight="700">${display}</text>
-      <text x="60" y="72" text-anchor="middle" fill="var(--grigio-medio,#666)" font-family="var(--font-body,Inter,sans-serif)" font-size="10">${g.unit}</text>
+      <text x="60" y="72" text-anchor="middle" style="fill:var(--mn-text-muted)" font-family="var(--font-body,Inter,sans-serif)" font-size="10">${g.unit}</text>
     </svg>
-    <p class="mn-micro" style="color:var(--grigio-medio);margin-top:var(--space-xs)">${g.sub}</p>
+    <p class="mn-micro" style="color:var(--mn-text-muted);margin-top:var(--space-xs)">${g.sub}</p>
   </div>`;
 }
 
 function serviceRow(s) {
-  const color = s.tone === 'green' ? '#00A651' : s.tone === 'amber' ? '#FFC72C' : s.tone === 'red' ? '#DC0000' : 'var(--grigio-scuro)';
-  return `<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-top:1px solid rgba(255,255,255,0.06)">
+  const color = s.tone === 'green' ? 'var(--signal-ok)' : s.tone === 'amber' ? 'var(--signal-warning)' : s.tone === 'red' ? 'var(--signal-danger)' : 'var(--mn-border)';
+  return `<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-top:1px solid var(--mn-border)">
     <div style="display:flex;align-items:center;gap:var(--space-sm)">
       <span style="width:10px;height:10px;border-radius:50%;background:${color};box-shadow:0 0 6px ${color}60;flex-shrink:0"></span>
       <div>
         <span class="mn-label">${s.name}</span>
-        <div class="mn-micro" style="color:var(--grigio-medio)">${s.detail}</div>
+        <div class="mn-micro" style="color:var(--mn-text-muted)">${s.detail}</div>
       </div>
     </div>
     <span class="mn-micro" style="color:var(--mn-text-muted);text-transform:uppercase;letter-spacing:0.08em">${s.tone === 'off' ? 'IDLE' : s.tone.toUpperCase()}</span>

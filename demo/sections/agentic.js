@@ -30,6 +30,12 @@ Projected savings from these optimizations: **€8,000–€12,000 per quarter**
 const TOKEN_USAGE = { prompt: 4820, completion: 612, cached: 2100, budget: 8000, costPerMToken: 3.0 };
 const LATENCY_VALS = [312, 890, 145, 50];
 
+/** SVG arc gauge KPI card — telemetry-style, semantic tokens, animated. */
+function agKpiCard(id, label, val, sub, pct, color) {
+  const c = +(2 * Math.PI * 46).toFixed(1), a = +(c * .75).toFixed(1), f = +(a * Math.min(1.02, pct)).toFixed(1);
+  return `<div class="mn-card-dark" style="padding:var(--space-lg);text-align:center"><svg width="110" height="110" viewBox="0 0 120 120" style="display:block;margin:0 auto;overflow:visible"><circle cx="60" cy="60" r="46" fill="none" style="stroke:var(--mn-border)" stroke-width="7" stroke-dasharray="${a} ${c}" stroke-linecap="round" transform="rotate(135 60 60)"/><circle id="${id}" cx="60" cy="60" r="46" fill="none" stroke="${color}" stroke-width="7" stroke-dasharray="${f} ${c}" stroke-linecap="round" transform="rotate(135 60 60)" style="transition:stroke-dasharray .8s ease"><animate attributeName="stroke-dasharray" from="0 ${c}" to="${f} ${c}" dur="1s" fill="freeze"/></circle><text id="${id}-val" x="60" y="56" text-anchor="middle" style="fill:${color};font-family:var(--font-display,Outfit,sans-serif)" font-size="16" font-weight="700">${val}</text><text x="60" y="70" text-anchor="middle" style="fill:var(--mn-text-muted);font-family:var(--font-body,Inter,sans-serif)" font-size="9">${sub}</text></svg><div class="mn-micro" style="color:var(--mn-text-muted);margin-top:var(--space-xs)">${label}</div></div>`;
+}
+
 export function createAgenticSection() {
   const M = window.Maranello;
   const section = document.createElement('section');
@@ -44,22 +50,10 @@ export function createAgenticSection() {
       <p class="mn-body mn-mb-2xl">Agent execution trace, token budget, streaming output, and human-in-the-loop approval — built for production AI pipelines.</p>
 
       <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-md);margin-bottom:var(--space-2xl)">
-        <div class="mn-card-dark" style="padding:var(--space-md) var(--space-lg);display:flex;align-items:center;gap:var(--space-md)">
-          <div id="ag-ring-steps" style="position:relative;flex-shrink:0;width:52px;height:52px"><span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:0.7rem;font-weight:700;color:var(--mn-accent)">5</span></div>
-          <div><div class="mn-body" id="ag-kpi-steps" style="font-variant-numeric:tabular-nums;color:var(--mn-accent);font-weight:700">5</div><div class="mn-micro" style="color:var(--mn-text-muted);margin-top:2px">Steps traced</div></div>
-        </div>
-        <div class="mn-card-dark" style="padding:var(--space-md) var(--space-lg);display:flex;align-items:center;gap:var(--space-md)">
-          <div id="ag-ring-tokens" style="position:relative;flex-shrink:0;width:52px;height:52px"><span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:0.65rem;font-weight:700;color:var(--signal-info)">8.3k</span></div>
-          <div><div class="mn-body" id="ag-kpi-tokens" style="font-variant-numeric:tabular-nums;color:var(--signal-info);font-weight:700">8,344</div><div class="mn-micro" style="color:var(--mn-text-muted);margin-top:2px">Tokens used</div></div>
-        </div>
-        <div class="mn-card-dark" style="padding:var(--space-md) var(--space-lg);display:flex;align-items:center;gap:var(--space-md)">
-          <div id="ag-ring-cost" style="position:relative;flex-shrink:0;width:52px;height:52px"><span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:0.65rem;font-weight:700;color:var(--signal-ok)">$0.02</span></div>
-          <div><div class="mn-body" id="ag-kpi-cost" style="font-variant-numeric:tabular-nums;color:var(--signal-ok);font-weight:700">$0.025</div><div class="mn-micro" style="color:var(--mn-text-muted);margin-top:2px">Estimated cost</div></div>
-        </div>
-        <div class="mn-card-dark" style="padding:var(--space-md) var(--space-lg);display:flex;align-items:center;gap:var(--space-md)">
-          <div id="ag-ring-cache" style="position:relative;flex-shrink:0;width:52px;height:52px"><span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:0.7rem;font-weight:700;color:var(--signal-warning)">39%</span></div>
-          <div><div class="mn-body" id="ag-kpi-cache" style="font-variant-numeric:tabular-nums;color:var(--signal-warning);font-weight:700">38.7%</div><div class="mn-micro" style="color:var(--mn-text-muted);margin-top:2px">Cache hit ratio</div></div>
-        </div>
+        ${agKpiCard('ag-arc-steps','Steps traced','5','complete',0.5,'var(--mn-accent)')}
+        ${agKpiCard('ag-arc-tokens','Token budget',(+(TOKEN_USAGE.prompt+TOKEN_USAGE.completion)/1000).toFixed(1)+'k','used',(TOKEN_USAGE.prompt+TOKEN_USAGE.completion)/TOKEN_USAGE.budget,'var(--signal-info)')}
+        ${agKpiCard('ag-arc-cost','Est. cost','$0.025','per run',0.25,'var(--signal-ok)')}
+        ${agKpiCard('ag-arc-cache','Cache hit','38.7%','ratio',0.387,'var(--signal-warning)')}
       </div>
 
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-xl);margin-bottom:var(--space-2xl)">
@@ -150,18 +144,24 @@ chain.setStatus(id, 'approved', timestamp);</pre>
   requestAnimationFrame(() => {
     let latencyData = LATENCY_VALS.slice();
     let extraStep = DEMO_STEPS.length;
-    let agRingTokens, agRingCache;
 
-    /* KPI helpers */
+    /** Update SVG arc progress + centre text. */
+    function updateArc(id, pct, newVal) {
+      const arc = section.querySelector(`#${id}`);
+      if (!arc) return;
+      const c = +(2 * Math.PI * 46).toFixed(1), a = +(c * .75).toFixed(1);
+      arc.setAttribute('stroke-dasharray', `${+(a * Math.min(1.02, pct)).toFixed(1)} ${c}`);
+      if (newVal !== undefined) { const t = section.querySelector(`#${id}-val`); if (t) t.textContent = newVal; }
+    }
+
+    /** Refresh KPI strip arcs from token usage object. */
     function refreshKpis(usage) {
       const totalTok = (usage.prompt ?? TOKEN_USAGE.prompt) + (usage.completion ?? TOKEN_USAGE.completion);
       const cost = (totalTok / 1_000_000) * TOKEN_USAGE.costPerMToken;
       const cacheRatio = ((usage.cached ?? TOKEN_USAGE.cached) / totalTok * 100).toFixed(1);
-      section.querySelector('#ag-kpi-tokens').textContent = totalTok.toLocaleString();
-      section.querySelector('#ag-kpi-cost').textContent = '$' + cost.toFixed(3);
-      section.querySelector('#ag-kpi-cache').textContent = cacheRatio + '%';
-      if (agRingTokens) agRingTokens.setValue(totalTok);
-      if (agRingCache) agRingCache.setValue(parseFloat(cacheRatio));
+      updateArc('ag-arc-tokens', totalTok / TOKEN_USAGE.budget, (totalTok / 1000).toFixed(1) + 'k');
+      updateArc('ag-arc-cost', Math.min(1, cost / 0.1), '$' + cost.toFixed(3));
+      updateArc('ag-arc-cache', parseFloat(cacheRatio) / 100, cacheRatio + '%');
     }
 
     /* Agent Trace */
@@ -174,7 +174,7 @@ chain.setStatus(id, 'approved', timestamp);</pre>
       const labels = ['call_api', 'validate_output', 'write_report', 'summarize', 'fetch_context'];
       traceCtrl.add({ id: `s${extraStep}`, kind: kinds[extraStep % 3], label: labels[extraStep % labels.length],
         status: 'running', timestamp: new Date().toLocaleTimeString('en', { hour12: false }) });
-      section.querySelector('#ag-kpi-steps').textContent = String(extraStep);
+      updateArc('ag-arc-steps', Math.min(1, extraStep / 10), String(extraStep));
       const ms = Math.round(Math.random() * 600 + 80);
       setTimeout(() => {
         traceCtrl.update(`s${extraStep}`, { status: 'done', durationMs: ms });
@@ -185,13 +185,11 @@ chain.setStatus(id, 'approved', timestamp);</pre>
     });
     section.querySelector('#ag-trace-clear').addEventListener('click', () => {
       traceCtrl.clear();
-      section.querySelector('#ag-kpi-steps').textContent = '0';
+      updateArc('ag-arc-steps', 0, '0');
     });
 
     /* Token Meter */
     const meterCtrl = M.tokenMeter(section.querySelector('#ag-token'), TOKEN_USAGE, { showCost: true, showBreakdown: true });
-    agRingTokens = M.progressRing(section.querySelector('#ag-ring-tokens'), { value: TOKEN_USAGE.prompt + TOKEN_USAGE.completion, max: TOKEN_USAGE.budget, size: 52, thickness: 4, color: '#3B82F6' });
-    agRingCache = M.progressRing(section.querySelector('#ag-ring-cache'), { value: 38.7, max: 100, size: 52, thickness: 4, color: '#FFC72C' });
     section.querySelector('#ag-token-sim').addEventListener('click', () => {
       const u = { prompt: Math.round(Math.random() * 6000 + 1000), completion: Math.round(Math.random() * 1000 + 200),
         cached: Math.round(Math.random() * 3000), budget: 8000, costPerMToken: 3.0 };
@@ -203,7 +201,7 @@ chain.setStatus(id, 'approved', timestamp);</pre>
     /* Latency sparkline */
     const latCanvas = section.querySelector('#ag-latency');
     function renderSparkline() {
-      if (M.sparkline) M.sparkline(latCanvas, latencyData, { color: '--mn-accent', filled: true });
+      if (M.charts?.sparkline) M.charts.sparkline(latCanvas, latencyData, { color: '--mn-accent', filled: true });
     }
     renderSparkline();
     section.querySelector('#ag-lat-label').textContent = latencyData[latencyData.length - 1] + 'ms';
