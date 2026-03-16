@@ -1,4 +1,4 @@
-/* Maranello Luce Design v4.10.2 | MPL-2.0 | github.com/Roberdan/MaranelloLuceDesign */
+/* Maranello Luce Design v4.11.0 | MPL-2.0 | github.com/Roberdan/MaranelloLuceDesign */
 
 // src/ts/core/sanitize.ts
 function escapeHtml(str) {
@@ -434,4 +434,4 @@ export {
   lerp,
   hiDpiCanvas
 };
-//# sourceMappingURL=chunk-SLWVRXQS.js.map
+//# sourceMappingURL=chunk-BEIMDCAZ.js.map

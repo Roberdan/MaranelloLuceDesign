@@ -12,7 +12,9 @@ export declare function openDrawer(id: string, triggerEl?: HTMLElement): void;
 /** Close a mobile drawer by element id. Returns focus to trigger. */
 export declare function closeDrawer(id: string, triggerEl?: HTMLElement | null): void;
 /** Initialize org tree expand/collapse, node selection, and keyboard nav. */
-export declare function initOrgTree(container: HTMLElement): void;
+export declare function initOrgTree(container: HTMLElement): {
+    destroy: () => void;
+};
 /** Toggle notification center visibility. */
 export declare function toggleNotifications(id: string): void;
 /** Initialize drill-down expand/collapse controls. */

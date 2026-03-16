@@ -1,9 +1,9 @@
-/* Maranello Luce Design v4.10.2 | MPL-2.0 | github.com/Roberdan/MaranelloLuceDesign */
+/* Maranello Luce Design v4.11.0 | MPL-2.0 | github.com/Roberdan/MaranelloLuceDesign */
 import {
   cssVar,
   escapeHtml,
   isValidColor
-} from "./chunk-SLWVRXQS.js";
+} from "./chunk-BEIMDCAZ.js";
 
 // src/ts/gantt-defaults.ts
 var DPR = window.devicePixelRatio || 1;
@@ -1078,4 +1078,4 @@ function gantt(container, tasks, userOpts) {
 export {
   gantt
 };
-//# sourceMappingURL=chunk-HB747A4P.js.map
+//# sourceMappingURL=chunk-4OZRR3CT.js.map

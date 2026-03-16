@@ -1,4 +1,4 @@
-/* Maranello Luce Design v4.10.2 | MPL-2.0 | github.com/Roberdan/MaranelloLuceDesign */
+/* Maranello Luce Design v4.11.0 | MPL-2.0 | github.com/Roberdan/MaranelloLuceDesign */
 "use strict";
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -164,6 +164,8 @@ function closeDrawer(id, triggerEl) {
   if (triggerEl && typeof triggerEl.focus === "function") triggerEl.focus();
 }
 function initOrgTree(container) {
+  const ac = new AbortController();
+  const sig = { signal: ac.signal };
   container.querySelectorAll(".mn-org-tree__toggle").forEach((toggle) => {
     if (toggle.classList.contains("mn-org-tree__toggle--leaf")) return;
     const item = toggle.closest(".mn-org-tree__item");
@@ -177,7 +179,7 @@ function initOrgTree(container) {
       children.classList.toggle("mn-org-tree__children--collapsed");
       toggle.classList.toggle("mn-org-tree__toggle--expanded", collapsed);
       toggle.setAttribute("aria-expanded", String(collapsed));
-    });
+    }, sig);
   });
   const nodes = container.querySelectorAll(".mn-org-tree__node");
   nodes.forEach((node, idx) => {
@@ -192,7 +194,7 @@ function initOrgTree(container) {
         label: label ? label.textContent ?? "" : "",
         node
       });
-    });
+    }, sig);
     node.addEventListener("keydown", (e) => {
       if (e.key === "ArrowDown") {
         e.preventDefault();
@@ -215,8 +217,9 @@ function initOrgTree(container) {
         const toggle = node.closest(".mn-org-tree__item")?.querySelector(".mn-org-tree__toggle");
         if (toggle && toggle.getAttribute("aria-expanded") === "true") toggle.click();
       }
-    });
+    }, sig);
   });
+  return { destroy: () => ac.abort() };
 }
 function toggleNotifications(id) {
   const panel = document.getElementById(id);

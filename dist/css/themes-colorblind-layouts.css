@@ -1,0 +1,189 @@
+@layer themes {
+/* themes -- Colorblind Layouts | Maranello Design System v1.4.0
+   Layout-level overrides for colorblind theme.
+   Focus rings, sidebar, drawer, panels, data table, notifications. */
+
+
+/* ============================================================
+   Sidebar / Navigation
+   ============================================================ */
+body.mn-colorblind .mn-sidebar__item--active {
+  color: var(--mn-cb-blue);
+  border-left-color: var(--mn-cb-blue);
+  background: rgba(0,114,178,0.08);
+}
+body.mn-colorblind .mn-nav__link--active,
+body.mn-colorblind .mn-nav__brand-accent { color: var(--mn-cb-blue); }
+body.mn-colorblind .mn-sidebar__item:hover { color: var(--mn-accent); }
+
+/* ============================================================
+   Focus ring -- always use --mn-accent, never --giallo-ferrari
+   ============================================================ */
+body.mn-colorblind :focus-visible {
+  outline: 2px solid var(--mn-accent);
+  outline-offset: 2px;
+}
+body.mn-colorblind .mn-toolbar__search:focus {
+  border-color: var(--mn-accent);
+  box-shadow: 0 0 0 2px rgba(0,114,178,0.25);
+}
+body.mn-colorblind .mn-toolbar__btn--active {
+  color: var(--mn-accent); border-color: var(--mn-accent);
+}
+
+/* ============================================================
+   Drawer / Panel backgrounds
+   ============================================================ */
+body.mn-colorblind .mn-drawer {
+  --mn-drawer-border: var(--mn-border, var(--grigio-scuro));
+}
+body.mn-colorblind .mn-drawer__header {
+  border-bottom-color: var(--mn-border, var(--grigio-scuro));
+}
+
+/* ============================================================
+   Section backgrounds (adaptive)
+   ============================================================ */
+body.mn-colorblind .mn-section-accent {
+  border-left: 3px solid var(--mn-accent);
+}
+
+/* ============================================================
+   Page header
+   ============================================================ */
+body.mn-colorblind .mn-page-header__action--active {
+  color: var(--mn-accent);
+  background: color-mix(in srgb, var(--mn-accent) 8%, transparent);
+}
+body.mn-colorblind .mn-page-header__badge { background: var(--mn-accent); }
+
+/* ============================================================
+   Data Table header / row hover
+   ============================================================ */
+body.mn-colorblind .mn-dt__th--sortable:hover { color: var(--mn-accent); }
+body.mn-colorblind .mn-dt__th--sorted { color: var(--mn-accent); }
+body.mn-colorblind .mn-dt__filter-input:focus {
+  border-color: var(--mn-accent);
+  box-shadow: 0 0 0 2px rgba(0,114,178,0.15);
+}
+body.mn-colorblind .mn-dt--crosshair .mn-dt__row--hovered {
+  background: rgba(0,114,178,0.06);
+}
+body.mn-colorblind .mn-dt__row--selected {
+  background: rgba(0,114,178,0.10);
+}
+body.mn-colorblind .mn-dt__col-highlight {
+  background: rgba(0,114,178,0.04);
+}
+body.mn-colorblind .mn-dt__badge--green { background: var(--mn-cb-blue); }
+body.mn-colorblind .mn-dt__badge--red { background: var(--mn-cb-orange); }
+body.mn-colorblind .mn-dt__badge--yellow { background: var(--mn-cb-yellow); }
+
+/* ============================================================
+   Detail panel field labels / values
+   ============================================================ */
+body.mn-colorblind .mn-detail-panel__section-title { color: var(--mn-accent); }
+body.mn-colorblind .mn-detail-panel__field-label { color: var(--mn-text-muted, var(--grigio-chiaro)); }
+body.mn-colorblind .mn-detail-panel__close:hover {
+  color: var(--mn-accent);
+}
+
+/* ============================================================
+   Command palette
+   ============================================================ */
+body.mn-colorblind .mn-command-palette__item:hover,
+body.mn-colorblind .mn-command-palette__item--active {
+  background: rgba(0,114,178,0.1);
+}
+
+/* ============================================================
+   Notification center -- unread highlight
+   ============================================================ */
+body.mn-colorblind .mn-notification-center__item--unread {
+  background: rgba(0,114,178,0.06);
+  border-left: 3px solid var(--mn-accent);
+}
+body.mn-colorblind .mn-notification-center__item-icon {
+  color: var(--mn-accent);
+}
+
+/* ============================================================
+   Org tree
+   ============================================================ */
+body.mn-colorblind .mn-org-tree__node--active {
+  color: var(--mn-accent);
+  background: rgba(0,114,178,0.08);
+}
+
+/* ============================================================
+   Heatmap (bars + legend + delta indicators)
+   ============================================================ */
+body.mn-colorblind .mn-heatmap__bar--ok {
+  background: var(--verde-racing);
+  background-image: repeating-linear-gradient(
+    45deg, transparent, transparent 3px,
+    rgba(255,255,255,0.15) 3px, rgba(255,255,255,0.15) 5px);
+}
+body.mn-colorblind .mn-heatmap__bar--warn {
+  background: var(--status-warning);
+  background-image: repeating-linear-gradient(
+    0deg, transparent, transparent 3px,
+    rgba(0,0,0,0.12) 3px, rgba(0,0,0,0.12) 5px);
+}
+body.mn-colorblind .mn-heatmap__bar--danger {
+  background: var(--rosso-corsa);
+  background-image: repeating-linear-gradient(
+    -45deg, transparent, transparent 3px,
+    rgba(255,255,255,0.2) 3px, rgba(255,255,255,0.2) 5px);
+}
+body.mn-colorblind .mn-heatmap__delta--positive::before { content: "\25B2 "; }
+body.mn-colorblind .mn-heatmap__delta--negative::before { content: "\25BC "; }
+body.mn-colorblind .mn-heatmap__legend-bar {
+  background: linear-gradient(
+    90deg, var(--mn-surface-sunken) 0%,
+    var(--mn-cb-green) 40%, var(--mn-cb-yellow) 65%, var(--mn-cb-orange) 100%);
+}
+
+/* ============================================================
+   Color-remapped primitives (alias overrides)
+   ============================================================ */
+body.mn-colorblind {
+  --giallo: #FFB000;
+  --rosso: var(--mn-cb-orange);
+  --verde: var(--mn-cb-blue);
+  --arancio: var(--mn-cb-yellow);
+
+  --mn-chart-series-1: var(--mn-cb-blue);
+  --mn-chart-series-2: var(--mn-cb-orange);
+  --mn-chart-series-3: var(--mn-cb-green);
+  --mn-chart-series-4: #F0E442;
+  --mn-chart-series-5: #CC79A7;
+  --mn-chart-series-6: #56B4E9;
+  --mn-chart-series-7: var(--mn-cb-yellow);
+  --mn-chart-series-8: var(--nero-assoluto);
+  --mn-chart-series-9: var(--mn-cb-blue);
+  --mn-chart-series-10: var(--mn-cb-orange);
+  --mn-chart-series-11: var(--mn-cb-green);
+  --mn-chart-series-12: #F0E442;
+
+  --mn-form-focus: #FFB000;
+  --mn-form-focus-ring: rgba(255,176,0,0.25);
+  --mn-form-error: var(--mn-cb-orange);
+  --mn-form-error-bg: rgba(213,94,0,0.06);
+  --mn-form-success: var(--mn-cb-blue);
+  --mn-form-success-bg: rgba(0,114,178,0.06);
+}
+
+/* ============================================================
+   Mission / Night-agent buttons
+   ============================================================ */
+body.mn-colorblind .mn-mission-btn--delegate {
+  color: var(--mn-accent); border-color: var(--mn-accent);
+}
+body.mn-colorblind .mn-mission-btn--start {
+  color: var(--mn-cb-blue); border-color: var(--mn-cb-blue);
+}
+body.mn-colorblind .mn-mission-btn--cancel {
+  color: #D55E00; border-color: #D55E00;
+}
+} /* end @layer themes */

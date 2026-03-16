@@ -167,6 +167,15 @@ html.mn-high-contrast {
   filter: contrast(1.15);
 }
 
+/* Auto-apply when OS high-contrast mode is active */
+@media (prefers-contrast: more) {
+  html {
+    --grigio-chiaro: #c0c0c0;
+    --grigio-medio: #808080;
+    filter: contrast(1.15);
+  }
+}
+
 /* ── NO FOCUS RING (when toggled off in a11y panel) ── */
 /* a11y: keep !important — must defeat all :focus-visible rules site-wide
    when user explicitly disables focus rings via the accessibility panel */

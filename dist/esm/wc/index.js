@@ -22,6 +22,7 @@ const WC_TAGS = [
   "mn-tab",
   "mn-tabs",
   "mn-theme-rotary",
+  "mn-section-nav",
   "mn-theme-toggle",
   "mn-toast"
 ];
@@ -51,6 +52,8 @@ async function registerAll() {
     import("./mn-speedometer.js"),
     import("./mn-system-status.js"),
     import("./mn-tabs.js"),
+    // also registers mn-tab
+    import("./mn-section-nav.js"),
     import("./mn-theme-rotary.js"),
     import("./mn-theme-toggle.js"),
     import("./mn-toast.js")

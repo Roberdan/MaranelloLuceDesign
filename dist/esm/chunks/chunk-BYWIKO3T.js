@@ -1,9 +1,9 @@
-/* Maranello Luce Design v4.10.2 | MPL-2.0 | github.com/Roberdan/MaranelloLuceDesign */
+/* Maranello Luce Design v4.11.0 | MPL-2.0 | github.com/Roberdan/MaranelloLuceDesign */
 import {
   cssVar,
   debounce,
   getAccent
-} from "./chunk-SLWVRXQS.js";
+} from "./chunk-BEIMDCAZ.js";
 
 // src/ts/gauge-engine-palette.ts
 function buildGaugePalette(accent) {
@@ -1176,4 +1176,4 @@ export {
   FerrariGauge,
   speedometer
 };
-//# sourceMappingURL=chunk-EFHEVZ7N.js.map
+//# sourceMappingURL=chunk-BYWIKO3T.js.map

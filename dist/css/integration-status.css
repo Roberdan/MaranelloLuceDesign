@@ -11,9 +11,9 @@
   .mn-status-merging::before { content: ''; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--info); margin-right: 6px; }
 
   /* Row-level status backgrounds */
-  .mn-row-done { background: rgba(0,166,81,0.06); }
-  .mn-row-in-progress { background: rgba(255,199,44,0.06); }
-  .mn-row-blocked { background: rgba(220,0,0,0.06); }
+  .mn-row-done { background: color-mix(in srgb, var(--signal-ok) 6%, transparent); }
+  .mn-row-in-progress { background: color-mix(in srgb, var(--signal-warning) 6%, transparent); }
+  .mn-row-blocked { background: color-mix(in srgb, var(--signal-danger) 6%, transparent); }
   .mn-row-pending { background: transparent; }
-  .mn-row-merging { background: rgba(78,168,222,0.06); }
+  .mn-row-merging { background: color-mix(in srgb, var(--signal-info) 6%, transparent); }
 }

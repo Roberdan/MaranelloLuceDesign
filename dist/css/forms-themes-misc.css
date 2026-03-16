@@ -19,7 +19,7 @@ body.mn-nero .mn-form-textarea {
 
 body.mn-colorblind {
   --mn-form-focus: var(--mn-cb-blue);
-  --mn-form-focus-ring: rgba(0, 114, 178, 0.25);
+  --mn-form-focus-ring: color-mix(in srgb, var(--signal-info) 25%, transparent);
   --mn-form-error: var(--mn-cb-orange);
   --mn-form-success: var(--mn-cb-green);
   --mn-form-warning: var(--mn-cb-yellow);

@@ -1,4 +1,4 @@
-/* Maranello Luce Design v4.10.2 | MPL-2.0 | github.com/Roberdan/MaranelloLuceDesign */
+/* Maranello Luce Design v4.11.0 | MPL-2.0 | github.com/Roberdan/MaranelloLuceDesign */
 import {
   SERIES,
   applyChartA11y,
@@ -19,15 +19,15 @@ import {
   radar,
   sparkline,
   sparklineInteract
-} from "./chunks/chunk-LJYGKFIB.js";
+} from "./chunks/chunk-3CORWDE4.js";
 import {
   FerrariGauge,
   buildGaugePalette,
   speedometer
-} from "./chunks/chunk-EFHEVZ7N.js";
+} from "./chunks/chunk-BYWIKO3T.js";
 import {
   gantt
-} from "./chunks/chunk-HB747A4P.js";
+} from "./chunks/chunk-4OZRR3CT.js";
 import {
   closeDetailPanel,
   closeDrawer,
@@ -40,7 +40,7 @@ import {
   steppedRotary,
   toggleLever,
   toggleNotifications
-} from "./chunks/chunk-DCFMQS5B.js";
+} from "./chunks/chunk-FPASRLXD.js";
 import {
   ALLOWED_BIND_PROPERTIES,
   clamp,
@@ -62,7 +62,7 @@ import {
   sanitizeSvg,
   setTheme,
   throttle
-} from "./chunks/chunk-SLWVRXQS.js";
+} from "./chunks/chunk-BEIMDCAZ.js";
 import {
   addValidator,
   defaultMessages,
@@ -81,11 +81,11 @@ import {
   validateField,
   validateForm,
   validators
-} from "./chunks/chunk-F5ICJJR3.js";
+} from "./chunks/chunk-5DS3ALMA.js";
 import {
   EventBus,
   eventBus
-} from "./chunks/chunk-3A2VSTXA.js";
+} from "./chunks/chunk-SR6SJMEN.js";
 
 // src/ts/network-messages.ts
 function resolveContainer(container) {
@@ -1882,9 +1882,14 @@ function initMessages(state, els, opts) {
     inputEl.value = "";
     resetInputHeight();
     updateSendVisibility();
-    if (opts.onSend) {
-      setTyping(true);
-      handleResult(opts.onSend(text));
+    try {
+      if (opts.onSend) {
+        setTyping(true);
+        handleResult(opts.onSend(text));
+      }
+    } catch (err) {
+      setTyping(false);
+      addMessage("ai", `Error: ${err.message ?? String(err)}`);
     }
   }
   function handleQuickAction(action) {
@@ -7127,7 +7132,7 @@ function openSearchDrawer(opts) {
         const badge = document.createElement("span");
         badge.className = "mn-badge";
         badge.textContent = escapeHtml(result.badge);
-        if (result.badgeColor) badge.style.backgroundColor = result.badgeColor;
+        if (result.badgeColor && isValidColor(result.badgeColor)) badge.style.backgroundColor = result.badgeColor;
         item.appendChild(badge);
       }
       item.addEventListener("click", () => onResultClick(result));

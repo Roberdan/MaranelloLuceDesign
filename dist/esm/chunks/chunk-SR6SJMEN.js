@@ -1,4 +1,4 @@
-/* Maranello Luce Design v4.10.2 | MPL-2.0 | github.com/Roberdan/MaranelloLuceDesign */
+/* Maranello Luce Design v4.11.0 | MPL-2.0 | github.com/Roberdan/MaranelloLuceDesign */
 
 // src/ts/core/events.ts
 var PREFIX = "mn:";
@@ -47,4 +47,4 @@ export {
   EventBus,
   eventBus
 };
-//# sourceMappingURL=chunk-3A2VSTXA.js.map
+//# sourceMappingURL=chunk-SR6SJMEN.js.map
