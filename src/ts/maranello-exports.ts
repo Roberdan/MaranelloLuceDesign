@@ -56,8 +56,12 @@ import { waterfallChart } from './charts-waterfall';
 import { confidenceChart } from './charts-confidence';
 import { decisionMatrix } from './decision-matrix';
 import { renderSourceCards } from './source-card';
+import { initForms, forms } from './forms';
+import { validateField as validateFormField, validateForm, initLiveValidation, addValidator } from './forms-validate';
+import { initPasswordToggle, initFileUpload, initFormSteps, initInlineEdit } from './forms-widgets';
+import { toggleNotifications, initDrillDown } from './controls';
 
-/** Register W3/W4 primitives on the window.Maranello namespace object. */
+/** Register W3/W4 primitives + forms + missing controls on the window.Maranello namespace object. */
 export function registerExtras(M: Record<string, unknown>): void {
   // Speedometer palette & draw primitives
   M.SPEEDO_FONT = SPEEDO_FONT;
@@ -149,4 +153,20 @@ export function registerExtras(M: Record<string, unknown>): void {
   M.costTimeline = costTimeline;
   M.businessModelCanvas = businessModelCanvas;
   M.userTable = userTable;
+
+  // Forms (v1 — missing from original IIFE registration)
+  M.initForms = initForms;
+  M.forms = forms;
+  M.validateField = validateFormField;
+  M.validateForm = validateForm;
+  M.initLiveValidation = initLiveValidation;
+  M.addValidator = addValidator;
+  M.initPasswordToggle = initPasswordToggle;
+  M.initFileUpload = initFileUpload;
+  M.initFormSteps = initFormSteps;
+  M.initInlineEdit = initInlineEdit;
+
+  // Controls (missing)
+  M.toggleNotifications = toggleNotifications;
+  M.initDrillDown = initDrillDown;
 }

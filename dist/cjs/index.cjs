@@ -15992,6 +15992,18 @@ function registerExtras(M2) {
   M2.costTimeline = costTimeline;
   M2.businessModelCanvas = businessModelCanvas;
   M2.userTable = userTable;
+  M2.initForms = initForms;
+  M2.forms = forms;
+  M2.validateField = validateField;
+  M2.validateForm = validateForm;
+  M2.initLiveValidation = initLiveValidation;
+  M2.addValidator = addValidator;
+  M2.initPasswordToggle = initPasswordToggle;
+  M2.initFileUpload = initFileUpload;
+  M2.initFormSteps = initFormSteps;
+  M2.initInlineEdit = initInlineEdit;
+  M2.toggleNotifications = toggleNotifications;
+  M2.initDrillDown = initDrillDown;
 }
 
 // src/ts/maranello.ts
@@ -16160,5 +16172,5 @@ M.charts = {
 registerExtras(M);
 
 // src/ts/index.ts
-var VERSION = "4.5.0";
+var VERSION = "4.10.0";
 //# sourceMappingURL=index.cjs.map

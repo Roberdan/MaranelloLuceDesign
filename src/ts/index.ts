@@ -1,6 +1,6 @@
 /** Maranello Luce Design - Main ES module entry point. Public API surface. */
 
-export const VERSION = '4.5.0';
+export const VERSION = '4.10.0';
 
 // Core types (all shared interfaces)
 export * from './core/types';

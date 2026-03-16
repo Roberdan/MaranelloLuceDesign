@@ -16,6 +16,26 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Demo: new sections `#platform-admin` and `#finops` added to header nav; `#strategy` extended with Business Model Canvas
 - `src/ts/index-extras.ts` barrel consolidates all v4.5–v4.10 exports, keeping `index.ts` under 250-line limit
 
+## [4.9.0] - 16 Mar 2026
+
+### Added
+- `agentTrace(el, steps, opts)` — expandable AI agent step timeline with status icons, duration, input/output; `M.agentTrace` on IIFE
+- `tokenMeter(el, usage, opts)` — token budget meter with prompt/completion/cached breakdown, cost estimate, onAlert; `M.tokenMeter` on IIFE
+- `streamingText(el, opts)` — markdown streaming renderer with citation markers, bold/code, onDone; `M.streamingText` on IIFE
+- `riskMatrix(canvas, opts)` — canvas risk scatter (probability × impact) with animated bubbles, quadrant shading, hover/click; `M.riskMatrix` on IIFE
+- `kpiScorecard(el, rows, opts)` — KPI tracking table with sparkline trends, status badges, delta %; `M.kpiScorecard` on IIFE
+- `cohortGrid(canvas/el, rows, opts)` — cohort retention heatmap, percent/absolute toggle; `M.cohortGrid` on IIFE
+- `approvalChain(el, steps, opts)` — multi-step approval workflow with setStatus, editable actions; `M.approvalChain` on IIFE
+- Demo: new sections `#agentic` (agent trace, token meter, streaming output, approval chain) and `#bi-dashboard` (risk matrix, KPI scorecard, approval, cohort) added to header nav
+
+## [4.8.0] - 16 Mar 2026
+
+### Added
+- `bcgMatrix(canvas, opts)` — BCG portfolio matrix (Stars/Cash Cows/Q-Marks/Dogs), animated bubbles, hover/click; `M.bcgMatrix` on IIFE
+- `nineBoxMatrix(el, opts)` — GE-McKinsey 9-box grid, drag-to-cell, arrow key navigation, Invest/Selective/Divest zones; `M.nineBoxMatrix` on IIFE
+- `swotMatrix(el, opts)` — editable SWOT 2×2 grid, add/delete items, export, onChange; `M.swotMatrix` on IIFE
+- Demo: new section `#strategy` with BCG, Nine-Box, SWOT, BMC, Decision Matrix
+
 ## [4.7.0] - 16 Mar 2026
 
 ### Added
