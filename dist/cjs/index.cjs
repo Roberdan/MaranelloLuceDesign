@@ -716,11 +716,7 @@ function networkMessages(container, opts = { nodes: [], connections: [] }) {
   const target = resolveContainer(container);
   if (!target) return null;
   const host = target;
-  const options = {
-    particleTrail: true,
-    glowEffect: true,
-    ...opts
-  };
+  const options = { particleTrail: true, glowEffect: true, ...opts };
   let nodes = options.nodes.slice();
   const messages = [];
   const flashes = [];

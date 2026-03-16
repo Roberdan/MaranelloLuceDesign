@@ -40,11 +40,7 @@ export function networkMessages(
   const target = resolveContainer(container);
   if (!target) return null;
   const host = target;
-  const options: Required<Pick<NetworkMessagesOptions, 'particleTrail' | 'glowEffect'>> & NetworkMessagesOptions = {
-    particleTrail: true,
-    glowEffect: true,
-    ...opts,
-  };
+  const options = { particleTrail: true, glowEffect: true, ...opts } as Required<Pick<NetworkMessagesOptions, 'particleTrail' | 'glowEffect'>> & NetworkMessagesOptions;
   let nodes = options.nodes.slice();
   const messages: ActiveMessage[] = [];
   const flashes: Flash[] = [];

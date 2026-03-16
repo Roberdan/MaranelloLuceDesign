@@ -95,9 +95,9 @@
 .mn-chat-panel__close:hover, .mn-chat-panel__resize:hover { background: var(--nero-soft); }
 .mn-chat-panel__close svg, .mn-chat-panel__resize svg { width: 16px; height: 16px; }
 .mn-chat-agent-selector {
-  border: 1px solid var(--grigio-scuro);
-  background: var(--nero-carbon);
-  color: var(--grigio-chiaro);
+  border: 1px solid var(--mn-border);
+  background: var(--mn-surface);
+  color: var(--mn-text-muted);
   border-radius: var(--radius-pill);
   font-family: var(--font-mono);
   font-size: var(--text-nano);
@@ -119,8 +119,8 @@
   left: var(--space-md);
   right: var(--space-md);
   z-index: 2;
-  background: var(--nero-carbon);
-  border: 1px solid var(--grigio-scuro);
+  background: var(--mn-surface);
+  border: 1px solid var(--mn-border);
   border-radius: var(--radius-md);
   padding: var(--space-sm);
   grid-template-columns: repeat(3, minmax(0, 1fr));
