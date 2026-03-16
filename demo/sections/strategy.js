@@ -69,17 +69,11 @@ const DM_CRITERIA    = [
   { id: 'c5', label: 'Compliance',       weight: 10 },
 ];
 const DM_ALTERNATIVES = [
-  { id: 'a1', label: 'Claude 3.5 Sonnet' },
-  { id: 'a2', label: 'GPT-4o' },
-  { id: 'a3', label: 'Gemini 1.5 Pro' },
-  { id: 'a4', label: 'Llama 3.1 70B' },
+  { id: 'a1', label: 'Claude 3.5 Sonnet', scores: { c1: 9, c2: 7, c3: 8, c4: 10, c5: 9 } },
+  { id: 'a2', label: 'GPT-4o',            scores: { c1: 9, c2: 6, c3: 8, c4:  7, c5: 8 } },
+  { id: 'a3', label: 'Gemini 1.5 Pro',    scores: { c1: 8, c2: 7, c3: 7, c4:  7, c5: 7 } },
+  { id: 'a4', label: 'Llama 3.1 70B',     scores: { c1: 7, c2: 9, c3: 6, c4:  5, c5: 5 } },
 ];
-const DM_SCORES = {
-  a1: { c1: 9, c2: 7, c3: 8, c4: 10, c5: 9 },
-  a2: { c1: 9, c2: 6, c3: 8, c4:  7, c5: 8 },
-  a3: { c1: 8, c2: 7, c3: 7, c4:  7, c5: 7 },
-  a4: { c1: 7, c2: 9, c3: 6, c4:  5, c5: 5 },
-};
 
 export function createStrategySection() {
   const section = document.createElement('section');
@@ -178,17 +172,15 @@ export function createStrategySection() {
     /* ── BCG Matrix ── */
     if (M.bcgMatrix) {
       const bcgCanvas = section.querySelector('#str-bcg');
-      if (!bcgCanvas) return;
-      if (bcgCanvas.clientWidth > 0) {
-        bcgCanvas.width = bcgCanvas.clientWidth;
-        bcgCanvas.height = bcgCanvas.clientHeight || 340;
+      if (bcgCanvas) {
+        if (bcgCanvas.clientWidth > 0) { bcgCanvas.width = bcgCanvas.clientWidth; bcgCanvas.height = bcgCanvas.clientHeight || 340; }
+        const bcgBadge = section.querySelector('#str-bcg-badge');
+        M.bcgMatrix(bcgCanvas, {
+          items: BCG_ITEMS, shareThreshold: 0.5, growthThreshold: 10, animate: true,
+          onHover: (item) => { if (!item) return; bcgBadge.textContent = item.label; bcgBadge.style.display = ''; },
+          onClick: (item) => M.toast({ type: 'info', title: item.label, message: `Share: ${(item.marketShare*100).toFixed(0)}% | Growth: ${item.growthRate}%` }),
+        });
       }
-      const bcgBadge = section.querySelector('#str-bcg-badge');
-      M.bcgMatrix(bcgCanvas, {
-        items: BCG_ITEMS, shareThreshold: 0.5, growthThreshold: 10, animate: true,
-        onHover: (item) => { if (!item) return; bcgBadge.textContent = item.label; bcgBadge.style.display = ''; },
-        onClick: (item) => M.toast({ type: 'info', title: item.label, message: `Share: ${(item.marketShare*100).toFixed(0)}% | Growth: ${item.growthRate}%` }),
-      });
     }
 
     /* ── Nine-Box Matrix ── */
@@ -210,12 +202,11 @@ export function createStrategySection() {
     /* ── Decision Matrix ── */
     if (M.decisionMatrix) {
       const dmCtrl = M.decisionMatrix(section.querySelector('#str-dm'), {
-        criteria: DM_CRITERIA, alternatives: DM_ALTERNATIVES, scores: DM_SCORES,
+        criteria: DM_CRITERIA, alternatives: DM_ALTERNATIVES,
         editable: true,
-        onSelect: (alt) => M.toast({ type: 'info', title: alt.label, message: 'Weighted score updated in table' }),
       });
       section.querySelector('#str-dm-reset').addEventListener('click', () => {
-        dmCtrl.update({ scores: DM_SCORES });
+        dmCtrl.update(DM_ALTERNATIVES);
         M.toast({ type: 'info', title: 'Scores reset', message: 'Restored default vendor scores' });
       });
     }
