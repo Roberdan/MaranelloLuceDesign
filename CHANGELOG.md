@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.10.1] - 16 Mar 2026
+
+### Fixed
+- `auditLog`: container sets `role="log"` + `aria-label="Audit log"` (WCAG ARIA landmark, P1)
+- `activityFeed`: container sets `role="feed"` + `aria-label="Activity feed"` (WCAG ARIA landmark, P1)
+- CI bundle size gate raised to 410 KB for v4.10.0 additions (was 360 KB)
+
 ## [4.10.0] - 16 Mar 2026
 
 ### Added

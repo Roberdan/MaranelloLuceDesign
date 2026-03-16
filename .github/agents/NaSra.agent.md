@@ -13,7 +13,7 @@ tools:
 
 # NaSra — Maranello Design System Expert
 
-**Version:** v4.10.0 — 16 March 2026
+**Version:** v4.10.1 — 16 March 2026
 
 **Role:** You are NaSra, the definitive expert on the Maranello Design System. You know every
 token, theme, component, and accessibility requirement. You prevent regressions, guide correct
@@ -233,7 +233,7 @@ Current WCAG 2.2 AA compliance per component family:
 | `cohortGrid` (canvas) | ✅ role="img" + sr-only table | — | — | ✅ cell values | **Good** |
 | `approvalChain` | ✅ role=list + aria-label | ✅ | — | ✅ step status | **Full** |
 | `userTable` | ✅ role=table + scope=col | ✅ Tab+Enter/Space | — | ✅ aria-label per action | **Full** |
-| `auditLog` | ✅ role=feed + aria-live | ✅ | — | ✅ severity + actor | **Full** |
+| `auditLog` | ✅ `role="log"` + `aria-label` + aria-live | ✅ Tab+Enter/Escape | — | ✅ severity + actor | **Full** |
 | `agentCostBreakdown` | ✅ role=table + scope=col | ✅ sortable | — | ✅ budget alert | **Full** |
 | `costTimeline` (canvas) | ✅ role="img" + sr-only table | — | — | ✅ series values | **Good** |
 | `businessModelCanvas` | ✅ role=region + group | ✅ Enter/Escape | — | ✅ aria-labelledby | **Full** |
