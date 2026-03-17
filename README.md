@@ -20,7 +20,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-4.13.3-FFC72C?style=flat-square">
+  <img src="https://img.shields.io/badge/version-4.13.4-FFC72C?style=flat-square">
   <img src="https://img.shields.io/badge/license-MPL_2.0-green?style=flat-square">
   <img src="https://img.shields.io/badge/tests-432_passed-00A651?style=flat-square">
   <img src="https://img.shields.io/badge/zero_deps-vanilla_TS-4EA8DE?style=flat-square">
@@ -100,13 +100,13 @@ It ships as **three independent layers** that you can use together or separately
 ## Install
 
 ```bash
-npm install github:Roberdan/MaranelloLuceDesign#v4.13.3
+npm install github:Roberdan/MaranelloLuceDesign#v4.13.4
 ```
 
 Or CDN:
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v4.13.3/dist/css/index.css">
-<script src="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v4.13.3/dist/iife/maranello.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v4.13.4/dist/css/index.css">
+<script src="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v4.13.4/dist/iife/maranello.min.js"></script>
 ```
 
 > **Breaking change (v4.0.0):** Glass theme removed. Themes are now **editorial · nero · avorio · colorblind**. See [CHANGELOG.md](CHANGELOG.md).

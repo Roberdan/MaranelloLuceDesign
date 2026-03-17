@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.13.4] - 2026-03-17
+
+### Fixed
+- Heatmap: text unreadable on red/green cells — added explicit `color:#fff` + `--mn-accent-text` per theme
+- Colorblind: heatmap cell text colors for Okabe-Ito palette
+- Demo: ghost buttons invisible on dark sections — `mn-btn--ghost` → `mn-btn--ghost-light` (overlays + WC cards)
+- Demo: WC catalog spinners — pre-load mn-profile, mn-login, mn-tabs, mn-modal, mn-hbar, mn-date-picker, mn-section-nav
+- Demo: WC catalog title 24 → 26
+- NaSra: added heatmap, ghost-light, WC preload patterns to Common Mistakes
+
 ## [4.13.3] - 2026-03-17
 
 ### Fixed

@@ -1,6 +1,6 @@
 # Maranello Luce Design — Agent Reference
 
-> Ferrari Luce-inspired design system. Zero deps. 4 themes. 150+ APIs. v4.13.3
+> Ferrari Luce-inspired design system. Zero deps. 4 themes. 150+ APIs. v4.13.4
 > Repo: github.com/Roberdan/MaranelloLuceDesign
 > Demo: roberdan.github.io/MaranelloLuceDesign/
 > AI Expert: @NaSra (see `.github/agents/NaSra.agent.md`)
@@ -8,7 +8,7 @@
 ## Install
 
 ```bash
-npm i github:Roberdan/MaranelloLuceDesign#v4.13.3
+npm i github:Roberdan/MaranelloLuceDesign#v4.13.4
 ```
 
 ## Import Paths
@@ -27,8 +27,8 @@ npm i github:Roberdan/MaranelloLuceDesign#v4.13.3
 
 CDN (no build):
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v4.13.3/dist/css/index.css">
-<script src="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v4.13.3/dist/iife/maranello.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v4.13.4/dist/css/index.css">
+<script src="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v4.13.4/dist/iife/maranello.min.js"></script>
 ```
 IIFE attaches everything to `window.Maranello`.
 
