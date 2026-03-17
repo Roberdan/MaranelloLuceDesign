@@ -30,15 +30,15 @@
   color: var(--mn-text);
 }
 
-/* Scan line effect (contained, doesn't clip content) */
+/* Scan line effect (subtle CRT texture) */
 .mn-strip__inner::before {
   content: '';
   position: absolute;
   inset: 0;
   background: repeating-linear-gradient(
     0deg,
-    transparent 0px, transparent 2px,
-    var(--mn-hover-bg) 2px, var(--mn-hover-bg) 4px
+    transparent 0px, transparent 3px,
+    rgba(255,255,255,0.02) 3px, rgba(255,255,255,0.02) 4px
   );
   pointer-events: none;
   border-radius: inherit;
