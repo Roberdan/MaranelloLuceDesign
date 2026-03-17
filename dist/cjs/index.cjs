@@ -16109,7 +16109,7 @@ function aiChat(container, opts) {
     placeholder: opts?.placeholder ?? "Type a message\u2026",
     title: opts?.title ?? "AI Assistant",
     welcomeMessage: opts?.welcomeMessage ?? null,
-    avatar: opts?.avatar ?? null,
+    avatar: opts?.avatar ?? "https://github.com/Roberdan.png",
     agents: opts?.agents ?? [],
     activeAgent: opts?.activeAgent ?? null,
     onAgentChange: opts?.onAgentChange ?? (() => {
@@ -16276,5 +16276,5 @@ M.charts = {
 registerExtras(M);
 
 // src/ts/index.ts
-var VERSION = "4.13.0";
+var VERSION = "4.13.1";
 //# sourceMappingURL=index.cjs.map

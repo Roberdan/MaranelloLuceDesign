@@ -54,7 +54,7 @@ function aiChat(container: HTMLElement, opts?: Partial<AIChatOptions>): AIChatCo
     placeholder: opts?.placeholder ?? 'Type a message…',
     title: opts?.title ?? 'AI Assistant',
     welcomeMessage: opts?.welcomeMessage ?? null,
-    avatar: opts?.avatar ?? null,
+    avatar: opts?.avatar ?? 'https://github.com/Roberdan.png',
     agents: opts?.agents ?? [],
     activeAgent: opts?.activeAgent ?? null,
     onAgentChange: opts?.onAgentChange ?? (() => {}),

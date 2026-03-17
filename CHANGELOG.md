@@ -5,6 +5,31 @@ All notable changes to this project will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.13.1] - 2026-03-17
+
+### Added
+- A11y FAB auto-mounts by default (IIFE + ESM `registerAll()`)
+- `.mn-strip__section--wide` modifier (flex:2) for wider strip sections
+- Avorio theme overrides for profile dropdown component
+- CSS fallback styling for broken chat avatar images
+
+### Fixed
+- Strip: removed aluminum nacelle border, lighter inner shadow
+- Strip: gauge clipping (`overflow:visible`, wrap 150→170px)
+- Strip: KPI min-width 64→80px
+- Strip Avorio: labels invisible (contrast 1.2:1→4.5:1), board cells same-color bg
+- Sim panel: removed `max-height:240px` on choose step (cards cut off)
+- Sim grid: fixed `repeat(4,1fr)` → `auto-fit minmax(140px,1fr)`
+- Profile: double `))` syntax error in `var(--mn-accent))`
+- Profile: `--status-danger` → `var(--mn-error)` (undefined token)
+- Profile: avatar fallback colors (border→accent)
+- Accent tokens: 47 replacements of `--giallo-ferrari` → `--mn-accent` across 25+ CSS files
+- Bot default avatar set to Roberdan profile photo
+
+### Changed
+- Strip label/dim colors use semantic tokens (`--mn-text-tertiary`, `--mn-text-muted`) instead of `--avorio-scuro`
+- Avorio strip inner background uses `--avorio-caldo` for contrast
+
 ## [4.11.0] - 2026-03-16
 
 ### Added

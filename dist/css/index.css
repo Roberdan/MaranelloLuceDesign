@@ -6633,6 +6633,8 @@
   }
 
   .mn-a11y-panel__divider {
+    background: var(--mn-border);
+    height: 1px;
     margin: var(--space-sm) 0;
   }
 
@@ -6652,6 +6654,7 @@
   }
 
   .mn-a11y-panel__reset:hover {
+    background: var(--mn-hover-bg);
     color: var(--mn-text);
   }
 
@@ -6670,9 +6673,13 @@
   }
 
   .mn-profile-trigger__avatar {
+    background: var(--mn-accent);
+    width: 36px;
+    height: 36px;
     color: var(--mn-accent-text);
     font-family: var(--font-display);
     letter-spacing: .04em;
+    border-radius: 50%;
     justify-content: center;
     align-items: center;
     font-size: .75rem;
@@ -12699,7 +12706,7 @@
 }
 
 .mn-profile-dropdown__item--danger {
-  color: var(--status-danger);
+  color: var(--mn-error);
 }
 
 .mn-profile-dropdown__item--danger:hover {
@@ -12737,6 +12744,20 @@
   background: var(--mn-border);
   height: 1px;
   margin: var(--space-xs) 0;
+}
+
+body.mn-avorio .mn-profile-dropdown {
+  background: var(--mn-surface);
+  border-color: var(--mn-border);
+}
+
+body.mn-avorio .mn-profile-dropdown__item:hover, body.mn-avorio .mn-profile-dropdown__item--focused {
+  background: var(--mn-hover-bg);
+}
+
+body.mn-avorio .mn-profile-dropdown__avatar-lg, body.mn-avorio .mn-profile-trigger__avatar {
+  background: var(--mn-accent);
+  color: var(--mn-accent-text);
 }
 
 .mn-chat-agent-card:hover {

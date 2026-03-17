@@ -3,8 +3,8 @@
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: var(--mn-border);
-  color: var(--mn-border-strong);
+  background: var(--mn-accent);
+  color: var(--mn-accent-text);
   font-family: var(--font-display);
   font-weight: 600;
   font-size: 1rem;
@@ -75,7 +75,7 @@
   background: var(--mn-surface-raised);
 }
 .mn-profile-dropdown__item--danger {
-  color: var(--status-danger);
+  color: var(--mn-error);
 }
 .mn-profile-dropdown__item--danger:hover {
   background: rgba(255,23,68,0.08);
@@ -109,4 +109,11 @@
   background: var(--mn-border);
   margin: var(--space-xs) 0;
 }
+
+/* ── Avorio theme ── */
+body.mn-avorio .mn-profile-dropdown { background: var(--mn-surface); border-color: var(--mn-border); }
+body.mn-avorio .mn-profile-dropdown__item:hover,
+body.mn-avorio .mn-profile-dropdown__item--focused { background: var(--mn-hover-bg); }
+body.mn-avorio .mn-profile-dropdown__avatar-lg { background: var(--mn-accent); color: var(--mn-accent-text); }
+body.mn-avorio .mn-profile-trigger__avatar { background: var(--mn-accent); color: var(--mn-accent-text); }
 } /* end @layer layouts */
