@@ -82,15 +82,15 @@ body.mn-nero .mn-gantt__label { color: var(--mn-text-tertiary); }
   border-bottom-color: rgba(0,0,0,0.06);
 }
 .mn-avorio .mn-chart-panel__title {
-  color: var(--mn-text-inverse);
+  color: var(--mn-text);
 }
 .mn-avorio .mn-chart-tooltip {
-  background: var(--mn-hover-bg);
-  border-color: rgba(0,0,0,0.1);
-  color: var(--mn-text-inverse);
-  box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+  background: var(--mn-surface-raised);
+  border-color: var(--mn-border-strong);
+  color: var(--mn-text);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.16);
 }
-.mn-avorio .mn-chart-tooltip__label { color: var(--mn-text-muted); }
+.mn-avorio .mn-chart-tooltip__label { color: var(--mn-text-tertiary); }
 .mn-avorio .mn-live-panel {
   background: linear-gradient(135deg, rgba(250,250,250,0.98), rgba(245,245,245,0.96));
   border-color: rgba(0,0,0,0.08);
@@ -107,15 +107,15 @@ body.mn-nero .mn-gantt__label { color: var(--mn-text-tertiary); }
 .mn-avorio .mn-donut__value { color: var(--mn-text); }
 .mn-avorio .mn-half-gauge__value { color: var(--mn-text); }
 .mn-avorio .mn-temp-badge {
-  background: var(--mn-hover-bg);
-  color: var(--mn-text-inverse);
+  background: rgba(0,0,0,0.12);
+  color: var(--mn-text);
 }
 .mn-avorio .mn-heatmap__cell { color: rgba(0,0,0,0.7); }
 .mn-avorio .mn-funnel__stage-label { color: var(--mn-text); }
 .mn-avorio .mn-gantt__label { color: var(--mn-text); }
 .mn-avorio .mn-bar-chart__bar-label { color: var(--mn-text-tertiary); }
 .mn-avorio .mn-chart-legend { color: var(--mn-text-muted); }
-.mn-avorio .mn-treemap__cell { color: var(--mn-hover-bg); }
+.mn-avorio .mn-treemap__cell { color: var(--mn-text); }
 .mn-avorio .mn-progress-ring__label { color: var(--mn-text); }
 
 /* Gauge DOM text — dark text on Avorio light backgrounds (WCAG 4.5:1) */

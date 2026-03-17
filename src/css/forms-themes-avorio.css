@@ -90,7 +90,7 @@ body.mn-avorio .mn-form__actions {
   border-top-color: var(--mn-border-strong);
 }
 body.mn-avorio .mn-form-btn--secondary {
-  color: var(--mn-text-inverse);
+  color: var(--mn-text);
   border-color: var(--mn-border-strong);
 }
 body.mn-avorio .mn-form-btn--secondary:hover {
@@ -102,7 +102,7 @@ body.mn-avorio .mn-form-btn--ghost {
 }
 body.mn-avorio .mn-form-btn--ghost:hover {
   background: rgba(0, 0, 0, 0.04);
-  color: var(--mn-text-inverse);
+  color: var(--mn-text);
 }
 body.mn-avorio .mn-checkbox input:checked + .mn-checkbox__box {
   background: var(--mn-error);
@@ -153,7 +153,7 @@ body.mn-avorio .mn-form-card {
   background: rgba(0, 0, 0, 0.02);
 }
 body.mn-avorio .mn-form-card__title {
-  color: var(--mn-text-inverse);
+  color: var(--mn-text);
 }
 body.mn-avorio .mn-form-step__number {
   background: var(--mn-border-strong);

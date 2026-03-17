@@ -39,12 +39,7 @@ function hexToRgba(hex: string, alpha: number): string {
 }
 
 /** Inject a multi-column sr-only table after the canvas. */
-function injectSrTable(
-  canvas: HTMLCanvasElement,
-  caption: string,
-  headers: string[],
-  rows: string[][],
-): void {
+function injectSrTable(canvas: HTMLCanvasElement, caption: string, headers: string[], rows: string[][]): void {
   if (!canvas.parentElement) return;
   let srEl = canvas.nextElementSibling;
   if (!srEl || !srEl.classList.contains('mn-sr-only')) {
@@ -53,22 +48,15 @@ function injectSrTable(
     canvas.parentElement.insertBefore(srEl, canvas.nextSibling);
   }
   const th = headers.map((h) => `<th scope="col">${escapeHtml(h)}</th>`).join('');
-  const body = rows
-    .map((r) => `<tr>${r.map((c) => `<td>${escapeHtml(c)}</td>`).join('')}</tr>`)
-    .join('');
-  srEl.innerHTML =
-    `<table><caption>${escapeHtml(caption)}</caption>` +
-    `<thead><tr>${th}</tr></thead><tbody>${body}</tbody></table>`;
+  const body = rows.map((r) => `<tr>${r.map((c) => `<td>${escapeHtml(c)}</td>`).join('')}</tr>`).join('');
+  srEl.innerHTML = `<table><caption>${escapeHtml(caption)}</caption><thead><tr>${th}</tr></thead><tbody>${body}</tbody></table>`;
 }
 
 /**
  * Render a waterfall chart on a canvas element.
  * Positive values rise, negative values fall, isTotal draws from zero.
  */
-export function waterfallChart(
-  canvas: HTMLCanvasElement,
-  opts: WaterfallChartOptions,
-): void {
+export function waterfallChart(canvas: HTMLCanvasElement, opts: WaterfallChartOptions): void {
   const dpr = window.devicePixelRatio || 1;
   const segments = opts.segments;
   if (!segments || segments.length === 0) return;
@@ -122,6 +110,7 @@ export function waterfallChart(
 
   const animate = opts.animate !== false;
   const duration = 600;
+  let hoverIdx = -1;
 
   function drawBars(progress: number): void {
     if (!ctx) return;
@@ -149,12 +138,8 @@ export function waterfallChart(
 
     // Zero baseline
     const zeroY = yScale(0);
-    ctx.strokeStyle = colorBorder;
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(pad.left, zeroY);
-    ctx.lineTo(logicalW - pad.right, zeroY);
-    ctx.stroke();
+    ctx.strokeStyle = colorBorder; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(pad.left, zeroY); ctx.lineTo(logicalW - pad.right, zeroY); ctx.stroke();
 
     let prevTop = 0;
     for (let i = 0; i < n; i++) {
@@ -185,18 +170,21 @@ export function waterfallChart(
       ctx.fillRect(x, drawTop, barW, animH);
       ctx.globalAlpha = 1;
 
-      // Connector dashed line from previous bar top to this bar base
-      if (i > 0 && !seg.isTotal) {
-        const prevSegTop = yScale(totals[i - 1]);
+      // Hover highlight glow
+      if (i === hoverIdx) {
         ctx.save();
-        ctx.setLineDash([3, 3]);
-        ctx.strokeStyle = colorBorder;
-        ctx.lineWidth = 0.8;
-        ctx.beginPath();
-        ctx.moveTo(xBar(i - 1) + barW, prevSegTop);
-        ctx.lineTo(x, fullBarBottom);
-        ctx.stroke();
+        ctx.shadowColor = barColor;
+        ctx.shadowBlur = 12;
+        ctx.strokeStyle = barColor;
+        ctx.lineWidth = 2;
+        ctx.strokeRect(x, drawTop, barW, animH);
         ctx.restore();
+      }
+
+      // Connector dashed line
+      if (i > 0 && !seg.isTotal) {
+        ctx.save(); ctx.setLineDash([3, 3]); ctx.strokeStyle = colorBorder; ctx.lineWidth = 0.8;
+        ctx.beginPath(); ctx.moveTo(xBar(i - 1) + barW, yScale(totals[i - 1])); ctx.lineTo(x, fullBarBottom); ctx.stroke(); ctx.restore();
       }
 
       // Value label on top
@@ -204,17 +192,12 @@ export function waterfallChart(
       ctx.textAlign = 'center';
       ctx.textBaseline = seg.value >= 0 || seg.isTotal ? 'bottom' : 'top';
       ctx.fillStyle = colorMuted;
-      const valStr = (seg.value >= 0 && !seg.isTotal ? '+' : '') + seg.value +
-        (opts.unit ?? '');
+      const valStr = (seg.value >= 0 && !seg.isTotal ? '+' : '') + seg.value + (opts.unit ?? '');
       const labelY = seg.value >= 0 || seg.isTotal ? drawTop - 3 : drawTop + animH + 12;
       ctx.fillText(valStr, x + barW / 2, labelY);
-
       // X-axis label
-      ctx.font = '11px system-ui, sans-serif';
-      ctx.fillStyle = colorMuted;
-      ctx.textBaseline = 'top';
+      ctx.font = '11px system-ui, sans-serif'; ctx.fillStyle = colorMuted; ctx.textBaseline = 'top';
       ctx.fillText(seg.label, x + barW / 2, logicalH - pad.bottom + 6);
-
       prevTop = top;
     }
   }
@@ -244,4 +227,20 @@ export function waterfallChart(
     String(totals[i]),
   ]);
   injectSrTable(canvas, ariaLabel, ['Segment', 'Value', 'Running Total'], rows);
+
+  // Hover interaction — highlight bar under cursor
+  canvas.style.cursor = 'crosshair';
+  canvas.addEventListener('mousemove', (e: MouseEvent) => {
+    const rect = canvas.getBoundingClientRect();
+    const mx = (e.clientX - rect.left) * (logicalW / rect.width);
+    let found = -1;
+    for (let i = 0; i < n; i++) {
+      const bx = xBar(i);
+      if (mx >= bx && mx <= bx + barW) { found = i; break; }
+    }
+    if (found !== hoverIdx) { hoverIdx = found; drawBars(1); }
+  });
+  canvas.addEventListener('mouseleave', () => {
+    if (hoverIdx >= 0) { hoverIdx = -1; drawBars(1); }
+  });
 }

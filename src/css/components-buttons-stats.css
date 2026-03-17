@@ -195,7 +195,7 @@ body.mn-avorio .mn-btn--ghost:hover {
   background: var(--mn-text); color: var(--mn-surface);
 }
 body.mn-avorio .mn-btn--ghost-light {
-  border-color: var(--mn-border); color: var(--mn-text);
+  background: transparent; border-color: var(--mn-border); color: var(--mn-text);
 }
 body.mn-avorio .mn-btn--ghost-light:hover {
   background: var(--mn-hover-bg); border-color: var(--mn-text);

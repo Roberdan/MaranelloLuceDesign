@@ -90,5 +90,5 @@ body.mn-avorio .mn-icon-action {
 }
 body.mn-avorio .mn-icon-action:hover {
   background: rgba(0,0,0,0.04);
-  color: var(--mn-text-inverse);
+  color: var(--mn-text);
 }

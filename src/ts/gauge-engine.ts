@@ -30,6 +30,7 @@ export class FerrariGauge {
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
     this.config = JSON.parse(canvas.dataset.gauge || '{}');
+    this.applyColorMode();
     this.dpr = window.devicePixelRatio || 1;
     this.init();
     if (canvas.dataset.size === 'fluid') this._attachFluidObserver();
@@ -154,5 +155,26 @@ export class FerrariGauge {
       this.srSpan.remove();
       this.srSpan = null;
     }
+  }
+
+  /**
+   * Apply colorMode to arcBar colorStops if not explicitly set.
+   * 'higher-better': green at high values (red→yellow→green)
+   * 'lower-better': green at low values (green→yellow→red)
+   */
+  private applyColorMode(): void {
+    const mode = this.config.colorMode as string | undefined;
+    if (!mode) return;
+    const c = (this.config.complications || {}) as Record<string, unknown>;
+    const ab = (c.arcBar || {}) as Record<string, unknown>;
+    if (!ab.colorStops) {
+      ab.colorStops = mode === 'lower-better'
+        ? ['#00A651', '#FFC72C', '#DC0000']
+        : ['#DC0000', '#FFC72C', '#00A651'];
+    }
+    if (!ab.value) ab.value = this.config.value;
+    if (!ab.max) ab.max = this.config.max;
+    c.arcBar = ab;
+    this.config.complications = c;
   }
 }

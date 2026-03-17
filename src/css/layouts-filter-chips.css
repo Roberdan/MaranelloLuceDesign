@@ -82,7 +82,7 @@
 body.mn-avorio .mn-filter-chip {
   background: var(--avorio-medio, #f0e6d0);
   border-color: var(--mn-border-strong);
-  color: var(--mn-text-inverse);
+  color: var(--mn-text);
 }
 body.mn-avorio .mn-filter-chip__label {
   color: var(--mn-text-muted);

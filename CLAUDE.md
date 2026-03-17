@@ -119,7 +119,7 @@ Maranello.initSidebarToggle(sidebarEl, buttonEl);
 
 All responsive overrides live in `src/css/responsive-*.css` files, imported by `maranello.css` after `utilities.css`. Each file uses `@layer` matching its component domain and `@media` queries for breakpoints.
 
-## IIFE Exports (87 functions/objects on `window.Maranello`)
+## IIFE Exports (100 functions/objects on `window.Maranello`)
 
 ### Charts (11)
 `sparkline` · `donut` · `barChart` · `hBarChart` · `areaChart` · `liveGraph` · `halfGauge` · `progressRing` · `flipCounter` · `radar` · `bubble`
@@ -180,6 +180,12 @@ All responsive overrides live in `src/css/responsive-*.css` files, imported by `
 
 ### Map (2)
 `mapView` · `attachEvents`
+
+### Analytics & BI (11)
+`waterfallChart` · `confidenceChart` · `costTimeline` · `riskMatrix` · `kpiScorecard` · `agentCostBreakdown` · `tokenMeter` · `cohortGrid` · `approvalChain` · `decisionMatrix` · `renderSourceCards`
+
+### Chart Interaction (2)
+`chartInteract` · `sparklineInteract`
 
 ## Web Components (26 tags, 25 components)
 
@@ -268,6 +274,9 @@ All responsive overrides live in `src/css/responsive-*.css` files, imported by `
 - `speedometer(canvas, { size: 'fluid' })` — fluid mode with ResizeObserver; call `controller.destroy()` to clean up observer + sr-only span
 - `autoResize(canvas, factory, data)` — ResizeObserver wrapper; factory is called with `(canvas, data, { width, height })`
 - `initSidebarToggleAuto()` — auto-finds `.mn-sidebar` + `[data-sidebar-toggle]`; returns cleanup fn
+- `colorMode` gauge option: `'higher-better'` (green at high, red at low) or `'lower-better'` (green at low, red at high) — auto-generates arcBar colorStops
+- `chartInteract(canvas, meta, colors)` — adds crosshair, hover dots, and tooltips to any canvas chart
+- `costTimeline` and `waterfallChart` have built-in hover interaction (dots + bar highlight)
 
 ## CI / GitHub Actions
 

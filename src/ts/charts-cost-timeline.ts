@@ -52,10 +52,7 @@ function buildStacks(series: CostSeries[]): number[][] {
 
 function easeOut(t: number): number { return 1 - (1 - t) ** 3; }
 
-export function costTimeline(
-  canvas: HTMLCanvasElement,
-  opts: CostTimelineOptions,
-): CostTimelineController {
+export function costTimeline(canvas: HTMLCanvasElement, opts: CostTimelineOptions): CostTimelineController {
   let cfg = { ...opts, height: opts.height ?? 200, stacked: opts.stacked ?? true,
     animate: opts.animate ?? true, unit: opts.unit ?? '$' };
   let rafId = 0;
@@ -161,6 +158,23 @@ export function costTimeline(
       ctx.lineWidth = 1; ctx.setLineDash([2, 2]);
       ctx.beginPath(); ctx.moveTo(rx, PAD.top); ctx.lineTo(rx, h - PAD.bottom); ctx.stroke();
       ctx.setLineDash([]);
+
+      // Hover dots at each series intersection
+      for (let s = 0; s < cfg.series.length; s++) {
+        const color = resolveColor(cfg.series[s], s);
+        const hex = color.startsWith('#') ? color : '#888888';
+        const yVal = cfg.stacked ? stacks[s][ci] : cfg.series[s].values[ci];
+        const py = gy(yVal);
+        const cr = parseInt(hex.slice(1, 3), 16);
+        const cg = parseInt(hex.slice(3, 5), 16);
+        const cb = parseInt(hex.slice(5, 7), 16);
+        ctx.beginPath(); ctx.arc(rx, py, 8, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${cr},${cg},${cb},0.25)`; ctx.fill();
+        ctx.beginPath(); ctx.arc(rx, py, 4, 0, Math.PI * 2);
+        ctx.fillStyle = hex; ctx.fill();
+        ctx.strokeStyle = '#000'; ctx.lineWidth = 1.5; ctx.stroke();
+      }
+
       drawTooltip(ctx, cfg, ci, rx, w);
       if (cfg.onHover) {
         const vals: Record<string, number> = {};
@@ -171,27 +185,18 @@ export function costTimeline(
     ctx.restore();
   }
 
-  function drawTooltip(
-    ctx: CanvasRenderingContext2D, c: typeof cfg, idx: number, rx: number, w: number,
-  ): void {
-    const lines = [c.labels[idx], ...c.series.map((s) =>
-      `${s.label}: ${c.unit}${(s.values[idx] ?? 0).toFixed(2)}`)];
+  function drawTooltip(ctx: CanvasRenderingContext2D, c: typeof cfg, idx: number, rx: number, w: number): void {
+    const lines = [c.labels[idx], ...c.series.map((s) => `${s.label}: ${c.unit}${(s.values[idx] ?? 0).toFixed(2)}`)];
     ctx.font = '10px sans-serif';
     const tw = Math.max(...lines.map((l) => ctx.measureText(l).width)) + 16;
     const th = lines.length * 14 + 10;
-    const tx = rx + 12 + tw > w ? rx - tw - 8 : rx + 12;
-    const ty = PAD.top + 4;
-    const bg = cssVar('--mn-surface');
-    const border = cssVar('--mn-border');
+    const tx = rx + 12 + tw > w ? rx - tw - 8 : rx + 12, ty = PAD.top + 4;
+    const bg = cssVar('--mn-surface'), border = cssVar('--mn-border');
     ctx.fillStyle = bg.startsWith('#') ? bg : '#1a1a1a';
-    ctx.strokeStyle = border.startsWith('#') ? border : '#333333';
-    ctx.lineWidth = 1;
+    ctx.strokeStyle = border.startsWith('#') ? border : '#333333'; ctx.lineWidth = 1;
     ctx.beginPath(); ctx.roundRect(tx, ty, tw, th, 4); ctx.fill(); ctx.stroke();
     ctx.fillStyle = cssVar('--mn-text');
-    lines.forEach((l, i) => {
-      ctx.font = i === 0 ? 'bold 10px sans-serif' : '10px sans-serif';
-      ctx.fillText(l, tx + 8, ty + 14 + i * 14);
-    });
+    lines.forEach((l, i) => { ctx.font = i === 0 ? 'bold 10px sans-serif' : '10px sans-serif'; ctx.fillText(l, tx + 8, ty + 14 + i * 14); });
   }
 
   function animate(): void {
@@ -227,22 +232,17 @@ export function costTimeline(
 
   applySrOnly();
   animate();
-
   return {
     update(partial) {
       cfg = { ...cfg, ...partial, height: partial.height ?? cfg.height,
         stacked: partial.stacked ?? cfg.stacked, animate: partial.animate ?? cfg.animate,
         unit: partial.unit ?? cfg.unit };
-      cancelAnimationFrame(rafId);
-      applySrOnly();
-      animate();
+      cancelAnimationFrame(rafId); applySrOnly(); animate();
     },
     destroy() {
       cancelAnimationFrame(rafId);
-      canvas.removeEventListener('mousemove', onMove);
-      canvas.removeEventListener('mouseleave', onLeave);
-      const sr = canvas.nextElementSibling;
-      if (sr?.classList.contains('mn-sr-only')) sr.remove();
+      canvas.removeEventListener('mousemove', onMove); canvas.removeEventListener('mouseleave', onLeave);
+      const sr = canvas.nextElementSibling; if (sr?.classList.contains('mn-sr-only')) sr.remove();
     },
   };
 }

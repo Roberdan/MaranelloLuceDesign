@@ -40,7 +40,7 @@
 /* ── Avorio theme overrides for controls ── */
 body.mn-avorio .mn-machined-btn {
   background: linear-gradient(180deg, var(--mn-surface-avorio-3) 0%, var(--mn-surface-avorio-4) 40%, var(--mn-surface-avorio-5) 100%);
-  color: var(--mn-text-inverse);
+  color: var(--mn-text);
   box-shadow:
     0 4px 12px rgba(0,0,0,0.12),
     0 1px 3px rgba(0,0,0,0.08),
@@ -56,7 +56,7 @@ body.mn-avorio .mn-segmented {
 body.mn-avorio .mn-segmented__item { color: var(--mn-text-muted); }
 body.mn-avorio .mn-segmented__item--active {
   background: var(--mn-surface);
-  color: var(--mn-text-inverse);
+  color: var(--mn-text);
 }
 body.mn-avorio .mn-climate {
   background: linear-gradient(180deg, var(--mn-surface-avorio-1), var(--mn-surface-avorio-2));

@@ -146,6 +146,30 @@ Fluid WCs: `<mn-gauge size="fluid">` · `<mn-speedometer size="fluid">` · `<mn-
 | `updateGauge(id, value)` | Update gauge by data-id |
 | `bindChart(id, source)` | Live-bind chart data |
 
+## Analytics & BI APIs
+
+| Function | Signature | Description |
+|---|---|---|
+| `waterfallChart` | `(canvas, {segments, unit?, animate?})` | Sequential variance chart |
+| `confidenceChart` | `(canvas, {labels, values, lower, upper})` | Forecast with confidence bands |
+| `costTimeline` | `(canvas, {labels, series, stacked?, unit?})` | Multi-series cost area (hover dots) |
+| `riskMatrix` | `(canvas, {items, onHover?, onClick?})` | Impact×probability grid |
+| `kpiScorecard` | `(el, rows, {currency?, onSelect?})` | KPI table with trends |
+| `agentCostBreakdown` | `(el, rows, {sortable?, onBudgetAlert?})` | Per-agent cost table |
+| `tokenMeter` | `(el, {used, total, label})` | Budget usage meter |
+| `cohortGrid` | `(el, rows, {periodLabels?})` | Retention cohort heatmap |
+| `approvalChain` | `(el, steps, {editable?, onAction?})` | Workflow approval chain |
+| `decisionMatrix` | `(el, {criteria, alternatives})` | Weighted scoring matrix |
+| `renderSourceCards` | `(el, cards, {maxVisible?, layout?})` | RAG citation cards |
+| `chartInteract` | `(canvas, meta, colors?)` | Crosshair + hover dots + tooltip |
+| `sparklineInteract` | `(canvas, data, opts?)` | Sparkline hover dot + tooltip |
+
+### Gauge colorMode
+
+Set `colorMode` in `data-gauge` JSON to auto-generate arcBar colorStops:
+- `'higher-better'` — green at high values (quality, uptime)
+- `'lower-better'` — green at low values (latency, errors)
+
 ## Web Components (26 tags, 25 components)
 
 All use `mn-` prefix. Attributes are kebab-case. Events: `mn-{name}-ready`, `mn-{name}-change`.

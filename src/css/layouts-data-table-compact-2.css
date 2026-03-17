@@ -113,7 +113,7 @@
 /* ── Avorio theme ── */
 body.mn-avorio .mn-profile-dropdown { background: var(--mn-surface); border-color: var(--mn-border); }
 body.mn-avorio .mn-profile-dropdown__item:hover,
-body.mn-avorio .mn-profile-dropdown__item--focused { background: var(--mn-hover-bg); }
+body.mn-avorio .mn-profile-dropdown__item--focused { background: rgba(0,0,0,0.08); }
 body.mn-avorio .mn-profile-dropdown__avatar-lg { background: var(--mn-accent); color: var(--mn-accent-text); }
 body.mn-avorio .mn-profile-trigger__avatar { background: var(--mn-accent); color: var(--mn-accent-text); }
 } /* end @layer layouts */
