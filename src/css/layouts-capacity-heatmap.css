@@ -50,10 +50,10 @@
 }
 .mn-cap-grid__cell:hover { transform:scale(1.15); z-index:5; }
 .mn-cap-grid__cell--empty { background:var(--mn-surface-raised); color:var(--mn-border); }
-.mn-cap-grid__cell--low   { background:var(--verde,#2d8a4e); }
-.mn-cap-grid__cell--mid   { background:var(--mn-accent); color:var(--mn-surface-sunken); }
-.mn-cap-grid__cell--high  { background:var(--mn-error); }
-.mn-cap-grid__cell--over  { background:var(--mn-error); font-weight:700; }
+.mn-cap-grid__cell--low   { background:var(--verde,#2d8a4e); color:#fff; }
+.mn-cap-grid__cell--mid   { background:var(--mn-accent); color:var(--mn-accent-text); }
+.mn-cap-grid__cell--high  { background:var(--mn-error); color:#fff; }
+.mn-cap-grid__cell--over  { background:var(--mn-error); color:#fff; font-weight:700; }
 
 /* ── Tooltip ── */
 .mn-cap-tooltip {
