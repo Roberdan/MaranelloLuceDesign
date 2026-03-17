@@ -70,7 +70,7 @@
 body.mn-avorio .mn-toast {
   background: var(--mn-surface);
   border-color: var(--mn-border-subtle);
-  color: var(--mn-text-inverse);
+  color: var(--mn-text);
   box-shadow: 0 8px 32px rgba(0,0,0,0.12);
 }
 body.mn-avorio .mn-toast__text { color: var(--mn-text-muted); }
@@ -166,7 +166,7 @@ body.mn-avorio .mn-toast__text { color: var(--mn-text-muted); }
 body.mn-avorio .mn-dropdown__trigger {
   background: linear-gradient(180deg, #e8e3da, #ddd8cf);
   border-color: var(--mn-border-strong);
-  color: var(--mn-text-inverse);
+  color: var(--mn-text);
 }
 body.mn-avorio .mn-dropdown__menu {
   background: var(--mn-surface);

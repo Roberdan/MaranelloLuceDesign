@@ -151,6 +151,6 @@ body.mn-avorio .mn-nav-group__btn[data-tooltip]::after,
 body.mn-avorio .mn-nav-pill[data-tooltip]::after {
   background: var(--avorio-chiaro);
   border-color: var(--mn-border-strong);
-  color: var(--mn-text-inverse);
+  color: var(--mn-text);
 }
 } /* end @layer layouts */

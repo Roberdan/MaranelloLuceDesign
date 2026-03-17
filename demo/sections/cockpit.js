@@ -45,7 +45,7 @@ Maranello.speedometer(document.querySelector('#my-dial'), {
           <div class="mn-strip__divider"></div>
           <div class="mn-strip__section" style="flex:0 0 220px"><span class="mn-label mn-strip__label mn-block mn-mb-sm">SECONDARY BOARD</span><div class="mn-grid-3 mn-gap-xs"><div class="mn-strip__board-cell"><div class="mn-micro mn-strip__dim">KPI</div><div class="mn-strip__value">94</div></div><div class="mn-strip__board-cell"><div class="mn-micro mn-strip__dim">RUNWAY</div><div class="mn-strip__value">13d</div></div><div class="mn-strip__board-cell"><div class="mn-micro mn-strip__dim">ALERTS</div><div class="mn-strip__value" style="color:#DC0000">04</div></div></div></div>
           <div class="mn-strip__divider"></div>
-          <div class="mn-strip__section--pod"><div class="mn-flex-center mn-gap-sm"><div class="mn-pod" style="width:50px;height:50px"><div class="mn-pod__face"><div class="mn-pod__indicator" style="background:#00A651;box-shadow:0 0 8px #00A651,0 0 3px #00A651"></div></div></div><div class="mn-pod" style="width:50px;height:50px"><div class="mn-pod__face"><div class="mn-pod__indicator mn-pod__indicator--red"></div></div></div></div></div>
+          <div class="mn-strip__section--pod"><div class="mn-gauge__instrument mn-gauge__instrument--sm" style="width:120px;height:120px;padding:5px"><div class="mn-gauge__dial"><canvas class="mn-gauge__canvas" data-gauge='${stripRightGauge()}'></canvas><div class="mn-gauge__glass"></div></div></div></div>
         </div>
       </div>
       <h3 class="mn-title-sub mn-mb-sm">KPI Instrument Cluster</h3>
@@ -125,4 +125,7 @@ function kpiCoverageGauge() {
 }
 function qualityTrendGauge() {
   return JSON.stringify({ value: 0, max: 100, color: '#FFC72C', ticks: 0, subticks: 0, startAngle: 0, endAngle: 0, showNeedle: false, complications: { multigraph: { mode: 'sparkline', data: [42, 48, 55, 52, 61, 58, 65, 63, 70, 68, 72, 75], color: '#FFC72C', label: 'TREND', months: ['A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D', 'J', 'F', 'M'] }, centerLabel: 'FY26', centerValue: '75', centerUnit: 'score', trend: { direction: 'up', delta: '+33', color: '#00A651' } } });
+}
+function stripRightGauge() {
+  return JSON.stringify({ value: 340, max: 500, color: '#DC0000', colorMode: 'lower-better', ticks: 10, subticks: 5, startAngle: -225, endAngle: 45, showNeedle: true, numbers: [0, 250, 500], complications: { arcBar: { value: 340, max: 500, colorStops: ['#00A651', '#FFC72C', '#DC0000'], labelCenter: '340 ms' }, centerValue: '340', centerUnit: 'ms', centerLabel: 'LATENCY', statusLed: { color: '#FFC72C', label: 'WARN' } } });
 }

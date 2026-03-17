@@ -110,7 +110,7 @@
 
 body.mn-avorio .mn-panel {
   background: var(--mn-surface);
-  color: var(--mn-text-inverse);
+  color: var(--mn-text);
   border: 1px solid var(--mn-border-subtle);
 }
 body.mn-avorio .mn-panel__header { border-color: var(--mn-border-subtle); }

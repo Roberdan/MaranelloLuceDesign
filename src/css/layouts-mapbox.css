@@ -64,7 +64,7 @@
 /* Avorio theme overrides — higher specificity (0,2,0) beats Mapbox (0,1,0) */
 .mn-avorio .mn-mapbox-popup .mapboxgl-popup-content {
   background: var(--mn-surface);
-  color: var(--mn-text-inverse);
+  color: var(--mn-text);
   border-color: var(--mn-border-strong);
 }
 

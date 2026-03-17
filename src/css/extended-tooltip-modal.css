@@ -62,7 +62,7 @@
 
 body.mn-avorio .mn-tooltip {
   background: var(--mn-surface);
-  color: var(--mn-text-inverse);
+  color: var(--mn-text);
   border-color: var(--mn-border-strong);
   box-shadow: 0 4px 16px rgba(0,0,0,0.12);
 }
@@ -161,7 +161,7 @@ body.mn-avorio .mn-tooltip--bottom::after {
 body.mn-avorio .mn-modal {
   background: var(--mn-surface);
   border-color: var(--mn-border-subtle);
-  color: var(--mn-text-inverse);
+  color: var(--mn-text);
 }
 body.mn-avorio .mn-modal__header,
 body.mn-avorio .mn-modal__footer { border-color: var(--mn-border-subtle); }

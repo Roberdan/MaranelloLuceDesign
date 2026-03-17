@@ -113,6 +113,25 @@ riskMatrix(canvas, RiskMatrixOptions)
 bcgMatrix(canvas, BCGMatrixOptions)
 ```
 
+### ChartInteractMeta
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `type` | `'area'\|'line'\|'bar'\|'donut'\|'bubble'\|'radar'` | ✅ | Chart type for hit detection |
+| `datasets` | `Array<{data:number[],color?:string,label?:string}>` | area/line | Data series |
+| `labels` | `string[]` | — | X-axis labels |
+| `gx` | `(i:number)=>number` | area/line | Index→x coordinate |
+| `gy` | `(v:number)=>number` | area/line | Value→y coordinate |
+| `maxLen` | `number` | area/line | Max data length |
+| `pad` | `{top,bottom}` | — | Chart padding |
+
+### Gauge colorMode
+
+| Value | arcBar colorStops | Use Case |
+|---|---|---|
+| `'higher-better'` | `['#DC0000','#FFC72C','#00A651']` | Quality, uptime, utilization |
+| `'lower-better'` | `['#00A651','#FFC72C','#DC0000']` | Latency, errors, consumption |
+
 ## Gantt Controller
 
 ```ts
