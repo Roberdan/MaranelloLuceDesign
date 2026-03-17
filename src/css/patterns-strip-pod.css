@@ -60,9 +60,9 @@
   flex-shrink: 0;
 }
 
-/* Strip label classes (replaces inline styles) */
+/* Strip label classes */
 .mn-strip__label {
-  color: var(--avorio-scuro);
+  color: var(--mn-text-tertiary);
   font-size: 0.6rem;
   letter-spacing: 0.15em;
 }
@@ -73,7 +73,7 @@
   color: var(--mn-text);
 }
 .mn-strip__dim {
-  color: var(--avorio-scuro);
+  color: var(--mn-text-muted);
   margin-bottom: 2px;
 }
 

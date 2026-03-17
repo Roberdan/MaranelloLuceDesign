@@ -108,9 +108,13 @@
 }
 
 /* ═══ Avorio theme ═══ */
-body.mn-avorio .mn-strip-row__track { background:var(--avorio-medio); }
-body.mn-avorio .mn-strip-kpi__value { filter:brightness(0.7); }
-body.mn-avorio .mn-strip-board__cell { border-color:var(--mn-border-strong); background:var(--avorio-medio); }
+body.mn-avorio .mn-strip__inner { background:var(--avorio-caldo); }
+body.mn-avorio .mn-strip-row__track { background:var(--avorio-scuro); }
+body.mn-avorio .mn-strip-kpi__value { color:var(--mn-text); }
+body.mn-avorio .mn-strip-kpi__label { color:var(--mn-text-tertiary); }
+body.mn-avorio .mn-strip-board__cell { border-color:rgba(0,0,0,0.2); background:var(--avorio-chiaro); }
+body.mn-avorio .mn-strip-board__label { color:var(--mn-text-tertiary); }
+body.mn-avorio .mn-strip-gauge-label { color:var(--mn-text-tertiary); }
 
 /* ═══ Fluid sizing (container-query) ═══ */
 .mn-strip--dashboard .mn-strip__inner {
