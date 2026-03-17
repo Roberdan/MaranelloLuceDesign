@@ -11200,7 +11200,7 @@ M.charts = {
 registerExtras(M);
 
 // src/ts/index.ts
-var VERSION = "4.13.1";
+var VERSION = "4.13.2";
 export {
   COLOR,
   CONTINENTS,

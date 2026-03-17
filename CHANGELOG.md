@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.13.2] - 2026-03-17
+
+### Fixed
+- Buttons: ghost button invisible in Avorio (white text on cream)
+- Buttons: added full Avorio theme overrides for all button variants
+- Buttons: `--giallo-hover` → `var(--mn-accent-hover)` on accent button hover
+
 ## [4.13.1] - 2026-03-17
 
 ### Added

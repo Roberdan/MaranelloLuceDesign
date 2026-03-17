@@ -730,13 +730,14 @@
   }
 
   .mn-btn--accent:hover {
-    background: var(--giallo-hover);
-    border-color: var(--giallo-hover);
+    background: var(--mn-accent-hover, var(--mn-accent));
+    border-color: var(--mn-accent-hover, var(--mn-accent));
+    filter: brightness(1.15);
   }
 
   .mn-btn--accent:active {
-    background: var(--giallo-hover);
-    border-color: var(--giallo-hover);
+    background: var(--mn-accent);
+    border-color: var(--mn-accent);
     transform: translateY(1px);
   }
 
@@ -858,6 +859,55 @@
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
+  }
+
+  body.mn-avorio .mn-btn {
+    background: var(--mn-text);
+    border-color: var(--mn-text);
+    color: var(--mn-surface);
+  }
+
+  body.mn-avorio .mn-btn:hover {
+    background: var(--mn-text-tertiary);
+    border-color: var(--mn-text-tertiary);
+  }
+
+  body.mn-avorio .mn-btn--ghost {
+    border-color: var(--mn-text);
+    color: var(--mn-text);
+    background: none;
+  }
+
+  body.mn-avorio .mn-btn--ghost:hover {
+    background: var(--mn-text);
+    color: var(--mn-surface);
+  }
+
+  body.mn-avorio .mn-btn--ghost-light {
+    border-color: var(--mn-border);
+    color: var(--mn-text);
+  }
+
+  body.mn-avorio .mn-btn--ghost-light:hover {
+    background: var(--mn-hover-bg);
+    border-color: var(--mn-text);
+  }
+
+  body.mn-avorio .mn-btn--accent {
+    background: var(--mn-accent);
+    border-color: var(--mn-accent);
+    color: var(--mn-accent-text);
+  }
+
+  body.mn-avorio .mn-btn--accent:hover {
+    background: var(--mn-accent-hover);
+    border-color: var(--mn-accent-hover);
+  }
+
+  body.mn-avorio .mn-btn--white {
+    background: var(--mn-surface);
+    border-color: var(--mn-border);
+    color: var(--mn-text);
   }
 
   .mn-divider-gold {
