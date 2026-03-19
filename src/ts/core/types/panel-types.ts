@@ -80,6 +80,8 @@ export interface DetailPanelOptions {
   schema?: DetailSection[];
   data?: Record<string, unknown>;
   editable?: boolean;
+  /** 'overlay' (default) = fixed slide-over with backdrop; 'inline' = relative, no backdrop */
+  mode?: 'overlay' | 'inline';
   onSave?: (
     changes: Record<string, unknown>,
     data: Record<string, unknown>,

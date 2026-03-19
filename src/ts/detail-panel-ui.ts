@@ -75,10 +75,19 @@ export function buildDOM(
   onTabClick: (tab: string) => void,
 ): DetailPanelDOM {
   container.innerHTML = '';
+  const isInline = opts.mode === 'inline';
   container.classList.add('mn-detail-panel');
+  if (isInline) container.classList.add('mn-detail-panel--inline');
 
-  const backdrop = createElement('div', 'mn-detail-panel__backdrop');
-  container.parentNode!.insertBefore(backdrop, container);
+  /* Inline mode: no backdrop needed */
+  let backdrop: HTMLElement;
+  if (isInline) {
+    backdrop = createElement('div', 'mn-detail-panel__backdrop');
+    backdrop.style.display = 'none';
+  } else {
+    backdrop = createElement('div', 'mn-detail-panel__backdrop');
+    container.parentNode!.insertBefore(backdrop, container);
+  }
 
   const header = createElement('div', 'mn-detail-panel__header');
 
@@ -99,14 +108,15 @@ export function buildDOM(
   /* External link buttons after title */
   if (opts.externalLinks?.length) {
     for (const link of opts.externalLinks) {
-      const btn = createElement('button', 'mn-detail__ext-link');
-      btn.type = 'button';
-      btn.title = link.label;
-      btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>';
-      btn.addEventListener('click', () => {
-        window.open(link.url, '_blank', 'noopener');
-      });
-      titleRow.appendChild(btn);
+      const a = document.createElement('a');
+      a.className = 'mn-detail__ext-link';
+      a.href = link.url;
+      a.target = '_blank';
+      a.rel = 'noopener';
+      a.title = link.label;
+      a.setAttribute('aria-label', link.label);
+      a.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>';
+      titleRow.appendChild(a);
     }
   }
   header.appendChild(titleRow);

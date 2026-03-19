@@ -15,6 +15,8 @@ export interface ProfileMenuUser {
 
 export interface ProfileMenuOptions extends ProfileMenuUser {
   sections?: ProfileMenuSection[];
+  /** Maximum dropdown width in px (default: 320) */
+  maxWidth?: number;
 }
 
 export interface ProfileMenuController {
@@ -30,6 +32,7 @@ export function profileMenu(trigger: HTMLElement, options?: ProfileMenuOptions):
     email: '',
     avatarUrl: null as string | null,
     sections: [] as ProfileMenuSection[],
+    maxWidth: 320,
     ...options,
   };
 
@@ -51,6 +54,7 @@ export function profileMenu(trigger: HTMLElement, options?: ProfileMenuOptions):
     const rect = btn.getBoundingClientRect();
     dropdown.style.position = 'fixed';
     dropdown.style.top = `${rect.bottom + 4}px`;
+    dropdown.style.maxWidth = `${opts.maxWidth}px`;
     const menuWidth = dropdown.offsetWidth || 260;
     let left = rect.right - menuWidth;
     if (left < 8) left = 8;

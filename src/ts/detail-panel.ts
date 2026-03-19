@@ -19,6 +19,7 @@ export function createDetailPanel(
   container: HTMLElement,
   opts: DetailPanelOptions = {},
 ): DetailPanelController {
+  const isInline = opts.mode === 'inline';
   const state: DetailPanelState = {
     activeTab: opts.tabs?.[0] ?? null,
     isEditing: false,
@@ -43,21 +44,28 @@ export function createDetailPanel(
     renderBody(dom.body, state, opts);
   });
 
-  /* ARIA dialog attributes */
-  container.setAttribute('role', 'dialog');
-  container.setAttribute('aria-modal', 'true');
-  if (opts.title) container.setAttribute('aria-label', opts.title);
+  /* ARIA attributes — inline panels are complementary regions, not dialogs */
+  if (isInline) {
+    container.setAttribute('role', 'complementary');
+    if (opts.title) container.setAttribute('aria-label', opts.title);
+  } else {
+    container.setAttribute('role', 'dialog');
+    container.setAttribute('aria-modal', 'true');
+    if (opts.title) container.setAttribute('aria-label', opts.title);
+  }
   dom.closeBtn.setAttribute('aria-label', 'Close panel');
 
   renderBody(dom.body, state, opts);
 
   dom.closeBtn.addEventListener('click', () => { doClose(); opts.onClose?.(); });
-  dom.backdrop.addEventListener('click', () => { doClose(); opts.onClose?.(); });
+  if (!isInline) {
+    dom.backdrop.addEventListener('click', () => { doClose(); opts.onClose?.(); });
+  }
   dom.editBtn.addEventListener('click', () => startEdit());
   dom.cancelBtn.addEventListener('click', () => cancelEdit());
   dom.saveBtn.addEventListener('click', () => save());
 
-  /* Focus trap: Tab cycles within the panel while open */
+  /* Focus trap: Tab cycles within the panel while open (overlay mode only) */
   function onKeyDown(e: KeyboardEvent): void {
     if (!state.isOpen) return;
 
@@ -66,6 +74,9 @@ export function createDetailPanel(
       opts.onClose?.();
       return;
     }
+
+    /* No focus trap in inline mode — panel is part of page flow */
+    if (isInline) return;
 
     if (e.key === 'Tab') {
       const focusable = getFocusable(container);
@@ -119,32 +130,38 @@ export function createDetailPanel(
     state.isOpen = false;
     container.classList.remove('mn-detail-panel--open');
     document.removeEventListener('keydown', onKeyDown);
-    const bd = container.previousElementSibling;
-    if (bd && bd.classList.contains('mn-detail-panel__backdrop')) {
-      bd.classList.remove('mn-detail-panel__backdrop--visible');
+    if (!isInline) {
+      const bd = container.previousElementSibling;
+      if (bd && bd.classList.contains('mn-detail-panel__backdrop')) {
+        bd.classList.remove('mn-detail-panel__backdrop--visible');
+      }
     }
-    /* Return focus to the element that opened the panel */
-    if (triggerElement) {
+    /* Return focus to the element that opened the panel (overlay only) */
+    if (!isInline && triggerElement) {
       triggerElement.focus();
       triggerElement = null;
     }
   }
 
   function doOpen(): void {
-    triggerElement = document.activeElement instanceof HTMLElement
-      ? document.activeElement : null;
+    if (!isInline) {
+      triggerElement = document.activeElement instanceof HTMLElement
+        ? document.activeElement : null;
+    }
     state.isOpen = true;
     container.classList.add('mn-detail-panel--open');
     document.addEventListener('keydown', onKeyDown);
-    const bd = container.previousElementSibling;
-    if (bd && bd.classList.contains('mn-detail-panel__backdrop')) {
-      bd.classList.add('mn-detail-panel__backdrop--visible');
+    if (!isInline) {
+      const bd = container.previousElementSibling;
+      if (bd && bd.classList.contains('mn-detail-panel__backdrop')) {
+        bd.classList.add('mn-detail-panel__backdrop--visible');
+      }
+      /* Move focus into the panel */
+      setTimeout(() => {
+        const focusable = getFocusable(container);
+        if (focusable.length) focusable[0].focus();
+      }, 50);
     }
-    /* Move focus into the panel */
-    setTimeout(() => {
-      const focusable = getFocusable(container);
-      if (focusable.length) focusable[0].focus();
-    }, 50);
   }
 
   return {

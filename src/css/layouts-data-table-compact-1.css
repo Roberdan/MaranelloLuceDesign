@@ -202,6 +202,7 @@
   top: calc(100% + 8px);
   right: 0;
   width: 280px;
+  max-width: 320px;
   background: var(--mn-surface-sunken);
   border: 1px solid var(--mn-border);
   border-radius: var(--radius-lg);
@@ -221,5 +222,4 @@
   align-items: center;
   gap: var(--space-md);
 }
-.mn-profile-dropdown__avatar-lg {
 } /* end @layer layouts */

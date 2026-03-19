@@ -33,26 +33,31 @@
   color: var(--mn-accent));
 }
 
-/* ── External link icon button ───────────────────────────── */
+/* ── External link icon button (ghost style matching action buttons) ── */
 .mn-detail__ext-link {
-  width: 28px;
-  height: 28px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  width: 28px;
+  height: 28px;
   background: transparent;
-  border: 1px solid var(--mn-border));
-  border-radius: var(--radius-sm, 4px);
-  color: var(--mn-text-muted));
+  border: 1px solid transparent;
+  border-radius: 4px;
+  color: var(--mn-text-tertiary);
   cursor: pointer;
   padding: 0;
   flex-shrink: 0;
-  transition: all 0.2s;
+  text-decoration: none;
+  transition: all 0.15s ease;
 }
 .mn-detail__ext-link:hover {
   background: var(--mn-hover-bg);
-  color: var(--mn-accent));
-  border-color: var(--mn-accent));
+  border-color: var(--mn-hover-bg);
+  color: var(--mn-accent);
+}
+.mn-detail__ext-link svg {
+  width: 16px;
+  height: 16px;
 }
 
 /* ── Person field (v2 wrapper for searchFn) ──────────────── */

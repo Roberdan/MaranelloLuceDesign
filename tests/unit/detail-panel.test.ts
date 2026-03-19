@@ -249,3 +249,69 @@ describe('createDetailPanel — focus restoration', () => {
     expect(() => panel.close()).not.toThrow();
   });
 });
+
+// --- Inline mode ---
+
+describe('createDetailPanel — inline mode', () => {
+  it('adds mn-detail-panel--inline class when mode is inline', () => {
+    const container = mountContainer();
+    createDetailPanel(container, { mode: 'inline' });
+    expect(container.classList.contains('mn-detail-panel--inline')).toBe(true);
+  });
+
+  it('does not add mn-detail-panel--inline by default', () => {
+    const container = mountContainer();
+    createDetailPanel(container, {});
+    expect(container.classList.contains('mn-detail-panel--inline')).toBe(false);
+  });
+
+  it('sets role="complementary" instead of dialog in inline mode', () => {
+    const container = mountContainer();
+    createDetailPanel(container, { mode: 'inline', title: 'Inline' });
+    expect(container.getAttribute('role')).toBe('complementary');
+    expect(container.hasAttribute('aria-modal')).toBe(false);
+  });
+
+  it('does not insert a visible backdrop in inline mode', () => {
+    const container = mountContainer();
+    createDetailPanel(container, { mode: 'inline' });
+    const bd = container.previousElementSibling;
+    const hasVisibleBackdrop = bd?.classList.contains('mn-detail-panel__backdrop');
+    expect(hasVisibleBackdrop).toBeFalsy();
+  });
+
+  it('open/close still toggles mn-detail-panel--open class', () => {
+    const container = mountContainer();
+    const panel = createDetailPanel(container, { mode: 'inline' });
+    panel.open();
+    expect(container.classList.contains('mn-detail-panel--open')).toBe(true);
+    panel.close();
+    expect(container.classList.contains('mn-detail-panel--open')).toBe(false);
+  });
+});
+
+// --- External links rendering ---
+
+describe('createDetailPanel — externalLinks', () => {
+  it('renders anchor tags with target="_blank" and rel="noopener"', () => {
+    const container = mountContainer();
+    createDetailPanel(container, {
+      externalLinks: [{ label: 'DevOps', url: 'https://dev.azure.com' }],
+    });
+    const link = container.querySelector<HTMLAnchorElement>('.mn-detail__ext-link');
+    expect(link).not.toBeNull();
+    expect(link?.tagName).toBe('A');
+    expect(link?.target).toBe('_blank');
+    expect(link?.rel).toBe('noopener');
+    expect(link?.href).toContain('dev.azure.com');
+  });
+
+  it('sets aria-label to link label', () => {
+    const container = mountContainer();
+    createDetailPanel(container, {
+      externalLinks: [{ label: 'Open in Azure DevOps', url: 'https://dev.azure.com' }],
+    });
+    const link = container.querySelector('.mn-detail__ext-link');
+    expect(link?.getAttribute('aria-label')).toBe('Open in Azure DevOps');
+  });
+});
