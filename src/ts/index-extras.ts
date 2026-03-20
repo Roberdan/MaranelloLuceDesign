@@ -66,5 +66,8 @@ export { userTable } from './user-table';
 export type { AdminUser, UserRole, UserStatus, UserTableOptions, UserTableController } from './user-table';
 
 // v4.15 — Customer Journey
-export { customerJourney } from './customer-journey';
-export type { JourneyPhase, JourneyEngagement, CustomerJourneyOptions, CustomerJourneyController } from './customer-journey';
+export { customerJourney, journeyInitials } from './customer-journey';
+export type {
+  EngagementStatus, EngagementType, JourneyEngagement,
+  JourneyPhase, CustomerJourneyOptions, CustomerJourneyController,
+} from './customer-journey';
