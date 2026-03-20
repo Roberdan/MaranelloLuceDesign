@@ -1,4 +1,4 @@
-import { escapeHtml } from './core/utils';
+import { escapeHtml, cssVar } from './core/utils';
 export interface GraphNode {
   id: string;
   label: string;
@@ -188,7 +188,7 @@ export function socialGraph(
       ctx.fillStyle = '#111'; ctx.font = `600 ${Math.max(10, radius * 0.8)}px Inter, sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
       ctx.fillText(inside(node), node.x, node.y + 0.5, radius * 1.5);
       if (showLabels) {
-        ctx.fillStyle = 'rgba(245,245,245,.92)';
+        ctx.fillStyle = cssVar('--mn-text', 'rgba(245,245,245,.92)');
         ctx.font = '500 12px Inter, sans-serif';
         ctx.textBaseline = 'top';
         ctx.fillText(node.label, node.x, node.y + radius + 8);

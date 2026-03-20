@@ -180,6 +180,12 @@ body.mn-sugar .mn-detail-panel { background: var(--mn-surface-raised) !important
 /* Mesh network */
 body.mn-sugar .mn-mesh-node { background: var(--mn-surface-raised) !important; border: 1px solid var(--mn-border) !important; }
 
+/* Dropdown triggers */
+body.mn-sugar .mn-dropdown__trigger { background: var(--mn-surface-raised) !important; border: 1px solid var(--mn-border) !important; color: var(--mn-text) !important; }
+
+/* Avatar group circles */
+body.mn-sugar .mn-avatar-group .mn-avatar, body.mn-sugar .mn-avatar--sm { background: var(--mn-border) !important; color: var(--mn-text) !important; }
+
 /* Chart tooltip + severity vars */
 body.mn-sugar {
   --mn-chart-tooltip-bg: var(--mn-surface-raised);

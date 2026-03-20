@@ -59,6 +59,7 @@ export function mapView(
     const th = detectTheme();
     const mc = getMarkerColors();
     const themeName = document.body.classList.contains('mn-colorblind') ? 'colorblind'
+      : document.body.classList.contains('mn-sugar') ? 'sugar'
       : document.body.classList.contains('mn-nero') ? 'nero'
       : document.body.classList.contains('mn-avorio') ? 'avorio' : 'editorial';
     const colors = mc[themeName];

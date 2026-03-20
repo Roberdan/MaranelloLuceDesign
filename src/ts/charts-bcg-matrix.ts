@@ -45,13 +45,13 @@ function quadOf(it: BCGItem, sT: number, gT: number): Quad {
   if (hg) return '? Marks';
   return 'Dogs';
 }
-
 function quadHex(q: Quad): string {
+  const isSugar = document.body.classList.contains('mn-sugar');
   const m: Record<Quad, [string, string]> = {
     'Stars': ['--signal-ok', '#00A651'],
-    'Cash Cows': ['--mn-accent', '#FFC72C'],
+    'Cash Cows': isSugar ? ['--signal-warning', '#F59E0B'] : ['--mn-accent', '#FFC72C'],
     '? Marks': ['--signal-warning', '#FFC72C'],
-    'Dogs': ['--mn-border-subtle', '#4d4d4d'],
+    'Dogs': isSugar ? ['--mn-text-muted', '#767676'] : ['--mn-border-subtle', '#4d4d4d'],
   };
   const [v, fb] = m[q];
   return cssVar(v, fb);

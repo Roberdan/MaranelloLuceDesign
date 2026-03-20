@@ -39,13 +39,17 @@ export function miniGaugeSVG(status: LoginServiceStatus, latencyMs: number | nul
   const pct = status === 'healthy' ? 95 : status === 'degraded' ? 55 : 10;
   const sz = 56, cx = sz / 2, cy = sz - 4, r = 22;
   const startAngle = Math.PI, needleAngle = startAngle + (clamp(pct, 0, 100) / 100) * Math.PI;
+  const light = document.body.classList.contains('mn-sugar') || document.body.classList.contains('mn-avorio');
+  const tickStroke = light ? 'rgba(0,0,0,0.15)' : 'rgba(255,255,255,0.2)';
+  const trackStroke = light ? 'rgba(0,0,0,0.08)' : 'rgba(255,255,255,0.06)';
+  const dotFill = light ? '#ddd' : '#111';
 
   let ticks = '';
   for (let i = 0; i <= 6; i++) {
     const a = startAngle + (i / 6) * Math.PI;
     const tx1 = cx + Math.cos(a) * (r - 4), ty1 = cy + Math.sin(a) * (r - 4);
     const tx2 = cx + Math.cos(a) * r, ty2 = cy + Math.sin(a) * r;
-    ticks += `<line x1="${tx1.toFixed(1)}" y1="${ty1.toFixed(1)}" x2="${tx2.toFixed(1)}" y2="${ty2.toFixed(1)}" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>`;
+    ticks += `<line x1="${tx1.toFixed(1)}" y1="${ty1.toFixed(1)}" x2="${tx2.toFixed(1)}" y2="${ty2.toFixed(1)}" stroke="${tickStroke}" stroke-width="1"/>`;
   }
 
   const nx = cx + Math.cos(needleAngle) * (r - 8);
@@ -53,34 +57,40 @@ export function miniGaugeSVG(status: LoginServiceStatus, latencyMs: number | nul
   const latencyText = latencyMs != null ? `${latencyMs}ms` : '';
 
   return `<svg viewBox="0 0 ${sz} ${sz}" width="${sz}" height="${sz}" aria-label="${escapeHtml(label)}">` +
-    `<path d="${arc(cx, cy, r, startAngle, 2 * Math.PI)}" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="4" stroke-linecap="round"/>` +
+    `<path d="${arc(cx, cy, r, startAngle, 2 * Math.PI)}" fill="none" stroke="${trackStroke}" stroke-width="4" stroke-linecap="round"/>` +
     `<path d="${arc(cx, cy, r, startAngle, needleAngle)}" fill="none" stroke="${color}" stroke-width="4" stroke-linecap="round" style="filter:drop-shadow(0 0 4px ${color}60)"/>` +
     ticks +
     `<line x1="${cx}" y1="${cy}" x2="${nx.toFixed(1)}" y2="${ny.toFixed(1)}" stroke="${color}" stroke-width="1.5" stroke-linecap="round"/>` +
     `<circle cx="${cx}" cy="${cy}" r="2.5" fill="${color}"/>` +
-    `<circle cx="${cx}" cy="${cy}" r="1" fill="#111"/>` +
+    `<circle cx="${cx}" cy="${cy}" r="1" fill="${dotFill}"/>` +
     (latencyText ? `<text x="${cx}" y="${cy - r - 6}" text-anchor="middle" fill="${color}" font-family="var(--font-mono)" font-size="7" font-weight="600">${latencyText}</text>` : '') +
     '</svg>';
 }
 
 export function compassSVG(size: number): string {
+  const light = document.body.classList.contains('mn-sugar') || document.body.classList.contains('mn-avorio');
+  const bezelStart = light ? '#ddd' : '#666';
+  const bezelEnd = light ? '#bbb' : '#1a1a1a';
+  const face = light ? '#f0f0f4' : '#0d0d0d';
+  const center = light ? '#e4e4ea' : '#1a1a1a';
+  const minor = light ? 'rgba(0,0,0,.25)' : 'rgba(255,255,255,.4)';
   return `<svg viewBox="0 0 64 64" width="${size}" height="${size}" aria-hidden="true">` +
-    '<defs><linearGradient id="lb" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#666"/><stop offset="100%" stop-color="#1a1a1a"/></linearGradient>' +
+    `<defs><linearGradient id="lb" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${bezelStart}"/><stop offset="100%" stop-color="${bezelEnd}"/></linearGradient>` +
     '<linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#FFD85C"/><stop offset="50%" stop-color="#FFC72C"/><stop offset="100%" stop-color="#E8A838"/></linearGradient>' +
     '<linearGradient id="ln" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FF4444"/><stop offset="100%" stop-color="#CC0000"/></linearGradient>' +
     '<filter id="lg2"><feGaussianBlur stdDeviation="1.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>' +
-    '<circle cx="32" cy="32" r="31" fill="url(#lb)" stroke="#555" stroke-width=".5"/>' +
-    '<circle cx="32" cy="32" r="27" fill="#0d0d0d"/>' +
+    `<circle cx="32" cy="32" r="31" fill="url(#lb)" stroke="#555" stroke-width=".5"/>` +
+    `<circle cx="32" cy="32" r="27" fill="${face}"/>` +
     '<g stroke="url(#lg)" stroke-width="1.5" stroke-linecap="round" filter="url(#lg2)">' +
     '<line x1="32" y1="6" x2="32" y2="11"/><line x1="32" y1="6" x2="32" y2="11" transform="rotate(90,32,32)"/>' +
     '<line x1="32" y1="6" x2="32" y2="11" transform="rotate(180,32,32)"/><line x1="32" y1="6" x2="32" y2="11" transform="rotate(270,32,32)"/></g>' +
-    '<g stroke="rgba(255,255,255,.4)" stroke-width="1" stroke-linecap="round">' +
+    `<g stroke="${minor}" stroke-width="1" stroke-linecap="round">` +
     '<line x1="32" y1="6" x2="32" y2="10" transform="rotate(45,32,32)"/><line x1="32" y1="6" x2="32" y2="10" transform="rotate(135,32,32)"/>' +
     '<line x1="32" y1="6" x2="32" y2="10" transform="rotate(225,32,32)"/><line x1="32" y1="6" x2="32" y2="10" transform="rotate(315,32,32)"/></g>' +
     '<text x="32" y="16" text-anchor="middle" dominant-baseline="middle" fill="#FFC72C" font-family="\'Barlow Condensed\',sans-serif" font-weight="700" font-size="7" filter="url(#lg2)">N</text>' +
     '<polygon points="32,10 29,32 32,30 35,32" fill="url(#ln)" filter="url(#lg2)"/>' +
     '<polygon points="32,54 29,32 32,34 35,32" fill="#999"/>' +
-    '<circle cx="32" cy="32" r="4" fill="url(#lg)" filter="url(#lg2)"/><circle cx="32" cy="32" r="2" fill="#1a1a1a"/></svg>';
+    `<circle cx="32" cy="32" r="4" fill="url(#lg)" filter="url(#lg2)"/><circle cx="32" cy="32" r="2" fill="${center}"/></svg>`;
 }
 
 export function createServiceCard(check: LoginServiceCheck): HTMLDivElement {

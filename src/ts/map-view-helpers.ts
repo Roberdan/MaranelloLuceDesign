@@ -37,6 +37,7 @@ const THEMES: Record<string, ThemePalette> = {
   editorial: { land: '#333330', water: '#0d0d0d', border: '#444440', grid: 'rgba(200,200,200,0.06)', text: '#c8c8c8', muted: '#616161' },
   nero: { land: '#2e2e2a', water: '#080808', border: '#444440', grid: 'rgba(200,200,200,0.05)', text: '#c8c8c8', muted: '#555' },
   avorio: { land: '#e8d5b0', water: '#faf3e6', border: '#d7c39a', grid: 'rgba(0,0,0,0.05)', text: '#1a1a1a', muted: '#888' },
+  sugar: { land: '#FFFFFF', water: '#E4E4E8', border: '#D0D0D5', grid: 'rgba(0,0,0,0.04)', text: '#111111', muted: '#767676' },
   colorblind: { land: '#1a1a1a', water: '#0a0a0a', border: '#2a2a2a', grid: 'rgba(200,200,200,0.04)', text: '#c8c8c8', muted: '#616161' },
 };
 
@@ -53,7 +54,8 @@ export const CONTINENTS: Record<string, Array<[number, number]>> = {
 
 export function detectTheme(): ThemePalette & { coast: string; bg: string } {
   const b = document.body.classList;
-  const name = b.contains('mn-colorblind') ? 'colorblind' : b.contains('mn-nero') ? 'nero' : b.contains('mn-avorio') ? 'avorio' : 'editorial';
+  const name = b.contains('mn-colorblind') ? 'colorblind' : b.contains('mn-sugar') ? 'sugar'
+    : b.contains('mn-nero') ? 'nero' : b.contains('mn-avorio') ? 'avorio' : 'editorial';
   const t = THEMES[name];
   return { ...t, coast: t.border, bg: t.water };
 }
@@ -63,6 +65,7 @@ export function getMarkerColors(): Record<string, Record<MarkerColor, string>> {
     editorial: { active: cssVar('--signal-ok', '#00A651'), warning: cssVar('--signal-warning', '#FFC72C'), danger: cssVar('--signal-danger', '#DC0000') },
     nero: { active: cssVar('--signal-ok', '#00A651'), warning: cssVar('--signal-warning', '#FFC72C'), danger: cssVar('--signal-danger', '#DC0000') },
     avorio: { active: cssVar('--signal-ok', '#00A651'), warning: cssVar('--arancio', '#D4622B'), danger: cssVar('--signal-danger', '#DC0000') },
+    sugar: { active: cssVar('--signal-ok', '#00A651'), warning: cssVar('--signal-warning', '#F59E0B'), danger: cssVar('--signal-danger', '#DC0000') },
     colorblind: { active: '#0072B2', warning: '#FFB000', danger: '#D55E00' },
   };
 }
