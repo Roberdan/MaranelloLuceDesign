@@ -49,6 +49,10 @@ import { agentCostBreakdown } from './agent-cost-breakdown';
 import { costTimeline } from './charts-cost-timeline';
 import { businessModelCanvas } from './business-model-canvas';
 import { userTable } from './user-table';
+import { customerJourney } from './customer-journey';
+import { adminShell } from './admin-shell';
+import { sectionCard } from './section-card';
+import { settingsPanel } from './settings-panel';
 import { dateRangePicker } from './date-range-picker';
 import { bulletChart } from './charts-bullet';
 import { notificationCenter } from './notification-center';
@@ -189,4 +193,10 @@ export function registerExtras(M: Record<string, unknown>): void {
   M.AppShellController = AppShellController;
   M.PanelOrchestrator = PanelOrchestrator;
   M.DashboardRenderer = DashboardRenderer;
+
+  // v4.19 — Customer Journey + Admin Components
+  M.customerJourney = customerJourney;
+  M.adminShell = adminShell;
+  M.sectionCard = sectionCard;
+  M.settingsPanel = settingsPanel;
 }

@@ -10409,11 +10409,11 @@ function genId() {
   if (typeof crypto !== "undefined" && crypto.randomUUID) return crypto.randomUUID();
   return Date.now().toString(36) + Math.random().toString(36).slice(2);
 }
-function buildQuadrant(q, label, uid, editable) {
+function buildQuadrant(q, label, uid2, editable) {
   const div = document.createElement("div");
   div.className = `mn-swot__quadrant mn-swot__quadrant--${q}`;
   div.setAttribute("role", "group");
-  const hdrId = `swot-${uid}-${q}-hdr`;
+  const hdrId = `swot-${uid2}-${q}-hdr`;
   div.setAttribute("aria-labelledby", hdrId);
   div.dataset.quadrant = q;
   const hdr = document.createElement("div");
@@ -10478,13 +10478,13 @@ function swotMatrix(el4, opts) {
   const editable = opts?.editable !== false;
   const labels = { ...DEFAULTS2, ...opts?.quadrantLabels };
   let items = [...opts?.items ?? []];
-  const uid = genId().slice(0, 8);
+  const uid2 = genId().slice(0, 8);
   el4.classList.add("mn-swot");
   el4.setAttribute("role", "region");
   el4.setAttribute("aria-label", "SWOT Analysis");
   const quadrantEls = /* @__PURE__ */ new Map();
   for (const q of QUADRANTS) {
-    const qEl = buildQuadrant(q, labels[q], uid, editable);
+    const qEl = buildQuadrant(q, labels[q], uid2, editable);
     quadrantEls.set(q, qEl);
     el4.append(qEl);
   }
@@ -12216,12 +12216,12 @@ function genId2() {
   if (typeof crypto !== "undefined" && crypto.randomUUID) return crypto.randomUUID();
   return Date.now().toString(36) + Math.random().toString(36).slice(2);
 }
-function buildBlock(blockId, title, icon, uid, editable) {
+function buildBlock(blockId, title, icon, uid2, editable) {
   const div = document.createElement("div");
   div.className = `mn-bmc__block mn-bmc__block--${AREA[blockId]}`;
   div.setAttribute("role", "group");
   div.dataset.block = blockId;
-  const hdrId = `bmc-${uid}-${blockId}-hdr`;
+  const hdrId = `bmc-${uid2}-${blockId}-hdr`;
   div.setAttribute("aria-labelledby", hdrId);
   const hdr = document.createElement("div");
   hdr.className = "mn-bmc__header";
@@ -12283,7 +12283,7 @@ function buildItemEl2(item, editable) {
 }
 function businessModelCanvas(el4, opts) {
   const editable = opts?.editable !== false;
-  const uid = genId2().slice(0, 8);
+  const uid2 = genId2().slice(0, 8);
   const blocks = BLOCK_IDS.map((id) => ({
     id,
     title: opts?.blocks?.[id]?.title ?? DEFAULTS3[id].title,
@@ -12295,7 +12295,7 @@ function businessModelCanvas(el4, opts) {
   el4.setAttribute("aria-label", "Business Model Canvas");
   const blockEls = /* @__PURE__ */ new Map();
   for (const b of blocks) {
-    const bEl = buildBlock(b.id, b.title, b.icon, uid, editable);
+    const bEl = buildBlock(b.id, b.title, b.icon, uid2, editable);
     blockEls.set(b.id, bEl);
     el4.append(bEl);
   }
@@ -12460,8 +12460,8 @@ function userTable(el4, users, opts) {
     renderCount();
     if (o.selectable) {
       tbody2.querySelectorAll(`.${CLS}__check`).forEach((cb) => {
-        const uid = cb.closest("tr")?.dataset.uid ?? "";
-        cb.checked = selected.has(uid);
+        const uid2 = cb.closest("tr")?.dataset.uid ?? "";
+        cb.checked = selected.has(uid2);
       });
     }
   }
@@ -12486,23 +12486,23 @@ function userTable(el4, users, opts) {
     const actionBtn = target.closest(`.${CLS}__action`);
     if (actionBtn) {
       e.stopPropagation();
-      const uid = actionBtn.closest("tr")?.dataset.uid ?? "";
-      const user = data.find((u) => u.id === uid);
+      const uid2 = actionBtn.closest("tr")?.dataset.uid ?? "";
+      const user = data.find((u) => u.id === uid2);
       const act = actionBtn.dataset.act;
       if (user && o.onAction) o.onAction(user, act);
       return;
     }
     const checkbox = target.closest(`.${CLS}__check`);
     if (checkbox) {
-      const uid = checkbox.closest("tr")?.dataset.uid ?? "";
-      if (checkbox.checked) selected.add(uid);
-      else selected.delete(uid);
+      const uid2 = checkbox.closest("tr")?.dataset.uid ?? "";
+      if (checkbox.checked) selected.add(uid2);
+      else selected.delete(uid2);
       return;
     }
     const row = target.closest(`.${CLS}__row`);
     if (row) {
-      const uid = row.dataset.uid ?? "";
-      const user = data.find((u) => u.id === uid);
+      const uid2 = row.dataset.uid ?? "";
+      const user = data.find((u) => u.id === uid2);
       if (user && o.onSelect) o.onSelect(user);
     }
   }, { signal: sig });
@@ -12511,8 +12511,8 @@ function userTable(el4, users, opts) {
     const row = e.target.closest(`.${CLS}__row`);
     if (!row) return;
     e.preventDefault();
-    const uid = row.dataset.uid ?? "";
-    const user = data.find((u) => u.id === uid);
+    const uid2 = row.dataset.uid ?? "";
+    const user = data.find((u) => u.id === uid2);
     if (user && o.onSelect) o.onSelect(user);
   }, { signal: sig });
   if (o.selectable) {
@@ -12545,6 +12545,788 @@ function userTable(el4, users, opts) {
     destroy() {
       ac.abort();
       el4.innerHTML = "";
+    }
+  };
+}
+
+// src/ts/customer-journey-render.ts
+var STATUS_LABELS4 = {
+  completed: "Completed",
+  active: "Active",
+  pending: "Pending",
+  blocked: "Blocked"
+};
+function buildCard2(eng, typeIcons, ac) {
+  const card = document.createElement("div");
+  card.className = `mn-journey__card mn-journey__card--${eng.status}`;
+  card.setAttribute("role", "listitem");
+  card.setAttribute("tabindex", "0");
+  card.dataset.id = eng.id;
+  if (eng.date) card.dataset.date = eng.date;
+  if (eng.assignee) card.dataset.assignee = eng.assignee;
+  const avatar = document.createElement("div");
+  avatar.className = "mn-journey__avatar";
+  if (eng.avatar) {
+    const img = document.createElement("img");
+    img.src = eng.avatar;
+    img.alt = eng.assignee ? escapeHtml(eng.assignee) : "";
+    img.className = "mn-journey__avatar-img";
+    avatar.appendChild(img);
+  } else {
+    avatar.textContent = eng.assignee ? journeyInitials(eng.assignee) : "?";
+  }
+  card.appendChild(avatar);
+  const body = document.createElement("div");
+  body.className = "mn-journey__card-body";
+  const title = document.createElement("span");
+  title.className = "mn-journey__title";
+  title.textContent = escapeHtml(eng.title);
+  body.appendChild(title);
+  const badge = document.createElement("span");
+  badge.className = `mn-journey__badge mn-journey__badge--${eng.status}`;
+  badge.textContent = STATUS_LABELS4[eng.status];
+  badge.setAttribute("aria-label", STATUS_LABELS4[eng.status]);
+  body.appendChild(badge);
+  const typeEl = document.createElement("span");
+  typeEl.className = `mn-journey__type mn-journey__type--${eng.type}`;
+  typeEl.textContent = typeIcons[eng.type] ?? "";
+  typeEl.setAttribute("aria-label", eng.type);
+  body.appendChild(typeEl);
+  card.appendChild(body);
+  return card;
+}
+function buildPhase(phase, typeIcons, ac) {
+  const col = document.createElement("div");
+  col.className = "mn-journey__phase";
+  col.setAttribute("role", "group");
+  col.setAttribute("aria-label", phase.label);
+  const heading = document.createElement("div");
+  heading.className = "mn-journey__phase-label";
+  heading.textContent = escapeHtml(phase.label);
+  col.appendChild(heading);
+  for (const eng of phase.engagements) {
+    col.appendChild(buildCard2(eng, typeIcons, ac));
+  }
+  return col;
+}
+function renderJourneyPhases(el4, phases, opts, ac, typeIcons) {
+  for (const phase of phases) {
+    el4.appendChild(buildPhase(phase, typeIcons, ac));
+  }
+}
+function drawConnectors(el4, phases) {
+  const phaseEls = el4.querySelectorAll(".mn-journey__phase");
+  if (phaseEls.length < 2) return;
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.classList.add("mn-journey__connectors");
+  svg.setAttribute("aria-hidden", "true");
+  const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+  const marker = document.createElementNS("http://www.w3.org/2000/svg", "marker");
+  marker.setAttribute("id", "mn-journey-arrow");
+  marker.setAttribute("markerWidth", "8");
+  marker.setAttribute("markerHeight", "6");
+  marker.setAttribute("refX", "8");
+  marker.setAttribute("refY", "3");
+  marker.setAttribute("orient", "auto");
+  const arrowPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  arrowPath.setAttribute("d", "M0,0 L8,3 L0,6 Z");
+  arrowPath.style.fill = "var(--mn-info)";
+  marker.appendChild(arrowPath);
+  defs.appendChild(marker);
+  svg.appendChild(defs);
+  for (let i = 0; i < phaseEls.length - 1; i++) {
+    const srcCards = phaseEls[i].querySelectorAll(".mn-journey__card");
+    const dstCards = phaseEls[i + 1].querySelectorAll(".mn-journey__card");
+    if (!srcCards.length || !dstCards.length) continue;
+    const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    line.classList.add("mn-journey__connector-line");
+    line.setAttribute("data-from-phase", String(i));
+    line.setAttribute("data-to-phase", String(i + 1));
+    line.style.stroke = "var(--mn-info)";
+    line.setAttribute("stroke-dasharray", "6 4");
+    line.setAttribute("stroke-width", "2");
+    line.setAttribute("marker-end", "url(#mn-journey-arrow)");
+    svg.appendChild(line);
+  }
+  el4.appendChild(svg);
+}
+
+// src/ts/customer-journey.ts
+var TYPE_ICONS = {
+  opportunity: "\u2605",
+  // star
+  contract: "\u2709",
+  // envelope
+  ticket: "\u2691",
+  // flag
+  meeting: "\u260E",
+  // telephone
+  task: "\u2713"
+  // check
+};
+function journeyInitials(name) {
+  return name.trim().split(/\s+/).map((w) => w[0]).join("").slice(0, 2).toUpperCase();
+}
+function setupKeyboard(el4, phases, opts, ac, selectFn) {
+  el4.addEventListener("keydown", (e) => {
+    const target = e.target;
+    if (!target.classList.contains("mn-journey__card")) return;
+    const phaseEl = target.closest(".mn-journey__phase");
+    if (!phaseEl) return;
+    const allPhases = [...el4.querySelectorAll(".mn-journey__phase")];
+    const phaseIdx = allPhases.indexOf(phaseEl);
+    const cards = [...phaseEl.querySelectorAll(".mn-journey__card")];
+    const cardIdx = cards.indexOf(target);
+    let next = null;
+    if (e.key === "ArrowRight" && phaseIdx < allPhases.length - 1) {
+      const nextCards = allPhases[phaseIdx + 1].querySelectorAll(".mn-journey__card");
+      next = nextCards[0] ?? null;
+    } else if (e.key === "ArrowLeft" && phaseIdx > 0) {
+      const prevCards = allPhases[phaseIdx - 1].querySelectorAll(".mn-journey__card");
+      next = prevCards[0] ?? null;
+    } else if (e.key === "ArrowDown" && cardIdx < cards.length - 1) {
+      next = cards[cardIdx + 1];
+    } else if (e.key === "ArrowUp" && cardIdx > 0) {
+      next = cards[cardIdx - 1];
+    } else if (e.key === "Enter") {
+      const id = target.dataset.id ?? "";
+      selectFn(id);
+      const eng = phases.flatMap((p) => p.engagements).find((en) => en.id === id);
+      if (eng?.onClick) eng.onClick();
+      if (eng && opts.onSelect) opts.onSelect(eng);
+      return;
+    }
+    if (next) {
+      e.preventDefault();
+      next.focus();
+    }
+  }, { signal: ac.signal });
+}
+function setupTooltip(el4, ac) {
+  let tip = null;
+  el4.addEventListener("pointerenter", (e) => {
+    const card = e.target.closest?.(".mn-journey__card");
+    if (!card) return;
+    const date = card.dataset.date ?? "";
+    const assignee = card.dataset.assignee ?? "";
+    if (!date && !assignee) return;
+    tip = document.createElement("div");
+    tip.className = "mn-journey__tooltip";
+    const parts = [];
+    if (assignee) parts.push(escapeHtml(assignee));
+    if (date) parts.push(escapeHtml(date));
+    tip.innerHTML = parts.join("<br>");
+    card.appendChild(tip);
+  }, { capture: true, signal: ac.signal });
+  el4.addEventListener("pointerleave", (e) => {
+    const card = e.target.closest?.(".mn-journey__card");
+    if (card && tip && card.contains(tip)) {
+      tip.remove();
+      tip = null;
+    }
+  }, { capture: true, signal: ac.signal });
+}
+function customerJourney(el4, phases, opts) {
+  const options = {
+    orientation: "horizontal",
+    onSelect: () => {
+    },
+    showConnectors: true,
+    compactMode: false,
+    ...opts
+  };
+  const ac = new AbortController();
+  let selectedId = null;
+  let currentPhases = [...phases];
+  el4.setAttribute("role", "list");
+  el4.setAttribute("aria-label", "Customer journey");
+  el4.classList.add("mn-journey");
+  if (options.orientation === "vertical") el4.classList.add("mn-journey--vertical");
+  if (options.compactMode) el4.classList.add("mn-journey--compact");
+  function render5() {
+    el4.innerHTML = "";
+    renderJourneyPhases(el4, currentPhases, options, ac, TYPE_ICONS);
+    if (options.showConnectors && currentPhases.length > 1) {
+      drawConnectors(el4, currentPhases);
+    }
+    if (selectedId) markSelected(selectedId);
+  }
+  function markSelected(id) {
+    el4.querySelectorAll(".mn-journey__card--selected").forEach((c) => c.classList.remove("mn-journey__card--selected"));
+    const card = el4.querySelector(`[data-id="${CSS.escape(id)}"]`);
+    if (card) {
+      card.classList.add("mn-journey__card--selected");
+      card.scrollIntoView({ block: "nearest", inline: "nearest" });
+    }
+  }
+  function selectEngagement(id) {
+    selectedId = id;
+    markSelected(id);
+  }
+  el4.addEventListener("click", (e) => {
+    const card = e.target.closest?.(".mn-journey__card");
+    if (!card) return;
+    const id = card.dataset.id ?? "";
+    selectEngagement(id);
+    const eng = currentPhases.flatMap((p) => p.engagements).find((en) => en.id === id);
+    if (eng?.onClick) eng.onClick();
+    if (eng && opts?.onSelect) opts.onSelect(eng);
+  }, { signal: ac.signal });
+  setupKeyboard(el4, currentPhases, options, ac, selectEngagement);
+  setupTooltip(el4, ac);
+  render5();
+  return {
+    update(newPhases) {
+      currentPhases = [...newPhases];
+      render5();
+    },
+    selectEngagement,
+    getSelected: () => selectedId,
+    destroy() {
+      ac.abort();
+      el4.innerHTML = "";
+      el4.removeAttribute("role");
+      el4.removeAttribute("aria-label");
+      el4.classList.remove("mn-journey", "mn-journey--vertical", "mn-journey--compact");
+    }
+  };
+}
+
+// src/ts/admin-shell-render.ts
+function groupBySection(items) {
+  const map = /* @__PURE__ */ new Map();
+  for (const item of items) {
+    const key = item.section ?? "";
+    const arr2 = map.get(key);
+    if (arr2) arr2.push(item);
+    else map.set(key, [item]);
+  }
+  return map;
+}
+function buildHeader(cfg) {
+  const hdr = document.createElement("div");
+  hdr.className = "mn-admin-sidebar__header";
+  if (cfg.icon) {
+    const ico = document.createElement("span");
+    ico.className = "mn-admin-sidebar__header-icon";
+    ico.innerHTML = icons[cfg.icon]?.() ?? "";
+    hdr.appendChild(ico);
+  }
+  const title = document.createElement("span");
+  title.className = "mn-admin-sidebar__header-title";
+  title.textContent = cfg.title;
+  hdr.appendChild(title);
+  if (cfg.badge) {
+    const badge = document.createElement("span");
+    badge.className = "mn-admin-sidebar__header-badge";
+    badge.textContent = cfg.badge;
+    hdr.appendChild(badge);
+  }
+  return hdr;
+}
+function buildSearch(cfg, ac, onInput) {
+  const wrap = document.createElement("div");
+  wrap.className = "mn-admin-sidebar__search";
+  const input = document.createElement("input");
+  input.type = "text";
+  input.className = "mn-admin-sidebar__search-input";
+  input.placeholder = cfg.placeholder ?? "Find...";
+  input.setAttribute("aria-label", cfg.placeholder ?? "Find...");
+  wrap.appendChild(input);
+  if (cfg.shortcut) {
+    const kbd = document.createElement("kbd");
+    kbd.className = "mn-admin-sidebar__search-kbd";
+    kbd.textContent = cfg.shortcut;
+    wrap.appendChild(kbd);
+  }
+  input.addEventListener("input", () => onInput(input.value), { signal: ac.signal });
+  return wrap;
+}
+function buildNavItem(item, active, ac, onClick) {
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "mn-admin-nav-item";
+  if (active) btn.classList.add("mn-admin-nav-item--active");
+  btn.dataset.navId = item.id;
+  if (active) btn.setAttribute("aria-current", "page");
+  const ico = document.createElement("span");
+  ico.className = "mn-admin-nav-item__icon";
+  ico.innerHTML = icons[item.icon]?.() ?? "";
+  btn.appendChild(ico);
+  const label = document.createElement("span");
+  label.className = "mn-admin-nav-item__label";
+  label.textContent = item.label;
+  btn.appendChild(label);
+  if (item.badge != null) {
+    const badge = document.createElement("span");
+    badge.className = "mn-admin-nav-item__badge";
+    badge.textContent = String(item.badge);
+    btn.appendChild(badge);
+  }
+  btn.addEventListener("click", () => onClick(item.id), { signal: ac.signal });
+  return btn;
+}
+function buildTopbar(pageLabel) {
+  const bar = document.createElement("div");
+  bar.className = "mn-admin-topbar";
+  const breadcrumb = document.createElement("span");
+  breadcrumb.className = "mn-admin-topbar__breadcrumb";
+  breadcrumb.textContent = "Admin";
+  bar.appendChild(breadcrumb);
+  const sep = document.createElement("span");
+  sep.className = "mn-admin-topbar__sep";
+  sep.textContent = "\u203A";
+  bar.appendChild(sep);
+  const title = document.createElement("span");
+  title.className = "mn-admin-topbar__title";
+  title.textContent = pageLabel;
+  bar.appendChild(title);
+  return { el: bar, breadcrumbEl: breadcrumb, titleEl: title };
+}
+
+// src/ts/admin-shell.ts
+function findItem(nav, id) {
+  return nav.find((n) => n.id === id);
+}
+function adminShell(el4, opts) {
+  const ac = new AbortController();
+  const collapsible = opts.collapsible ?? true;
+  const showTopBar = opts.topBar ?? true;
+  let activePage = opts.initialPage ?? opts.sidebar.nav[0]?.id ?? "";
+  el4.innerHTML = "";
+  el4.classList.add("mn-admin-shell");
+  if (opts.initialCollapsed) el4.classList.add("mn-admin-shell--collapsed");
+  const sidebar = document.createElement("nav");
+  sidebar.className = "mn-admin-sidebar";
+  sidebar.setAttribute("role", "navigation");
+  sidebar.setAttribute("aria-label", "Admin navigation");
+  el4.appendChild(sidebar);
+  if (opts.sidebar.header) {
+    sidebar.appendChild(buildHeader(opts.sidebar.header));
+  }
+  let searchWrap = null;
+  const filterNav = (q) => {
+    const lower = q.toLowerCase();
+    const btns = sidebar.querySelectorAll(".mn-admin-nav-item");
+    btns.forEach((btn) => {
+      const label = btn.querySelector(".mn-admin-nav-item__label")?.textContent ?? "";
+      btn.style.display = label.toLowerCase().includes(lower) ? "" : "none";
+    });
+    opts.sidebar.search?.onSearch?.(q);
+  };
+  if (opts.sidebar.search) {
+    searchWrap = buildSearch(opts.sidebar.search, ac, filterNav);
+    sidebar.appendChild(searchWrap);
+  }
+  if (opts.sidebar.search?.shortcut) {
+    const key = opts.sidebar.search.shortcut.toLowerCase();
+    document.addEventListener("keydown", (e) => {
+      if (e.key.toLowerCase() === key && !isInputFocused()) {
+        e.preventDefault();
+        const input = searchWrap?.querySelector("input");
+        input?.focus();
+      }
+    }, { signal: ac.signal });
+  }
+  const navContainer = document.createElement("div");
+  navContainer.className = "mn-admin-sidebar__nav";
+  sidebar.appendChild(navContainer);
+  function renderNav() {
+    navContainer.innerHTML = "";
+    const groups = groupBySection(opts.sidebar.nav);
+    for (const [section, items] of groups) {
+      if (section) {
+        const heading = document.createElement("div");
+        heading.className = "mn-admin-sidebar__section-title";
+        heading.textContent = section;
+        navContainer.appendChild(heading);
+      }
+      for (const item of items) {
+        navContainer.appendChild(
+          buildNavItem(item, item.id === activePage, ac, handleNav)
+        );
+      }
+    }
+  }
+  function handleNav(id) {
+    activePage = id;
+    highlightActive();
+    const item = findItem(opts.sidebar.nav, id);
+    if (item && titleEl) titleEl.textContent = item.label;
+    opts.onNavigate(id);
+  }
+  function highlightActive() {
+    const btns = navContainer.querySelectorAll(".mn-admin-nav-item");
+    btns.forEach((btn) => {
+      const isActive = btn.dataset.navId === activePage;
+      btn.classList.toggle("mn-admin-nav-item--active", isActive);
+      if (isActive) btn.setAttribute("aria-current", "page");
+      else btn.removeAttribute("aria-current");
+    });
+  }
+  renderNav();
+  if (collapsible) {
+    const toggle = document.createElement("button");
+    toggle.type = "button";
+    toggle.className = "mn-admin-sidebar__collapse-btn";
+    toggle.setAttribute("aria-label", "Toggle sidebar");
+    toggle.textContent = "\xAB";
+    toggle.addEventListener("click", () => {
+      el4.classList.toggle("mn-admin-shell--collapsed");
+    }, { signal: ac.signal });
+    sidebar.appendChild(toggle);
+  }
+  if (opts.sidebar.footer) sidebar.appendChild(opts.sidebar.footer);
+  const content = document.createElement("div");
+  content.className = "mn-admin-content";
+  el4.appendChild(content);
+  let titleEl = null;
+  if (showTopBar) {
+    const initLabel = findItem(opts.sidebar.nav, activePage)?.label ?? "";
+    const topbar = buildTopbar(initLabel);
+    titleEl = topbar.titleEl;
+    content.appendChild(topbar.el);
+  }
+  const body = document.createElement("div");
+  body.className = "mn-admin-content__body";
+  content.appendChild(body);
+  return {
+    contentEl: body,
+    setPage(id) {
+      activePage = id;
+      highlightActive();
+      const item = findItem(opts.sidebar.nav, id);
+      if (item && titleEl) titleEl.textContent = item.label;
+      opts.onNavigate(id);
+    },
+    setTitle(title) {
+      if (titleEl) titleEl.textContent = title;
+    },
+    collapse(val) {
+      el4.classList.toggle("mn-admin-shell--collapsed", val);
+    },
+    destroy() {
+      ac.abort();
+      el4.innerHTML = "";
+      el4.classList.remove("mn-admin-shell", "mn-admin-shell--collapsed");
+    }
+  };
+}
+function isInputFocused() {
+  const tag = document.activeElement?.tagName;
+  return tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT";
+}
+
+// src/ts/section-card.ts
+var idCounter = 0;
+function renderAction(header, action, ac) {
+  header.querySelector(".mn-section-card__action")?.remove();
+  if (!action) return;
+  const el4 = document.createElement(action.href ? "a" : "button");
+  el4.className = "mn-section-card__action";
+  el4.textContent = escapeHtml(action.label);
+  if (action.href && el4 instanceof HTMLAnchorElement) {
+    el4.href = action.href;
+  }
+  if (action.onClick) {
+    el4.addEventListener("click", (e) => {
+      if (!action.href) e.preventDefault();
+      action.onClick();
+    }, { signal: ac.signal });
+  }
+  if (el4 instanceof HTMLButtonElement) {
+    el4.type = "button";
+  }
+  header.appendChild(el4);
+}
+function sectionCard(el4, opts) {
+  const ac = new AbortController();
+  const variant = opts.variant ?? "default";
+  const titleId = `mn-sc-title-${++idCounter}`;
+  const section = document.createElement("section");
+  section.className = `mn-section-card mn-section-card--${variant}`;
+  if (opts.padding === false) section.classList.add("mn-section-card--no-padding");
+  if (opts.className) section.classList.add(opts.className);
+  section.setAttribute("role", "region");
+  section.setAttribute("aria-labelledby", titleId);
+  const header = document.createElement("header");
+  header.className = "mn-section-card__header";
+  const h3 = document.createElement("h3");
+  h3.className = "mn-section-card__title";
+  h3.id = titleId;
+  h3.textContent = escapeHtml(opts.title);
+  header.appendChild(h3);
+  renderAction(header, opts.action, ac);
+  section.appendChild(header);
+  const body = document.createElement("div");
+  body.className = "mn-section-card__body";
+  section.appendChild(body);
+  el4.appendChild(section);
+  return {
+    bodyEl: body,
+    setTitle(t) {
+      h3.textContent = escapeHtml(t);
+    },
+    setAction(a) {
+      renderAction(header, a, ac);
+    }
+  };
+}
+
+// src/ts/settings-panel-items.ts
+var uid = 0;
+function nextId(prefix) {
+  return `mn-sp-${prefix}-${++uid}`;
+}
+function labelGroup(label, description, forId) {
+  const g = document.createElement("div");
+  g.className = "mn-settings-item__label-group";
+  const lbl = document.createElement("label");
+  lbl.className = "mn-settings-item__label";
+  lbl.textContent = escapeHtml(label);
+  if (forId) lbl.htmlFor = forId;
+  g.appendChild(lbl);
+  if (description) {
+    const desc = document.createElement("span");
+    desc.className = "mn-settings-item__desc";
+    desc.textContent = escapeHtml(description);
+    g.appendChild(desc);
+  }
+  return g;
+}
+function renderToggle(item, ac, values) {
+  const row = document.createElement("div");
+  row.className = "mn-settings-item";
+  const id = nextId("toggle");
+  row.appendChild(labelGroup(item.label, item.description, id));
+  const input = document.createElement("input");
+  input.type = "checkbox";
+  input.id = id;
+  input.className = "mn-settings-item__ctrl mn-settings-toggle";
+  input.checked = item.value;
+  input.setAttribute("role", "switch");
+  input.setAttribute("aria-checked", String(item.value));
+  if (item.disabled) input.disabled = true;
+  input.addEventListener("change", () => {
+    values.set(item.label, input.checked);
+    input.setAttribute("aria-checked", String(input.checked));
+    item.onChange(input.checked);
+  }, { signal: ac.signal });
+  values.set(item.label, item.value);
+  row.appendChild(input);
+  return row;
+}
+function renderText(item, ac, values) {
+  const row = document.createElement("div");
+  row.className = "mn-settings-item";
+  const id = nextId("text");
+  row.appendChild(labelGroup(item.label, item.description, id));
+  const input = document.createElement("input");
+  input.type = "text";
+  input.id = id;
+  input.className = "mn-settings-item__ctrl mn-settings-text";
+  input.value = item.value;
+  if (item.placeholder) input.placeholder = item.placeholder;
+  if (item.maxLength) input.maxLength = item.maxLength;
+  if (item.hint) {
+    const hintId = `${id}-hint`;
+    input.setAttribute("aria-describedby", hintId);
+    const hint = document.createElement("span");
+    hint.id = hintId;
+    hint.className = "mn-settings-item__hint mn-sr-only";
+    hint.textContent = item.hint;
+    row.appendChild(hint);
+  }
+  input.addEventListener("input", () => {
+    values.set(item.label, input.value);
+    item.onChange(input.value);
+  }, { signal: ac.signal });
+  values.set(item.label, item.value);
+  row.appendChild(input);
+  return row;
+}
+function renderSelect(item, ac, values) {
+  const row = document.createElement("div");
+  row.className = "mn-settings-item";
+  const id = nextId("select");
+  row.appendChild(labelGroup(item.label, item.description, id));
+  const sel = document.createElement("select");
+  sel.id = id;
+  sel.className = "mn-settings-item__ctrl mn-settings-select";
+  for (const opt of item.options) {
+    const o = document.createElement("option");
+    o.value = opt.value;
+    o.textContent = escapeHtml(opt.label);
+    if (opt.value === item.value) o.selected = true;
+    sel.appendChild(o);
+  }
+  sel.addEventListener("change", () => {
+    values.set(item.label, sel.value);
+    item.onChange(sel.value);
+  }, { signal: ac.signal });
+  values.set(item.label, item.value);
+  row.appendChild(sel);
+  return row;
+}
+
+// src/ts/settings-panel.ts
+function renderRange(item, ac, values) {
+  const row = document.createElement("div");
+  row.className = "mn-settings-item";
+  const id = nextId("range");
+  row.appendChild(labelGroup(item.label, item.description, id));
+  const wrap = document.createElement("div");
+  wrap.className = "mn-settings-item__ctrl mn-settings-range-wrap";
+  const input = document.createElement("input");
+  input.type = "range";
+  input.id = id;
+  input.className = "mn-settings-range";
+  input.min = String(item.min);
+  input.max = String(item.max);
+  if (item.step) input.step = String(item.step);
+  input.value = String(item.value);
+  const display = document.createElement("span");
+  display.className = "mn-settings-range__value";
+  display.textContent = item.format ? item.format(item.value) : String(item.value);
+  input.addEventListener("input", () => {
+    const v = Number(input.value);
+    display.textContent = item.format ? item.format(v) : String(v);
+    values.set(item.label, v);
+    item.onChange(v);
+  }, { signal: ac.signal });
+  values.set(item.label, item.value);
+  wrap.appendChild(input);
+  wrap.appendChild(display);
+  row.appendChild(wrap);
+  return row;
+}
+function renderRadio(item, ac, values) {
+  const row = document.createElement("div");
+  row.className = "mn-settings-item";
+  const name = nextId("radio");
+  row.appendChild(labelGroup(item.label, item.description));
+  const group = document.createElement("div");
+  group.className = "mn-settings-item__ctrl mn-settings-radio-group";
+  group.setAttribute("role", "radiogroup");
+  group.setAttribute("aria-label", item.label);
+  for (const opt of item.options) {
+    const label = document.createElement("label");
+    label.className = "mn-settings-radio";
+    const input = document.createElement("input");
+    input.type = "radio";
+    input.name = name;
+    input.value = opt.value;
+    if (opt.value === item.value) input.checked = true;
+    input.addEventListener("change", () => {
+      values.set(item.label, input.value);
+      item.onChange(input.value);
+    }, { signal: ac.signal });
+    label.appendChild(input);
+    const span = document.createElement("span");
+    span.textContent = escapeHtml(opt.label);
+    label.appendChild(span);
+    group.appendChild(label);
+  }
+  values.set(item.label, item.value);
+  row.appendChild(group);
+  return row;
+}
+function renderInfo(item) {
+  const row = document.createElement("div");
+  row.className = "mn-settings-item";
+  row.appendChild(labelGroup(item.label));
+  const val = document.createElement("span");
+  val.className = "mn-settings-item__ctrl mn-settings-info";
+  if (item.mono) val.classList.add("mn-settings-info--mono");
+  val.textContent = escapeHtml(item.value);
+  row.appendChild(val);
+  return row;
+}
+function renderAction2(item, ac) {
+  const row = document.createElement("div");
+  row.className = "mn-settings-item mn-settings-item--action";
+  row.appendChild(labelGroup(item.label, item.description));
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "mn-settings-item__ctrl mn-settings-action-btn";
+  if (item.variant === "danger") btn.classList.add("mn-settings-action-btn--danger");
+  btn.textContent = escapeHtml(item.buttonLabel);
+  btn.addEventListener("click", () => item.onAction(), { signal: ac.signal });
+  row.appendChild(btn);
+  return row;
+}
+function renderCustom(item) {
+  const row = document.createElement("div");
+  row.className = "mn-settings-item";
+  row.appendChild(labelGroup(item.label, item.description));
+  const slot = document.createElement("div");
+  slot.className = "mn-settings-item__ctrl";
+  item.render(slot);
+  row.appendChild(slot);
+  return row;
+}
+function renderItem(item, ac, values) {
+  switch (item.type) {
+    case "toggle":
+      return renderToggle(item, ac, values);
+    case "text":
+      return renderText(item, ac, values);
+    case "select":
+      return renderSelect(item, ac, values);
+    case "range":
+      return renderRange(item, ac, values);
+    case "radio":
+      return renderRadio(item, ac, values);
+    case "info":
+      return renderInfo(item);
+    case "action":
+      return renderAction2(item, ac);
+    case "custom":
+      return renderCustom(item);
+  }
+}
+function settingsPanel(el4, opts) {
+  const ac = new AbortController();
+  const values = /* @__PURE__ */ new Map();
+  el4.classList.add("mn-settings-panel");
+  for (const section of opts.sections) {
+    const fieldset = document.createElement("fieldset");
+    fieldset.className = "mn-settings-section";
+    if (section.id) fieldset.dataset.sectionId = section.id;
+    const legend2 = document.createElement("legend");
+    legend2.className = "mn-settings-section__title";
+    legend2.textContent = escapeHtml(section.title);
+    fieldset.appendChild(legend2);
+    if (section.description) {
+      const desc = document.createElement("p");
+      desc.className = "mn-settings-section__desc";
+      desc.textContent = escapeHtml(section.description);
+      fieldset.appendChild(desc);
+    }
+    for (const item of section.items) {
+      const key = section.id ? `${section.id}:${item.label}` : item.label;
+      fieldset.appendChild(renderItem(item, ac, values));
+      if (values.has(item.label)) {
+        values.set(key, values.get(item.label));
+      }
+    }
+    el4.appendChild(fieldset);
+  }
+  return {
+    update(sectionId, itemLabel, value) {
+      const key = `${sectionId}:${itemLabel}`;
+      values.set(key, value);
+      values.set(itemLabel, value);
+    },
+    getValues() {
+      const result = {};
+      for (const [k, v] of values) result[k] = v;
+      return result;
+    },
+    destroy() {
+      ac.abort();
+      el4.innerHTML = "";
+      el4.classList.remove("mn-settings-panel");
     }
   };
 }
@@ -12697,6 +13479,10 @@ function registerExtras(M2) {
   M2.AppShellController = AppShellController;
   M2.PanelOrchestrator = PanelOrchestrator;
   M2.DashboardRenderer = DashboardRenderer;
+  M2.customerJourney = customerJourney;
+  M2.adminShell = adminShell;
+  M2.sectionCard = sectionCard;
+  M2.settingsPanel = settingsPanel;
 }
 
 // src/ts/maranello.ts
@@ -12866,6 +13652,7 @@ export {
   activityFeed,
   addListener,
   addValidator,
+  adminShell,
   agentCostBreakdown,
   agentTrace,
   applySettings,
@@ -12914,6 +13701,7 @@ export {
   createGaugesInContainer,
   cruiseLever,
   cssVar,
+  customerJourney,
   cycleTheme,
   dataIcons,
   dataTable,
@@ -13027,7 +13815,9 @@ export {
   resolveContainer3 as resolveContainer,
   riskMatrix,
   saveSettings,
+  sectionCard,
   setTheme,
+  settingsPanel,
   showTip,
   showToast,
   socialGraph,
