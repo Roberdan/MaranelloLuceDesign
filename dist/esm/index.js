@@ -3060,7 +3060,7 @@ var ICONS = {
   nero: "\u25CF",
   avorio: "\u25CB",
   colorblind: "\u25D0",
-  sugar: "\u25A3"
+  sugar: "\u25A8"
 };
 var LABELS = {
   editorial: "Editorial (mixed)",

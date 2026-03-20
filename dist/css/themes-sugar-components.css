@@ -157,14 +157,52 @@ body.mn-sugar .mn-detail-panel__header { border-color: var(--mn-border); }
 body.mn-sugar .mn-modal__content { background: var(--mn-surface-raised); border: 1px solid var(--mn-border); }
 body.mn-sugar .mn-tooltip { background: var(--mn-surface-raised); border: 1px solid var(--mn-border); color: var(--mn-text); }
 
-/* Nav bar */
-body.mn-sugar .mn-nav { background: var(--mn-surface-sunken); border-bottom: 1px solid var(--mn-border); }
+/* Nav bar — force light with !important to beat inline dark */
+body.mn-sugar .mn-nav { background: var(--mn-surface-sunken) !important; border-bottom: 1px solid var(--mn-border) !important; color: var(--mn-text) !important; }
+body.mn-sugar .mn-nav a, body.mn-sugar .mn-nav span { color: var(--mn-text) !important; }
+body.mn-sugar .mn-nav a:hover { color: var(--mn-accent) !important; }
+body.mn-sugar .mn-nav .mn-nav__link--active { color: var(--mn-accent) !important; text-decoration: underline; }
+body.mn-sugar header, body.mn-sugar .mn-header { background: var(--mn-surface-sunken) !important; color: var(--mn-text) !important; }
+
+/* Footer */
+body.mn-sugar .mn-footer { background: var(--mn-surface-raised) !important; color: var(--mn-text-muted) !important; }
+body.mn-sugar .mn-footer a { color: var(--mn-accent) !important; }
 
 /* Notification center */
-body.mn-sugar .mn-notification-panel { background: var(--mn-surface-raised); border: 1px solid var(--mn-border); }
+body.mn-sugar .mn-notification-panel { background: var(--mn-surface-raised) !important; border: 1px solid var(--mn-border) !important; }
 
-/* WC gantt — dark canvas override */
-body.mn-sugar mn-gantt { border: 1px solid var(--mn-border); border-radius: var(--radius-md); overflow: hidden; }
+/* WC gantt — canvas sits inside dark container */
+body.mn-sugar mn-gantt { border: 1px solid var(--mn-border) !important; border-radius: var(--radius-md); overflow: hidden; }
+body.mn-sugar .mn-gantt canvas { filter: invert(0.88) hue-rotate(180deg); }
+
+/* Global text readability on Sugar bg */
+body.mn-sugar .mn-title-section, body.mn-sugar .mn-title-sub,
+body.mn-sugar h1, body.mn-sugar h2, body.mn-sugar h3,
+body.mn-sugar h4, body.mn-sugar h5 { color: var(--mn-text) !important; }
+body.mn-sugar .mn-body, body.mn-sugar .mn-caption,
+body.mn-sugar p { color: var(--mn-text-tertiary) !important; }
+body.mn-sugar .mn-micro { color: var(--mn-text-muted) !important; }
+body.mn-sugar .mn-label { color: var(--mn-text-muted) !important; }
+
+/* Card shadows — Sugar design aesthetic: subtle elevation */
+body.mn-sugar .mn-card,
+body.mn-sugar .mn-card-dark,
+body.mn-sugar .mn-section-card { box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04) !important; }
+body.mn-sugar .mn-card:hover,
+body.mn-sugar .mn-card-dark:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.04) !important; }
+
+/* OKR panel */
+body.mn-sugar .mn-okr { background: var(--mn-surface-raised) !important; }
+body.mn-sugar .mn-okr * { color: var(--mn-text) !important; }
+
+/* Command palette */
+body.mn-sugar .mn-command-palette { background: var(--mn-surface-raised) !important; border: 1px solid var(--mn-border) !important; }
+
+/* Dropdown */
+body.mn-sugar .mn-dropdown__menu { background: var(--mn-surface-raised) !important; border: 1px solid var(--mn-border) !important; }
+
+/* Toast override */
+body.mn-sugar .mn-toast { background: var(--mn-surface-raised) !important; border: 1px solid var(--mn-border) !important; color: var(--mn-text) !important; }
 
 /* Chart tooltip vars */
 body.mn-sugar {
