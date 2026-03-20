@@ -20,7 +20,7 @@ class MnThemeToggle extends HTMLElement {
     super();
     this.attachShadow({ mode: "open" });
     this._modes = ["editorial", "nero", "avorio", "colorblind", "sugar"];
-    this._icons = ["\u25D1", "\u25CF", "\u25CB", "\u25D0", "\u25A3"];
+    this._icons = ["\u25D1", "\u25CF", "\u25CB", "\u25D0", "\u2B22"];
     this._labels = ["Editorial (mixed)", "Full Nero", "Full Avorio", "Colorblind-safe", "Sugar"];
     this._idx = 1;
     const tokens = cssLink("../css/tokens.css");
