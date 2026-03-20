@@ -6,8 +6,13 @@
 
 <p align="center">
   <a href="https://roberdan.github.io/MaranelloLuceDesign/">
-    <img src="docs/screenshots/hero-nero.png" alt="Maranello Luce — Hero" width="800">
+    <img src="docs/screenshots/hero-nero.png" alt="Maranello Luce — Nero theme" width="800">
   </a>
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/hero-sugar.png" alt="Maranello Luce — Sugar theme" width="390">
+  <img src="docs/screenshots/hero-avorio.png" alt="Maranello Luce — Avorio theme" width="390">
 </p>
 
 <p align="center">
@@ -20,19 +25,19 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-4.14.1-FFC72C?style=flat-square">
+  <img src="https://img.shields.io/badge/version-4.19.2-FFC72C?style=flat-square">
   <img src="https://img.shields.io/badge/license-MPL_2.0-green?style=flat-square">
-  <img src="https://img.shields.io/badge/tests-432_passed-00A651?style=flat-square">
+  <img src="https://img.shields.io/badge/tests-973_passed-00A651?style=flat-square">
   <img src="https://img.shields.io/badge/zero_deps-vanilla_TS-4EA8DE?style=flat-square">
   <img src="https://img.shields.io/badge/WCAG_2.2-AA-8B5CF6?style=flat-square">
-  <img src="https://img.shields.io/badge/themes-4_(nero%2C_avorio%2C_editorial%2C_colorblind)-D4622B?style=flat-square">
+  <img src="https://img.shields.io/badge/themes-5_(nero%2C_avorio%2C_editorial%2C_colorblind%2C_sugar)-D4622B?style=flat-square">
   <img src="https://img.shields.io/badge/components-150%2B_APIs-00A651?style=flat-square">
   <img src="https://img.shields.io/badge/icons-149%2B_SVGs-4EA8DE?style=flat-square">
 </p>
 
 ---
 
-> **[▶ Open Full Interactive Demo](https://roberdan.github.io/MaranelloLuceDesign/)** — 33 sections, every component, 4 themes, self-documenting API snippets · ♿ Accessibility panel (font size, contrast, motion, dyslexia font)
+> **[▶ Open Full Interactive Demo](https://roberdan.github.io/MaranelloLuceDesign/)** — 33 sections, every component, 5 themes, self-documenting API snippets · ♿ Accessibility panel (font size, contrast, motion, dyslexia font)
 
 ---
 
@@ -44,7 +49,7 @@ It ships as **three independent layers** that you can use together or separately
 
 | Layer | What you get | Import |
 |---|---|---|
-| **CSS-only** | 80+ component stylesheets, token system, 4 adaptive themes — zero JS required | `maranello-luce-design-business/css` |
+| **CSS-only** | 80+ component stylesheets, token system, 5 adaptive themes — zero JS required | `maranello-luce-design-business/css` |
 | **Headless JS** | 87 framework-agnostic APIs: charts, gauges, Gantt, forms, controls, data binding | `maranello-luce-design-business` |
 | **Web Components** | 31 `mn-*` custom elements — drop into any framework or plain HTML | `maranello-luce-design-business/wc` |
 
@@ -52,7 +57,7 @@ It ships as **three independent layers** that you can use together or separately
 
 | Capability | Detail |
 |---|---|
-| **4 Adaptive Themes** | Editorial · Nero · Avorio (warm light) · Colorblind (Wong palette) — all WCAG 2.2 AA |
+| **5 Adaptive Themes** | Editorial · Nero · Avorio (warm light) · Colorblind (Okabe-Ito) · Sugar (light grey, rounded) — all WCAG 2.2 AA |
 | **Token System** | 3-layer: primitive → semantic → component. `--mn-text` / `--mn-surface` auto-invert in light themes |
 | **87 JS APIs** | Charts (11), Gauges (9), Gantt, Funnel, Controls (6), Forms (12), Dialogs, Data binding (10), Icons (149+) |
 | **31 Web Components** | `mn-chart`, `mn-gauge`, `mn-gantt`, `mn-data-table`, `mn-detail-panel`, `mn-a11y`, `mn-chat`, `mn-okr`, `mn-map` · **Runtime**: `mn-app-shell`, `mn-facet-workbench`, `mn-entity-workbench`, `mn-dashboard`, `mn-async-select`, `mn-state-scaffold` |
@@ -118,11 +123,13 @@ Consumer contract: [`CONSUMER_CONTRACT.md`](CONSUMER_CONTRACT.md) · Full API: [
 
 ## Dashboard & KPI Cards
 
-<img src="docs/screenshots/dashboard-nero.png" alt="Dashboard with KPI cards" width="800">
+<img src="docs/screenshots/dashboard-nero.png" alt="Dashboard with KPI cards — Nero" width="800">
+
+<img src="docs/screenshots/dashboard-sugar.png" alt="Dashboard with KPI cards — Sugar" width="800">
 
 ## Charts & Data Visualization
 
-<img src="docs/screenshots/charts-nero.png" alt="Charts" width="800">
+<img src="docs/screenshots/charts-sugar.png" alt="Charts — Sugar theme" width="800">
 
 ## Ferrari Instrument Binnacle
 
@@ -151,23 +158,23 @@ Consumer contract: [`CONSUMER_CONTRACT.md`](CONSUMER_CONTRACT.md) · Full API: [
 ## Install
 
 ```bash
-npm install github:Roberdan/MaranelloLuceDesign#v4.15.0
+npm install github:Roberdan/MaranelloLuceDesign#v4.19.2
 ```
 
 Or CDN:
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v4.15.0/dist/css/index.css">
-<script src="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v4.15.0/dist/iife/maranello.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v4.19.2/dist/css/index.css">
+<script src="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v4.19.2/dist/iife/maranello.min.js"></script>
 ```
 
-> **Breaking change (v4.0.0):** Glass theme removed. Themes are now **editorial · nero · avorio · colorblind**. See [CHANGELOG.md](CHANGELOG.md).
+> **Breaking change (v4.0.0):** Glass theme removed. Themes are now **editorial · nero · avorio · colorblind · sugar**. See [CHANGELOG.md](CHANGELOG.md).
 
 > **New in v4.0.0:** `Maranello.palette()` — reads all 20 semantic color tokens live from the active theme, no caching. Use it inside render functions instead of capturing CSS vars at load time.
 
 ## NaSra — Built-in AI Design System Expert
 
 Maranello ships with **NaSra**, an AI agent that knows every token, theme, WCAG rule, and
-responsive pattern. She prevents regressions and guides correct usage across all 4 themes.
+responsive pattern. She prevents regressions and guides correct usage across all 5 themes.
 
 **In this repo (Claude Code) — auto-loads:**
 ```
@@ -181,7 +188,7 @@ responsive pattern. She prevents regressions and guides correct usage across all
 @node_modules/maranello-luce-design-business/.github/agents/NaSra.agent.md
 ```
 
-NaSra covers: adaptive token rules · all 4 themes · WCAG 2.2 AA · color blindness prevention ·
+NaSra covers: adaptive token rules · all 5 themes · WCAG 2.2 AA · color blindness prevention ·
 responsive checklist · CI constitution. Full guide: [`.github/agents/README.md`](.github/agents/README.md)
 
 ## Framework Integration

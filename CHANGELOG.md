@@ -5,7 +5,32 @@ All notable changes to this project will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.19.2] - 2026-03-20
+
+### Added
+- **`docs/migrations/TEMPLATE.md`** — standard template for all future breaking-change migration guides
+- **`docs/migrations/v4.19.1.md`** — full migration guide for v4.19.1 breaking changes (BC-1..BC-4)
+- **`scripts/check-migration-docs.sh`** — CI gate: if CHANGELOG contains `Breaking Changes` in the current version entry, `docs/migrations/vX.Y.Z.md` must exist or build fails
+- **CONTRIBUTING.md** — added Breaking Changes section: SemVer rules, process, CHANGELOG format convention
+- **README** — updated to 5 themes, badges (v4.19.2, 973 tests), Sugar theme screenshots, install URLs
+- **`docs/THEMING.md`** — added Sugar theme row, Sugar token overrides column, Sugar+Colorblind combined usage
+- **`docs/api-catalog.md`** — updated to v4.19.2, 31 WCs (was 25), added Themes table with all 5+1 combinations
+- **Screenshots** — `hero-sugar.png`, `hero-avorio.png`, `hero-editorial.png`, `dashboard-sugar.png`, `charts-sugar.png`
+
+### Changed
+- **CI** — added `check-migration-docs.sh` step after semantic design audit
+- **v4.19.1 CHANGELOG** — retroactively added `### Breaking Changes` section with [BC-1..BC-4] refs and migration doc link
+
 ## [4.19.1] - 2026-03-20
+
+### Breaking Changes
+
+- **[BC-1] `--mn-danger-text` replaces `var(--mn-text)` on danger buttons** — Migration: [v4.19.1](docs/migrations/v4.19.1.md#bc-1-new-token---mn-danger-text--danger-button-text-color)
+- **[BC-2] Avorio danger button is now outline** — Primary button keeps solid fill, danger button is outline/ghost. Migration: [v4.19.1](docs/migrations/v4.19.1.md#bc-2-avorio-theme--danger-button-is-now-outline-instead-of-filled)
+- **[BC-3] Colorblind `--mn-error` darkened `#D55E00` → `#C94000`** — Migration: [v4.19.1](docs/migrations/v4.19.1.md#bc-3-colorblind-theme---mn-error-darkened-from-d55e00-to-c94000)
+- **[BC-4] Sugar `--mn-text-muted` darkened `#767676` → `#5e5e5e`** — Migration: [v4.19.1](docs/migrations/v4.19.1.md#bc-4-sugar-theme---mn-text-muted-darkened-from-767676-to-5e5e5e)
+
+Full migration guide: [`docs/migrations/v4.19.1.md`](docs/migrations/v4.19.1.md)
 
 ### Added
 - **`scripts/check-semantic-design.sh`** — CI gate for semantic design audit: runs WCAG AA contrast check + signal token distinctness + danger-button contrast check across all 6 theme combinations (incl. Sugar+Colorblind)

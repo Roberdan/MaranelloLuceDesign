@@ -1,4 +1,4 @@
-<!-- v4.14.1 | 2026-03-17 -->
+<!-- v4.19.2 | 2026-03-20 -->
 # Contributing
 
 ## Constitution
@@ -12,7 +12,7 @@ Key rules:
 - All CSS rules inside `@layer` blocks
 - Max 250 lines per file
 - No hardcoded colors — use tokens from `tokens.css`
-- Works in all 4 themes (nero, avorio, editorial, colorblind)
+- Works in all 5 themes (nero, avorio, editorial, colorblind, sugar)
 - `prefers-reduced-motion` respected
 
 ## Setup
@@ -58,11 +58,13 @@ Requirements: Node 20+, npm 10+.
 
 ## Theme Compliance
 
-Every component must work in all 4 themes. Test by switching `<body>` class:
+Every component must work in all 5 themes. Test by switching `<body>` class:
 - `mn-nero` — dark mode
-- `mn-avorio` — warm light
-- (default) — editorial mixed
-- `mn-colorblind` — high-contrast accessible
+- `mn-avorio` — warm light, Ferrari red accent
+- (default) — editorial mixed dark/light
+- `mn-colorblind` — Okabe-Ito accessible palette
+- `mn-sugar` — light grey, rounded, black accent
+- `mn-sugar.mn-colorblind` — Sugar + colorblind combined
 
 Use only CSS custom properties for colors. NEVER hardcode #hex values (except in tokens.css).
 
@@ -81,9 +83,53 @@ Before submitting a PR:
 
 - [ ] One feature/fix per PR
 - [ ] Build, unit tests, and typecheck pass
-- [ ] Works across all 4 themes
+- [ ] Works across all 5 themes (including sugar + sugar+colorblind)
 - [ ] Accessibility checklist is complete
 - [ ] `CHANGELOG.md` updated under `[Unreleased]`
+- [ ] If breaking changes: `docs/migrations/vX.Y.Z.md` created (see [Breaking Changes](#breaking-changes))
+
+## Breaking Changes
+
+A change is **breaking** if it requires consumer code changes on upgrade. This includes:
+- Token renames, removals, or default value shifts that affect visual output
+- JS API signature changes (new required param, renamed function, changed return type)
+- CSS class renames or structural DOM changes
+- Web Component attribute renames or removals
+- Color changes significant enough to break pixel-perfect tests
+
+### SemVer Rules
+
+| Change type | Version bump |
+|---|---|
+| Bug fix, internal refactor, perf | PATCH `x.y.Z` |
+| New feature (backward-compatible) | MINOR `x.Y.0` |
+| Visual breaking change (token color, layout) | PATCH + migration doc |
+| API / class / attr rename or removal | MINOR `x.Y.0` + migration doc |
+| Major restructure or paradigm shift | MAJOR `X.0.0` + migration doc |
+
+### Process
+
+1. Add `### Breaking Changes` section to the CHANGELOG entry (triggers the CI gate).
+2. Copy [`docs/migrations/TEMPLATE.md`](docs/migrations/TEMPLATE.md) to `docs/migrations/vX.Y.Z.md`.
+3. Fill in every `[BC-N]` block: **why**, **who is affected**, **before/after code**, **migration steps**.
+4. Reference the migration doc in your PR description.
+5. `scripts/check-migration-docs.sh` runs in CI and blocks merge if the doc is missing.
+
+### CHANGELOG Format for Breaking Changes
+
+```markdown
+## [4.20.0] - 2026-04-01
+
+### Breaking Changes
+
+- **[BC-1] `--mn-old-token` renamed to `--mn-new-token`** — Migration: [v4.20.0](docs/migrations/v4.20.0.md)
+
+### Added
+
+- ...
+```
+
+---
 
 ## License
 

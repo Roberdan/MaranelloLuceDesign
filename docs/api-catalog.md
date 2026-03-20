@@ -1,5 +1,16 @@
 <!-- Reference catalog — not loaded in context, use for lookup -->
-# API Catalog — v4.11.0
+# API Catalog — v4.19.2
+
+## Themes (5)
+
+| Theme | Body class | Accent | Notes |
+|---|---|---|---|
+| Editorial | (none) | `#FFC72C` | Default dark/light mix |
+| Nero | `mn-nero` | `#FFC72C` | Pure dark |
+| Avorio | `mn-avorio` | `#DC0000` | Warm ivory light — danger btn is outline |
+| Colorblind | `mn-colorblind` | `#0072B2` | Okabe-Ito accessible palette |
+| Sugar | `mn-sugar` | `#000000` | Light grey, rounded corners |
+| Sugar + Colorblind | `mn-sugar mn-colorblind` | `#0072B2` | Cross-theme combination |
 
 ## IIFE Exports (107 on `window.Maranello`)
 
@@ -32,7 +43,7 @@ Charts v4.11 (4): `costTimeline` · `waterfallChart` · `confidenceChart` · `bu
 Inputs (1): `dateRangePicker`
 Feed/Notify (2): `activityFeed` · `notificationCenter`
 
-## Web Components (25)
+## Web Components (31)
 
 | Tag | Attrs |
 |---|---|
@@ -59,7 +70,14 @@ Feed/Notify (2): `activityFeed` · `notificationCenter`
 | `mn-theme-toggle` | `mode` |
 | `mn-theme-rotary` | `size` |
 | `mn-tabs` / `mn-tab` | `active` / `label` |
-| `mn-a11y` | (FAB + settings panel) |
+| `mn-section-nav` | `sections`, `current`, `data-theme`, `data-pos` |
+| `mn-a11y` | (FAB + settings panel, auto-mounts by default) |
+| `mn-app-shell` | `layout` (`full`\|`split`\|`stacked`\|`docked-bottom`\|`dual-panel`\|`side-detail`) |
+| `mn-dashboard` | `schema` (JSON), `data` (JSON) |
+| `mn-facet-workbench` | `facets` (JSON), `presets` (JSON) |
+| `mn-entity-workbench` | `open`, `schema` (JSON), `data` (JSON), `editable` |
+| `mn-async-select` | `placeholder`, `min-chars`, `debounce` |
+| `mn-state-scaffold` | `state` (`loading`\|`empty`\|`error`\|`partial`\|`no-results`), `message`, `action-label` |
 
 ## Accessibility Helpers
 

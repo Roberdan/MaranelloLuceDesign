@@ -132,5 +132,8 @@ jobs:
       - name: Constitution — Semantic design audit
         run: bash scripts/check-semantic-design.sh
 
+      - name: Constitution — Migration docs gate
+        run: bash scripts/check-migration-docs.sh
+
       - name: Constitution — Theme semantic tokens
         run: bash scripts/check-theme-semantics.sh
