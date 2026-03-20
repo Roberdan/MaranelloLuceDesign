@@ -7,7 +7,7 @@
 
 ## Cosa cambia per te
 
-### Zero breaking change
+### Nessun breaking change
 
 Tutte le API che usi oggi funzionano identiche. I tuoi `Maranello.dataTable()`, `Maranello.sparkline()`, `Maranello.openDetailPanel()`, `<mn-gauge>`, `<mn-chart>` etc. sono intatti.
 
