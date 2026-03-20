@@ -2,11 +2,12 @@
 /* themes -- Sugar Components | Maranello Design System
    Cool gray light theme — SugarCRM-inspired, black accent */
 
-/* Section overrides — dark/light/ivory on cool gray bg */
+/* Section overrides — Sugar inverts dark sections to light.
+   !important needed to beat inline style="" on demo sections. */
 body.mn-sugar .mn-section-dark,
-body.mn-sugar .mn-section-accent { background: var(--mn-surface-raised); color: var(--mn-text); }
-body.mn-sugar .mn-section-light { background: var(--mn-surface-raised); }
-body.mn-sugar .mn-section-ivory { color: var(--mn-text); }
+body.mn-sugar .mn-section-accent { background: var(--mn-surface-raised) !important; color: var(--mn-text) !important; }
+body.mn-sugar .mn-section-light { background: var(--mn-surface-raised) !important; }
+body.mn-sugar .mn-section-ivory { color: var(--mn-text) !important; }
 body.mn-sugar .mn-section-dark .mn-watermark,
 body.mn-sugar .mn-section-light .mn-watermark,
 body.mn-sugar .mn-section-ivory .mn-watermark { color: var(--mn-border); }
@@ -26,15 +27,17 @@ body.mn-sugar .mn-section-dark .mn-section-number,
 body.mn-sugar .mn-section-light .mn-section-number,
 body.mn-sugar .mn-section-ivory .mn-section-number { color: var(--mn-text-muted); }
 
-/* Binnacle / Cockpit — force light bg instead of dark */
-body.mn-sugar .mn-binnacle { background: var(--mn-surface-raised); border: 1px solid var(--mn-border); }
-body.mn-sugar .mn-binnacle__title { color: var(--mn-text-muted); }
-body.mn-sugar .mn-strip { background: var(--mn-surface-raised); border: 1px solid var(--mn-border); }
-body.mn-sugar .mn-pod { background: var(--mn-surface); border-color: var(--mn-border); }
+/* Binnacle / Cockpit — !important to beat inline dark backgrounds */
+body.mn-sugar .mn-binnacle { background: var(--mn-surface-raised) !important; border: 1px solid var(--mn-border) !important; color: var(--mn-text) !important; }
+body.mn-sugar .mn-binnacle__title { color: var(--mn-text-muted) !important; }
+body.mn-sugar .mn-strip { background: var(--mn-surface-raised) !important; border: 1px solid var(--mn-border) !important; }
+body.mn-sugar .mn-strip * { color: var(--mn-text) !important; }
+body.mn-sugar .mn-pod { background: var(--mn-surface) !important; border-color: var(--mn-border) !important; color: var(--mn-text) !important; }
+body.mn-sugar .mn-pod * { color: inherit !important; }
 
-/* Card / Panel */
-body.mn-sugar .mn-card-dark { background: var(--mn-surface-raised); border: 1px solid var(--mn-border); box-shadow: var(--shadow-sm); color: var(--mn-text); }
-body.mn-sugar .mn-card { background: var(--mn-surface-raised); color: var(--mn-text); box-shadow: var(--shadow-card); }
+/* Card / Panel — !important to beat inline dark backgrounds */
+body.mn-sugar .mn-card-dark { background: var(--mn-surface-raised) !important; border: 1px solid var(--mn-border) !important; box-shadow: var(--shadow-sm) !important; color: var(--mn-text) !important; }
+body.mn-sugar .mn-card { background: var(--mn-surface-raised) !important; color: var(--mn-text) !important; box-shadow: var(--shadow-card); }
 body.mn-sugar .mn-card__title { color: var(--mn-text); }
 body.mn-sugar .mn-card__text { color: var(--mn-text-tertiary); }
 body.mn-sugar .mn-signal-panel { border-color: var(--mn-border); background: var(--mn-surface-raised); }
@@ -86,20 +89,42 @@ body.mn-sugar .mn-sidebar__link { color: var(--mn-text-muted); }
 body.mn-sugar .mn-sidebar__link:hover { color: var(--mn-text); background: var(--mn-hover-bg); }
 body.mn-sugar .mn-sidebar__link--active { color: var(--mn-text); background: var(--mn-active-bg); }
 
-/* Gantt — light bg */
-body.mn-sugar .mn-gantt { background: var(--mn-surface-raised); border: 1px solid var(--mn-border); }
-body.mn-sugar .mn-gantt__header { background: var(--mn-surface-sunken); color: var(--mn-text); }
-body.mn-sugar .mn-gantt__row { border-color: var(--mn-border); }
-body.mn-sugar .mn-gantt__label { color: var(--mn-text); }
+/* Gantt — light bg, !important for inline style backgrounds */
+body.mn-sugar .mn-gantt { background: var(--mn-surface-raised) !important; border: 1px solid var(--mn-border) !important; }
+body.mn-sugar .mn-gantt__header { background: var(--mn-surface-sunken) !important; color: var(--mn-text) !important; }
+body.mn-sugar .mn-gantt__row { border-color: var(--mn-border) !important; }
+body.mn-sugar .mn-gantt__label { color: var(--mn-text) !important; }
+body.mn-sugar [id*="gantt"] { background: var(--mn-surface-raised) !important; }
 
-/* Chat widget — lighten header */
-body.mn-sugar .mn-chat-header { background: var(--mn-surface-raised); border-bottom: 1px solid var(--mn-border); color: var(--mn-text); }
-body.mn-sugar .mn-chat-body { background: var(--mn-surface); }
-body.mn-sugar .mn-chat-input-wrap { background: var(--mn-surface-raised); border-top: 1px solid var(--mn-border); }
-body.mn-sugar .mn-chat-msg--bot { background: var(--mn-surface-raised); color: var(--mn-text); }
+/* Chat widget — lighten all parts */
+body.mn-sugar .mn-chat-header,
+body.mn-sugar [class*="chat-header"] { background: var(--mn-surface-raised) !important; border-bottom: 1px solid var(--mn-border) !important; color: var(--mn-text) !important; }
+body.mn-sugar .mn-chat-body,
+body.mn-sugar [class*="chat-body"] { background: var(--mn-surface) !important; }
+body.mn-sugar .mn-chat-input-wrap { background: var(--mn-surface-raised) !important; border-top: 1px solid var(--mn-border) !important; }
+body.mn-sugar .mn-chat-msg--bot { background: var(--mn-surface-raised) !important; color: var(--mn-text) !important; }
 
 /* Map — border on dark canvas */
-body.mn-sugar .mn-map-container { border: 1px solid var(--mn-border); border-radius: var(--radius-md); overflow: hidden; }
+body.mn-sugar .mn-map-container,
+body.mn-sugar [id*="map-canvas"] { border: 1px solid var(--mn-border) !important; border-radius: var(--radius-md); overflow: hidden; }
+
+/* Mesh network cards */
+body.mn-sugar .mn-mesh-node { background: var(--mn-surface-raised) !important; border: 1px solid var(--mn-border) !important; }
+body.mn-sugar .mn-mesh-status { background: var(--mn-surface-raised) !important; }
+
+/* Mini gantt bars - use signal tokens not hardcoded */
+body.mn-sugar .mn-mini-gantt__bar--active { background: var(--signal-ok) !important; }
+body.mn-sugar .mn-mini-gantt__bar--planned { background: var(--signal-warning) !important; }
+body.mn-sugar .mn-mini-gantt__bar--at-risk { background: var(--signal-danger) !important; }
+
+/* Treemap / heatmap */
+body.mn-sugar .mn-treemap { border: 1px solid var(--mn-border); border-radius: var(--radius-md); overflow: hidden; }
+
+/* Search suggestions */
+body.mn-sugar .mn-search-bar__list { background: var(--mn-surface-raised) !important; border-color: var(--mn-border) !important; }
+
+/* Video card gradient — lighten */
+body.mn-sugar .mn-video-card { background: linear-gradient(135deg, rgba(0,0,0,0.04), rgba(0,0,0,0.08)) !important; }
 
 /* Avatar — lighten for visibility */
 body.mn-sugar .mn-avatar { background: var(--mn-border); color: var(--mn-text); border: 1px solid var(--mn-border-strong); }
