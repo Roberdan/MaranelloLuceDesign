@@ -70,7 +70,7 @@ function buildSummaryStrip(container) {
 }
 
 export function createCustomerJourneySection() {
-  const M = window.Maranello;
+  const M = window.Maranello ?? {};
   const section = document.createElement('section');
   section.id = 'customer-journey';
   section.className = 'mn-section-dark';
@@ -89,8 +89,8 @@ export function createCustomerJourneySection() {
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-md)">
           <span class="mn-label" style="color:var(--mn-accent)">Journey Swimlane</span>
           <div style="display:flex;gap:var(--space-sm)">
-            <button class="mn-btn mn-btn--ghost" id="cj-compact" style="font-size:var(--text-micro)">Compact</button>
-            <button class="mn-btn mn-btn--ghost" id="cj-vertical" style="font-size:var(--text-micro)">Vertical</button>
+            <button class="mn-btn mn-btn--ghost" id="cj-compact" style="font-size:var(--text-micro)" aria-pressed="false">Compact</button>
+            <button class="mn-btn mn-btn--ghost" id="cj-vertical" style="font-size:var(--text-micro)" aria-pressed="false">Vertical</button>
           </div>
         </div>
         <div id="cj-root"></div>
@@ -107,13 +107,16 @@ ctrl.destroy();</pre>
       </div>
 
       <div class="mn-card-dark" style="padding:var(--space-xl)">
-        <span class="mn-label" style="color:var(--mn-accent)">Web Component (planned)</span>
-        <pre style="font-family:var(--font-mono);font-size:var(--text-micro);padding:var(--space-sm) 0;color:var(--mn-text-muted);overflow-x:auto">&lt;mn-customer-journey
-  phases='${JSON.stringify(PHASES).slice(0, 60)}...'
+        <span class="mn-label" style="color:var(--mn-accent);display:block;margin-bottom:var(--space-md)">Web Component</span>
+        <mn-customer-journey phases='${JSON.stringify(PHASES)}'></mn-customer-journey>
+        <details class="mn-code-snippet" style="margin-top:var(--space-md)">
+          <summary class="mn-micro" style="cursor:pointer;color:var(--mn-text-muted)">WC usage</summary>
+          <pre style="font-family:var(--font-mono);font-size:var(--text-micro);padding:var(--space-sm) 0;color:var(--mn-text-muted);overflow-x:auto">&lt;mn-customer-journey
+  phases='[{"id":"lead","label":"Lead Generation","engagements":[...]}]'
   orientation="horizontal"
   show-connectors
 &gt;&lt;/mn-customer-journey&gt;</pre>
-        <p class="mn-micro" style="color:var(--mn-text-muted);margin-top:var(--space-sm)">WC wrapper planned for next release. Use the headless API above for now.</p>
+        </details>
       </div>
     </div>`;
 
@@ -121,7 +124,7 @@ ctrl.destroy();</pre>
     buildSummaryStrip(section.querySelector('#cj-summary'));
 
     const root = section.querySelector('#cj-root');
-    if (!M.customerJourney) {
+    if (!M || !M.customerJourney) {
       root.innerHTML = '<p class="mn-micro" style="color:var(--mn-text-muted);padding:var(--space-md)">customerJourney: not yet in IIFE bundle — rebuild with npm run build</p>';
       return;
     }
@@ -134,19 +137,27 @@ ctrl.destroy();</pre>
     });
 
     /* Compact toggle */
-    section.querySelector('#cj-compact').addEventListener('click', () => {
+    const compactBtn = section.querySelector('#cj-compact');
+    const verticalBtn = section.querySelector('#cj-vertical');
+    compactBtn.addEventListener('click', () => {
+      const pressed = compactBtn.getAttribute('aria-pressed') === 'true';
+      compactBtn.setAttribute('aria-pressed', String(!pressed));
+      verticalBtn.setAttribute('aria-pressed', 'false');
       ctrl.destroy();
       ctrl = M.customerJourney(root, PHASES, {
-        compactMode: true, showConnectors: true,
+        compactMode: !pressed, showConnectors: true,
         onSelect: (eng) => M.toast({ type: 'info', title: eng.title, message: eng.status }),
       });
     });
 
     /* Vertical toggle */
-    section.querySelector('#cj-vertical').addEventListener('click', () => {
+    verticalBtn.addEventListener('click', () => {
+      const pressed = verticalBtn.getAttribute('aria-pressed') === 'true';
+      verticalBtn.setAttribute('aria-pressed', String(!pressed));
+      compactBtn.setAttribute('aria-pressed', 'false');
       ctrl.destroy();
       ctrl = M.customerJourney(root, PHASES, {
-        orientation: 'vertical', showConnectors: true,
+        orientation: !pressed ? 'vertical' : 'horizontal', showConnectors: true,
         onSelect: (eng) => M.toast({ type: 'info', title: eng.title, message: eng.status }),
       });
     });

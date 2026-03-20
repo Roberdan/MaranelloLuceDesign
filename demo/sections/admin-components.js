@@ -31,7 +31,7 @@ function buildKpiStrip(container) {
     card.innerHTML = `
       <span class="mn-stat__value" style="font-size:var(--text-h3);color:var(--mn-accent)">${kpi.value}</span>
       <span class="mn-stat__label" style="display:block;font-size:var(--text-micro);color:var(--mn-text-muted);margin-top:var(--space-xs)">${kpi.label}</span>
-      ${kpi.delta ? `<span class="mn-micro" style="color:var(--signal-ok)">${kpi.delta}</span>` : ''}`;
+      ${kpi.delta ? `<span class="mn-micro" style="color:var(${kpi.delta.startsWith('-') ? '--signal-warning' : '--signal-ok'})">${kpi.delta}</span>` : ''}`;
     strip.appendChild(card);
   }
   container.appendChild(strip);
@@ -123,7 +123,7 @@ function buildSettings(container, M) {
 }
 
 export function createAdminComponentsSection() {
-  const M = window.Maranello;
+  const M = window.Maranello ?? {};
   const section = document.createElement('section');
   section.id = 'admin-components';
   section.className = 'mn-section-dark';
@@ -178,7 +178,7 @@ card.bodyEl.appendChild(content);</pre>
   requestAnimationFrame(() => {
     /* Admin Shell */
     const shellEl = section.querySelector('#ac-shell');
-    if (M.adminShell) {
+    if (M && M.adminShell) {
       const shell = M.adminShell(shellEl, {
         sidebar: {
           header: { icon: '\u2302', title: 'Maranello Luce', badge: 'v3.2' },
@@ -207,7 +207,7 @@ card.bodyEl.appendChild(content);</pre>
 
     /* Section Card with KPI */
     const cardEl = section.querySelector('#ac-card');
-    if (M.sectionCard) {
+    if (M && M.sectionCard) {
       const card = M.sectionCard(cardEl, {
         title: 'Overview piattaforma',
         action: {

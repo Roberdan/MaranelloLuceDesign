@@ -31,13 +31,16 @@
     body.mn-colorblind .demo-nav__links a.demo-nav__link--active { color: #0072B2; }
     body:not(.mn-nero):not(.mn-avorio):not(.mn-colorblind):not(.mn-sugar) .demo-nav { background: rgba(20,20,24,0.92); }
     body.mn-sugar .demo-nav { background: rgba(228,228,232,0.95); border-bottom-color: var(--mn-border); }
-    body.mn-sugar .demo-nav__links a { color: #555; }
+    body.mn-sugar .demo-nav__links a { color: var(--mn-text-muted); }
     body.mn-sugar .demo-nav__links a:hover,
-    body.mn-sugar .demo-nav__links a.demo-nav__link--active { color: #000; }
-    body.mn-sugar .demo-nav__brand { color: #000; }
-    body.mn-sugar #demo-theme-label { color: #555 !important; }
-    body.mn-sugar .demo-hamburger { border-color: var(--mn-border); color: #555; }
-    body.mn-sugar .demo-nav__right { color: #555; }
+    body.mn-sugar .demo-nav__links a.demo-nav__link--active { color: var(--mn-text); }
+    body.mn-sugar .demo-nav__brand { color: var(--mn-text); }
+    body.mn-sugar #demo-theme-label { color: var(--mn-text-muted) !important; }
+    body.mn-sugar .demo-hamburger { border-color: var(--mn-border); color: var(--mn-text-muted); }
+    body.mn-sugar .demo-nav__right { color: var(--mn-text-muted); }
+    body.mn-sugar.mn-colorblind .demo-nav__links a:hover,
+    body.mn-sugar.mn-colorblind .demo-nav__links a.demo-nav__link--active { color: #0072B2; }
+    body.mn-sugar.mn-colorblind .demo-nav__brand { color: #0072B2; }
     /* Sugar: WC gantt canvas sits in shadow DOM — border the host */
     body.mn-sugar mn-gantt { display: block; border: 1px solid var(--mn-border); border-radius: var(--radius-md); overflow: hidden; background: var(--mn-surface-raised); }
     /* Sugar: drag rotary is a dark circle — lighten */

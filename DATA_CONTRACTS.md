@@ -68,7 +68,7 @@ Full API detail for all components: [`docs/api-contracts-v4.md`](docs/api-contra
 | `CustomerJourneyOptions` | `customerJourney()` | `orientation?`, `onSelect?`, `showConnectors?`, `compactMode?` |
 | `JourneyPhase` | `customerJourney()` | `id`, `label`, `engagements[]` |
 | `JourneyEngagement` | `customerJourney()` | `id`, `title`, `status`, `type`, `date?`, `assignee?`, `onClick?` |
-| `AdminShellOpts` | `adminShell()` | `sidebar` (`header?`, `search?`, `nav[]`, `footer?`), `collapsible?`, `onNavigate` |
+| `AdminShellOpts` | `adminShell()` | `sidebar` (`header?`, `search?`, `nav[]`, `footer?`), `collapsible?`, `onNavigate`, `initialPage?` |
 | `AdminShellNavItem` | `adminShell()` | `id`, `label`, `icon`, `section?`, `badge?` |
 | `SectionCardOpts` | `sectionCard()` | `title`, `action?`, `padding?`, `variant?`, `className?` |
 | `SettingsPanelOpts` | `settingsPanel()` | `sections[]` (`title`, `description?`, `items[]`) |

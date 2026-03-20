@@ -425,7 +425,7 @@ When asked to implement something, always map requirements to existing Maranello
 | Customer journey flow | `customerJourney(el, phases, opts)` or `<mn-customer-journey>` | Custom swimlane div |
 | Admin layout shell | `adminShell(el, opts)` | Custom fixed sidebar + topbar |
 | Titled content card | `sectionCard(el, opts)` | Custom card with heading |
-| Settings form | `settingsPanel(el, items, opts)` | Custom toggle/input list |
+| Settings form | `settingsPanel(el, { sections })` | Custom toggle/input list |
 
 ## Framework Integration
 
