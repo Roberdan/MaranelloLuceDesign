@@ -59,7 +59,7 @@
 /* Danger — destructive actions */
 .mn-form-btn--danger {
   background: var(--mn-error);
-  color: var(--mn-text);
+  color: var(--mn-danger-text);
   border-color: var(--mn-error);
 }
 .mn-form-btn--danger:hover {

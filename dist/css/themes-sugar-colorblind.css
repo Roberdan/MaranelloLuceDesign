@@ -7,8 +7,8 @@ body.mn-sugar.mn-colorblind {
   --mn-accent-text: #fff;
   --signal-ok: #009E73;
   --signal-warning: #E69F00;
-  --signal-danger: #D55E00;
-  --mn-error: #D55E00;
+  --signal-danger: #C94000;
+  --mn-error: #C94000;
   --mn-success: #009E73;
   --mn-warning: #E69F00;
   --mn-info: #56B4E9;

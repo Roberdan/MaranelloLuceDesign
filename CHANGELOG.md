@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.19.1] - 2026-03-20
+
+### Added
+- **`scripts/check-semantic-design.sh`** — CI gate for semantic design audit: runs WCAG AA contrast check + signal token distinctness + danger-button contrast check across all 6 theme combinations (incl. Sugar+Colorblind)
+- **`scripts/check-signal-semantics.mjs`** — machine-readable JSON report; exits 1 on P0 findings (meaning lost)
+- **`--mn-danger-text`** — new semantic token (defaults to white) ensuring danger button text always has ≥4.5:1 contrast on `--mn-error` background
+- **`src/css/themes-avorio-components.css`** — Avorio danger button rendered as outline/ghost red (distinct from solid red primary)
+
+### Fixed
+- **Danger button text contrast** — `color: var(--mn-text)` → `var(--mn-danger-text)` in `.mn-form-btn--danger`; fixes dark text on red (#111 on #DC0000 = 2.65:1) in Avorio and Sugar themes
+- **Colorblind `--mn-error`** — darkened from `#D55E00` to `#C94000` so white danger-text achieves ≥4.5:1 contrast (was 3.71:1)
+- **Sugar `--mn-text-muted`** — darkened from `#767676` to `#5e5e5e` to pass WCAG AA (3.15:1 → 4.91:1) on `#E4E4E8` surface
+- **Avorio danger button border** — reverted to base `1.5px` width (was incorrectly set to `2px`, causing layout shifts)
+
+### Changed
+- **`scripts/check-contrast.mjs`** — now tests 6 theme combinations including `sugarColorblind` (was 5); 96 pairs checked (was 80)
+- **`scripts/check-signal-semantics.mjs`** — audits 6 themes including `sugarColorblind`; threshold corrected to WCAG SC 1.4.3 (4.5:1)
+- **CI** — standalone `check-contrast.mjs` step removed; superseded by `check-semantic-design.sh` (Phase 1)
+
 ## [4.19.0] - 2026-03-20
 
 ### Added

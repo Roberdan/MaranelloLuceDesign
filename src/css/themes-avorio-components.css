@@ -9,7 +9,7 @@
 body.mn-avorio .mn-form-btn--danger {
   background: transparent;
   color: var(--mn-error);
-  border: 2px solid var(--mn-error);
+  border-color: var(--mn-error);
 }
 body.mn-avorio .mn-form-btn--danger:hover {
   background: var(--mn-error-bg);

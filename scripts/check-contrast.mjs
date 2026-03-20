@@ -69,16 +69,22 @@ function contrastRatio(c1, c2) {
 /* ── Read CSS files ── */
 const tokensCss = readFileSync(join(CSS_DIR, 'tokens-color.css'), 'utf8');
 const themesCss = readFileSync(join(CSS_DIR, 'themes-base.css'), 'utf8');
+const sugarCbCss = readFileSync(join(CSS_DIR, 'themes-sugar-colorblind.css'), 'utf8');
 
 const rootVars = parseVars(tokensCss);
 
 /* ── Build theme variable maps ── */
 const themes = {
-  editorial:  { ...rootVars },
-  nero:       { ...rootVars, ...parseVars(themesCss, 'body.mn-nero') },
-  avorio:     { ...rootVars, ...parseVars(themesCss, 'body.mn-avorio') },
-  colorblind: { ...rootVars, ...parseVars(themesCss, 'body.mn-colorblind') },
-  sugar:      { ...rootVars, ...parseVars(themesCss, 'body.mn-sugar') },
+  editorial:       { ...rootVars },
+  nero:            { ...rootVars, ...parseVars(themesCss, 'body.mn-nero') },
+  avorio:          { ...rootVars, ...parseVars(themesCss, 'body.mn-avorio') },
+  colorblind:      { ...rootVars, ...parseVars(themesCss, 'body.mn-colorblind') },
+  sugar:           { ...rootVars, ...parseVars(themesCss, 'body.mn-sugar') },
+  sugarColorblind: {
+    ...rootVars,
+    ...parseVars(themesCss, 'body.mn-sugar'),
+    ...parseVars(sugarCbCss, 'body.mn-sugar.mn-colorblind'),
+  },
 };
 
 /* ── Critical contrast pairs: [fgVar, bgVar, minRatio, label] ── */

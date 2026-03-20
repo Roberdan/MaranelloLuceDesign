@@ -48,7 +48,7 @@ body.mn-colorblind {
   --mn-text: #fafafa; --mn-text-muted: #9e9e9e; --mn-text-tertiary: #c8c8c8; --mn-text-disabled: #7a7a7a; --mn-text-inverse: #000000;
   --mn-border: #2a2a2a; --mn-border-subtle: rgba(255,255,255,0.07); --mn-border-strong: var(--mn-text-tertiary); --mn-border-focus: #0072B2; --mn-border-error: #D55E00;
   --mn-hover-bg: rgba(255,255,255,0.06); --mn-active-bg: rgba(255,255,255,0.12); --mn-focus-ring: #0072B2; --mn-focus-ring-offset: var(--mn-surface);
-  --mn-error: #D55E00; --mn-success: #009E73; --mn-warning: #E69F00; --mn-info: #56B4E9;
+  --mn-error: #C94000; --mn-success: #009E73; --mn-warning: #E69F00; --mn-info: #56B4E9;
   --mn-error-bg: color-mix(in srgb, var(--mn-error) 16%, transparent); --mn-success-bg: color-mix(in srgb, var(--mn-success) 16%, transparent); --mn-warning-bg: color-mix(in srgb, var(--mn-warning) 16%, transparent); --mn-info-bg: color-mix(in srgb, var(--mn-info) 16%, transparent);
   --mn-backdrop: rgba(0,0,0,0.4); --mn-scrim: rgba(0,0,0,0.72);
 }
@@ -195,7 +195,7 @@ body.mn-sugar {
   --mn-accent: #000000; --mn-accent-hover: #333333; --mn-accent-text: #FFFFFF;
   --mn-surface: #E4E4E8; --mn-surface-raised: #FFFFFF; --mn-surface-sunken: #D8D8DC;
   --mn-surface-input: #FFFFFF; --mn-surface-overlay: color-mix(in srgb, #FFFFFF 92%, transparent); --mn-surface-hover: rgba(0,0,0,0.04);
-  --mn-text: #111111; --mn-text-muted: #767676; --mn-text-tertiary: #666666; --mn-text-disabled: #AAAAAA; --mn-text-inverse: #FFFFFF;
+  --mn-text: #111111; --mn-text-muted: #5e5e5e; --mn-text-tertiary: #666666; --mn-text-disabled: #AAAAAA; --mn-text-inverse: #FFFFFF;
   --mn-border: #E0E0E4; --mn-border-subtle: rgba(0,0,0,0.06); --mn-border-strong: #C0C0C5; --mn-border-focus: #000000; --mn-border-error: var(--mn-error);
   --mn-hover-bg: rgba(0,0,0,0.04); --mn-active-bg: rgba(0,0,0,0.08); --mn-focus-ring: #000000; --mn-focus-ring-offset: #E4E4E8;
   --mn-error: #DC0000; --mn-success: #00A651; --mn-warning: #F59E0B; --mn-info: #448AFF;

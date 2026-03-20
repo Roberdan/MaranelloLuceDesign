@@ -66,14 +66,20 @@ function contrast(c1, c2) {
 /* ── Load CSS ── */
 const tokensCss = readFileSync(join(CSS, 'tokens-color.css'), 'utf8');
 const themesCss = readFileSync(join(CSS, 'themes-base.css'), 'utf8');
+const sugarCbCss = readFileSync(join(CSS, 'themes-sugar-colorblind.css'), 'utf8');
 const rootVars  = parseVars(tokensCss);
 
 const THEMES = {
-  editorial:  { ...rootVars },
-  nero:       { ...rootVars, ...parseVars(themesCss, 'body.mn-nero') },
-  avorio:     { ...rootVars, ...parseVars(themesCss, 'body.mn-avorio') },
-  colorblind: { ...rootVars, ...parseVars(themesCss, 'body.mn-colorblind') },
-  sugar:      { ...rootVars, ...parseVars(themesCss, 'body.mn-sugar') },
+  editorial:       { ...rootVars },
+  nero:            { ...rootVars, ...parseVars(themesCss, 'body.mn-nero') },
+  avorio:          { ...rootVars, ...parseVars(themesCss, 'body.mn-avorio') },
+  colorblind:      { ...rootVars, ...parseVars(themesCss, 'body.mn-colorblind') },
+  sugar:           { ...rootVars, ...parseVars(themesCss, 'body.mn-sugar') },
+  sugarColorblind: {
+    ...rootVars,
+    ...parseVars(themesCss, 'body.mn-sugar'),
+    ...parseVars(sugarCbCss, 'body.mn-sugar.mn-colorblind'),
+  },
 };
 
 /* ── Audit state ── */
