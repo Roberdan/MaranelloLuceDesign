@@ -112,7 +112,7 @@ orchestrator.open('dashboard', 'page', await fetchDashboardData());
 | Ad-hoc filter UI | `new FacetWorkbench(el, { facets, onFilterChange })` |
 | Custom entity forms | `new EntityWorkbench(el, { schema, data, onSave })` |
 
-Consumer contract: [`CONSUMER_CONTRACT.md`](CONSUMER_CONTRACT.md) · Full API: [`docs/api-contracts-v4.md`](docs/api-contracts-v4.md)
+Consumer contract: [`CONSUMER_CONTRACT.md`](CONSUMER_CONTRACT.md) · Full API: [`docs/api-contracts-v4.md`](docs/api-contracts-v4.md) · Migration guide: [`docs/migration-guide-v4.17.md`](docs/migration-guide-v4.17.md) · Agent cookbook: [`docs/agent-cookbook.md`](docs/agent-cookbook.md) · Consumer adoption prompt: [`docs/consumer-adoption-prompt.md`](docs/consumer-adoption-prompt.md)
 
 ---
 
