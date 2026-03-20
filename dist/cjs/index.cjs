@@ -2664,9 +2664,9 @@ function buildGaugePalette(accent) {
       tickMajor: "#888",
       tickHalf: "#aaa",
       tickMinor: "#ccc",
-      capOuter: ["#ccc", "#b0b0b5", "#999", "#777"],
-      capInner: ["#d0d0d5", "#b0b0b5", "#999"],
-      capCenter: "#aaa",
+      capOuter: ["#D0D0D5", "#C0C0C5", "#B0B0B5", "#A0A0A5"],
+      capInner: ["#D8D8DC", "#C8C8CC", "#B0B0B5"],
+      capCenter: "#C0C0C5",
       needleTail: "#999",
       needleTip: "#111",
       highlightRing: "rgba(0,0,0,0.06)",
@@ -7734,17 +7734,20 @@ function buildSeverity() {
 function themeColors() {
   const cl = document.body.classList;
   const isLight = cl.contains("mn-avorio") || cl.contains("mn-sugar");
+  const isSugar = cl.contains("mn-sugar");
   const surface = cssVar("--mn-surface", isLight ? "#faf8f2" : "#0a0a0a");
   const text = cssVar("--mn-text", isLight ? "#1a1a1a" : "#e0e0e0");
   const muted = cssVar("--mn-text-muted", isLight ? "#666" : "#888");
   const border = cssVar("--mn-border", isLight ? "rgba(0,0,0,0.08)" : "rgba(200,200,200,0.08)");
+  const headerBg = isSugar ? "rgba(216,216,220,0.98)" : isLight ? "rgba(245,242,235,0.98)" : "rgba(18,18,18,0.98)";
+  const sidebarBg = isSugar ? "rgba(216,216,220,0.95)" : isLight ? "rgba(245,242,235,0.95)" : "rgba(14,14,14,0.97)";
   return {
     bg: surface,
     text,
     muted,
     border,
-    headerBg: isLight ? "rgba(245,242,235,0.98)" : "rgba(18,18,18,0.98)",
-    sidebarBg: isLight ? "rgba(245,242,235,0.95)" : "rgba(14,14,14,0.97)",
+    headerBg,
+    sidebarBg,
     rowHover: isLight ? "rgba(99,102,241,0.08)" : "rgba(99,102,241,0.12)",
     rowSel: isLight ? "rgba(99,102,241,0.12)" : "rgba(99,102,241,0.18)",
     childBg: isLight ? "rgba(0,0,0,0.02)" : "rgba(255,255,255,0.02)",
@@ -14201,7 +14204,8 @@ function dateRangePicker(el4, opts) {
 
 // src/ts/charts-bullet.ts
 function resolve(varName) {
-  return getComputedStyle(document.documentElement).getPropertyValue(varName).trim() || "#888";
+  const el4 = document.body ?? document.documentElement;
+  return getComputedStyle(el4).getPropertyValue(varName).trim() || "#888";
 }
 function parseColor(color) {
   if (color.startsWith("var(")) {
@@ -14481,7 +14485,8 @@ function notificationCenter(triggerEl, opts) {
 
 // src/ts/charts-waterfall.ts
 function resolveCssVar(name, fallback) {
-  const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  const el4 = document.body ?? document.documentElement;
+  const v = getComputedStyle(el4).getPropertyValue(name).trim();
   return v || fallback;
 }
 function easeOutCubic2(t) {
@@ -14688,7 +14693,8 @@ function waterfallChart(canvas, opts) {
 
 // src/ts/charts-confidence.ts
 function resolveCssVar2(name, fallback) {
-  const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  const el4 = document.body ?? document.documentElement;
+  const v = getComputedStyle(el4).getPropertyValue(name).trim();
   return v || fallback;
 }
 function resolveColor(color) {

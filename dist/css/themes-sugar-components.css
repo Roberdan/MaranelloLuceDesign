@@ -112,7 +112,7 @@ body.mn-sugar #neural-nodes-demo { background: radial-gradient(circle at center,
 body.mn-sugar #social-graph-canvas { background: radial-gradient(circle at center, rgba(0,0,0,0.02), var(--mn-surface-sunken)) !important; }
 
 /* Chat */
-body.mn-sugar .mn-chat-header, body.mn-sugar [class*="chat-header"] { background: var(--mn-surface-raised) !important; border-bottom: 1px solid var(--mn-border) !important; color: var(--mn-text) !important; }
+body.mn-sugar .mn-chat-header, body.mn-sugar .mn-chat-panel__header, body.mn-sugar [class*="chat-header"] { background: var(--mn-surface-raised) !important; border-bottom: 1px solid var(--mn-border) !important; color: var(--mn-text) !important; }
 body.mn-sugar .mn-chat-body, body.mn-sugar [class*="chat-body"] { background: var(--mn-surface) !important; }
 body.mn-sugar .mn-chat-msg--bot { background: var(--mn-surface-raised) !important; color: var(--mn-text) !important; }
 
@@ -185,6 +185,13 @@ body.mn-sugar .mn-dropdown__trigger { background: var(--mn-surface-raised) !impo
 
 /* Avatar group circles */
 body.mn-sugar .mn-avatar-group .mn-avatar, body.mn-sugar .mn-avatar--sm { background: var(--mn-border) !important; color: var(--mn-text) !important; }
+
+/* Launch / accent sections — override gradient bg for readability */
+body.mn-sugar .mn-section-accent .mn-btn { background: var(--mn-accent) !important; color: var(--mn-accent-text) !important; }
+body.mn-sugar #launch section[style*="gradient"] { background: var(--mn-surface-raised) !important; }
+body.mn-sugar #launch section[style*="gradient"] * { color: var(--mn-text) !important; }
+body.mn-sugar #launch section[style*="gradient"] .mn-btn { background: var(--mn-accent) !important; color: var(--mn-accent-text) !important; }
+body.mn-sugar #launch section[style*="gradient"] .mn-code-snippet pre { background: rgba(0,0,0,0.06) !important; }
 
 /* Chart tooltip + severity vars */
 body.mn-sugar {

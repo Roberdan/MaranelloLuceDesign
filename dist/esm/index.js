@@ -31,10 +31,10 @@ import {
   speedoPalette,
   speedometer,
   valueToAngle
-} from "./chunks/chunk-RINBFLIL.js";
+} from "./chunks/chunk-TXUQ7KRN.js";
 import {
   gantt
-} from "./chunks/chunk-WNYNPBTE.js";
+} from "./chunks/chunk-QCV7R46G.js";
 import {
   closeDetailPanel,
   closeDrawer,
@@ -9008,7 +9008,8 @@ function dateRangePicker(el4, opts) {
 
 // src/ts/charts-bullet.ts
 function resolve(varName) {
-  return getComputedStyle(document.documentElement).getPropertyValue(varName).trim() || "#888";
+  const el4 = document.body ?? document.documentElement;
+  return getComputedStyle(el4).getPropertyValue(varName).trim() || "#888";
 }
 function parseColor(color) {
   if (color.startsWith("var(")) {
@@ -9288,7 +9289,8 @@ function notificationCenter(triggerEl, opts) {
 
 // src/ts/charts-waterfall.ts
 function resolveCssVar(name, fallback) {
-  const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  const el4 = document.body ?? document.documentElement;
+  const v = getComputedStyle(el4).getPropertyValue(name).trim();
   return v || fallback;
 }
 function easeOutCubic2(t) {
@@ -9495,7 +9497,8 @@ function waterfallChart(canvas, opts) {
 
 // src/ts/charts-confidence.ts
 function resolveCssVar2(name, fallback) {
-  const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  const el4 = document.body ?? document.documentElement;
+  const v = getComputedStyle(el4).getPropertyValue(name).trim();
   return v || fallback;
 }
 function resolveColor(color) {

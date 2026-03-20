@@ -15,11 +15,11 @@ export interface ConfidenceChartOptions {
   height?: number;
 }
 
-/** Resolve a CSS custom property to its computed value. */
+/** Resolve a CSS custom property to its computed value.
+ *  Reads from document.body so body-scoped theme overrides resolve. */
 function resolveCssVar(name: string, fallback: string): string {
-  const v = getComputedStyle(document.documentElement)
-    .getPropertyValue(name)
-    .trim();
+  const el = document.body ?? document.documentElement;
+  const v = getComputedStyle(el).getPropertyValue(name).trim();
   return v || fallback;
 }
 

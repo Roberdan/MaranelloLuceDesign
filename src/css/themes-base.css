@@ -196,7 +196,7 @@ body.mn-sugar {
   --mn-surface: #E4E4E8; --mn-surface-raised: #FFFFFF; --mn-surface-sunken: #D8D8DC;
   --mn-surface-input: #FFFFFF; --mn-surface-overlay: color-mix(in srgb, #FFFFFF 92%, transparent); --mn-surface-hover: rgba(0,0,0,0.04);
   --mn-text: #111111; --mn-text-muted: #767676; --mn-text-tertiary: #666666; --mn-text-disabled: #AAAAAA; --mn-text-inverse: #FFFFFF;
-  --mn-border: #D0D0D5; --mn-border-subtle: rgba(0,0,0,0.06); --mn-border-strong: #B0B0B5; --mn-border-focus: #000000; --mn-border-error: var(--mn-error);
+  --mn-border: #E0E0E4; --mn-border-subtle: rgba(0,0,0,0.06); --mn-border-strong: #C0C0C5; --mn-border-focus: #000000; --mn-border-error: var(--mn-error);
   --mn-hover-bg: rgba(0,0,0,0.04); --mn-active-bg: rgba(0,0,0,0.08); --mn-focus-ring: #000000; --mn-focus-ring-offset: #E4E4E8;
   --mn-error: #DC0000; --mn-success: #00A651; --mn-warning: #F59E0B; --mn-info: #448AFF;
   --mn-error-bg: color-mix(in srgb, var(--mn-error) 14%, transparent); --mn-success-bg: color-mix(in srgb, var(--mn-success) 14%, transparent); --mn-warning-bg: color-mix(in srgb, var(--mn-warning) 14%, transparent); --mn-info-bg: color-mix(in srgb, var(--mn-info) 14%, transparent);

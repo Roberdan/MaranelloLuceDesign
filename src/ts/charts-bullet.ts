@@ -22,7 +22,8 @@ export interface BulletChartOptions {
 }
 
 function resolve(varName: string): string {
-  return getComputedStyle(document.documentElement).getPropertyValue(varName).trim() || '#888';
+  const el = document.body ?? document.documentElement;
+  return getComputedStyle(el).getPropertyValue(varName).trim() || '#888';
 }
 
 function parseColor(color: string): string {

@@ -44,30 +44,27 @@ const PHASES = [
   },
 ];
 
-/** Build a summary strip showing phase counts and completion. */
+/** Build flat stat pills (no 3D neumorphic balls). */
 function buildSummaryStrip(container) {
   const strip = document.createElement('div');
-  strip.className = 'mn-strip mn-mb-lg';
-  strip.style.cssText = 'display:flex;gap:var(--space-md);flex-wrap:wrap';
+  strip.style.cssText = 'display:flex;gap:var(--space-lg);flex-wrap:wrap;margin-bottom:var(--space-xl)';
   const total = PHASES.reduce((n, p) => n + p.engagements.length, 0);
   const done = PHASES.reduce((n, p) => n + p.engagements.filter(e => e.status === 'completed').length, 0);
   const active = PHASES.reduce((n, p) => n + p.engagements.filter(e => e.status === 'active').length, 0);
 
   const stats = [
-    { label: 'Fasi', value: PHASES.length },
-    { label: 'Attivita totali', value: total },
-    { label: 'Completate', value: done },
-    { label: 'In corso', value: active },
-    { label: 'In attesa', value: total - done - active },
+    { label: 'FASI', value: PHASES.length },
+    { label: 'TOTALI', value: total },
+    { label: 'COMPLETATE', value: done },
+    { label: 'IN CORSO', value: active },
+    { label: 'IN ATTESA', value: total - done - active },
   ];
 
   for (const s of stats) {
-    const pod = document.createElement('div');
-    pod.className = 'mn-pod';
-    pod.innerHTML = `
-      <span class="mn-stat__value" style="font-size:var(--text-h3);color:var(--mn-accent)">${s.value}</span>
-      <span class="mn-stat__label" style="font-size:var(--text-micro);color:var(--mn-text-muted)">${s.label}</span>`;
-    strip.appendChild(pod);
+    const pill = document.createElement('div');
+    pill.style.cssText = 'text-align:center;padding:var(--space-sm) var(--space-md);background:var(--mn-surface-raised);border-radius:var(--radius-md);border:1px solid var(--mn-border)';
+    pill.innerHTML = `<div style="font-size:var(--text-h3);font-weight:700;color:var(--mn-text)">${s.value}</div><div class="mn-micro" style="color:var(--mn-text-muted)">${s.label}</div>`;
+    strip.appendChild(pill);
   }
   container.appendChild(strip);
 }
@@ -83,7 +80,8 @@ export function createCustomerJourneySection() {
       <p class="mn-section-number">42 — Customer Journey</p>
       <div class="mn-watermark">JOURNEY</div>
       <h2 class="mn-title-section mn-mb-sm mn-anim-fadeInUp">Customer Journey — Meridian Consulting Group</h2>
-      <p class="mn-body mn-mb-lg">Swimlane visualization of the full client engagement lifecycle — from lead generation through post-sale support.</p>
+      <p class="mn-body mn-mb-sm">Percorso cliente completo — dalla lead generation al supporto post-vendita</p>
+      <p class="mn-caption mn-mb-lg">Swimlane visualization of the full client engagement lifecycle.</p>
 
       <div id="cj-summary"></div>
 

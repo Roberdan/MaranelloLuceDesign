@@ -19539,9 +19539,9 @@
     --mn-text-tertiary: #666;
     --mn-text-disabled: #aaa;
     --mn-text-inverse: #fff;
-    --mn-border: #d0d0d5;
+    --mn-border: #e0e0e4;
     --mn-border-subtle: #0000000f;
-    --mn-border-strong: #b0b0b5;
+    --mn-border-strong: #c0c0c5;
     --mn-border-focus: #000;
     --mn-border-error: var(--mn-error);
     --mn-hover-bg: #0000000a;
@@ -20421,7 +20421,7 @@
     background: radial-gradient(circle at center, #00000005, var(--mn-surface-sunken)) !important;
   }
 
-  body.mn-sugar .mn-chat-header, body.mn-sugar [class*="chat-header"] {
+  body.mn-sugar .mn-chat-header, body.mn-sugar .mn-chat-panel__header, body.mn-sugar [class*="chat-header"] {
     background: var(--mn-surface-raised) !important;
     border-bottom: 1px solid var(--mn-border) !important;
     color: var(--mn-text) !important;
@@ -20625,6 +20625,28 @@
   body.mn-sugar .mn-avatar-group .mn-avatar, body.mn-sugar .mn-avatar--sm {
     background: var(--mn-border) !important;
     color: var(--mn-text) !important;
+  }
+
+  body.mn-sugar .mn-section-accent .mn-btn {
+    background: var(--mn-accent) !important;
+    color: var(--mn-accent-text) !important;
+  }
+
+  body.mn-sugar #launch section[style*="gradient"] {
+    background: var(--mn-surface-raised) !important;
+  }
+
+  body.mn-sugar #launch section[style*="gradient"] * {
+    color: var(--mn-text) !important;
+  }
+
+  body.mn-sugar #launch section[style*="gradient"] .mn-btn {
+    background: var(--mn-accent) !important;
+    color: var(--mn-accent-text) !important;
+  }
+
+  body.mn-sugar #launch section[style*="gradient"] .mn-code-snippet pre {
+    background: #0000000f !important;
   }
 
   body.mn-sugar {

@@ -3,7 +3,7 @@ import {
   FerrariGauge,
   buildGaugePalette,
   speedometer
-} from "../chunks/chunk-RINBFLIL.js";
+} from "../chunks/chunk-TXUQ7KRN.js";
 import "../chunks/chunk-GNZ7B5YQ.js";
 export {
   FerrariGauge,

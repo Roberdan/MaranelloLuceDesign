@@ -12087,9 +12087,9 @@
     --mn-text-tertiary: #666;
     --mn-text-disabled: #aaa;
     --mn-text-inverse: #fff;
-    --mn-border: #d0d0d5;
+    --mn-border: #e0e0e4;
     --mn-border-subtle: #0000000f;
-    --mn-border-strong: #b0b0b5;
+    --mn-border-strong: #c0c0c5;
     --mn-border-focus: #000;
     --mn-border-error: var(--mn-error);
     --mn-hover-bg: #0000000a;
