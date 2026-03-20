@@ -188,11 +188,35 @@ body.mn-colorblind {
   --scope-global:    #E69F00;
 }
 /* ============================================================
+   SUGAR MODE — cool gray light theme (SugarCRM-inspired)
+   ============================================================ */
+body.mn-sugar {
+  background: #E4E4E8; color: var(--mn-text);
+  --mn-accent: #000000; --mn-accent-hover: #333333; --mn-accent-text: #FFFFFF;
+  --mn-surface: #E4E4E8; --mn-surface-raised: #FFFFFF; --mn-surface-sunken: #D8D8DC;
+  --mn-surface-input: #FFFFFF; --mn-surface-overlay: color-mix(in srgb, #FFFFFF 92%, transparent); --mn-surface-hover: rgba(0,0,0,0.04);
+  --mn-text: #111111; --mn-text-muted: #767676; --mn-text-tertiary: #666666; --mn-text-disabled: #AAAAAA; --mn-text-inverse: #FFFFFF;
+  --mn-border: #D0D0D5; --mn-border-subtle: rgba(0,0,0,0.06); --mn-border-strong: #B0B0B5; --mn-border-focus: #000000; --mn-border-error: var(--mn-error);
+  --mn-hover-bg: rgba(0,0,0,0.04); --mn-active-bg: rgba(0,0,0,0.08); --mn-focus-ring: #000000; --mn-focus-ring-offset: #E4E4E8;
+  --mn-error: #DC0000; --mn-success: #00A651; --mn-warning: #F59E0B; --mn-info: #448AFF;
+  --mn-error-bg: color-mix(in srgb, var(--mn-error) 14%, transparent); --mn-success-bg: color-mix(in srgb, var(--mn-success) 14%, transparent); --mn-warning-bg: color-mix(in srgb, var(--mn-warning) 14%, transparent); --mn-info-bg: color-mix(in srgb, var(--mn-info) 14%, transparent);
+  --mn-backdrop: rgba(0,0,0,0.25); --mn-scrim: rgba(0,0,0,0.6);
+  --radius-sm: 0.5rem; --radius-md: 1rem; --radius-lg: 1.25rem; --radius-xl: 1.75rem;
+  --shadow-card: 0 1px 3px rgba(0,0,0,0.04); --shadow-elevated: 0 4px 12px rgba(0,0,0,0.08); --shadow-deep: 0 8px 24px rgba(0,0,0,0.12);
+  --signal-ok: #00A651; --signal-warning: #F59E0B; --signal-danger: #DC0000;
+  --chart-default: #000000; --chart-bar: #4EA8DE; --chart-axis: #888888; --chart-label: #666666; --chart-muted: #888888;
+  --stage-1: #000000; --stage-2: #333333; --stage-3: #4EA8DE; --stage-4: #0891B2; --stage-5: #888888; --stage-6: #D4622B; --stage-7: #D0D0D5;
+  --state-active: #00A651; --state-planned: #F59E0B; --state-closed: #888888;
+  --scope-local: #4EA8DE; --scope-team: #7C3AED; --scope-global: #000000;
+  --mn-accent-bg: color-mix(in srgb, var(--mn-accent) 8%, transparent);
+  --mn-accent-border: color-mix(in srgb, var(--mn-accent) 20%, transparent);
+}
+/* ============================================================
    AUTO DARK MODE — prefers-color-scheme
    Applies Nero theme tokens when no explicit theme class is set.
    ============================================================ */
 @media (prefers-color-scheme: dark) {
-  body:not(.mn-avorio):not(.mn-nero):not(.mn-colorblind) {
+  body:not(.mn-avorio):not(.mn-nero):not(.mn-colorblind):not(.mn-sugar) {
     --mn-accent:       #FFC72C;
     --mn-accent-hover: #e6b326;
     --mn-accent-text:  #111;
@@ -202,8 +226,8 @@ body.mn-colorblind {
     --bordo:           #333333;
     --bianco:          var(--mn-text);
   }
-  body:not(.mn-avorio):not(.mn-nero):not(.mn-colorblind) .mn-section-light,
-  body:not(.mn-avorio):not(.mn-nero):not(.mn-colorblind) .mn-section-ivory {
+  body:not(.mn-avorio):not(.mn-nero):not(.mn-colorblind):not(.mn-sugar) .mn-section-light,
+  body:not(.mn-avorio):not(.mn-nero):not(.mn-colorblind):not(.mn-sugar) .mn-section-ivory {
     background: var(--mn-surface-sunken);
     color: var(--mn-text);
   }
