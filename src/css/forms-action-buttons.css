@@ -36,8 +36,8 @@
   border-color: var(--mn-accent);
 }
 .mn-form-btn--primary:hover {
-  background: var(--giallo-hover);
-  border-color: var(--giallo-hover);
+  background: var(--mn-accent-hover);
+  border-color: var(--mn-accent-hover);
   box-shadow: 0 4px 12px rgba(255, 199, 44, 0.3);
 }
 .mn-form-btn--primary:active {
@@ -63,7 +63,7 @@
   border-color: var(--mn-error);
 }
 .mn-form-btn--danger:hover {
-  background: var(--rosso-hover);
+  background: color-mix(in srgb, var(--mn-error) 85%, #000);
   box-shadow: 0 4px 12px rgba(220, 0, 0, 0.3);
 }
 

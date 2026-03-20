@@ -14,7 +14,7 @@
   text-transform: uppercase;
   letter-spacing: 0.1em;
   border: 1.5px solid var(--mn-text-inverse);
-  border-radius: 0;
+  border-radius: var(--mn-btn-radius, var(--radius-sm));
   background: var(--mn-text-inverse);
   color: var(--mn-text);
   cursor: pointer;
