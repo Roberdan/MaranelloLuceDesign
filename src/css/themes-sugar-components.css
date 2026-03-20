@@ -99,9 +99,18 @@ body.mn-sugar .mn-gantt { background: var(--mn-surface-raised) !important; borde
 body.mn-sugar [id*="gantt"] { background: var(--mn-surface-raised) !important; }
 body.mn-sugar .mn-gantt canvas, body.mn-sugar mn-gantt canvas { filter: invert(0.88) hue-rotate(180deg) !important; }
 
-/* ALL canvas chart containers — invert for Sugar */
-body.mn-sugar canvas.mn-gauge__canvas { filter: invert(0.85) hue-rotate(180deg) !important; }
-body.mn-sugar .mn-gauge__glass { opacity: 0.3 !important; }
+/* Gauge — hide glass overlay, lighten dial, invert canvas */
+body.mn-sugar .mn-gauge__glass { display: none !important; }
+body.mn-sugar .mn-gauge__dial { background: var(--mn-surface-raised) !important; box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important; border: 1px solid var(--mn-border) !important; }
+body.mn-sugar .mn-gauge__canvas { filter: invert(0.88) hue-rotate(180deg) !important; }
+/* Speedometer canvas */
+body.mn-sugar .mn-speedometer canvas { filter: invert(0.88) hue-rotate(180deg) !important; }
+/* All canvas in dark sections */
+body.mn-sugar .mn-section-dark canvas { filter: invert(0.88) hue-rotate(180deg) !important; }
+/* Ferrari control dials — lighten */
+body.mn-sugar .mn-ctrl-manettino__knob { filter: invert(0.7) !important; }
+body.mn-sugar .mn-ctrl-stepped__knob { filter: invert(0.7) !important; }
+body.mn-sugar .mn-ctrl-lever__track { filter: invert(0.7) !important; }
 
 /* Network / Social — dark gradient backgrounds */
 body.mn-sugar #network-messages-demo { background: radial-gradient(circle at top, rgba(0,0,0,0.03), var(--mn-surface-sunken)) !important; }

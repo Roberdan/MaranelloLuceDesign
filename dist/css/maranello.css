@@ -19638,12 +19638,22 @@
     filter: invert(.88) hue-rotate(180deg) !important;
   }
 
-  body.mn-sugar canvas.mn-gauge__canvas {
-    filter: invert(.85) hue-rotate(180deg) !important;
+  body.mn-sugar .mn-gauge__glass {
+    display: none !important;
   }
 
-  body.mn-sugar .mn-gauge__glass {
-    opacity: .3 !important;
+  body.mn-sugar .mn-gauge__dial {
+    background: var(--mn-surface-raised) !important;
+    border: 1px solid var(--mn-border) !important;
+    box-shadow: 0 2px 8px #0000001a !important;
+  }
+
+  body.mn-sugar .mn-gauge__canvas, body.mn-sugar .mn-speedometer canvas, body.mn-sugar .mn-section-dark canvas {
+    filter: invert(.88) hue-rotate(180deg) !important;
+  }
+
+  body.mn-sugar .mn-ctrl-manettino__knob, body.mn-sugar .mn-ctrl-stepped__knob, body.mn-sugar .mn-ctrl-lever__track {
+    filter: invert(.7) !important;
   }
 
   body.mn-sugar #network-messages-demo {
