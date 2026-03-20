@@ -31,11 +31,11 @@ class MnThemeRotary extends HTMLElement {
     // Restore saved theme before rendering so the dial reflects correct position
     let saved = null;
     try { saved = localStorage.getItem('mn-theme'); } catch (_) { /* storage blocked */ }
-    if (saved && ['nero', 'avorio', 'colorblind', 'editorial'].includes(saved)) {
+    if (saved && ['nero', 'avorio', 'colorblind', 'editorial', 'sugar'].includes(saved)) {
       const setTheme = resolve('setTheme');
       if (typeof setTheme === 'function') setTheme(saved);
       else {
-        document.body.classList.remove('mn-nero', 'mn-avorio', 'mn-colorblind');
+        document.body.classList.remove('mn-nero', 'mn-avorio', 'mn-colorblind', 'mn-sugar');
         if (saved !== 'editorial') document.body.classList.add('mn-' + saved);
       }
     }
@@ -76,6 +76,7 @@ class MnThemeRotary extends HTMLElement {
       { mode: 'nero', label: 'NR', angle: 45 },
       { mode: 'avorio', label: 'AV', angle: 135 },
       { mode: 'colorblind', label: 'CB', angle: 225 },
+      { mode: 'sugar', label: 'SG', angle: 315 },
     ];
 
     const center = size / 2;
@@ -180,6 +181,7 @@ class MnThemeRotary extends HTMLElement {
     if (cl.contains('mn-nero')) return 'nero';
     if (cl.contains('mn-avorio')) return 'avorio';
     if (cl.contains('mn-colorblind')) return 'colorblind';
+    if (cl.contains('mn-sugar')) return 'sugar';
     return 'editorial';
   }
 
@@ -187,8 +189,8 @@ class MnThemeRotary extends HTMLElement {
     const fn = resolve('setTheme');
     if (fn) fn(mode);
     else {
-      document.body.classList.remove('mn-nero', 'mn-avorio', 'mn-colorblind');
-      const map = { nero: 'mn-nero', avorio: 'mn-avorio', colorblind: 'mn-colorblind' };
+      document.body.classList.remove('mn-nero', 'mn-avorio', 'mn-colorblind', 'mn-sugar');
+      const map = { nero: 'mn-nero', avorio: 'mn-avorio', colorblind: 'mn-colorblind', sugar: 'mn-sugar' };
       if (map[mode]) document.body.classList.add(map[mode]);
       try { localStorage.setItem('mn-theme', mode); } catch (_) { /* storage blocked */ }
     }

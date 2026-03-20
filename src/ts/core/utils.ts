@@ -10,9 +10,10 @@ const BODY_CLASSES: Record<ThemeMode, string> = {
   nero: 'mn-nero',
   avorio: 'mn-avorio',
   colorblind: 'mn-colorblind',
+  sugar: 'mn-sugar',
 };
 
-const THEME_ORDER: ThemeMode[] = ['editorial', 'nero', 'avorio', 'colorblind'];
+const THEME_ORDER: ThemeMode[] = ['editorial', 'nero', 'avorio', 'colorblind', 'sugar'];
 
 /** Read a CSS custom property value, with fallback. */
 export function cssVar(name: string, fallback: string = ''): string {
@@ -29,6 +30,7 @@ export function getTheme(): ThemeMode {
   if (cl.contains('mn-nero')) return 'nero';
   if (cl.contains('mn-avorio')) return 'avorio';
   if (cl.contains('mn-colorblind')) return 'colorblind';
+  if (cl.contains('mn-sugar')) return 'sugar';
   return 'editorial';
 }
 

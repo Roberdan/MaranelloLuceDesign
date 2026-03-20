@@ -233,4 +233,4 @@ export interface A11yPanelController {
 
 // --- Theme ---
 
-export type ThemeMode = 'editorial' | 'nero' | 'avorio' | 'colorblind';
+export type ThemeMode = 'editorial' | 'nero' | 'avorio' | 'colorblind' | 'sugar';

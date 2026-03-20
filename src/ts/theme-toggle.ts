@@ -21,6 +21,7 @@ const ICONS: Record<ThemeMode, string> = {
   nero: '\u25CF',
   avorio: '\u25CB',
   colorblind: '\u25D0',
+  sugar: '\u25A3',
 };
 
 const LABELS: Record<ThemeMode, string> = {
@@ -28,6 +29,7 @@ const LABELS: Record<ThemeMode, string> = {
   nero: 'Full Nero',
   avorio: 'Full Avorio',
   colorblind: 'Colorblind-safe',
+  sugar: 'Sugar',
 };
 
 /**

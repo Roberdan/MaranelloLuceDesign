@@ -27,9 +27,9 @@ class MnThemeToggle extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
-    this._modes = ['editorial', 'nero', 'avorio', 'colorblind'];
-    this._icons = ['\u25D1', '\u25CF', '\u25CB', '\u25D0'];
-    this._labels = ['Editorial (mixed)', 'Full Nero', 'Full Avorio', 'Colorblind-safe'];
+    this._modes = ['editorial', 'nero', 'avorio', 'colorblind', 'sugar'];
+    this._icons = ['\u25D1', '\u25CF', '\u25CB', '\u25D0', '\u25A3'];
+    this._labels = ['Editorial (mixed)', 'Full Nero', 'Full Avorio', 'Colorblind-safe', 'Sugar'];
     this._idx = 1; // default: nero
 
     const tokens = cssLink("../css/tokens.css");
@@ -100,7 +100,7 @@ class MnThemeToggle extends HTMLElement {
     const setTheme = resolve('setTheme');
     if (typeof setTheme === 'function') setTheme(mode);
     else {
-      document.body.classList.remove('mn-nero', 'mn-avorio', 'mn-colorblind');
+      document.body.classList.remove('mn-nero', 'mn-avorio', 'mn-colorblind', 'mn-sugar');
       if (mode !== 'editorial') document.body.classList.add(`mn-${mode}`);
       try { localStorage.setItem('mn-theme', mode); } catch (_) { /* storage blocked */ }
     }
