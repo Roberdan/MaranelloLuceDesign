@@ -17222,7 +17222,7 @@
 
   .mn-settings-toggle:after {
     content: "";
-    background: #fff;
+    background: var(--mn-text-inverse);
     border-radius: 50%;
     width: 18px;
     height: 18px;
@@ -20633,17 +20633,17 @@
   }
 
   body.mn-sugar .mn-section-accent * {
-    color: #fff !important;
+    color: var(--bianco-puro) !important;
   }
 
   body.mn-sugar .mn-section-accent .mn-btn {
-    color: #111 !important;
-    background: #fff !important;
-    border-color: #fff !important;
+    background: var(--bianco-puro) !important;
+    color: var(--nero-assoluto) !important;
+    border-color: var(--bianco-puro) !important;
   }
 
   body.mn-sugar .mn-section-accent .mn-btn--ghost, body.mn-sugar .mn-section-accent .mn-btn:last-child {
-    color: #fff !important;
+    color: var(--bianco-puro) !important;
     background: none !important;
     border-color: #fff6 !important;
   }

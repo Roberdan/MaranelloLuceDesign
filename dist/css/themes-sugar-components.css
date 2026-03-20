@@ -187,10 +187,10 @@ body.mn-sugar .mn-dropdown__trigger { background: var(--mn-surface-raised) !impo
 body.mn-sugar .mn-avatar-group .mn-avatar, body.mn-sugar .mn-avatar--sm { background: var(--mn-border) !important; color: var(--mn-text) !important; }
 
 /* Launch / accent sections — dark gradient CTA, white text + white buttons */
-body.mn-sugar .mn-section-accent * { color: #fff !important; }
-body.mn-sugar .mn-section-accent .mn-btn { background: #fff !important; color: #111 !important; border-color: #fff !important; }
+body.mn-sugar .mn-section-accent * { color: var(--bianco-puro) !important; }
+body.mn-sugar .mn-section-accent .mn-btn { background: var(--bianco-puro) !important; color: var(--nero-assoluto) !important; border-color: var(--bianco-puro) !important; }
 body.mn-sugar .mn-section-accent .mn-btn--ghost,
-body.mn-sugar .mn-section-accent .mn-btn:last-child { background: transparent !important; color: #fff !important; border-color: rgba(255,255,255,0.4) !important; }
+body.mn-sugar .mn-section-accent .mn-btn:last-child { background: transparent !important; color: var(--bianco-puro) !important; border-color: rgba(255,255,255,0.4) !important; }
 body.mn-sugar .mn-section-accent .mn-watermark { color: rgba(255,255,255,0.08) !important; }
 
 /* Chart tooltip + severity vars */
