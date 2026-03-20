@@ -1,6 +1,6 @@
 /**
  * Customer Journey section — interactive swimlane visualization.
- * VirtualBPM sample: Meridian Consulting Group engagement history.
+ * Maranello Luce sample: Meridian Consulting Group engagement history.
  */
 
 const PHASES = [

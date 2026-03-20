@@ -1,6 +1,6 @@
 /**
  * Admin Components section — adminShell, sectionCard, settingsPanel.
- * VirtualBPM admin console context with realistic navigation and settings.
+ * Maranello Luce admin console context with realistic navigation and settings.
  */
 
 const NAV_ITEMS = [
@@ -133,7 +133,7 @@ export function createAdminComponentsSection() {
       <p class="mn-section-number">43 — Admin Components</p>
       <div class="mn-watermark">ADMIN</div>
       <h2 class="mn-title-section mn-mb-sm mn-anim-fadeInUp">Admin Components</h2>
-      <p class="mn-body mn-mb-lg">Composable admin primitives — shell layout, section cards, and settings panel — for building internal VirtualBPM admin consoles.</p>
+      <p class="mn-body mn-mb-lg">Composable admin primitives — shell layout, section cards, and settings panel — for building internal Maranello Luce admin consoles.</p>
 
       <div class="mn-card-dark mn-mb-2xl" style="padding:var(--space-xl)">
         <span class="mn-label" style="color:var(--mn-accent);display:block;margin-bottom:var(--space-md)">Admin Shell</span>
@@ -141,7 +141,7 @@ export function createAdminComponentsSection() {
         <details class="mn-code-snippet" style="margin-top:var(--space-md)">
           <summary class="mn-micro" style="cursor:pointer;color:var(--mn-text-muted)">Usage</summary>
           <pre style="font-family:var(--font-mono);font-size:var(--text-micro);padding:var(--space-sm) 0;color:var(--mn-text-muted);overflow-x:auto">const shell = M.adminShell(el, {
-  sidebar: { header: { title: 'VirtualBPM' }, nav: [...] },
+  sidebar: { header: { title: 'Maranello Luce' }, nav: [...] },
   onNavigate: (pageId) => loadPage(pageId),
 });
 shell.contentEl.appendChild(myContent);</pre>
@@ -181,7 +181,7 @@ card.bodyEl.appendChild(content);</pre>
     if (M.adminShell) {
       const shell = M.adminShell(shellEl, {
         sidebar: {
-          header: { icon: '\u2302', title: 'VirtualBPM', badge: 'v3.2' },
+          header: { icon: '\u2302', title: 'Maranello Luce', badge: 'v3.2' },
           search: { placeholder: 'Cerca pagina...', shortcut: '/' },
           nav: NAV_ITEMS,
         },
