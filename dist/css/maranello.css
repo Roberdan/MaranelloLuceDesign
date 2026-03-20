@@ -20129,9 +20129,14 @@
     border-color: var(--mn-cb-orange);
   }
 
-  body.mn-sugar .mn-section-dark, body.mn-sugar .mn-section-accent {
+  body.mn-sugar .mn-section-dark {
     background: var(--mn-surface-raised) !important;
     color: var(--mn-text) !important;
+  }
+
+  body.mn-sugar .mn-section-accent {
+    color: #fff !important;
+    background: linear-gradient(135deg, #2d2d2d, #1a1a1a) !important;
   }
 
   body.mn-sugar .mn-section-light {
@@ -20627,26 +20632,24 @@
     color: var(--mn-text) !important;
   }
 
+  body.mn-sugar .mn-section-accent * {
+    color: #fff !important;
+  }
+
   body.mn-sugar .mn-section-accent .mn-btn {
-    background: var(--mn-accent) !important;
-    color: var(--mn-accent-text) !important;
+    color: #111 !important;
+    background: #fff !important;
+    border-color: #fff !important;
   }
 
-  body.mn-sugar #launch section[style*="gradient"] {
-    background: var(--mn-surface-raised) !important;
+  body.mn-sugar .mn-section-accent .mn-btn--ghost, body.mn-sugar .mn-section-accent .mn-btn:last-child {
+    color: #fff !important;
+    background: none !important;
+    border-color: #fff6 !important;
   }
 
-  body.mn-sugar #launch section[style*="gradient"] * {
-    color: var(--mn-text) !important;
-  }
-
-  body.mn-sugar #launch section[style*="gradient"] .mn-btn {
-    background: var(--mn-accent) !important;
-    color: var(--mn-accent-text) !important;
-  }
-
-  body.mn-sugar #launch section[style*="gradient"] .mn-code-snippet pre {
-    background: #0000000f !important;
+  body.mn-sugar .mn-section-accent .mn-watermark {
+    color: #ffffff14 !important;
   }
 
   body.mn-sugar {

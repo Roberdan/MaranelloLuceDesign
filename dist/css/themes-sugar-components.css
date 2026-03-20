@@ -3,8 +3,8 @@
    Uses !important selectively to beat inline dark backgrounds. */
 
 /* Sections — invert dark to light */
-body.mn-sugar .mn-section-dark,
-body.mn-sugar .mn-section-accent { background: var(--mn-surface-raised) !important; color: var(--mn-text) !important; }
+body.mn-sugar .mn-section-dark { background: var(--mn-surface-raised) !important; color: var(--mn-text) !important; }
+body.mn-sugar .mn-section-accent { background: linear-gradient(135deg, #2d2d2d, #1a1a1a) !important; color: #fff !important; }
 body.mn-sugar .mn-section-light { background: var(--mn-surface-raised) !important; }
 body.mn-sugar .mn-section-ivory { color: var(--mn-text) !important; }
 body.mn-sugar .mn-section-dark .mn-watermark,
@@ -186,12 +186,12 @@ body.mn-sugar .mn-dropdown__trigger { background: var(--mn-surface-raised) !impo
 /* Avatar group circles */
 body.mn-sugar .mn-avatar-group .mn-avatar, body.mn-sugar .mn-avatar--sm { background: var(--mn-border) !important; color: var(--mn-text) !important; }
 
-/* Launch / accent sections — override gradient bg for readability */
-body.mn-sugar .mn-section-accent .mn-btn { background: var(--mn-accent) !important; color: var(--mn-accent-text) !important; }
-body.mn-sugar #launch section[style*="gradient"] { background: var(--mn-surface-raised) !important; }
-body.mn-sugar #launch section[style*="gradient"] * { color: var(--mn-text) !important; }
-body.mn-sugar #launch section[style*="gradient"] .mn-btn { background: var(--mn-accent) !important; color: var(--mn-accent-text) !important; }
-body.mn-sugar #launch section[style*="gradient"] .mn-code-snippet pre { background: rgba(0,0,0,0.06) !important; }
+/* Launch / accent sections — dark gradient CTA, white text + white buttons */
+body.mn-sugar .mn-section-accent * { color: #fff !important; }
+body.mn-sugar .mn-section-accent .mn-btn { background: #fff !important; color: #111 !important; border-color: #fff !important; }
+body.mn-sugar .mn-section-accent .mn-btn--ghost,
+body.mn-sugar .mn-section-accent .mn-btn:last-child { background: transparent !important; color: #fff !important; border-color: rgba(255,255,255,0.4) !important; }
+body.mn-sugar .mn-section-accent .mn-watermark { color: rgba(255,255,255,0.08) !important; }
 
 /* Chart tooltip + severity vars */
 body.mn-sugar {
