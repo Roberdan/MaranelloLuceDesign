@@ -120,7 +120,7 @@
 /* --- Action row --- */
 .mn-settings-item--action .mn-settings-item__label { color: var(--mn-error); }
 
-.mn-settings-item__action-btn {
+.mn-settings-action-btn {
   padding: 6px var(--space-md);
   border: 1px solid var(--mn-border);
   border-radius: var(--radius-sm);
@@ -130,14 +130,14 @@
   font-size: 12px;
 }
 
-.mn-settings-item__action-btn:hover { background: var(--mn-hover-bg); }
+.mn-settings-action-btn:hover { background: var(--mn-hover-bg); }
 
-.mn-settings-item__action-btn--danger {
+.mn-settings-action-btn--danger {
   border-color: var(--mn-error);
   color: var(--mn-error);
 }
 
-.mn-settings-item__action-btn--danger:hover {
+.mn-settings-action-btn--danger:hover {
   background: var(--mn-error-bg, color-mix(in srgb, var(--mn-error) 10%, transparent));
 }
 

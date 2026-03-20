@@ -64,18 +64,3 @@ export { businessModelCanvas } from './business-model-canvas';
 export type { BmcBlockId, BmcItem, BmcBlock, BusinessModelCanvasOptions, BusinessModelCanvasController } from './business-model-canvas';
 export { userTable } from './user-table';
 export type { AdminUser, UserRole, UserStatus, UserTableOptions, UserTableController } from './user-table';
-
-// v4.15 — Customer Journey
-export { customerJourney, journeyInitials } from './customer-journey';
-export type {
-  EngagementStatus, EngagementType, JourneyEngagement,
-  JourneyPhase, CustomerJourneyOptions, CustomerJourneyController,
-} from './customer-journey';
-
-// v4.15 — Admin Shell, Section Card, Settings Panel
-export { adminShell } from './admin-shell';
-export type { AdminShellNavItem, AdminShellOpts, AdminShellController } from './admin-shell';
-export { sectionCard } from './section-card';
-export type { SectionCardOpts, SectionCardController } from './section-card';
-export { settingsPanel } from './settings-panel';
-export type { SettingsPanelSection, SettingsPanelOpts, SettingsPanelController } from './settings-panel';

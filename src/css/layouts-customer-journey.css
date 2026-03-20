@@ -18,7 +18,7 @@
   min-width: 220px;
   flex-shrink: 0;
 }
-.mn-journey__phase-header {
+.mn-journey__phase-label {
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.08em;

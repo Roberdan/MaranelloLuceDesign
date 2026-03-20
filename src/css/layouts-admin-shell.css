@@ -187,7 +187,7 @@
 .mn-admin-shell--collapsed .mn-admin-nav-item__badge { display: none; }
 
 /* --- Collapse button --- */
-.mn-admin-shell__collapse-btn {
+.mn-admin-sidebar__collapse-btn {
   background: transparent;
   border: none;
   color: var(--mn-text-muted);
@@ -197,7 +197,7 @@
   border-radius: var(--radius-sm);
 }
 
-.mn-admin-shell__collapse-btn:hover { background: var(--mn-hover-bg); }
+.mn-admin-sidebar__collapse-btn:hover { background: var(--mn-hover-bg); }
 
 /* --- Mobile: off-canvas sidebar --- */
 @media (max-width: 640px) {
