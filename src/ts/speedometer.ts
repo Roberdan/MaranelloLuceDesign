@@ -1,39 +1,9 @@
 /** Maranello Luce Design - Speedometer gauge (animated needle + optional bar). */
 import type { SpeedometerOptions, SpeedometerController } from './core/types';
 import { cssVar, debounce } from './core/utils';
+import { speedoPalette, SPEEDO_SIZES as SIZES, SWEEP, START, easeOutCubic, valueToAngle as v2a } from './speedometer-palette';
 
-const SIZES: Record<string, number> = { sm: 120, md: 220, lg: 320 };
-const SWEEP = Math.PI * 1.5, START = Math.PI * 0.75;
 const FONT = "'Barlow Condensed', 'Outfit', sans-serif";
-function easeOutCubic(t: number): number { return 1 - Math.pow(1 - t, 3); }
-function v2a(v: number, max: number): number { return START + (Math.min(Math.max(v, 0), max) / max) * SWEEP; }
-
-function speedoPalette(): Record<string, unknown> {
-  const cl = document.body.classList;
-  const isCB = cl.contains('mn-colorblind');
-  const isNero = cl.contains('mn-nero');
-  const isAvorio = cl.contains('mn-avorio');
-  const D: Record<string, unknown> = {
-    needle: null, arc: null, barStops: null,
-    bg: ['#0d0d0d', '#1a1a1a', '#2c2c2c'], border: '#3a3a3a',
-    minorTick: '#444', majStroke: '#aaa', majText: '#c8c8c8',
-    capFill: '#2a2a2a', capStroke: '#555',
-    value: '#fafafa', unit: '#888', subLabel: '#666',
-    barBg: '#1a1a1a', barDim: '#666', barBright: '#aaa',
-  };
-  if (isCB) return { ...D, needle: '#4D9DE0', arc: '#7EC8E3', barStops: ['#E15759', '#EDC948', '#59A14F'] };
-  if (isAvorio) return { ...D,
-    bg: ['#faf3e6', '#f0e4cc', '#e8d5b0'], border: '#c4b99a',
-    minorTick: '#999', majStroke: '#555', majText: '#333',
-    capFill: '#333', capStroke: '#555',
-    value: '#1a1a1a', unit: '#555', subLabel: '#777',
-    barBg: '#e8d5b0', barDim: '#777', barBright: '#444',
-    needle: '#DC0000', arc: '#DC0000',
-  };
-  if (isNero) return { ...D, bg: ['#050505', '#111', '#1a1a1a'], border: '#2a2a2a',
-    minorTick: '#333', capFill: '#1a1a1a', capStroke: '#444', barBg: '#111' };
-  return D;
-}
 
 function drawSpeedo(
   ctx: CanvasRenderingContext2D, dim: number, s: number, cx: number, cy: number, R: number,

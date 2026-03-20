@@ -48,9 +48,20 @@ export function speedoPalette(): SpeedoPalette {
     value: '#fafafa', unit: '#888', subLabel: '#666',
     barBg: '#1a1a1a', barDim: '#666', barBright: '#aaa',
   };
+  const isSugar = cl.contains('mn-sugar');
   if (isCB) {
     return { ...D, needle: '#4D9DE0', arc: '#7EC8E3',
       barStops: ['#E15759', '#EDC948', '#59A14F'] };
+  }
+  if (isSugar) {
+    return { ...D,
+      bg: ['#f8f8fa', '#f0f0f4', '#e4e4ea'], border: '#d0d0d8',
+      minorTick: '#999', majStroke: '#555', majText: '#333',
+      capFill: '#333', capStroke: '#555',
+      value: '#1a1a1a', unit: '#555', subLabel: '#777',
+      barBg: '#e4e4ea', barDim: '#777', barBright: '#444',
+      needle: '#DC0000', arc: '#DC0000',
+    };
   }
   if (isAvorio) {
     return { ...D,

@@ -1,0 +1,27 @@
+@layer themes {
+/* Sugar + Colorblind cross-theme — Okabe-Ito palette on Sugar light surface.
+   Covers the case where a user enables BOTH Sugar theme AND colorblind mode. */
+body.mn-sugar.mn-colorblind {
+  --mn-accent: #0072B2;
+  --mn-accent-hover: #005f94;
+  --mn-accent-text: #fff;
+  --signal-ok: #009E73;
+  --signal-warning: #E69F00;
+  --signal-danger: #D55E00;
+  --mn-error: #D55E00;
+  --mn-success: #009E73;
+  --mn-warning: #E69F00;
+  --mn-info: #56B4E9;
+  --chart-default: #0072B2;
+  --chart-bar: #56B4E9;
+  --mn-focus-ring: #0072B2;
+  --mn-border-focus: #0072B2;
+  --stage-1: #E69F00;
+  --stage-2: #E69F00;
+  --stage-3: #56B4E9;
+  --stage-4: #009E73;
+  --stage-5: #999;
+  --stage-6: #D55E00;
+  --stage-7: #444;
+}
+} /* end @layer themes */

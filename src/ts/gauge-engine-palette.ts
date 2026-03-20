@@ -81,6 +81,23 @@ export function buildGaugePalette(accent: string): GaugeRenderPalette {
       odometerBg: '#f0ede6', odometerBorder: '#ccc', odometerText: '#1a1a1a',
     };
   }
+  if (cl.contains('mn-sugar')) {
+    return { ...D,
+      numbers: '#3a3530', centerValue: '#1a1a1a', centerUnit: '#666660',
+      centerLabel: '#4a4540', muted: '#666660', dimmed: '#7a7570',
+      subDialLabel: '#5a5550', axisLabel: '#4a4540', axisTitle: '#5a5550',
+      gridScale: '#8a8580', sparkMonth: '#8a8580', sparkLabel: '#7a7570',
+      quadrant: '#a0a09a', quadrantDim: '#b0aba4',
+      tickMajor: '#a07818', tickHalf: '#806010', tickMinor: '#604808',
+      capOuter: ['#d0cfc9', '#b8b4ae', '#a09e98', '#888582'],
+      capInner: ['#d8d4ce', '#c0bcb6', '#a8a49e'], capCenter: '#b0aba4',
+      needleTail: '#a8a49e', needleTip: '#1a1a1a',
+      highlightRing: 'rgba(0,0,0,0.04)', trackAlpha: 'rgba(0,0,0,0.06)',
+      subDialBg: ['#e8e4dc', '#ddd8ce'], subDialBorder: '#c0b9ad',
+      subDialTrack: 'rgba(0,0,0,0.08)',
+      odometerBg: '#f0ede6', odometerBorder: '#ccc', odometerText: '#1a1a1a',
+    };
+  }
   if (cl.contains('mn-colorblind')) {
     return { ...D,
       tickMajor: '#FFB000', tickHalf: '#B87E00', tickMinor: '#7A5400',

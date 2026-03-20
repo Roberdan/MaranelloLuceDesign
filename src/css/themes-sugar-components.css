@@ -94,19 +94,13 @@ body.mn-sugar .mn-nav a, body.mn-sugar .mn-nav span { color: var(--mn-text) !imp
 body.mn-sugar .mn-nav a:hover { color: var(--mn-accent) !important; }
 body.mn-sugar .mn-footer { background: var(--mn-surface-raised) !important; color: var(--mn-text-muted) !important; }
 
-/* Gantt — canvas invert + light container */
+/* Gantt — light container (canvas is now theme-aware via JS) */
 body.mn-sugar .mn-gantt { background: var(--mn-surface-raised) !important; border: 1px solid var(--mn-border) !important; }
 body.mn-sugar [id*="gantt"] { background: var(--mn-surface-raised) !important; }
-body.mn-sugar .mn-gantt canvas, body.mn-sugar mn-gantt canvas { filter: invert(0.88) hue-rotate(180deg) !important; }
 
-/* Gauge — hide glass overlay, lighten dial, invert canvas */
+/* Gauge — hide glass overlay, lighten dial (canvas is now theme-aware via JS palette) */
 body.mn-sugar .mn-gauge__glass { display: none !important; }
 body.mn-sugar .mn-gauge__dial { background: var(--mn-surface-raised) !important; box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important; border: 1px solid var(--mn-border) !important; }
-body.mn-sugar .mn-gauge__canvas { filter: invert(0.88) hue-rotate(180deg) !important; }
-/* Speedometer canvas */
-body.mn-sugar .mn-speedometer canvas { filter: invert(0.88) hue-rotate(180deg) !important; }
-/* All canvas in dark sections */
-body.mn-sugar .mn-section-dark canvas { filter: invert(0.88) hue-rotate(180deg) !important; }
 /* Ferrari control dials — lighten */
 body.mn-sugar .mn-ctrl-manettino__knob { filter: invert(0.7) !important; }
 body.mn-sugar .mn-ctrl-stepped__knob { filter: invert(0.7) !important; }
