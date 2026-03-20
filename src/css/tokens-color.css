@@ -105,6 +105,7 @@
   --mn-focus-ring:     var(--mn-accent);
   --mn-focus-ring-offset: var(--mn-surface);
   --mn-error:          #DC0000;
+  --mn-danger-text:    var(--bianco-puro);   /* text on mn-error bg: always white for contrast */
   --mn-success:        #00A651;
   --mn-warning:        var(--mn-accent);
   --mn-info:           var(--status-info);

@@ -74,10 +74,11 @@ const rootVars = parseVars(tokensCss);
 
 /* ── Build theme variable maps ── */
 const themes = {
-  editorial: { ...rootVars },
-  nero: { ...rootVars, ...parseVars(themesCss, 'body.mn-nero') },
-  avorio: { ...rootVars, ...parseVars(themesCss, 'body.mn-avorio') },
+  editorial:  { ...rootVars },
+  nero:       { ...rootVars, ...parseVars(themesCss, 'body.mn-nero') },
+  avorio:     { ...rootVars, ...parseVars(themesCss, 'body.mn-avorio') },
   colorblind: { ...rootVars, ...parseVars(themesCss, 'body.mn-colorblind') },
+  sugar:      { ...rootVars, ...parseVars(themesCss, 'body.mn-sugar') },
 };
 
 /* ── Critical contrast pairs: [fgVar, bgVar, minRatio, label] ── */

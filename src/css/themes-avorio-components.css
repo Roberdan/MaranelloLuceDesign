@@ -1,0 +1,18 @@
+@layer themes {
+/* Avorio Components — P0 semantic fix
+   Avorio sets --mn-accent = --mn-error (Ferrari red accent).
+   Without this override, .mn-form-btn--primary and .mn-form-btn--danger
+   both render as solid red — meaning is LOST.
+   Fix: danger becomes outline/ghost red, primary stays solid red.
+   Text contrast: --mn-error red (#DC0000) as text on white bg ≈ 5.2:1 (WCAG AA). */
+
+body.mn-avorio .mn-form-btn--danger {
+  background: transparent;
+  color: var(--mn-error);
+  border: 2px solid var(--mn-error);
+}
+body.mn-avorio .mn-form-btn--danger:hover {
+  background: var(--mn-error-bg);
+  box-shadow: none;
+}
+} /* end @layer themes */

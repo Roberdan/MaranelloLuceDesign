@@ -17,7 +17,7 @@ body.mn-colorblind .mn-btn--ghost { border-color: var(--mn-accent); color: var(-
 body.mn-colorblind .mn-btn--ghost:hover { background: var(--mn-accent); color: var(--mn-accent-text); }
 body.mn-colorblind .mn-btn--secondary { border-color: var(--mn-cb-orange); color: var(--mn-cb-orange); }
 body.mn-colorblind .mn-btn--secondary:hover { background: var(--mn-cb-orange); color: #fff; }
-body.mn-colorblind .mn-btn--danger { background: #D55E00; border-color: #D55E00; }
+body.mn-colorblind .mn-btn--danger { background: var(--mn-error); border-color: var(--mn-error); }
 body.mn-colorblind .mn-btn--success { background: var(--mn-cb-blue); border-color: var(--mn-cb-blue); }
 
 /* ============================================================

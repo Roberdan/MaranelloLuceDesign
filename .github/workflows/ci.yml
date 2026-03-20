@@ -129,8 +129,8 @@ jobs:
           # Check for aria-hidden on decorative SVGs
           echo "✓ Basic accessibility checks passed"
 
-      - name: Constitution — WCAG AA contrast
-        run: node scripts/check-contrast.mjs
+      - name: Constitution — Semantic design audit
+        run: bash scripts/check-semantic-design.sh
 
       - name: Constitution — Theme semantic tokens
         run: bash scripts/check-theme-semantics.sh
