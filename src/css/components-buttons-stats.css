@@ -210,12 +210,20 @@ body.mn-avorio .mn-btn--white {
   background: var(--mn-surface); border-color: var(--mn-border); color: var(--mn-text);
 }
 body.mn-avorio .mn-btn:active {
-  background: var(--mn-text-tertiary); box-shadow: inset 0 2px 6px rgba(0,0,0,0.25);
+  background: var(--mn-text); box-shadow: inset 0 3px 8px rgba(0,0,0,0.35);
+}
+body.mn-avorio .mn-btn[aria-pressed="true"],
+body.mn-avorio .mn-btn[aria-selected="true"] {
+  background: var(--mn-text); color: var(--mn-surface); box-shadow: inset 0 2px 6px rgba(0,0,0,0.3);
 }
 body.mn-avorio .mn-btn--ghost:active {
-  background: rgba(0,0,0,0.12); color: var(--mn-text);
+  background: rgba(0,0,0,0.18); color: var(--mn-text); box-shadow: inset 0 2px 4px rgba(0,0,0,0.15);
+}
+body.mn-avorio .mn-btn--ghost[aria-pressed="true"],
+body.mn-avorio .mn-btn--ghost[aria-selected="true"] {
+  background: rgba(0,0,0,0.14); color: var(--mn-text); border-color: var(--mn-text);
 }
 body.mn-avorio .mn-btn--ghost-light:active {
-  background: rgba(0,0,0,0.08);
+  background: rgba(0,0,0,0.12); box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
 }
 } /* end @layer components */

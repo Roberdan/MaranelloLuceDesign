@@ -31,6 +31,7 @@
 .mn-tabs__tab[aria-selected="true"] {
   color: var(--mn-text);
   border-bottom-color: var(--mn-accent);
+  background: var(--mn-hover-bg);
 }
 .mn-tabs__panel {
   display: none;
@@ -40,7 +41,11 @@
 
 body.mn-avorio .mn-tabs__list { border-color: var(--mn-border-subtle); }
 body.mn-avorio .mn-tabs__tab { color: var(--mn-text-muted); }
-body.mn-avorio .mn-tabs__tab--active { color: var(--mn-text); }
+body.mn-avorio .mn-tabs__tab--active,
+body.mn-avorio .mn-tabs__tab[aria-selected="true"] {
+  color: var(--mn-text);
+  background: rgba(0,0,0,0.05);
+}
 
 
 /* ── BREADCRUMB ── */

@@ -85,6 +85,23 @@
   padding: var(--space-sm) var(--space-md);
   border-top: 1px solid var(--mn-border);
 }
+button.mn-admin-sidebar__footer {
+  display: block;
+  width: 100%;
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: none;
+  border-top: 1px solid var(--mn-border);
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--duration-sm) var(--ease-out);
+}
+button.mn-admin-sidebar__footer:hover { background: var(--mn-hover-bg); }
+button.mn-admin-sidebar__footer:focus-visible {
+  outline: 2px solid var(--mn-focus-ring);
+  outline-offset: -2px;
+}
 
 /* --- Nav items --- */
 .mn-admin-nav-item {

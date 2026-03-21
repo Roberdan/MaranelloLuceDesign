@@ -24,7 +24,8 @@ export interface AdminShellOpts {
       onSearch?: (q: string) => void;
     };
     nav: AdminShellNavItem[];
-    footer?: HTMLElement | string;
+    footer?: HTMLElement | string | { label: string; onClick: () => void };
+    onFooterClick?: () => void;
   };
   collapsible?: boolean;
   initialCollapsed?: boolean;
@@ -162,13 +163,25 @@ export function adminShell(
 
   /* Footer */
   if (opts.sidebar.footer) {
-    if (typeof opts.sidebar.footer === 'string') {
-      const span = document.createElement('span');
-      span.className = 'mn-admin-sidebar__footer';
-      span.textContent = opts.sidebar.footer;
-      sidebar.appendChild(span);
+    const footer = opts.sidebar.footer;
+    if (typeof footer === 'string') {
+      const el2 = document.createElement('button');
+      el2.type = 'button';
+      el2.className = 'mn-admin-sidebar__footer';
+      el2.textContent = footer;
+      if (opts.sidebar.onFooterClick) {
+        el2.addEventListener('click', opts.sidebar.onFooterClick, { signal: ac.signal });
+      }
+      sidebar.appendChild(el2);
+    } else if (typeof footer === 'object' && 'label' in footer && 'onClick' in footer) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'mn-admin-sidebar__footer';
+      btn.textContent = footer.label;
+      btn.addEventListener('click', footer.onClick, { signal: ac.signal });
+      sidebar.appendChild(btn);
     } else {
-      sidebar.appendChild(opts.sidebar.footer);
+      sidebar.appendChild(footer as HTMLElement);
     }
   }
 

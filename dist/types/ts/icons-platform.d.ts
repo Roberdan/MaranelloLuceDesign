@@ -50,4 +50,7 @@ export declare const platformIcons: {
     readonly discover: () => string;
     readonly push: () => string;
     readonly addPeer: () => string;
+    readonly moon: () => string;
+    readonly sun: () => string;
+    readonly contrast: () => string;
 };

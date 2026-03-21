@@ -3034,7 +3034,10 @@ var platformIcons = {
   sync: () => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7h-5V2M4 17h5v5"/><path d="M6.5 8.5A7 7 0 0 1 18 7M17.5 15.5A7 7 0 0 1 6 17"/></svg>',
   discover: () => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="5"/><path d="M13.5 13.5L20 20"/><circle cx="8" cy="10" r=".6" fill="currentColor" stroke="none"/><circle cx="12" cy="8" r=".6" fill="currentColor" stroke="none"/><circle cx="11.5" cy="12.5" r=".6" fill="currentColor" stroke="none"/><path d="M8.6 9.8l2.8-1.5M8.6 10.2l2.3 2"/></svg>',
   push: () => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M4 14v6h16v-6"/></svg>',
-  addPeer: () => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="14" r="3"/><circle cx="16" cy="14" r="3"/><path d="M11 14h2M16 5v6M13 8h6"/></svg>'
+  addPeer: () => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="14" r="3"/><circle cx="16" cy="14" r="3"/><path d="M11 14h2M16 5v6M13 8h6"/></svg>',
+  moon: () => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>',
+  sun: () => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>',
+  contrast: () => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20" fill="currentColor" stroke="none"/></svg>'
 };
 
 // src/ts/icons.ts
@@ -3071,12 +3074,12 @@ function iconCatalog() {
 }
 
 // src/ts/theme-toggle.ts
-var ICONS = {
-  editorial: "\u25D1",
-  nero: "\u25CF",
-  avorio: "\u25CB",
-  colorblind: "\u25D0",
-  sugar: "\u25A8"
+var THEME_ICONS = {
+  editorial: platformIcons.contrast,
+  nero: platformIcons.moon,
+  avorio: platformIcons.sun,
+  colorblind: actionIcons.eye,
+  sugar: platformIcons.sparkle
 };
 var LABELS = {
   editorial: "Editorial (mixed)",
@@ -3085,6 +3088,11 @@ var LABELS = {
   colorblind: "Colorblind-safe",
   sugar: "Sugar"
 };
+function themeIcon(mode) {
+  const factory = THEME_ICONS[mode];
+  if (!factory) return "";
+  return `<span class="mn-icon mn-icon--sm" aria-hidden="true">${factory()}</span>`;
+}
 function initThemeToggle(toggleId, gaugeInstances = [], onAutoContrast) {
   const toggle = typeof toggleId === "string" ? document.getElementById(toggleId) : toggleId;
   if (!toggle) {
@@ -3096,11 +3104,13 @@ function initThemeToggle(toggleId, gaugeInstances = [], onAutoContrast) {
     };
   }
   let current = getTheme();
-  toggle.textContent = ICONS[current];
+  toggle.innerHTML = themeIcon(current);
   toggle.title = LABELS[current];
+  toggle.setAttribute("aria-label", LABELS[current]);
   function applyTheme() {
-    toggle.textContent = ICONS[current];
+    toggle.innerHTML = themeIcon(current);
     toggle.title = LABELS[current];
+    toggle.setAttribute("aria-label", LABELS[current]);
     requestAnimationFrame(() => {
       gaugeInstances.forEach((g) => g.redraw());
       if (onAutoContrast) onAutoContrast(".mn-treemap__cell");
@@ -10349,7 +10359,7 @@ function nineBoxMatrix(el4, opts) {
 
 // src/ts/swot-matrix.ts
 var QUADRANTS = ["strengths", "weaknesses", "opportunities", "threats"];
-var ICONS2 = {
+var ICONS = {
   strengths: "S",
   weaknesses: "W",
   opportunities: "O",
@@ -10377,7 +10387,7 @@ function buildQuadrant(q, label, uid2, editable) {
   hdr.id = hdrId;
   const icon = document.createElement("span");
   icon.className = "mn-swot__icon";
-  icon.textContent = ICONS2[q];
+  icon.textContent = ICONS[q];
   const title = document.createElement("span");
   title.className = "mn-swot__title";
   title.textContent = label;
@@ -12947,13 +12957,25 @@ function adminShell(el4, opts) {
     sidebar.appendChild(toggle);
   }
   if (opts.sidebar.footer) {
-    if (typeof opts.sidebar.footer === "string") {
-      const span = document.createElement("span");
-      span.className = "mn-admin-sidebar__footer";
-      span.textContent = opts.sidebar.footer;
-      sidebar.appendChild(span);
+    const footer = opts.sidebar.footer;
+    if (typeof footer === "string") {
+      const el22 = document.createElement("button");
+      el22.type = "button";
+      el22.className = "mn-admin-sidebar__footer";
+      el22.textContent = footer;
+      if (opts.sidebar.onFooterClick) {
+        el22.addEventListener("click", opts.sidebar.onFooterClick, { signal: ac.signal });
+      }
+      sidebar.appendChild(el22);
+    } else if (typeof footer === "object" && "label" in footer && "onClick" in footer) {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "mn-admin-sidebar__footer";
+      btn.textContent = footer.label;
+      btn.addEventListener("click", footer.onClick, { signal: ac.signal });
+      sidebar.appendChild(btn);
     } else {
-      sidebar.appendChild(opts.sidebar.footer);
+      sidebar.appendChild(footer);
     }
   }
   const content = document.createElement("div");
@@ -13593,7 +13615,7 @@ M.charts = {
 registerExtras(M);
 
 // src/ts/index.ts
-var VERSION = "4.14.1";
+var VERSION = "4.20.0";
 export {
   AppShellController,
   AsyncSelect,
