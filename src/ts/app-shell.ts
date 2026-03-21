@@ -1,3 +1,5 @@
+import type { Placement } from './view-registry';
+
 export type LayoutMode = 'full' | 'split' | 'stacked' | 'docked-bottom' | 'dual-panel' | 'side-detail';
 
 export interface AppShellConfig {
@@ -13,6 +15,16 @@ const SLOT_NAMES: readonly SlotName[] = [
 ] as const;
 
 const LAYOUTS: readonly LayoutMode[] = ['full', 'split', 'stacked', 'docked-bottom', 'dual-panel', 'side-detail'];
+
+/** Maps Placement values from ViewRegistry to AppShell slot names. */
+const PLACEMENT_TO_SLOT: ReadonlyMap<Placement, SlotName> = new Map<Placement, SlotName>([
+  ['page', 'main'],
+  ['side-panel', 'detail'],
+  ['bottom-dock', 'bottom'],
+  ['overlay', 'overlay'],
+  ['workspace', 'secondary'],
+  // 'modal' intentionally omitted — modals use the modal system, not a slot
+]);
 
 export class AppShellController {
   private readonly container: HTMLElement;
@@ -62,6 +74,13 @@ export class AppShellController {
 
   getSlot(name: string): HTMLElement | null {
     return this.slots.get(name as SlotName) ?? null;
+  }
+
+  /** Resolves a Placement to the corresponding shell slot element. Returns null for modal or unknown placements. */
+  getSlotForPlacement(placement: Placement): HTMLElement | null {
+    const slotName = PLACEMENT_TO_SLOT.get(placement);
+    if (!slotName) return null;
+    return this.slots.get(slotName) ?? null;
   }
 
   destroy(): void {

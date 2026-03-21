@@ -129,7 +129,7 @@ export class DashboardRenderer {
       return;
     }
 
-    record.scaffold.setState('partial');
+    record.scaffold.setState('ready');
 
     if (!record.rendered) {
       record.controller.render(record.widgetHost, value);

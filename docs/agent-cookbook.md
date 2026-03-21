@@ -70,8 +70,81 @@ sel.setProvider(newProvider);
 
 ```js
 const scaffold = new Maranello.StateScaffold(el, { state: 'loading' });
-scaffold.setState('partial');
+scaffold.setState('ready');    // data loaded successfully — content visible
+scaffold.setState('partial');  // degraded content — shows warning banner
 scaffold.setState('error', 'Connection failed');
+```
+
+---
+
+## AI Operations Components
+
+Maranello provides four dedicated components for building AI/LLM operations dashboards.
+These are available in both the IIFE bundle (`window.Maranello`) and ESM imports.
+
+| Component | Purpose |
+|-----------|---------|
+| `tokenMeter` | Visualizes LLM token budget usage (used/total) with optional cost display |
+| `agentCostBreakdown` | Per-agent cost attribution table with sorting and budget alerts |
+| `agentTrace` | Step-by-step trace of an AI agent's execution with status indicators |
+| `costTimeline` | Multi-series area chart for tracking LLM spend over time |
+| `streamingText` | Renders streaming LLM output with citation support |
+
+**Demo coverage:** `demo/sections/agentic.js` showcases `agentTrace`, `tokenMeter`, and
+`streamingText`. `demo/sections/finops.js` showcases `agentCostBreakdown`, `costTimeline`,
+and `tokenMeter`.
+
+### Recipe: Agent operations dashboard
+
+Combines all four core AI components into a single monitoring view.
+
+```js
+// 1. Layout: use AppShell with side-detail for drill-in
+const shell = new Maranello.AppShellController(appEl, { layout: 'side-detail' });
+
+// 2. Token budget meter — prominent at the top
+const meter = Maranello.tokenMeter(
+  document.getElementById('token-budget'),
+  { used: 847_200, total: 1_000_000, label: 'GPT-4o budget' },
+  { showCost: true, showBreakdown: true }
+);
+
+// 3. Cost breakdown table — per-agent attribution
+const costs = Maranello.agentCostBreakdown(
+  document.getElementById('cost-table'),
+  [
+    { agent: 'Planner',    model: 'claude-opus-4', tokens: 420_000, cost: 6.30 },
+    { agent: 'Executor',   model: 'claude-opus-4', tokens: 310_000, cost: 4.65 },
+    { agent: 'Reviewer',   model: 'gpt-4o',       tokens: 117_200, cost: 0.59 }
+  ],
+  { sortable: true, onBudgetAlert: (row) => Maranello.toast(`${row.agent} over budget`, { type: 'warning' }) }
+);
+
+// 4. Cost over time — canvas area chart with hover interaction
+const timeline = Maranello.costTimeline(
+  document.getElementById('cost-canvas'),
+  {
+    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+    series: [
+      { label: 'Planner',  values: [1.20, 1.50, 1.80, 0.90, 0.90] },
+      { label: 'Executor', values: [0.80, 1.10, 1.00, 0.85, 0.90] }
+    ],
+    stacked: true,
+    unit: '$'
+  }
+);
+
+// 5. Agent trace — step-by-step execution log
+const trace = Maranello.agentTrace(
+  document.getElementById('trace-panel'),
+  [
+    { id: '1', label: 'Plan generated',   status: 'done',       duration: 2400 },
+    { id: '2', label: 'Code written',     status: 'done',       duration: 8100 },
+    { id: '3', label: 'Tests running',    status: 'in-progress' },
+    { id: '4', label: 'Review pending',   status: 'pending' }
+  ],
+  { onSelect: (step) => console.log('Selected step:', step.id) }
+);
 ```
 
 ---
@@ -201,7 +274,7 @@ try {
   if (data.length === 0) {
     scaffold.setState('empty', 'No records found');
   } else {
-    scaffold.setState('partial'); // content slot becomes visible
+    scaffold.setState('ready'); // data loaded — content slot becomes visible
     renderContent(el, data);
   }
 } catch (e) {

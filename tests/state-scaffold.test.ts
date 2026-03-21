@@ -20,7 +20,7 @@ describe('StateScaffold', () => {
 
   it('transitions through all supported states', () => {
     const scaffold = new StateScaffold(container, { state: 'loading' });
-    const states = ['empty', 'error', 'partial', 'no-results', 'loading'] as const;
+    const states = ['empty', 'error', 'partial', 'no-results', 'ready', 'loading'] as const;
 
     for (const state of states) {
       scaffold.setState(state, `state-${state}`);

@@ -54,13 +54,20 @@ function contrastRatio(c1: [number, number, number], c2: [number, number, number
 
 const tokensCss = readFileSync(join(CSS_DIR, 'tokens-color.css'), 'utf8');
 const themesCss = readFileSync(join(CSS_DIR, 'themes-base.css'), 'utf8');
+const sugarCbCss = readFileSync(join(CSS_DIR, 'themes-sugar-colorblind.css'), 'utf8');
 const rootVars = parseVars(tokensCss);
+
+const sugarVars = parseVars(themesCss, 'body.mn-sugar');
+const colorblindVars = parseVars(themesCss, 'body.mn-colorblind');
+const sugarCbVars = parseVars(sugarCbCss, 'body.mn-sugar.mn-colorblind');
 
 const themes: Record<string, Record<string, string>> = {
   editorial: { ...rootVars },
   nero: { ...rootVars, ...parseVars(themesCss, 'body.mn-nero') },
   avorio: { ...rootVars, ...parseVars(themesCss, 'body.mn-avorio') },
-  colorblind: { ...rootVars, ...parseVars(themesCss, 'body.mn-colorblind') },
+  colorblind: { ...rootVars, ...colorblindVars },
+  sugar: { ...rootVars, ...sugarVars },
+  'sugar-colorblind': { ...rootVars, ...sugarVars, ...colorblindVars, ...sugarCbVars },
 };
 
 describe('WCAG AA contrast ratios', () => {

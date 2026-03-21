@@ -1,5 +1,5 @@
 export interface StateScaffoldOptions {
-  state: 'loading' | 'empty' | 'error' | 'partial' | 'no-results';
+  state: 'loading' | 'empty' | 'error' | 'partial' | 'no-results' | 'ready';
   message?: string;
   actionLabel?: string;
   onRetry?: () => void;
@@ -8,7 +8,7 @@ export interface StateScaffoldOptions {
 
 type ScaffoldState = StateScaffoldOptions['state'];
 
-const VALID_STATES: readonly ScaffoldState[] = ['loading', 'empty', 'error', 'partial', 'no-results'];
+const VALID_STATES: readonly ScaffoldState[] = ['loading', 'empty', 'error', 'partial', 'no-results', 'ready'];
 
 export class StateScaffold {
   private container: HTMLElement;
@@ -40,7 +40,10 @@ export class StateScaffold {
   }
 
   setState(state: ScaffoldState, message?: string): void {
-    if (!VALID_STATES.includes(state)) return;
+    if (!VALID_STATES.includes(state)) {
+      console.warn(`StateScaffold: invalid state "${state}". Valid states: ${VALID_STATES.join(', ')}`);
+      return;
+    }
     this.state = state;
     this.options.state = state;
     if (typeof message === 'string') {
@@ -56,13 +59,14 @@ export class StateScaffold {
     this.container.classList.add(`mn-scaffold--${state}`);
 
     this.status.innerHTML = '';
-    this.content.classList.toggle('mn-scaffold__content--hidden', state !== 'partial');
+    this.content.classList.toggle('mn-scaffold__content--hidden', state !== 'partial' && state !== 'ready');
 
     if (state === 'loading') this.renderLoading();
     if (state === 'empty') this.renderEmpty();
     if (state === 'error') this.renderError();
     if (state === 'partial') this.renderPartial();
     if (state === 'no-results') this.renderNoResults();
+    if (state === 'ready') this.renderReady();
   }
 
   getState(): string {
@@ -136,6 +140,11 @@ export class StateScaffold {
     banner.appendChild(text);
 
     this.status.appendChild(banner);
+  }
+
+  private renderReady(): void {
+    this.status.innerHTML = '';
+    this.container.setAttribute('aria-busy', 'false');
   }
 
   private renderNoResults(): void {

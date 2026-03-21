@@ -1,7 +1,7 @@
 /**
  * Visual regression tests for theme rendering.
  * Uses Playwright's toHaveScreenshot() to capture baseline screenshots
- * and detect unintended visual changes across all 4 themes.
+ * and detect unintended visual changes across all 6 theme variants.
  *
  * Usage:
  *   npx playwright test visual-regression   — compare against baselines
@@ -10,10 +10,12 @@
 import { test, expect, type Page } from '@playwright/test';
 
 const THEMES = [
-  { name: 'editorial', bodyClass: null },
-  { name: 'nero',      bodyClass: 'mn-nero' },
-  { name: 'avorio',    bodyClass: 'mn-avorio' },
-  { name: 'colorblind', bodyClass: 'mn-colorblind' },
+  { name: 'editorial',        bodyClass: null },
+  { name: 'nero',             bodyClass: 'mn-nero' },
+  { name: 'avorio',           bodyClass: 'mn-avorio' },
+  { name: 'colorblind',       bodyClass: 'mn-colorblind' },
+  { name: 'sugar',            bodyClass: 'mn-sugar' },
+  { name: 'sugar-colorblind', bodyClass: 'mn-sugar mn-colorblind' },
 ] as const;
 
 const SECTIONS = [
@@ -22,8 +24,8 @@ const SECTIONS = [
 
 async function applyTheme(page: Page, bodyClass: string | null) {
   await page.evaluate((cls) => {
-    document.body.classList.remove('mn-nero', 'mn-avorio', 'mn-colorblind');
-    if (cls) document.body.classList.add(cls);
+    document.body.classList.remove('mn-nero', 'mn-avorio', 'mn-colorblind', 'mn-sugar');
+    if (cls) cls.split(' ').forEach(c => document.body.classList.add(c));
   }, bodyClass);
   // Allow CSS transitions to settle
   await page.waitForTimeout(300);

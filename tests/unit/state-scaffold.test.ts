@@ -39,13 +39,10 @@ describe('StateScaffold', () => {
   it('setState("empty") shows empty message', () => {
     const scaffold = new StateScaffold(el, { state: 'loading' });
     scaffold.setState('empty', 'Nothing here yet.');
-
     expect(scaffold.getState()).toBe('empty');
     expect(el.classList.contains('mn-scaffold--empty')).toBe(true);
     expect(el.classList.contains('mn-scaffold--loading')).toBe(false);
-
-    const msg = el.querySelector('.mn-scaffold__message');
-    expect(msg?.textContent).toBe('Nothing here yet.');
+    expect(el.querySelector('.mn-scaffold__message')?.textContent).toBe('Nothing here yet.');
     scaffold.destroy();
   });
 
@@ -193,7 +190,7 @@ describe('StateScaffold', () => {
 
   it('setState transitions cleanly between all states', () => {
     const scaffold = new StateScaffold(el, { state: 'loading' });
-    const states = ['empty', 'error', 'partial', 'no-results', 'loading'] as const;
+    const states = ['empty', 'error', 'partial', 'no-results', 'ready', 'loading'] as const;
 
     for (const s of states) {
       scaffold.setState(s);
@@ -201,5 +198,52 @@ describe('StateScaffold', () => {
       expect(el.classList.contains(`mn-scaffold--${s}`)).toBe(true);
     }
     scaffold.destroy();
+  });
+
+  it('setState("ready") hides status, shows content, sets aria-busy=false', () => {
+    const scaffold = new StateScaffold(el, { state: 'loading' });
+    scaffold.setState('ready');
+    expect(scaffold.getState()).toBe('ready');
+    expect(el.classList.contains('mn-scaffold--ready')).toBe(true);
+    expect(el.classList.contains('mn-scaffold--loading')).toBe(false);
+    expect((el.querySelector('.mn-scaffold__status') as HTMLElement)?.innerHTML).toBe('');
+    expect(el.querySelector('.mn-scaffold__content')?.classList.contains('mn-scaffold__content--hidden')).toBe(false);
+    expect(el.getAttribute('aria-busy')).toBe('false');
+    scaffold.destroy();
+  });
+
+  it.each(['loading', 'empty', 'error'] as const)('transitions from %s to ready correctly', (from) => {
+    const scaffold = new StateScaffold(el, { state: from, message: 'Test' });
+    expect(scaffold.getState()).toBe(from);
+    scaffold.setState('ready');
+    expect(scaffold.getState()).toBe('ready');
+    expect(el.querySelector('.mn-scaffold__content')?.classList.contains('mn-scaffold__content--hidden')).toBe(false);
+    scaffold.destroy();
+  });
+
+  it('partial state still works for degraded content with banner', () => {
+    const scaffold = new StateScaffold(el, { state: 'loading' });
+    scaffold.setState('partial', 'Some data may be unavailable.');
+    expect(scaffold.getState()).toBe('partial');
+    expect(el.querySelector('.mn-scaffold__banner')?.textContent).toBe('Some data may be unavailable.');
+    expect(el.querySelector('.mn-scaffold__content')?.classList.contains('mn-scaffold__content--hidden')).toBe(false);
+    scaffold.destroy();
+  });
+
+  it('console.warn fires on invalid state name', () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+    const scaffold = new StateScaffold(el, { state: 'loading' });
+    scaffold.setState('bogus' as 'loading');
+    expect(warnSpy).toHaveBeenCalledOnce();
+    expect(warnSpy.mock.calls[0]?.[0]).toContain('bogus');
+    expect(scaffold.getState()).toBe('loading');
+    warnSpy.mockRestore();
+    scaffold.destroy();
+  });
+
+  it('destroy removes ready state class', () => {
+    const scaffold = new StateScaffold(el, { state: 'ready' });
+    scaffold.destroy();
+    expect(el.classList.contains('mn-scaffold--ready')).toBe(false);
   });
 });

@@ -1,6 +1,6 @@
 # Maranello Luce Design — Agent Reference
 
-> Ferrari Luce-inspired design system. Zero deps. 4 themes. 150+ APIs. v4.16.0
+> Ferrari Luce-inspired design system. Zero deps. 5 themes. 150+ APIs. v5.0.0
 > Repo: github.com/Roberdan/MaranelloLuceDesign
 > Demo: roberdan.github.io/MaranelloLuceDesign/
 > AI Expert: @NaSra (see `.github/agents/NaSra.agent.md`)
@@ -8,7 +8,7 @@
 ## Install
 
 ```bash
-npm i github:Roberdan/MaranelloLuceDesign#v4.16.0
+npm i github:Roberdan/MaranelloLuceDesign#v5.0.0
 ```
 
 ## Import Paths
@@ -22,13 +22,13 @@ npm i github:Roberdan/MaranelloLuceDesign#v4.16.0
 | `maranello-luce-design-business/controls` | manettino, cruiseLever, toggleLever, steppedRotary, initRotary, initSlider, openDrawer, openDetailPanel |
 | `maranello-luce-design-business/forms` | initForms, validateField, validateForm, initTagInput, initFileUpload, initFormSteps |
 | `maranello-luce-design-business/gantt` | Gantt timeline renderer |
-| `maranello-luce-design-business/wc` | All 26 Web Components |
+| `maranello-luce-design-business/wc` | All 32 Web Components |
 | `maranello-luce-design-business/wc/mn-*` | Individual Web Components |
 
 CDN (no build):
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v4.16.0/dist/css/index.css">
-<script src="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v4.16.0/dist/iife/maranello.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v5.0.0/dist/css/index.css">
+<script src="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v5.0.0/dist/iife/maranello.min.js"></script>
 ```
 IIFE attaches everything to `window.Maranello`.
 
@@ -40,6 +40,7 @@ IIFE attaches everything to `window.Maranello`.
 | `mn-nero` | Pure dark (#0a0a0a) | Giallo Ferrari (#FFC72C) |
 | `mn-avorio` | Warm ivory light (#faf3e6) | Rosso Corsa (#DC0000) |
 | `mn-colorblind` | Dark, Wong palette | Blue (#0072B2) |
+| `mn-sugar` | Light grey, rounded | Black (#000000) |
 
 Apply: `<body class="mn-nero">`. Toggle: `Maranello.cycleTheme()` or `Maranello.setTheme('nero')`.
 Persist: `<mn-theme-toggle>` or `<mn-theme-rotary>` (saves to localStorage).
@@ -170,7 +171,7 @@ Set `colorMode` in `data-gauge` JSON to auto-generate arcBar colorStops:
 - `'higher-better'` — green at high values (quality, uptime)
 - `'lower-better'` — green at low values (latency, errors)
 
-## Web Components (26 tags, 25 components)
+## Web Components (32 tags, 31 components)
 
 All use `mn-` prefix. Attributes are kebab-case. Events: `mn-{name}-ready`, `mn-{name}-change`.
 
@@ -360,6 +361,21 @@ Sizes: `xs` (12px), `sm` (16px), `md` (20px), `lg` (24px), `xl` (32px), `2xl` (4
 | `--radius-pill` | Pill shape |
 | `--shadow-sm` → `--shadow-deep` | Elevation levels |
 
+## AI Operations
+
+First-class components for AI/LLM monitoring dashboards. All accessible (WCAG AA), themed, responsive.
+
+| Component | API | Purpose |
+|-----------|-----|---------|
+| `tokenMeter` | `(el, {used, total, label})` | Token budget usage with `role=meter` and `aria-valuenow` |
+| `agentCostBreakdown` | `(el, rows, {sortable?, onBudgetAlert?})` | Per-agent cost attribution table, sortable columns |
+| `agentTrace` | `(el, steps, {onSelect?})` | Step-by-step agent execution trace with status indicators |
+| `costTimeline` | `(canvas, {labels, series, stacked?, unit?})` | Multi-series cost area chart with built-in hover |
+| `streamingText` | `(el, {onCitationClick?})` | Streaming LLM output renderer with citation support |
+
+See `docs/agent-cookbook.md` for a full integration recipe combining all five components.
+Demo: `demo/sections/agentic.js` (trace, meter, streaming) and `demo/sections/finops.js` (costs, timeline, meter).
+
 ## Decision Tree
 
 | I need... | Use |
@@ -462,7 +478,7 @@ Read [CONSTITUTION.md](CONSTITUTION.md) first. All rules are enforced by CI.
 1. Create `src/css/<name>.css` inside appropriate `@layer`
 2. Import in barrel file (`layouts.css`, `components.css`, etc.)
 3. Use `mn-` prefix, BEM naming, token variables only
-4. Verify in all 4 themes
+4. Verify in all 5 themes
 
 ### Add a JS API
 1. Create `src/ts/<name>.ts` with named exports

@@ -112,7 +112,7 @@ describe('DashboardRenderer', () => {
     expect(container.querySelector('.mn-scaffold--error')).not.toBeNull();
 
     renderer.setData('w', 'ok');
-    expect(container.querySelector('.mn-scaffold--partial')).not.toBeNull();
+    expect(container.querySelector('.mn-scaffold--ready')).not.toBeNull();
     expect(renderFn).toHaveBeenCalledTimes(1);
     const widgetHost = container.querySelector('.mn-dashboard-widget-host');
     expect(widgetHost).not.toBeNull();

@@ -9,7 +9,7 @@
  */
 import { StateScaffold } from '../ts/state-scaffold.js';
 
-const VALID_STATES = new Set(['loading', 'empty', 'error', 'partial', 'no-results']);
+const VALID_STATES = new Set(['loading', 'empty', 'error', 'partial', 'no-results', 'ready']);
 
 class MnStateScaffold extends HTMLElement {
   static get observedAttributes() {

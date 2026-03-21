@@ -1,5 +1,5 @@
 export interface StateScaffoldOptions {
-    state: 'loading' | 'empty' | 'error' | 'partial' | 'no-results';
+    state: 'loading' | 'empty' | 'error' | 'partial' | 'no-results' | 'ready';
     message?: string;
     actionLabel?: string;
     onRetry?: () => void;
@@ -22,6 +22,7 @@ export declare class StateScaffold {
     private renderEmpty;
     private renderError;
     private renderPartial;
+    private renderReady;
     private renderNoResults;
     private buildPanel;
     private buildMessageState;

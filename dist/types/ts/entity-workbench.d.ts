@@ -42,6 +42,7 @@ export declare class EntityWorkbench {
     private readonly stack;
     private readonly asyncControls;
     private readonly fieldEls;
+    private readonly renderedTabs;
     private currentSchema;
     private baseData;
     private currentData;
@@ -59,6 +60,12 @@ export declare class EntityWorkbench {
     pushEntity(schema: EntitySchema, data: Record<string, unknown>): void;
     popEntity(): boolean;
     destroy(): void;
+    private buildRenderContext;
+    private buildBreadcrumb;
+    /** Switch tab via CSS display toggle — no DOM rebuild. */
+    private handleTabSwitch;
+    /** Force-render any tabs not yet lazily rendered (needed for validate). */
+    private ensureAllTabsRendered;
     private render;
     private onFieldChange;
     private handleSave;

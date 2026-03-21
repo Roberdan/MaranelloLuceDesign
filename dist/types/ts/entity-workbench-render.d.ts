@@ -1,6 +1,6 @@
 import { AsyncSelect } from './async-select';
 import type { EntityField, EntitySchema } from './entity-workbench';
-interface RenderContext {
+export interface RenderContext {
     container: HTMLElement;
     schema: EntitySchema;
     activeTab: string;
@@ -15,6 +15,7 @@ interface RenderContext {
     isDirty: boolean;
     fieldEls: Map<string, HTMLElement>;
     asyncControls: AsyncSelect[];
+    renderedTabs: Set<string>;
     onTab: (tabId: string) => void;
     onField: (field: EntityField, value: unknown) => void;
     onSave: () => void;
@@ -22,4 +23,7 @@ interface RenderContext {
     onAction: (id: string) => void;
 }
 export declare function renderWorkbench(ctx: RenderContext): void;
-export {};
+/** Toggle tab visibility without rebuilding DOM. */
+export declare function switchTab(container: HTMLElement, tabId: string, ctx: RenderContext): void;
+/** Update the save button disabled state without full re-render. */
+export declare function updateSaveState(container: HTMLElement, isDirty: boolean): void;

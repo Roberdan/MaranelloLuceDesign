@@ -18,6 +18,14 @@
     display: none;
   }
 
+  .mn-scaffold--ready .mn-scaffold__status {
+    display: none;
+  }
+
+  .mn-scaffold--ready .mn-scaffold__content {
+    display: block;
+  }
+
   .mn-scaffold__panel,
   .mn-scaffold__banner {
     display: grid;

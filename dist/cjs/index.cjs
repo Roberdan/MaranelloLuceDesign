@@ -427,6 +427,14 @@ var SLOT_NAMES = [
   "overlay"
 ];
 var LAYOUTS = ["full", "split", "stacked", "docked-bottom", "dual-panel", "side-detail"];
+var PLACEMENT_TO_SLOT = /* @__PURE__ */ new Map([
+  ["page", "main"],
+  ["side-panel", "detail"],
+  ["bottom-dock", "bottom"],
+  ["overlay", "overlay"],
+  ["workspace", "secondary"]
+  // 'modal' intentionally omitted — modals use the modal system, not a slot
+]);
 var AppShellController = class {
   constructor(container, config = {}) {
     this.slots = /* @__PURE__ */ new Map();
@@ -467,6 +475,12 @@ var AppShellController = class {
   }
   getSlot(name) {
     return this.slots.get(name) ?? null;
+  }
+  /** Resolves a Placement to the corresponding shell slot element. Returns null for modal or unknown placements. */
+  getSlotForPlacement(placement) {
+    const slotName = PLACEMENT_TO_SLOT.get(placement);
+    if (!slotName) return null;
+    return this.slots.get(slotName) ?? null;
   }
   destroy() {
     this.container.classList.remove("mn-app-shell", "mn-app-shell--sidebar-collapsed", "mn-app-shell--bottom-open");
@@ -525,9 +539,10 @@ function closeModal(id) {
 
 // src/ts/panel-orchestrator.ts
 var PanelOrchestrator = class {
-  constructor(registry, navigation) {
+  constructor(registry, navigation, shell) {
     this.registry = registry;
     this.navigation = navigation;
+    this.shell = shell;
     this.openViews = /* @__PURE__ */ new Map();
   }
   open(viewId, target, data) {
@@ -629,10 +644,10 @@ var PanelOrchestrator = class {
     this.openViews.clear();
   }
   createViewContainer(viewId) {
-    const el4 = document.createElement("div");
-    el4.className = "mn-panel-view";
-    el4.dataset.viewId = viewId;
-    return el4;
+    const el5 = document.createElement("div");
+    el5.className = "mn-panel-view";
+    el5.dataset.viewId = viewId;
+    return el5;
   }
   mountView(config, container, data) {
     if (config.factory) return config.factory(container, data);
@@ -656,13 +671,20 @@ var PanelOrchestrator = class {
     return id;
   }
   ensureSlot(placement) {
+    if (this.shell) {
+      const shellSlot = this.shell.getSlotForPlacement(placement);
+      if (shellSlot) return shellSlot;
+    }
+    return this.ensureFallbackSlot(placement);
+  }
+  ensureFallbackSlot(placement) {
     const id = `mn-slot-${placement}`;
     let slot = document.getElementById(id);
     if (!slot) {
       slot = document.createElement("div");
       slot.id = id;
       slot.className = `mn-slot mn-slot--${placement}`;
-      document.body.appendChild(slot);
+      document.querySelector("body").appendChild(slot);
     }
     return slot;
   }
@@ -679,7 +701,7 @@ var PanelOrchestrator = class {
 };
 
 // src/ts/state-scaffold.ts
-var VALID_STATES = ["loading", "empty", "error", "partial", "no-results"];
+var VALID_STATES = ["loading", "empty", "error", "partial", "no-results", "ready"];
 var StateScaffold = class {
   constructor(container, options) {
     this.events = null;
@@ -699,7 +721,10 @@ var StateScaffold = class {
     this.setState(initial, this.options.message);
   }
   setState(state, message) {
-    if (!VALID_STATES.includes(state)) return;
+    if (!VALID_STATES.includes(state)) {
+      console.warn(`StateScaffold: invalid state "${state}". Valid states: ${VALID_STATES.join(", ")}`);
+      return;
+    }
     this.state = state;
     this.options.state = state;
     if (typeof message === "string") {
@@ -712,12 +737,13 @@ var StateScaffold = class {
     }
     this.container.classList.add(`mn-scaffold--${state}`);
     this.status.innerHTML = "";
-    this.content.classList.toggle("mn-scaffold__content--hidden", state !== "partial");
+    this.content.classList.toggle("mn-scaffold__content--hidden", state !== "partial" && state !== "ready");
     if (state === "loading") this.renderLoading();
     if (state === "empty") this.renderEmpty();
     if (state === "error") this.renderError();
     if (state === "partial") this.renderPartial();
     if (state === "no-results") this.renderNoResults();
+    if (state === "ready") this.renderReady();
   }
   getState() {
     return this.state;
@@ -778,6 +804,10 @@ var StateScaffold = class {
     text.textContent = this.options.message || "Some data may be unavailable right now.";
     banner.appendChild(text);
     this.status.appendChild(banner);
+  }
+  renderReady() {
+    this.status.innerHTML = "";
+    this.container.setAttribute("aria-busy", "false");
   }
   renderNoResults() {
     const panel = this.buildMessageState(
@@ -1028,13 +1058,13 @@ function sanitizeSvg(svgString) {
   cleanSvgNode(svg);
   return svg.outerHTML;
 }
-function cleanSvgNode(el4) {
-  for (const attr of Array.from(el4.attributes)) {
+function cleanSvgNode(el5) {
+  for (const attr of Array.from(el5.attributes)) {
     if (attr.name.toLowerCase().startsWith("on")) {
-      el4.removeAttribute(attr.name);
+      el5.removeAttribute(attr.name);
     }
   }
-  const children = Array.from(el4.children);
+  const children = Array.from(el5.children);
   for (const child of children) {
     const tag = child.tagName.toLowerCase();
     if (DANGEROUS_SVG_TAGS.has(tag)) {
@@ -1093,8 +1123,8 @@ var BODY_CLASSES = {
 };
 var THEME_ORDER = ["editorial", "nero", "avorio", "colorblind", "sugar"];
 function cssVar(name, fallback = "") {
-  const el4 = document.body ?? document.documentElement;
-  return getComputedStyle(el4).getPropertyValue(name).trim() || fallback;
+  const el5 = document.body ?? document.documentElement;
+  return getComputedStyle(el5).getPropertyValue(name).trim() || fallback;
 }
 function getTheme() {
   const cl = document.body.classList;
@@ -1125,8 +1155,8 @@ function cycleTheme() {
 function getAccent(fallback = "#FFC72C") {
   return cssVar("--mn-accent", fallback);
 }
-function palette(el4 = document.documentElement, opts) {
-  const read = (name) => getComputedStyle(el4).getPropertyValue(name).trim();
+function palette(el5 = document.documentElement, opts) {
+  const read = (name) => getComputedStyle(el5).getPropertyValue(name).trim();
   const semantic = {
     surface: read("--mn-surface"),
     surfaceRaised: read("--mn-surface-raised"),
@@ -1193,15 +1223,15 @@ function throttle(fn, ms) {
   };
 }
 function createElement(tag, className, attrs) {
-  const el4 = document.createElement(tag);
-  if (className) el4.className = className;
+  const el5 = document.createElement(tag);
+  if (className) el5.className = className;
   if (attrs) {
     for (const [key, val] of Object.entries(attrs)) {
-      if (key === "text") el4.textContent = val;
-      else el4.setAttribute(key, val);
+      if (key === "text") el5.textContent = val;
+      else el5.setAttribute(key, val);
     }
   }
-  return el4;
+  return el5;
 }
 function formatNumber(value, opts) {
   const decimals = opts?.decimals ?? 0;
@@ -2008,10 +2038,10 @@ function hexLum(hex) {
   return 0.2126 * r + 0.7152 * g + 0.0722 * b;
 }
 function createEl(tag, cls, text) {
-  const el4 = document.createElement(tag);
-  if (cls) el4.className = cls;
-  if (text != null) el4.textContent = text;
-  return el4;
+  const el5 = document.createElement(tag);
+  if (cls) el5.className = cls;
+  if (text != null) el5.textContent = text;
+  return el5;
 }
 function normalizeHex(color) {
   if (typeof color !== "string") return cssVar("--chart-bar", "#4EA8DE");
@@ -2076,9 +2106,9 @@ function hBarChart(container, opts) {
   host.innerHTML = "";
   host.classList.add("mn-hbar-host");
   host.appendChild(frame);
-  function addListener2(el4, evt, handler) {
-    el4.addEventListener(evt, handler);
-    state.listeners.push({ el: el4, evt, handler });
+  function addListener2(el5, evt, handler) {
+    el5.addEventListener(evt, handler);
+    state.listeners.push({ el: el5, evt, handler });
   }
   function cleanupTimers2() {
     while (state.timers.length) {
@@ -3105,8 +3135,8 @@ var GAUGE_SIZES = {
 };
 function resolveCanvas(target) {
   if (typeof target === "string") {
-    const el4 = document.querySelector(target);
-    return el4 instanceof HTMLCanvasElement ? el4 : null;
+    const el5 = document.querySelector(target);
+    return el5 instanceof HTMLCanvasElement ? el5 : null;
   }
   return target instanceof HTMLCanvasElement ? target : null;
 }
@@ -3147,18 +3177,36 @@ var charts = { sparkline, donut, bar: barChart, area: areaChart, radar, bubble }
 function arr(v) {
   return Array.isArray(v) ? v : [];
 }
+function el(tag, cls, text) {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (text !== void 0) e.textContent = text;
+  return e;
+}
+function clear(node) {
+  while (node.firstChild) node.removeChild(node.firstChild);
+}
 function kpi() {
   let h = null;
   const draw = (v) => {
     if (!h) return;
-    h.innerHTML = arr(v).map((i) => `<article class="mn-dashboard-kpi"><p class="mn-dashboard-kpi__label">${String(i.label ?? "\u2014")}</p><p class="mn-dashboard-kpi__value">${String(i.value ?? "\u2014")}</p>${i.delta != null ? `<span class="mn-dashboard-kpi__delta">${String(i.delta)}</span>` : ""}</article>`).join("");
+    clear(h);
+    for (const i of arr(v)) {
+      const article = el("article", "mn-dashboard-kpi");
+      article.appendChild(el("p", "mn-dashboard-kpi__label", String(i.label ?? "\u2014")));
+      article.appendChild(el("p", "mn-dashboard-kpi__value", String(i.value ?? "\u2014")));
+      if (i.delta != null) {
+        article.appendChild(el("span", "mn-dashboard-kpi__delta", String(i.delta)));
+      }
+      h.appendChild(article);
+    }
   };
   return { render(c, v) {
     h = c;
     h.classList.add("mn-dashboard-kpi-strip");
     draw(v);
   }, update: draw, destroy() {
-    if (h) h.innerHTML = "";
+    if (h) clear(h);
     h = null;
   } };
 }
@@ -3167,14 +3215,21 @@ function stat(o) {
   const icon = typeof o?.icon === "string" ? o.icon : "";
   const draw = (v) => {
     if (!h) return;
+    clear(h);
     const d = v && typeof v === "object" ? v : {};
-    h.innerHTML = `<article class="mn-dashboard-stat">${icon ? `<span class="mn-dashboard-stat__icon">${icon}</span>` : ""}<p class="mn-dashboard-stat__value">${String(d.value ?? d.metric ?? "\u2014")}</p><p class="mn-dashboard-stat__label">${String(d.label ?? o?.label ?? "Metric")}</p></article>`;
+    const article = el("article", "mn-dashboard-stat");
+    if (icon) {
+      article.appendChild(el("span", "mn-dashboard-stat__icon", icon));
+    }
+    article.appendChild(el("p", "mn-dashboard-stat__value", String(d.value ?? d.metric ?? "\u2014")));
+    article.appendChild(el("p", "mn-dashboard-stat__label", String(d.label ?? o?.label ?? "Metric")));
+    h.appendChild(article);
   };
   return { render(c, v) {
     h = c;
     draw(v);
   }, update: draw, destroy() {
-    if (h) h.innerHTML = "";
+    if (h) clear(h);
     h = null;
   } };
 }
@@ -3199,7 +3254,7 @@ function chart(o) {
     draw(v);
   }, update: draw, destroy() {
     hb?.destroy?.();
-    if (h) h.innerHTML = "";
+    if (h) clear(h);
     h = null;
     c = null;
     hb = null;
@@ -3231,23 +3286,35 @@ function gauge(o) {
     draw(v);
   }, update: draw, destroy() {
     g?.destroy?.();
-    if (h) h.innerHTML = "";
+    if (h) clear(h);
     h = null;
     c = null;
     g = null;
   } };
 }
+var FALLBACK_COLOR = "var(--mn-accent)";
 function legend() {
   let h = null;
   const draw = (v) => {
     if (!h) return;
-    h.innerHTML = `<ul class="mn-dashboard-legend">${arr(v).map((i) => `<li class="mn-dashboard-legend__item"><span class="mn-dashboard-legend__swatch" style="background:${String(i.color ?? "var(--mn-accent)")}"></span><span>${String(i.label ?? "Item")}</span></li>`).join("")}</ul>`;
+    clear(h);
+    const ul = el("ul", "mn-dashboard-legend");
+    for (const i of arr(v)) {
+      const li = el("li", "mn-dashboard-legend__item");
+      const swatch = el("span", "mn-dashboard-legend__swatch");
+      const rawColor = String(i.color ?? FALLBACK_COLOR);
+      swatch.style.background = isValidColor(rawColor) ? rawColor : FALLBACK_COLOR;
+      li.appendChild(swatch);
+      li.appendChild(el("span", void 0, String(i.label ?? "Item")));
+      ul.appendChild(li);
+    }
+    h.appendChild(ul);
   };
   return { render(c, v) {
     h = c;
     draw(v);
   }, update: draw, destroy() {
-    if (h) h.innerHTML = "";
+    if (h) clear(h);
     h = null;
   } };
 }
@@ -3255,16 +3322,36 @@ function table() {
   let h = null;
   const draw = (v) => {
     if (!h) return;
+    clear(h);
     const d = v && typeof v === "object" ? v : {};
-    const th = Array.isArray(d.headers) ? d.headers.map((x) => `<th>${String(x)}</th>`).join("") : "";
-    const tr = Array.isArray(d.rows) ? d.rows.map((r) => `<tr>${r.map((x) => `<td>${String(x ?? "")}</td>`).join("")}</tr>`).join("") : "";
-    h.innerHTML = `<table class="mn-dashboard-table-summary"><thead><tr>${th}</tr></thead><tbody>${tr}</tbody></table>`;
+    const tbl = el("table", "mn-dashboard-table-summary");
+    const thead = document.createElement("thead");
+    const headRow = document.createElement("tr");
+    if (Array.isArray(d.headers)) {
+      for (const x of d.headers) {
+        headRow.appendChild(el("th", void 0, String(x)));
+      }
+    }
+    thead.appendChild(headRow);
+    tbl.appendChild(thead);
+    const tbody = document.createElement("tbody");
+    if (Array.isArray(d.rows)) {
+      for (const r of d.rows) {
+        const tr = document.createElement("tr");
+        for (const x of r) {
+          tr.appendChild(el("td", void 0, String(x ?? "")));
+        }
+        tbody.appendChild(tr);
+      }
+    }
+    tbl.appendChild(tbody);
+    h.appendChild(tbl);
   };
   return { render(c, v) {
     h = c;
     draw(v);
   }, update: draw, destroy() {
-    if (h) h.innerHTML = "";
+    if (h) clear(h);
     h = null;
   } };
 }
@@ -3278,10 +3365,10 @@ function custom(o) {
     h = c;
     draw(v);
   }, update(v) {
-    if (h) h.innerHTML = "";
+    if (h) clear(h);
     draw(v);
   }, destroy() {
-    if (h) h.innerHTML = "";
+    if (h) clear(h);
     h = null;
   } };
 }
@@ -3381,7 +3468,7 @@ var DashboardRenderer = class {
       record.scaffold.setState("empty");
       return;
     }
-    record.scaffold.setState("partial");
+    record.scaffold.setState("ready");
     if (!record.rendered) {
       record.controller.render(record.widgetHost, value);
       record.rendered = true;
@@ -3537,14 +3624,14 @@ function renderActiveChips(chipsContainer, facets, filters, onRemove) {
 }
 function setFacetDisabled(section, disabled) {
   section.classList.toggle("mn-facet--disabled", disabled);
-  section.querySelectorAll("input, button, select, textarea").forEach((el4) => {
-    if (!el4.classList.contains("mn-facet__header")) el4.disabled = disabled;
+  section.querySelectorAll("input, button, select, textarea").forEach((el5) => {
+    if (!el5.classList.contains("mn-facet__header")) el5.disabled = disabled;
   });
 }
 
 // src/ts/facet-workbench-keyboard.ts
-function isOptionElement(el4) {
-  return el4.classList.contains("mn-facet__option-input") || el4.classList.contains("mn-facet__option-button");
+function isOptionElement(el5) {
+  return el5.classList.contains("mn-facet__option-input") || el5.classList.contains("mn-facet__option-button");
 }
 function focusOption(current, direction) {
   const body = current.closest(".mn-facet__body");
@@ -3930,10 +4017,10 @@ var AsyncSelect = class {
     const len = this.items.length;
     this.activeIndex = (index % len + len) % len;
     const options = this.dropdown.querySelectorAll(".mn-async-select__item");
-    options.forEach((el4, i) => {
+    options.forEach((el5, i) => {
       const active2 = i === this.activeIndex;
-      el4.classList.toggle("mn-async-select__item--active", active2);
-      el4.setAttribute("aria-selected", active2 ? "true" : "false");
+      el5.classList.toggle("mn-async-select__item--active", active2);
+      el5.setAttribute("aria-selected", active2 ? "true" : "false");
     });
     const active = options[this.activeIndex];
     if (!active) return;
@@ -4294,7 +4381,37 @@ var editors = {
 function renderWorkbench(ctx) {
   ctx.container.innerHTML = "";
   ctx.container.className = "mn-entity-workbench";
-  ctx.container.append(renderBreadcrumb(ctx.breadcrumb), renderTabs(ctx), renderBody(ctx), renderActions(ctx));
+  ctx.container.append(
+    renderBreadcrumb(ctx.breadcrumb),
+    renderTabs(ctx),
+    renderBody(ctx),
+    renderActions(ctx)
+  );
+}
+function switchTab(container, tabId, ctx) {
+  const tabButtons = container.querySelectorAll(".mn-entity-workbench__tab");
+  tabButtons.forEach((btn) => {
+    btn.classList.toggle("mn-entity-workbench__tab--active", btn.textContent === labelForTab(ctx.schema, tabId));
+  });
+  const panels = container.querySelectorAll(".mn-entity-workbench__tab-panel");
+  panels.forEach((panel) => {
+    panel.style.display = panel.dataset.tab === tabId ? "" : "none";
+  });
+  if (!ctx.renderedTabs.has(tabId)) {
+    const panel = container.querySelector(`.mn-entity-workbench__tab-panel[data-tab="${tabId}"]`);
+    const tab = ctx.schema.tabs.find((t) => t.id === tabId);
+    if (panel && tab) {
+      renderTabContent(panel, tab, ctx);
+      ctx.renderedTabs.add(tabId);
+    }
+  }
+}
+function updateSaveState(container, isDirty) {
+  const saveBtn = container.querySelector('[data-action="save"]');
+  if (saveBtn) saveBtn.disabled = !isDirty;
+}
+function labelForTab(schema, tabId) {
+  return schema.tabs.find((t) => t.id === tabId)?.label ?? "";
 }
 function renderBreadcrumb(content) {
   const nav = document.createElement("nav");
@@ -4318,8 +4435,21 @@ function renderTabs(ctx) {
 function renderBody(ctx) {
   const body = document.createElement("div");
   body.className = "mn-entity-workbench__body";
-  const tab = ctx.schema.tabs.find((v) => v.id === ctx.activeTab) ?? ctx.schema.tabs[0];
-  tab?.sections.forEach((section) => {
+  ctx.schema.tabs.forEach((tab) => {
+    const panel = document.createElement("div");
+    panel.className = "mn-entity-workbench__tab-panel";
+    panel.dataset.tab = tab.id;
+    panel.style.display = tab.id === ctx.activeTab ? "" : "none";
+    if (tab.id === ctx.activeTab) {
+      renderTabContent(panel, tab, ctx);
+      ctx.renderedTabs.add(tab.id);
+    }
+    body.appendChild(panel);
+  });
+  return body;
+}
+function renderTabContent(panel, tab, ctx) {
+  tab.sections.forEach((section) => {
     const sec = document.createElement("section");
     sec.className = "mn-entity-workbench__section";
     if (section.title) {
@@ -4329,9 +4459,8 @@ function renderBody(ctx) {
       sec.appendChild(title);
     }
     section.fields.forEach((field) => sec.appendChild(renderField(ctx, field)));
-    body.appendChild(sec);
+    panel.appendChild(sec);
   });
-  return body;
 }
 function renderField(ctx, field) {
   if (field.type === "group") return renderGroup(ctx, field);
@@ -4551,6 +4680,7 @@ var EntityWorkbench = class {
     this.stack = new BackStack();
     this.asyncControls = [];
     this.fieldEls = /* @__PURE__ */ new Map();
+    this.renderedTabs = /* @__PURE__ */ new Set();
     this.activeTab = "";
     this.currentSchema = options.schema;
     this.baseData = clone(options.data);
@@ -4579,6 +4709,7 @@ var EntityWorkbench = class {
     return out;
   }
   validate() {
+    this.ensureAllTabsRendered();
     const errors = /* @__PURE__ */ new Map();
     collectFields(this.currentSchema.tabs).forEach((field) => {
       if (field.type === "group" || field.type === "computed") return;
@@ -4628,34 +4759,58 @@ var EntityWorkbench = class {
   destroy() {
     this.asyncControls.splice(0).forEach((ctrl) => ctrl.destroy());
     this.fieldEls.clear();
+    this.renderedTabs.clear();
     this.container.innerHTML = "";
   }
-  render() {
-    this.destroy();
-    renderWorkbench({
+  buildRenderContext() {
+    return {
       container: this.container,
       schema: this.currentSchema,
       activeTab: this.activeTab,
       data: this.currentData,
       editable: this.options.editable !== false,
       actions: this.options.actions ?? [],
-      breadcrumb: [this.rootLabel, ...this.stack.path().map((v) => v.label), getLabel(this.currentData, this.getCurrentDepth())].join(" / "),
+      breadcrumb: this.buildBreadcrumb(),
       isDirty: this.isDirty(),
       fieldEls: this.fieldEls,
       asyncControls: this.asyncControls,
-      onTab: (tabId) => {
-        this.activeTab = tabId;
-        this.render();
-      },
+      renderedTabs: this.renderedTabs,
+      onTab: (tabId) => this.handleTabSwitch(tabId),
       onField: (field, value) => this.onFieldChange(field, value),
       onSave: () => void this.handleSave(),
       onCancel: () => this.handleCancel(),
       onAction: (id) => this.options.onAction?.(id, this.currentData)
-    });
+    };
+  }
+  buildBreadcrumb() {
+    return [
+      this.rootLabel,
+      ...this.stack.path().map((v) => v.label),
+      getLabel(this.currentData, this.getCurrentDepth())
+    ].join(" / ");
+  }
+  /** Switch tab via CSS display toggle — no DOM rebuild. */
+  handleTabSwitch(tabId) {
+    this.activeTab = tabId;
+    switchTab(this.container, tabId, this.buildRenderContext());
+  }
+  /** Force-render any tabs not yet lazily rendered (needed for validate). */
+  ensureAllTabsRendered() {
+    const ctx = this.buildRenderContext();
+    for (const tab of this.currentSchema.tabs) {
+      if (!this.renderedTabs.has(tab.id)) {
+        switchTab(this.container, tab.id, ctx);
+      }
+    }
+    switchTab(this.container, this.activeTab, ctx);
+  }
+  render() {
+    this.destroy();
+    renderWorkbench(this.buildRenderContext());
   }
   onFieldChange(field, value) {
     setValue(this.currentData, field.key, value);
-    this.render();
+    updateSaveState(this.container, this.isDirty());
   }
   async handleSave() {
     if (!this.validate().valid) return;
@@ -5688,15 +5843,15 @@ var iconAliases = {
 };
 var icons = { ...baseIcons, ...iconAliases };
 function renderIcon(target, name, opts) {
-  const el4 = typeof target === "string" ? document.querySelector(target) : target;
-  if (!el4 || !icons[name]) return;
+  const el5 = typeof target === "string" ? document.querySelector(target) : target;
+  if (!el5 || !icons[name]) return;
   const sizeClass = opts?.size ? ` mn-icon--${opts.size}` : "";
   const extraClass = opts?.class ? ` ${opts.class}` : "";
   const svg = icons[name]();
   const safeLabel = opts?.ariaLabel ? escapeHtml(opts.ariaLabel).replace(/"/g, "&quot;") : "";
   const ariaAttr = safeLabel ? `role="img" aria-label="${safeLabel}"` : 'aria-hidden="true"';
   const a11ySvg = svg.replace("<svg ", `<svg ${ariaAttr} `);
-  el4.innerHTML = `<span class="mn-icon${sizeClass}${extraClass}">${a11ySvg}</span>`;
+  el5.innerHTML = `<span class="mn-icon${sizeClass}${extraClass}">${a11ySvg}</span>`;
 }
 function iconCatalog() {
   return Object.keys(icons);
@@ -5811,14 +5966,14 @@ function themeRotary(opts) {
     const rad = (pos.angle - 90) * (Math.PI / 180);
     const lx = center + Math.cos(rad) * labelRadius;
     const ly = center + Math.sin(rad) * labelRadius;
-    const el4 = createElement("div", "mn-theme-rotary__pos");
-    el4.textContent = pos.label;
-    el4.style.left = lx + "px";
-    el4.style.top = ly + "px";
-    el4.dataset.theme = pos.mode;
-    el4.addEventListener("click", () => applyTheme(pos.mode));
-    dial.appendChild(el4);
-    labels.set(pos.mode, el4);
+    const el5 = createElement("div", "mn-theme-rotary__pos");
+    el5.textContent = pos.label;
+    el5.style.left = lx + "px";
+    el5.style.top = ly + "px";
+    el5.dataset.theme = pos.mode;
+    el5.addEventListener("click", () => applyTheme(pos.mode));
+    dial.appendChild(el5);
+    labels.set(pos.mode, el5);
   }
   const centerBtn = createElement("div", "mn-theme-rotary__center");
   centerBtn.style.width = centerBtn.style.height = centerSize + "px";
@@ -5831,10 +5986,10 @@ function themeRotary(opts) {
   root.setAttribute("role", "radiogroup");
   root.setAttribute("aria-label", "Theme selector");
   root.setAttribute("tabindex", "0");
-  for (const [mode, el4] of labels) {
-    el4.id = `${rotaryId}-${mode}`;
-    el4.setAttribute("role", "radio");
-    el4.setAttribute("aria-checked", String(mode === getTheme()));
+  for (const [mode, el5] of labels) {
+    el5.id = `${rotaryId}-${mode}`;
+    el5.setAttribute("role", "radio");
+    el5.setAttribute("aria-checked", String(mode === getTheme()));
   }
   root.setAttribute("aria-activedescendant", `${rotaryId}-${getTheme()}`);
   root.addEventListener("keydown", (e) => {
@@ -5880,10 +6035,10 @@ function themeRotary(opts) {
     const angle = angleForTheme(current);
     pointer.style.transform = `translateX(-50%) rotate(${angle}deg)`;
     root.setAttribute("aria-activedescendant", `${rotaryId}-${current}`);
-    for (const [mode, el4] of labels) {
+    for (const [mode, el5] of labels) {
       const active = mode === current;
-      el4.classList.toggle("mn-theme-rotary__pos--active", active);
-      el4.setAttribute("aria-checked", String(active));
+      el5.classList.toggle("mn-theme-rotary__pos--active", active);
+      el5.setAttribute("aria-checked", String(active));
     }
   }
   updateVisual();
@@ -5954,19 +6109,19 @@ function toast(options) {
 // src/ts/command-palette.ts
 function getVisibleItems(palette2) {
   const all = palette2.querySelectorAll(".mn-command-palette__item");
-  return Array.from(all).filter((el4) => el4.style.display !== "none");
+  return Array.from(all).filter((el5) => el5.style.display !== "none");
 }
 function clearActive(palette2) {
-  palette2.querySelectorAll(".mn-command-palette__item").forEach((el4) => {
-    el4.classList.remove("mn-command-palette__item--active");
-    el4.setAttribute("aria-selected", "false");
+  palette2.querySelectorAll(".mn-command-palette__item").forEach((el5) => {
+    el5.classList.remove("mn-command-palette__item--active");
+    el5.setAttribute("aria-selected", "false");
   });
 }
 function activateItem(input, items, index) {
-  items.forEach((el4, i) => {
+  items.forEach((el5, i) => {
     const active = i === index;
-    el4.classList.toggle("mn-command-palette__item--active", active);
-    el4.setAttribute("aria-selected", String(active));
+    el5.classList.toggle("mn-command-palette__item--active", active);
+    el5.setAttribute("aria-selected", String(active));
   });
   const target = items[index];
   if (target) {
@@ -6266,7 +6421,7 @@ function getIcon(name) {
   if (icons[name]) return icons[name]();
   return FALLBACK_ICONS[name] ?? "";
 }
-function el(tag, cls, attrs) {
+function el2(tag, cls, attrs) {
   const e = document.createElement(tag);
   if (cls) e.className = cls;
   if (attrs) {
@@ -6288,11 +6443,11 @@ function renderContent(text) {
   for (const part of parts) {
     if (part.startsWith("```") && part.endsWith("```")) {
       const code = part.slice(3, -3).replace(/^\w*\n/, "");
-      const block = el("div", "mn-chat-msg__code");
-      const pre = el("pre", "");
+      const block = el2("div", "mn-chat-msg__code");
+      const pre = el2("pre", "");
       pre.textContent = code;
       block.appendChild(pre);
-      const copyBtn = el("button", "mn-chat-msg__copy", { "aria-label": "Copy code" });
+      const copyBtn = el2("button", "mn-chat-msg__copy", { "aria-label": "Copy code" });
       copyBtn.innerHTML = getIcon("copy");
       copyBtn.addEventListener("click", () => {
         navigator.clipboard.writeText(code).then(() => {
@@ -6305,7 +6460,7 @@ function renderContent(text) {
       block.appendChild(copyBtn);
       container.appendChild(block);
     } else if (part) {
-      const span = el("span", "");
+      const span = el2("span", "");
       span.innerHTML = escapeHtml(part).replace(/`([^`]+)`/g, '<code class="mn-chat-msg__code">$1</code>').replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>").replace(/\n/g, "<br>");
       container.appendChild(span);
     }
@@ -6323,7 +6478,7 @@ function buildUI(container, opts) {
     isAgentGridOpen: false,
     activeAgentId: opts.activeAgent ?? (opts.agents?.[0]?.id ?? null)
   };
-  const fab = el("button", "mn-chat-fab", { "aria-label": "Open AI assistant", title: "AI Assistant" });
+  const fab = el2("button", "mn-chat-fab", { "aria-label": "Open AI assistant", title: "AI Assistant" });
   if (opts.avatar) {
     const fabImg = document.createElement("img");
     fabImg.src = opts.avatar;
@@ -6333,30 +6488,30 @@ function buildUI(container, opts) {
   } else {
     fab.innerHTML = ICON_SPARK;
   }
-  const pulse = el("span", "mn-chat-fab__pulse");
+  const pulse = el2("span", "mn-chat-fab__pulse");
   fab.appendChild(pulse);
   container.appendChild(fab);
-  const panel = el("div", "mn-chat-panel", { role: "dialog", "aria-label": "AI assistant chat" });
-  panel.appendChild(el("div", "mn-chat-panel__accent"));
-  const resizeHandle = el("div", "mn-chat-panel__resize");
+  const panel = el2("div", "mn-chat-panel", { role: "dialog", "aria-label": "AI assistant chat" });
+  panel.appendChild(el2("div", "mn-chat-panel__accent"));
+  const resizeHandle = el2("div", "mn-chat-panel__resize");
   panel.appendChild(resizeHandle);
-  const header = el("div", "mn-chat-panel__header");
-  const headerLeft = el("div", "mn-chat-panel__header-left");
+  const header = el2("div", "mn-chat-panel__header");
+  const headerLeft = el2("div", "mn-chat-panel__header-left");
   if (opts.avatar) {
-    const ha = el("img", "mn-chat-panel__header-avatar");
+    const ha = el2("img", "mn-chat-panel__header-avatar");
     ha.src = opts.avatar;
     ha.alt = "";
     headerLeft.appendChild(ha);
   }
-  const titleEl = el("span", "mn-chat-panel__title", { text: opts.avatar ? "" : opts.title ?? "" });
-  const agentSelector = el("button", "mn-chat-agent-selector", { type: "button", "aria-label": "Select AI agent" });
-  const agentSelectorLabel = el("span", "mn-chat-agent-selector__label");
+  const titleEl = el2("span", "mn-chat-panel__title", { text: opts.avatar ? "" : opts.title ?? "" });
+  const agentSelector = el2("button", "mn-chat-agent-selector", { type: "button", "aria-label": "Select AI agent" });
+  const agentSelectorLabel = el2("span", "mn-chat-agent-selector__label");
   agentSelector.appendChild(agentSelectorLabel);
-  agentSelector.appendChild(el("span", "mn-chat-agent-selector__chevron", { html: getIcon("chevronDown") }));
-  const headerActions = el("div", "mn-chat-panel__header-actions");
-  const closeBtn = el("button", "mn-chat-panel__close", { "aria-label": "Close chat" });
+  agentSelector.appendChild(el2("span", "mn-chat-agent-selector__chevron", { html: getIcon("chevronDown") }));
+  const headerActions = el2("div", "mn-chat-panel__header-actions");
+  const closeBtn = el2("button", "mn-chat-panel__close", { "aria-label": "Close chat" });
   closeBtn.innerHTML = getIcon("close");
-  const widthBtn = el("button", "mn-chat-panel__resize", { "aria-label": "Toggle panel width" });
+  const widthBtn = el2("button", "mn-chat-panel__resize", { "aria-label": "Toggle panel width" });
   widthBtn.innerHTML = getIcon("expandHorizontal");
   headerActions.appendChild(widthBtn);
   headerActions.appendChild(closeBtn);
@@ -6365,21 +6520,21 @@ function buildUI(container, opts) {
   header.appendChild(headerLeft);
   header.appendChild(headerActions);
   panel.appendChild(header);
-  const agentGrid = el("div", "mn-chat-agent-grid", { "aria-hidden": "true" });
+  const agentGrid = el2("div", "mn-chat-agent-grid", { "aria-hidden": "true" });
   panel.appendChild(agentGrid);
-  const messagesEl = el("div", "mn-chat-panel__messages");
+  const messagesEl = el2("div", "mn-chat-panel__messages");
   panel.appendChild(messagesEl);
-  const typingEl = el("div", "mn-chat-typing");
+  const typingEl = el2("div", "mn-chat-typing");
   typingEl.style.display = "none";
-  for (let d = 0; d < 3; d++) typingEl.appendChild(el("span", "mn-chat-typing__dot"));
+  for (let d = 0; d < 3; d++) typingEl.appendChild(el2("span", "mn-chat-typing__dot"));
   messagesEl.appendChild(typingEl);
-  const quickBar = el("div", "mn-chat-panel__quick");
+  const quickBar = el2("div", "mn-chat-panel__quick");
   panel.appendChild(quickBar);
-  const inputArea = el("div", "mn-chat-panel__input-area");
-  const inputEl = el("textarea", "mn-chat-panel__input", { placeholder: opts.placeholder ?? "", rows: "1" });
-  const sendBtn = el("button", "mn-chat-panel__send", { "aria-label": "Send message" });
+  const inputArea = el2("div", "mn-chat-panel__input-area");
+  const inputEl = el2("textarea", "mn-chat-panel__input", { placeholder: opts.placeholder ?? "", rows: "1" });
+  const sendBtn = el2("button", "mn-chat-panel__send", { "aria-label": "Send message" });
   sendBtn.innerHTML = getIcon("arrowUp");
-  const voiceBtn = el("button", "mn-chat-voice", { "aria-label": "Toggle voice input" });
+  const voiceBtn = el2("button", "mn-chat-voice", { "aria-label": "Toggle voice input" });
   voiceBtn.innerHTML = getIcon("mic");
   inputArea.appendChild(inputEl);
   inputArea.appendChild(voiceBtn);
@@ -6419,31 +6574,31 @@ function initMessages(state, els, opts) {
     return msg;
   }
   function renderMessage(msg) {
-    const wrap = el("div", `mn-chat-msg mn-chat-msg--${msg.role}`);
+    const wrap = el2("div", `mn-chat-msg mn-chat-msg--${msg.role}`);
     if (msg.role === "ai") {
-      const iconWrap = el("span", "mn-chat-msg__icon");
+      const iconWrap = el2("span", "mn-chat-msg__icon");
       iconWrap.innerHTML = ICON_SPARK;
-      const body = el("div", "mn-chat-msg__body");
+      const body = el2("div", "mn-chat-msg__body");
       body.appendChild(iconWrap);
-      const contentEl = el("span", "mn-chat-msg__content");
+      const contentEl = el2("span", "mn-chat-msg__content");
       contentEl.appendChild(renderContent(msg.content));
       body.appendChild(contentEl);
       wrap.appendChild(body);
     } else {
       if (opts.avatar) {
-        const body = el("div", "mn-chat-msg__body");
-        const contentEl = el("span", "mn-chat-msg__content");
+        const body = el2("div", "mn-chat-msg__body");
+        const contentEl = el2("span", "mn-chat-msg__content");
         contentEl.appendChild(renderContent(msg.content));
         body.appendChild(contentEl);
-        body.appendChild(el("img", "mn-chat-msg__avatar", { src: opts.avatar ?? "", alt: "You" }));
+        body.appendChild(el2("img", "mn-chat-msg__avatar", { src: opts.avatar ?? "", alt: "You" }));
         wrap.appendChild(body);
       } else {
-        const contentEl = el("span", "mn-chat-msg__content");
+        const contentEl = el2("span", "mn-chat-msg__content");
         contentEl.appendChild(renderContent(msg.content));
         wrap.appendChild(contentEl);
       }
     }
-    wrap.appendChild(el("div", "mn-chat-msg__time", { text: formatTime(msg.time) }));
+    wrap.appendChild(el2("div", "mn-chat-msg__time", { text: formatTime(msg.time) }));
     messagesEl.insertBefore(wrap, typingEl);
     return wrap;
   }
@@ -6530,16 +6685,16 @@ function initMessages(state, els, opts) {
     if (!agents.length) return;
     agentGrid.innerHTML = "";
     for (const agent of agents) {
-      const card = el("button", "mn-chat-agent-card", { type: "button" });
+      const card = el2("button", "mn-chat-agent-card", { type: "button" });
       if (agent.id === state.activeAgentId) card.classList.add("mn-chat-agent-card--active");
-      const iconEl = el("span", "mn-chat-agent-card__icon");
+      const iconEl = el2("span", "mn-chat-agent-card__icon");
       if (agent.icon && /<svg/i.test(agent.icon)) {
         const safeSvg = sanitizeSvg(agent.icon);
         if (safeSvg) iconEl.innerHTML = safeSvg;
         else iconEl.textContent = "\u{1F916}";
       } else iconEl.textContent = agent.icon ?? "\u{1F916}";
       card.appendChild(iconEl);
-      card.appendChild(el("span", "mn-chat-agent-card__label", { text: agent.label ?? agent.id }));
+      card.appendChild(el2("span", "mn-chat-agent-card__label", { text: agent.label ?? agent.id }));
       card.addEventListener("click", () => {
         state.activeAgentId = agent.id;
         updateAgentSelectorLabel();
@@ -6568,13 +6723,13 @@ function initMessages(state, els, opts) {
     voiceBtn.classList.toggle("mn-chat-voice--active", state.isListening);
     if (typeof opts.onVoice === "function") opts.onVoice(state.isListening);
   }
-  function clear() {
+  function clear2() {
     state.messages.length = 0;
     messagesEl.querySelectorAll(".mn-chat-msg").forEach((n) => n.remove());
     setTyping(false);
   }
   for (const action of opts.quickActions ?? []) {
-    const btn = el("button", "mn-chat-panel__quick-btn", { text: action });
+    const btn = el2("button", "mn-chat-panel__quick-btn", { text: action });
     btn.addEventListener("click", () => handleQuickAction(action));
     quickBar.appendChild(btn);
   }
@@ -6598,7 +6753,7 @@ function initMessages(state, els, opts) {
   els.widthBtn.addEventListener("click", cyclePanelWidth);
   state.addMessage = addMessage;
   state.setTyping = setTyping;
-  state.clear = clear;
+  state.clear = clear2;
   state.toggleAgentGrid = toggleAgentGrid;
   state.onDocumentClick = (e) => {
     if (!state.isAgentGridOpen) return;
@@ -6750,8 +6905,8 @@ function initials(name) {
   return (first + last).toUpperCase();
 }
 function buildAvatarSpan(cls, name, url) {
-  const el4 = document.createElement("span");
-  el4.className = cls;
+  const el5 = document.createElement("span");
+  el5.className = cls;
   if (url) {
     const img = document.createElement("img");
     img.src = url;
@@ -6759,13 +6914,13 @@ function buildAvatarSpan(cls, name, url) {
     img.style.cssText = "width:100%;height:100%;object-fit:cover;border-radius:50%";
     img.onerror = () => {
       img.remove();
-      el4.textContent = initials(name);
+      el5.textContent = initials(name);
     };
-    el4.appendChild(img);
+    el5.appendChild(img);
   } else {
-    el4.textContent = initials(name);
+    el5.textContent = initials(name);
   }
-  return el4;
+  return el5;
 }
 function buildTriggerAvatar(name, url) {
   return buildAvatarSpan("mn-profile-trigger__avatar", name, url);
@@ -6880,7 +7035,7 @@ function profileMenu(trigger, options) {
   function setFocus(idx) {
     if (!itemEls.length) return;
     focusIdx = (idx % itemEls.length + itemEls.length) % itemEls.length;
-    itemEls.forEach((el4, i) => el4.classList.toggle("mn-profile-dropdown__item--focused", i === focusIdx));
+    itemEls.forEach((el5, i) => el5.classList.toggle("mn-profile-dropdown__item--focused", i === focusIdx));
     itemEls[focusIdx].focus();
   }
   function onKeyDown(e) {
@@ -6987,13 +7142,13 @@ var DPR = window.devicePixelRatio || 1;
 var activeTooltip = null;
 function getTooltip() {
   if (activeTooltip) return activeTooltip;
-  const el4 = document.createElement("div");
-  el4.className = "mn-chart-tooltip";
-  el4.setAttribute("role", "tooltip");
-  el4.setAttribute("aria-hidden", "true");
-  document.body.appendChild(el4);
-  activeTooltip = el4;
-  return el4;
+  const el5 = document.createElement("div");
+  el5.className = "mn-chart-tooltip";
+  el5.setAttribute("role", "tooltip");
+  el5.setAttribute("aria-hidden", "true");
+  document.body.appendChild(el5);
+  activeTooltip = el5;
+  return el5;
 }
 function positionTooltip(tip, x, y) {
   const pad2 = 12, rect = tip.getBoundingClientRect();
@@ -9181,24 +9336,24 @@ function mapboxView(container, opts) {
     markerInstances.forEach((m) => m.remove());
     markerInstances = [];
     markers.forEach((m) => {
-      const el4 = document.createElement("div");
-      el4.className = "mn-mapbox-marker";
+      const el5 = document.createElement("div");
+      el5.className = "mn-mapbox-marker";
       const color = markerColor(m);
-      el4.style.cssText = `width:14px;height:14px;border-radius:50%;background:${color};border:2px solid rgba(255,255,255,0.8);box-shadow:0 0 8px ${color}80;cursor:pointer;transition:transform 0.15s`;
+      el5.style.cssText = `width:14px;height:14px;border-radius:50%;background:${color};border:2px solid rgba(255,255,255,0.8);box-shadow:0 0 8px ${color}80;cursor:pointer;transition:transform 0.15s`;
       if (m.count && m.count > 1) {
-        el4.style.cssText += ";width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:700;color:#000";
-        el4.textContent = String(m.count);
+        el5.style.cssText += ";width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:700;color:#000";
+        el5.textContent = String(m.count);
       }
-      el4.addEventListener("mouseenter", () => {
-        el4.style.transform = "scale(1.4)";
+      el5.addEventListener("mouseenter", () => {
+        el5.style.transform = "scale(1.4)";
       });
-      el4.addEventListener("mouseleave", () => {
-        el4.style.transform = "";
+      el5.addEventListener("mouseleave", () => {
+        el5.style.transform = "";
       });
       const popup = new mb.Popup({ offset: 20, closeButton: false, className: "mn-mapbox-popup" }).setHTML(`<div style="font-weight:600;margin-bottom:2px">${escapeHtml(m.label)}</div>${m.detail ? `<div style="font-size:0.75rem;opacity:0.7">${escapeHtml(m.detail)}</div>` : ""}`);
-      const marker = new mb.Marker({ element: el4 }).setLngLat([m.lon, m.lat]).setPopup(popup).addTo(map);
+      const marker = new mb.Marker({ element: el5 }).setLngLat([m.lon, m.lat]).setPopup(popup).addTo(map);
       if (o.onClick) {
-        el4.addEventListener("click", () => o.onClick(m));
+        el5.addEventListener("click", () => o.onClick(m));
       }
       markerInstances.push(marker);
     });
@@ -10027,7 +10182,7 @@ function manettino(container, opts) {
     knobEl.style.transform = `translate(-50%,-50%) rotate(${angleFor(current)}deg)`;
     root.setAttribute("aria-valuenow", String(current));
     root.setAttribute("aria-valuetext", positions[current]);
-    posEls.forEach((el4, i) => el4.classList.toggle("mn-ctrl-manettino__pos--active", i === current));
+    posEls.forEach((el5, i) => el5.classList.toggle("mn-ctrl-manettino__pos--active", i === current));
   }
   function set(idx) {
     const next = clamp(idx, 0, total - 1);
@@ -10098,7 +10253,7 @@ function steppedRotary(container, opts) {
     knobEl.style.transform = `translate(-50%,-50%) rotate(${angleFor(current)}deg)`;
     root.setAttribute("aria-valuenow", String(current));
     root.setAttribute("aria-valuetext", positions[current]);
-    posEls.forEach((el4, i) => el4.classList.toggle("mn-ctrl-stepped__pos--active", i === current));
+    posEls.forEach((el5, i) => el5.classList.toggle("mn-ctrl-stepped__pos--active", i === current));
     tickEls.forEach((t, i) => t.classList.toggle("mn-ctrl-stepped__tick--active", i === current));
   }
   function set(idx) {
@@ -10138,28 +10293,28 @@ function toElementArray(selector) {
 }
 var UNSAFE_STYLE_RE = /url\s*\(\s*javascript:/i;
 var EXPRESSION_RE = /expression\s*\(/i;
-function setElementProperty(el4, property, value) {
+function setElementProperty(el5, property, value) {
   if (!ALLOWED_BIND_PROPERTIES.has(property) && !property.startsWith("style.") && !property.startsWith("data-")) {
     console.warn('[Maranello] bind: property "%s" not in whitelist', property);
   }
   if (property === "textContent") {
-    el4.textContent = value == null ? "" : String(value);
+    el5.textContent = value == null ? "" : String(value);
   } else if (property === "innerHTML") {
-    el4.innerHTML = value == null ? "" : escapeHtml(String(value));
+    el5.innerHTML = value == null ? "" : escapeHtml(String(value));
   } else if (property.startsWith("style.")) {
-    if (el4 instanceof HTMLElement) {
+    if (el5 instanceof HTMLElement) {
       const strVal = value == null ? "" : String(value);
       if (UNSAFE_STYLE_RE.test(strVal) || EXPRESSION_RE.test(strVal)) {
         console.warn('[Maranello] bind: blocked unsafe style value for "%s"', property);
         return;
       }
-      el4.style[property.slice(6)] = strVal;
+      el5.style[property.slice(6)] = strVal;
     }
   } else if (property.startsWith("data-")) {
     const attrValue = typeof value === "object" && value !== null ? JSON.stringify(value) : String(value ?? "");
-    el4.setAttribute(property, attrValue);
+    el5.setAttribute(property, attrValue);
   } else {
-    el4[property] = value;
+    el5[property] = value;
   }
 }
 function bind(selector, options) {
@@ -10176,16 +10331,16 @@ function bind(selector, options) {
       return fetch(opts.url).then((r) => r.json());
     });
     fetchFn().then((data) => {
-      for (const el4 of elements) {
-        const value = opts.map(data, el4);
-        setElementProperty(el4, opts.property, value);
-        el4.classList.add("mn-anim-count");
-        setTimeout(() => el4.classList.remove("mn-anim-count"), 300);
-        if (opts.onUpdate) opts.onUpdate(el4, value);
+      for (const el5 of elements) {
+        const value = opts.map(data, el5);
+        setElementProperty(el5, opts.property, value);
+        el5.classList.add("mn-anim-count");
+        setTimeout(() => el5.classList.remove("mn-anim-count"), 300);
+        if (opts.onUpdate) opts.onUpdate(el5, value);
       }
     }).catch((err) => {
       if (opts.onError) {
-        for (const el4 of elements) opts.onError(el4, err);
+        for (const el5 of elements) opts.onError(el5, err);
       }
     });
   }
@@ -10194,9 +10349,9 @@ function bind(selector, options) {
   return void 0;
 }
 function autoBind() {
-  document.querySelectorAll("[data-mn-bind]").forEach((el4) => {
+  document.querySelectorAll("[data-mn-bind]").forEach((el5) => {
     const config = {};
-    const rawBind = el4.dataset.mnBind;
+    const rawBind = el5.dataset.mnBind;
     if (!rawBind) return;
     rawBind.split(";").forEach((pair) => {
       const kv = pair.split(":");
@@ -10210,7 +10365,7 @@ function autoBind() {
       }
     });
     if (config.url) {
-      bind(el4, {
+      bind(el5, {
         url: config.url,
         property: config.prop ?? "textContent",
         interval: parseInt(config.refresh ?? "", 10) || 0
@@ -10219,23 +10374,23 @@ function autoBind() {
   });
 }
 function onDrillDown(selector, handler) {
-  document.querySelectorAll(selector).forEach((el4) => {
-    if (el4 instanceof HTMLElement) el4.style.cursor = "pointer";
-    el4.setAttribute("role", "button");
-    el4.setAttribute("tabindex", "0");
-    el4.classList.add("mn-hover-lift");
+  document.querySelectorAll(selector).forEach((el5) => {
+    if (el5 instanceof HTMLElement) el5.style.cursor = "pointer";
+    el5.setAttribute("role", "button");
+    el5.setAttribute("tabindex", "0");
+    el5.classList.add("mn-hover-lift");
     function trigger() {
       const context = {};
-      Array.from(el4.attributes).forEach((attr) => {
+      Array.from(el5.attributes).forEach((attr) => {
         if (attr.name.startsWith("data-")) {
           context[attr.name.slice(5)] = attr.value;
         }
       });
-      context.text = el4.textContent;
-      handler(el4, context);
+      context.text = el5.textContent;
+      handler(el5, context);
     }
-    el4.addEventListener("click", trigger);
-    el4.addEventListener("keydown", (e) => {
+    el5.addEventListener("click", trigger);
+    el5.addEventListener("keydown", (e) => {
       const keyEvent = e;
       if (keyEvent.key === "Enter" || keyEvent.key === " ") {
         keyEvent.preventDefault();
@@ -10292,9 +10447,9 @@ function bindChart(canvas, chartType, options, chartRegistry) {
   return void 0;
 }
 function autoBindSliders(initSlider2) {
-  document.querySelectorAll("[data-mn-slider]").forEach((el4) => {
+  document.querySelectorAll("[data-mn-slider]").forEach((el5) => {
     const config = {};
-    const rawSlider = el4.dataset.mnSlider;
+    const rawSlider = el5.dataset.mnSlider;
     if (!rawSlider) return;
     rawSlider.split(";").forEach((pair) => {
       const kv = pair.split(":");
@@ -10305,10 +10460,10 @@ function autoBindSliders(initSlider2) {
         config[key] = isNaN(numericValue) ? rawValue : numericValue;
       }
     });
-    if (initSlider2) initSlider2(el4, config);
+    if (initSlider2) initSlider2(el5, config);
   });
 }
-function bindControl(el4, options) {
+function bindControl(el5, options) {
   const opts = {
     mapRead: (d) => d.value,
     mapWrite: (v) => JSON.stringify({ value: v }),
@@ -10317,14 +10472,14 @@ function bindControl(el4, options) {
   if (opts.url) {
     fetch(opts.url).then((r) => r.json()).then((data) => {
       const val = opts.mapRead(data);
-      if (el4._mnSlider) el4._mnSlider.setValue(val);
+      if (el5._mnSlider) el5._mnSlider.setValue(val);
     }).catch((err) => {
       console.warn("bindControl: failed to read initial value", err);
     });
   }
   eventBus.on("slider-change", (detail) => {
     const d = detail;
-    if (d.element !== el4) return;
+    if (d.element !== el5) return;
     if (opts.url) {
       fetch(opts.url, {
         method: "POST",
@@ -10456,7 +10611,7 @@ var STATUS_MAP2 = {
   "planned": { cls: "info", icon: "\u25CB" },
   "stage 4": { cls: "warning", icon: "\u25CF" }
 };
-function el2(tag, cls, attrs) {
+function el3(tag, cls, attrs) {
   const e = document.createElement(tag);
   if (cls) e.className = cls;
   if (attrs) for (const [k, v] of Object.entries(attrs)) {
@@ -10470,7 +10625,7 @@ function escHtml2(s) {
   return s == null ? "" : escapeHtml(String(s));
 }
 function buildRow(row, rowIdx2, opts, state, tbody) {
-  const tr = el2("tr", "mn-dt__row");
+  const tr = el3("tr", "mn-dt__row");
   tr.setAttribute("role", "row");
   tr.setAttribute("data-row-idx", String(rowIdx2));
   if (opts.selectable) tr.classList.add("mn-dt__row--selectable");
@@ -10479,7 +10634,7 @@ function buildRow(row, rowIdx2, opts, state, tbody) {
   if (state.selected === rowIdx2) tr.classList.add("mn-dt__row--selected");
   if (opts.stripedRows && rowIdx2 % 2 === 1) tr.classList.add("mn-dt__row--striped");
   opts.columns.forEach((col, ci) => {
-    const td = el2("td", "mn-dt__td");
+    const td = el3("td", "mn-dt__td");
     td.setAttribute("role", "gridcell");
     td.setAttribute("data-col", String(ci));
     if (col.align === "right") td.style.textAlign = "right";
@@ -10525,11 +10680,11 @@ function buildRow(row, rowIdx2, opts, state, tbody) {
   return tr;
 }
 function buildGroupHeader(groupName, count, isExpanded, colSpan, state, renderFn) {
-  const tr = el2("tr", "mn-dt__group-row");
+  const tr = el3("tr", "mn-dt__group-row");
   tr.setAttribute("role", "rowgroup");
   tr.setAttribute("tabindex", "0");
   tr.setAttribute("aria-expanded", isExpanded ? "true" : "false");
-  const td = el2("td", "mn-dt__group-cell");
+  const td = el3("td", "mn-dt__group-cell");
   td.setAttribute("colspan", String(colSpan));
   const statusCls = STATUS_MAP2[groupName.toLowerCase()]?.cls;
   td.innerHTML = '<span class="mn-dt__group-chevron' + (isExpanded ? " mn-dt__group-chevron--open" : "") + '">\u25B8</span><span class="mn-dt__group-dot' + (statusCls ? " mn-dt__group-dot--" + statusCls : "") + '"></span><span class="mn-dt__group-label">' + escHtml2(groupName.toUpperCase()) + '</span><span class="mn-dt__group-count">' + count + "</span>";
@@ -10554,7 +10709,7 @@ function buildPagination(totalRows, paginationEl, pageSize, state, renderFn) {
   paginationEl.innerHTML = "";
   const totalPages = Math.ceil(totalRows / pageSize);
   if (totalPages <= 1) return;
-  const prevBtn = el2("button", "mn-dt__page-btn", { text: "\u2190", "aria-label": "Previous page" });
+  const prevBtn = el3("button", "mn-dt__page-btn", { text: "\u2190", "aria-label": "Previous page" });
   prevBtn.disabled = state.page === 0;
   prevBtn.addEventListener("click", () => {
     if (state.page > 0) {
@@ -10568,7 +10723,7 @@ function buildPagination(totalRows, paginationEl, pageSize, state, renderFn) {
   const winEnd = Math.min(totalPages, winStart + windowSize);
   if (winEnd - winStart < windowSize) winStart = Math.max(0, winEnd - windowSize);
   for (let p = winStart; p < winEnd; p++) {
-    const pageBtn = el2("button", "mn-dt__page-btn" + (p === state.page ? " mn-dt__page-btn--active" : ""), {
+    const pageBtn = el3("button", "mn-dt__page-btn" + (p === state.page ? " mn-dt__page-btn--active" : ""), {
       text: String(p + 1),
       "aria-label": "Page " + (p + 1)
     });
@@ -10582,7 +10737,7 @@ function buildPagination(totalRows, paginationEl, pageSize, state, renderFn) {
     });
     paginationEl.appendChild(pageBtn);
   }
-  const nextBtn = el2("button", "mn-dt__page-btn", { text: "\u2192", "aria-label": "Next page" });
+  const nextBtn = el3("button", "mn-dt__page-btn", { text: "\u2192", "aria-label": "Next page" });
   nextBtn.disabled = state.page >= totalPages - 1;
   nextBtn.addEventListener("click", () => {
     if (state.page < totalPages - 1) {
@@ -10593,8 +10748,8 @@ function buildPagination(totalRows, paginationEl, pageSize, state, renderFn) {
   paginationEl.appendChild(nextBtn);
 }
 function buildEmptyRow(emptyMessage, colSpan) {
-  const tr = el2("tr", "mn-dt__empty-row");
-  const td = el2("td", "mn-dt__empty-cell", { text: emptyMessage });
+  const tr = el3("tr", "mn-dt__empty-row");
+  const td = el3("td", "mn-dt__empty-cell", { text: emptyMessage });
   td.setAttribute("colspan", String(colSpan));
   tr.appendChild(td);
   return tr;
@@ -10765,25 +10920,25 @@ function dataTable(container, opts) {
   if (resolved.compact) containerEl.classList.add("mn-dt--compact");
   if (resolved.crosshair) containerEl.classList.add("mn-dt--crosshair");
   if (resolved.onDrillDown) containerEl.classList.add("mn-dt--drilldown");
-  const scrollWrap = el2("div", "mn-dt__scroll");
-  const table2 = el2("table", "mn-dt__table");
+  const scrollWrap = el3("div", "mn-dt__scroll");
+  const table2 = el3("table", "mn-dt__table");
   table2.setAttribute("role", "grid");
   table2.setAttribute("aria-label", resolved.ariaLabel ?? "Data table");
-  const thead = el2("thead", "mn-dt__head");
-  const headerRow = el2("tr", "mn-dt__header-row");
+  const thead = el3("thead", "mn-dt__head");
+  const headerRow = el3("tr", "mn-dt__header-row");
   headerRow.setAttribute("role", "row");
-  const filterRow = resolved.showFilters ? el2("tr", "mn-dt__filter-row") : null;
+  const filterRow = resolved.showFilters ? el3("tr", "mn-dt__filter-row") : null;
   if (filterRow) filterRow.setAttribute("role", "row");
-  const tbody = el2("tbody", "mn-dt__body");
+  const tbody = el3("tbody", "mn-dt__body");
   tbody.setAttribute("role", "rowgroup");
-  const liveRegion = el2("div", "mn-sr-only");
+  const liveRegion = el3("div", "mn-sr-only");
   liveRegion.setAttribute("aria-live", "polite");
   liveRegion.setAttribute("role", "status");
   function doRender() {
     render2(state, resolved, tbody, paginationEl, liveRegion);
   }
   resolved.columns.forEach((col, ci) => {
-    const th = el2("th", "mn-dt__th");
+    const th = el3("th", "mn-dt__th");
     th.setAttribute("role", "columnheader");
     th.setAttribute("scope", "col");
     th.setAttribute("data-col", String(ci));
@@ -10791,13 +10946,13 @@ function dataTable(container, opts) {
     if (col.minWidth) th.style.minWidth = typeof col.minWidth === "number" ? col.minWidth + "px" : String(col.minWidth);
     if (col.align === "right") th.style.textAlign = "right";
     if (col.align === "center") th.style.textAlign = "center";
-    const label = el2("span", "mn-dt__th-label", { text: col.label ?? col.key });
+    const label = el3("span", "mn-dt__th-label", { text: col.label ?? col.key });
     if (col.sortable) {
       th.classList.add("mn-dt__th--sortable");
       th.setAttribute("tabindex", "0");
       th.setAttribute("aria-sort", "none");
       th.appendChild(label);
-      th.appendChild(el2("span", "mn-dt__sort-icon", { html: "\u21C5" }));
+      th.appendChild(el3("span", "mn-dt__sort-icon", { html: "\u21C5" }));
       th.addEventListener("click", () => handleSort(col.key, ci, state, headerRow, doRender, resolved.onSort));
       th.addEventListener("keydown", (e) => {
         if (e.key === "Enter" || e.key === " ") {
@@ -10810,10 +10965,10 @@ function dataTable(container, opts) {
     }
     headerRow.appendChild(th);
     if (filterRow) {
-      const ftd = el2("th", "mn-dt__filter-cell");
+      const ftd = el3("th", "mn-dt__filter-cell");
       ftd.setAttribute("data-col", String(ci));
       if (col.filterable) {
-        const input = el2("input", "mn-dt__filter-input");
+        const input = el3("input", "mn-dt__filter-input");
         input.type = "text";
         input.placeholder = "Filter\u2026";
         input.setAttribute("aria-label", "Filter " + (col.label ?? col.key));
@@ -10834,10 +10989,10 @@ function dataTable(container, opts) {
   containerEl.appendChild(liveRegion);
   let paginationEl = null;
   if ((resolved.pageSize ?? 0) > 0) {
-    paginationEl = el2("div", "mn-dt__pagination");
+    paginationEl = el3("div", "mn-dt__pagination");
     containerEl.appendChild(paginationEl);
   }
-  const colHighlightEl = el2("div", "mn-dt__col-highlight");
+  const colHighlightEl = el3("div", "mn-dt__col-highlight");
   colHighlightEl.style.display = "none";
   scrollWrap.appendChild(colHighlightEl);
   if (resolved.crosshair) {
@@ -11237,13 +11392,13 @@ function datePicker(anchor, opts) {
 }
 
 // src/ts/forms-widgets.ts
-function initAutoResize(el4) {
-  if (!el4) return;
+function initAutoResize(el5) {
+  if (!el5) return;
   function resize() {
-    el4.style.height = "auto";
-    el4.style.height = el4.scrollHeight + "px";
+    el5.style.height = "auto";
+    el5.style.height = el5.scrollHeight + "px";
   }
-  el4.addEventListener("input", resize);
+  el5.addEventListener("input", resize);
   resize();
 }
 function initTagInput(container) {
@@ -11394,9 +11549,9 @@ function initFormSteps(container) {
     getCurrent: () => current
   };
 }
-function initInlineEdit(el4) {
-  if (!el4) return;
-  const root = el4;
+function initInlineEdit(el5) {
+  if (!el5) return;
+  const root = el5;
   let originalText = (root.textContent ?? "").trim();
   let editing = false;
   root.addEventListener("click", () => {
@@ -11495,28 +11650,28 @@ function initForms(root = document) {
     (form) => initLiveValidation(form)
   );
   qsa(root, "[data-mn-autoresize]", ".mn-form-textarea--auto").forEach(
-    (el4) => initAutoResize(el4)
+    (el5) => initAutoResize(el5)
   );
   qsa(root, "[data-mn-tags]", ".mn-tag-input").forEach(
-    (el4) => initTagInput(el4)
+    (el5) => initTagInput(el5)
   );
   qsa(root, "[data-mn-password-toggle]", ".mn-password-wrap").forEach(
-    (el4) => initPasswordToggle(el4)
+    (el5) => initPasswordToggle(el5)
   );
   qsa(root, "[data-mn-file-upload]", ".mn-file-upload").forEach(
-    (el4) => initFileUpload(el4)
+    (el5) => initFileUpload(el5)
   );
   qsa(root, "[data-mn-steps]", ".mn-form-steps").forEach(
-    (el4) => initFormSteps(el4)
+    (el5) => initFormSteps(el5)
   );
   qsa(root, "[data-mn-inline-edit]", ".mn-inline-edit").forEach(
-    (el4) => initInlineEdit(el4)
+    (el5) => initInlineEdit(el5)
   );
   qsa(root, "[data-mn-char-counter]", ".mn-field__counter").forEach(
-    (el4) => initCharCounter(el4)
+    (el5) => initCharCounter(el5)
   );
   qsa(root, "[data-mn-search-clear]", ".mn-search-input").forEach(
-    (el4) => initSearchClear(el4)
+    (el5) => initSearchClear(el5)
   );
 }
 var forms = {
@@ -11543,28 +11698,28 @@ var forms = {
 };
 
 // src/ts/forms-tags-field.ts
-function initTagsField(el4, opts) {
+function initTagsField(el5, opts) {
   const tags = [];
   const onChange = opts?.onChange;
   const maxTags = opts?.maxTags ?? Infinity;
   const placeholder = opts?.placeholder ?? "Add tag...";
   const suggestions = opts?.suggestions ?? [];
-  el4.innerHTML = "";
-  el4.classList.add("mn-tags-field");
+  el5.innerHTML = "";
+  el5.classList.add("mn-tags-field");
   const chipsContainer = document.createElement("div");
   chipsContainer.className = "mn-tags-field__chips";
-  el4.appendChild(chipsContainer);
+  el5.appendChild(chipsContainer);
   const input = document.createElement("input");
   input.className = "mn-tags-field__input";
   input.type = "text";
   input.placeholder = placeholder;
   input.setAttribute("aria-label", placeholder);
-  el4.appendChild(input);
+  el5.appendChild(input);
   const dropdown = document.createElement("div");
   dropdown.className = "mn-tags-field__suggestions";
   dropdown.style.display = "none";
-  el4.appendChild(dropdown);
-  el4.addEventListener("click", (e) => {
+  el5.appendChild(dropdown);
+  el5.addEventListener("click", (e) => {
     if (e.target !== dropdown) input.focus();
   });
   function notify() {
@@ -11666,8 +11821,8 @@ function initTagsField(el4, opts) {
   });
   if (opts?.value) opts.value.forEach((t) => addTag(t));
   function destroy() {
-    el4.innerHTML = "";
-    el4.classList.remove("mn-tags-field");
+    el5.innerHTML = "";
+    el5.classList.remove("mn-tags-field");
     tags.length = 0;
   }
   return { addTag, removeTag, getTags: () => tags.slice(), setValue: setValue2, destroy };
@@ -11680,11 +11835,11 @@ function deriveInitials(name) {
   if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
   return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
 }
-function initPersonField(el4, opts) {
+function initPersonField(el5, opts) {
   const { searchFn, onSelect, placeholder = "Search people..." } = opts;
-  el4.classList.add("mn-person-field");
+  el5.classList.add("mn-person-field");
   let selectedId = "";
-  const asyncSelect = new AsyncSelect(el4, {
+  const asyncSelect = new AsyncSelect(el5, {
     provider: {
       search: (query) => searchFn(query),
       renderItem: (person) => {
@@ -11703,14 +11858,14 @@ function initPersonField(el4, opts) {
       onSelect?.({ id: person.id, name: person.name });
     }
   });
-  const input = el4.querySelector(".mn-async-select__input");
+  const input = el5.querySelector(".mn-async-select__input");
   if (input) {
     input.classList.add("mn-input", "mn-person-field__input");
     if (opts.value) input.value = opts.value;
   }
   function destroy() {
     asyncSelect.destroy();
-    el4.classList.remove("mn-person-field");
+    el5.classList.remove("mn-person-field");
   }
   return {
     getValue: () => input?.value ?? "",
@@ -11740,16 +11895,16 @@ function resolveContainer3(c) {
   return c instanceof Element ? c : null;
 }
 function svgEl(tag, attrs) {
-  const el4 = document.createElementNS("http://www.w3.org/2000/svg", tag);
+  const el5 = document.createElementNS("http://www.w3.org/2000/svg", tag);
   if (attrs) {
-    for (const k of Object.keys(attrs)) el4.setAttribute(k, String(attrs[k]));
+    for (const k of Object.keys(attrs)) el5.setAttribute(k, String(attrs[k]));
   }
-  return el4;
+  return el5;
 }
 function svgText(attrs, text) {
-  const el4 = svgEl("text", attrs);
-  el4.textContent = text;
-  return el4;
+  const el5 = svgEl("text", attrs);
+  el5.textContent = text;
+  return el5;
 }
 function trapPath(x1, w1, x2, w2, y1, y2) {
   const l1 = x1, r1 = x1 + w1, l2 = x2, r2 = x2 + w2, my = (y1 + y2) / 2;
@@ -11846,7 +12001,7 @@ function funnel(container, options) {
         bar.style.filter = "";
       });
       hit.addEventListener("click", () => {
-        svg.querySelectorAll(".mn-funnel__sel").forEach((el4) => el4.remove());
+        svg.querySelectorAll(".mn-funnel__sel").forEach((el5) => el5.remove());
         const sel = svgEl("rect", { x: barX - 2, y: y - 2, width: barW + 4, height: barH + 4, fill: "none", stroke: "#FFC72C", "stroke-width": "2", rx: "6", class: "mn-funnel__sel" });
         svg.appendChild(sel);
         if (opts.onClick) opts.onClick(stage);
@@ -11928,7 +12083,7 @@ function statusLabel(s) {
 function formatKR(current, target, unit) {
   return String(current) + "/" + String(target) + (unit || "");
 }
-function el3(tag, className, attrs) {
+function el4(tag, className, attrs) {
   const node = document.createElement(tag);
   if (className) node.className = className;
   if (attrs) Object.keys(attrs).forEach((key) => {
@@ -12061,18 +12216,18 @@ function createSummaryCard(status, count, description, total) {
   const rawColor = STATUS_COLORS2[status] || "#00A651";
   const color = isValidColor(rawColor) ? rawColor : "#00A651";
   const p = total > 0 ? count / total * 100 : 0;
-  const card = el3("div", `mn-okr__summary-card mn-okr__summary-card--${status}`);
-  const arcWrap = el3("div", "mn-okr__summary-arc");
+  const card = el4("div", `mn-okr__summary-card mn-okr__summary-card--${status}`);
+  const arcWrap = el4("div", "mn-okr__summary-arc");
   const sz = 64, sw = 5, r = (sz - sw) / 2, cx = sz / 2;
   const circ = 2 * Math.PI * r;
   const offset = circ - p / 100 * circ;
   arcWrap.innerHTML = `<svg viewBox="0 0 ${sz} ${sz}" width="${sz}" height="${sz}"><circle cx="${cx}" cy="${cx}" r="${r}" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="${sw}"/><circle class="mn-okr__summary-ring" cx="${cx}" cy="${cx}" r="${r}" fill="none" stroke="${color}" stroke-width="${sw}" stroke-linecap="round" stroke-dasharray="${circ.toFixed(1)}" stroke-dashoffset="${circ.toFixed(1)}" data-target="${offset.toFixed(1)}" transform="rotate(-90,${cx},${cx})" style="filter:drop-shadow(0 0 6px ${color}40);transition:stroke-dashoffset 900ms cubic-bezier(0.2,1,0.2,1)"/><text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle" fill="${color}" font-family="var(--font-mono)" font-size="18" font-weight="700">${count}</text></svg>`;
-  const info = el3("div", "mn-okr__summary-info");
-  const head = el3("div", "mn-okr__summary-head");
-  head.appendChild(el3("span", `mn-okr__status-dot mn-okr__status-dot--${status}`));
-  head.appendChild(el3("span", "mn-okr__summary-label", { text: statusLabel(status) }));
+  const info = el4("div", "mn-okr__summary-info");
+  const head = el4("div", "mn-okr__summary-head");
+  head.appendChild(el4("span", `mn-okr__status-dot mn-okr__status-dot--${status}`));
+  head.appendChild(el4("span", "mn-okr__summary-label", { text: statusLabel(status) }));
   info.appendChild(head);
-  info.appendChild(el3("div", "mn-okr__summary-threshold", { text: description }));
+  info.appendChild(el4("div", "mn-okr__summary-threshold", { text: description }));
   card.appendChild(arcWrap);
   card.appendChild(info);
   return card;
@@ -12081,21 +12236,21 @@ function createHero(stats, period) {
   const status = statusFromProgress(stats.average);
   const rawHeroColor = STATUS_COLORS2[status];
   const color = isValidColor(rawHeroColor) ? rawHeroColor : "#00A651";
-  const section = el3("section", "mn-okr__hero");
-  const gaugeBlock = el3("div", "mn-okr__gauge-wrap");
+  const section = el4("section", "mn-okr__hero");
+  const gaugeBlock = el4("div", "mn-okr__gauge-wrap");
   gaugeBlock.innerHTML = heroGaugeSVG(stats.average, color);
-  const gaugeValue = el3("div", "mn-okr__gauge-value", { text: Math.round(stats.average) + "%" });
+  const gaugeValue = el4("div", "mn-okr__gauge-value", { text: Math.round(stats.average) + "%" });
   gaugeValue.style.color = color;
   gaugeBlock.appendChild(gaugeValue);
-  const avgBlock = el3("div", "mn-okr__average");
-  avgBlock.appendChild(el3("div", "mn-okr__average-label", { text: "Average completion" }));
-  const avgVal = el3("div", "mn-okr__average-value", { text: Math.round(stats.average) + "%" });
+  const avgBlock = el4("div", "mn-okr__average");
+  avgBlock.appendChild(el4("div", "mn-okr__average-label", { text: "Average completion" }));
+  const avgVal = el4("div", "mn-okr__average-value", { text: Math.round(stats.average) + "%" });
   avgVal.style.color = color;
   avgBlock.appendChild(avgVal);
-  const badge = el3("div", `mn-okr__status-badge mn-okr__status-badge--${status}`, { text: statusLabel(status) });
+  const badge = el4("div", `mn-okr__status-badge mn-okr__status-badge--${status}`, { text: statusLabel(status) });
   badge.style.setProperty("--badge-color", color);
   avgBlock.appendChild(badge);
-  avgBlock.appendChild(el3("span", "mn-okr__period-tag", { text: period || "Current period" }));
+  avgBlock.appendChild(el4("span", "mn-okr__period-tag", { text: period || "Current period" }));
   section.appendChild(gaugeBlock);
   section.appendChild(avgBlock);
   return section;
@@ -12104,12 +12259,12 @@ function createKRRow(kr, objectiveStatus) {
   const current = safeNumber(kr.current), target = safeNumber(kr.target);
   const completion = pct(current, target);
   const status = statusFromProgress(completion);
-  const row = el3("li", "mn-okr__kr");
-  const top = el3("div", "mn-okr__kr-head");
-  top.appendChild(el3("span", "mn-okr__kr-title", { text: kr.title || "Untitled KR" }));
-  top.appendChild(el3("span", "mn-okr__kr-metric", { text: formatKR(current, target, kr.unit || "") }));
-  const track = el3("div", "mn-okr__kr-track");
-  const bar = el3("div", `mn-okr__kr-bar mn-okr__kr-bar--${status}`);
+  const row = el4("li", "mn-okr__kr");
+  const top = el4("div", "mn-okr__kr-head");
+  top.appendChild(el4("span", "mn-okr__kr-title", { text: kr.title || "Untitled KR" }));
+  top.appendChild(el4("span", "mn-okr__kr-metric", { text: formatKR(current, target, kr.unit || "") }));
+  const track = el4("div", "mn-okr__kr-track");
+  const bar = el4("div", `mn-okr__kr-bar mn-okr__kr-bar--${status}`);
   bar.dataset.target = completion.toFixed(2);
   bar.style.width = "0%";
   track.appendChild(bar);
@@ -12121,18 +12276,18 @@ function createKRRow(kr, objectiveStatus) {
 function createObjectiveCard(objective, index) {
   const scopeColor = SCOPE_COLORS[objective.scope] || (getComputedStyle(document.documentElement).getPropertyValue("--scope-local").trim() || "#4EA8DE");
   const status = objective.status in STATUS_COLORS2 ? objective.status : statusFromProgress(objective.progress);
-  const card = el3("article", `mn-okr__objective mn-okr__objective--${status}`, {
+  const card = el4("article", `mn-okr__objective mn-okr__objective--${status}`, {
     role: "article",
     "aria-label": `${objective.title} status ${status.replace("-", " ")}`
   });
   card.style.setProperty("--mn-okr-scope", scopeColor);
   card.style.setProperty("--mn-okr-status", STATUS_COLORS2[status]);
   card.style.animationDelay = index * 45 + "ms";
-  const header = el3("div", "mn-okr__objective-header");
-  const left = el3("div", "mn-okr__objective-main");
-  left.appendChild(el3("span", "mn-okr__scope-badge", { text: objective.scope }));
-  left.appendChild(el3("h3", "mn-okr__objective-title", { text: objective.title }));
-  const right = el3("div", "mn-okr__objective-ring-wrap");
+  const header = el4("div", "mn-okr__objective-header");
+  const left = el4("div", "mn-okr__objective-main");
+  left.appendChild(el4("span", "mn-okr__scope-badge", { text: objective.scope }));
+  left.appendChild(el4("h3", "mn-okr__objective-title", { text: objective.title }));
+  const right = el4("div", "mn-okr__objective-ring-wrap");
   right.innerHTML = ringTemplate(
     56,
     6,
@@ -12144,7 +12299,7 @@ function createObjectiveCard(objective, index) {
   );
   header.appendChild(left);
   header.appendChild(right);
-  const krList = el3("ul", "mn-okr__kr-list");
+  const krList = el4("ul", "mn-okr__kr-list");
   objective.keyResults.forEach((kr) => krList.appendChild(createKRRow(kr, status)));
   card.appendChild(header);
   card.appendChild(krList);
@@ -12164,13 +12319,13 @@ function okrPanel(container, opts) {
   let objectives = (opts?.objectives ?? []).map(normalizeObjective);
   function render5() {
     el_host.innerHTML = "";
-    const root = el3("div", "mn-okr");
-    const header = el3("div", "mn-okr__header");
-    header.appendChild(el3("h2", "mn-okr__title", { text: title }));
+    const root = el4("div", "mn-okr");
+    const header = el4("div", "mn-okr__header");
+    header.appendChild(el4("h2", "mn-okr__title", { text: title }));
     root.appendChild(header);
     const stats = calculateStats(objectives);
     root.appendChild(createHero(stats, period));
-    const summaryRow = el3("div", "mn-okr__summary-row");
+    const summaryRow = el4("div", "mn-okr__summary-row");
     const total = objectives.length;
     const descriptions = {
       "on-track": "\u2265 75% progress",
@@ -12181,7 +12336,7 @@ function okrPanel(container, opts) {
       summaryRow.appendChild(createSummaryCard(s, stats.counts[s], descriptions[s], total));
     });
     root.appendChild(summaryRow);
-    const grid = el3("div", "mn-okr__grid");
+    const grid = el4("div", "mn-okr__grid");
     objectives.forEach((obj, i) => grid.appendChild(createObjectiveCard(obj, i)));
     root.appendChild(grid);
     el_host.appendChild(root);
@@ -12249,7 +12404,7 @@ function initScrollReveal(opts) {
   if (!revealEls.length) {
     console.warn("[Maranello] initScrollReveal: no elements found for selector:", selector);
   }
-  revealEls.forEach((el4) => observer.observe(el4));
+  revealEls.forEach((el5) => observer.observe(el5));
 }
 function initNavTracking(opts) {
   const sectionSelector = opts?.sectionSelector ?? "section[id]";
@@ -12292,13 +12447,13 @@ function relativeLuminance(bgColor) {
   return 0.2126 * r + 0.7152 * g + 0.0722 * b;
 }
 function autoContrast(selector, threshold = 0.35) {
-  document.querySelectorAll(selector).forEach((el4) => {
-    const bg = getComputedStyle(el4).backgroundColor;
+  document.querySelectorAll(selector).forEach((el5) => {
+    const bg = getComputedStyle(el5).backgroundColor;
     const lum = relativeLuminance(bg);
     if (lum === null) return;
-    if (el4 instanceof HTMLElement) {
-      el4.style.color = lum > threshold ? "#111" : "rgba(255,255,255,0.95)";
-      el4.style.textShadow = lum > threshold ? "none" : "0 1px 3px rgba(0,0,0,0.5)";
+    if (el5 instanceof HTMLElement) {
+      el5.style.color = lum > threshold ? "#111" : "rgba(255,255,255,0.95)";
+      el5.style.textShadow = lum > threshold ? "none" : "0 1px 3px rgba(0,0,0,0.5)";
     }
   });
 }
@@ -12488,10 +12643,10 @@ function hexLum3(hex) {
   return 0.2126 * r + 0.7152 * g + 0.0722 * b;
 }
 function createEl2(tag, cls, text) {
-  const el4 = document.createElement(tag);
-  if (cls) el4.className = cls;
-  if (text != null) el4.textContent = text;
-  return el4;
+  const el5 = document.createElement(tag);
+  if (cls) el5.className = cls;
+  if (text != null) el5.textContent = text;
+  return el5;
 }
 function clampVal2(v, min, max) {
   return Math.max(min, Math.min(max, v));
@@ -12516,9 +12671,9 @@ function cleanupTimers(state) {
     if (t != null) window.clearTimeout(t);
   }
 }
-function addListener(state, el4, evt, handler) {
-  el4.addEventListener(evt, handler);
-  state.listeners.push({ el: el4, evt, handler });
+function addListener(state, el5, evt, handler) {
+  el5.addEventListener(evt, handler);
+  state.listeners.push({ el: el5, evt, handler });
 }
 function showTip2(tooltip, frame, text, evt) {
   tooltip.textContent = text;
@@ -12852,9 +13007,9 @@ function renderBody2(body, state, opts) {
 }
 
 // src/ts/detail-panel.ts
-function getFocusable(el4) {
+function getFocusable(el5) {
   const sel = 'a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
-  return Array.from(el4.querySelectorAll(sel));
+  return Array.from(el5.querySelectorAll(sel));
 }
 function createDetailPanel(container, opts = {}) {
   const isInline = opts.mode === "inline";
@@ -13263,10 +13418,10 @@ function a11yPanel() {
 }
 
 // src/ts/controls-dialogs.ts
-function initDropdown(el4) {
-  const trigger = el4.querySelector(".mn-dropdown__trigger");
-  const menu = el4.querySelector(".mn-dropdown__menu");
-  const items = el4.querySelectorAll(".mn-dropdown__item");
+function initDropdown(el5) {
+  const trigger = el5.querySelector(".mn-dropdown__trigger");
+  const menu = el5.querySelector(".mn-dropdown__menu");
+  const items = el5.querySelectorAll(".mn-dropdown__item");
   if (!trigger) throw new Error("Dropdown: missing .mn-dropdown__trigger");
   trigger.setAttribute("aria-haspopup", "listbox");
   trigger.setAttribute("aria-expanded", "false");
@@ -13276,18 +13431,18 @@ function initDropdown(el4) {
     item.setAttribute("aria-selected", "false");
   });
   function openMenu() {
-    el4.classList.add("mn-dropdown--open");
+    el5.classList.add("mn-dropdown--open");
     trigger.setAttribute("aria-expanded", "true");
     if (items[0]) items[0].focus();
   }
   function closeMenu() {
-    el4.classList.remove("mn-dropdown--open");
+    el5.classList.remove("mn-dropdown--open");
     trigger.setAttribute("aria-expanded", "false");
     trigger.focus();
   }
   trigger.addEventListener("click", (e) => {
     e.stopPropagation();
-    if (el4.classList.contains("mn-dropdown--open")) closeMenu();
+    if (el5.classList.contains("mn-dropdown--open")) closeMenu();
     else openMenu();
   });
   trigger.addEventListener("keydown", (e) => {
@@ -13331,13 +13486,13 @@ function initDropdown(el4) {
     });
   });
   document.addEventListener("click", () => {
-    if (el4.classList.contains("mn-dropdown--open")) closeMenu();
+    if (el5.classList.contains("mn-dropdown--open")) closeMenu();
   });
   return { open: openMenu, close: closeMenu };
 }
-function initTabs(el4) {
-  const tabs = el4.querySelectorAll(".mn-tabs__tab");
-  const panels = el4.querySelectorAll(".mn-tabs__panel");
+function initTabs(el5) {
+  const tabs = el5.querySelectorAll(".mn-tabs__tab");
+  const panels = el5.querySelectorAll(".mn-tabs__panel");
   function activate(idx) {
     tabs.forEach((t, i) => {
       const active = i === idx;
@@ -13391,16 +13546,16 @@ function initTabs(el4) {
 }
 
 // src/ts/controls-drag.ts
-function initRotary(el4, options) {
+function initRotary(el5, options) {
   const opts = {
     steps: ["WET", "COMFORT", "SPORT", "RACE", "ESC OFF"],
     initial: 2,
     snap: true,
     ...options
   };
-  const housing = el4.querySelector(".mn-rotary__housing");
-  const pointer = el4.querySelector(".mn-rotary__pointer");
-  const valueEl = el4.querySelector(".mn-rotary__value");
+  const housing = el5.querySelector(".mn-rotary__housing");
+  const pointer = el5.querySelector(".mn-rotary__pointer");
+  const valueEl = el5.querySelector(".mn-rotary__value");
   if (!housing || !pointer) throw new Error("Rotary: missing .mn-rotary__housing or __pointer");
   let current = opts.initial;
   const totalSteps = opts.steps.length;
@@ -13461,13 +13616,13 @@ function initRotary(el4, options) {
   housing.addEventListener("click", () => {
     if (!dragging) setStep((current + 1) % totalSteps);
   });
-  el4.setAttribute("tabindex", "0");
-  el4.setAttribute("role", "slider");
-  el4.setAttribute("aria-valuemin", "0");
-  el4.setAttribute("aria-valuemax", String(totalSteps - 1));
-  el4.setAttribute("aria-valuenow", String(current));
-  el4.setAttribute("aria-valuetext", opts.steps[current]);
-  el4.addEventListener("keydown", (e) => {
+  el5.setAttribute("tabindex", "0");
+  el5.setAttribute("role", "slider");
+  el5.setAttribute("aria-valuemin", "0");
+  el5.setAttribute("aria-valuemax", String(totalSteps - 1));
+  el5.setAttribute("aria-valuenow", String(current));
+  el5.setAttribute("aria-valuetext", opts.steps[current]);
+  el5.addEventListener("keydown", (e) => {
     if (e.key === "ArrowRight" || e.key === "ArrowUp") {
       e.preventDefault();
       setStep(current + 1);
@@ -13475,8 +13630,8 @@ function initRotary(el4, options) {
       e.preventDefault();
       setStep(current - 1);
     }
-    el4.setAttribute("aria-valuenow", String(current));
-    el4.setAttribute("aria-valuetext", opts.steps[current]);
+    el5.setAttribute("aria-valuenow", String(current));
+    el5.setAttribute("aria-valuetext", opts.steps[current]);
   });
   return {
     setStep,
@@ -13489,7 +13644,7 @@ function initRotary(el4, options) {
     }
   };
 }
-function initSlider(el4, options) {
+function initSlider(el5, options) {
   const opts = {
     min: 0,
     max: 100,
@@ -13500,10 +13655,10 @@ function initSlider(el4, options) {
     unit: "",
     ...options
   };
-  const track = el4.querySelector(".mn-slider__track") ?? el4;
-  let fill = el4.querySelector(".mn-slider__fill");
-  let thumb = el4.querySelector(".mn-slider__thumb");
-  const valueEl = el4.querySelector(".mn-slider__value");
+  const track = el5.querySelector(".mn-slider__track") ?? el5;
+  let fill = el5.querySelector(".mn-slider__fill");
+  let thumb = el5.querySelector(".mn-slider__thumb");
+  const valueEl = el5.querySelector(".mn-slider__value");
   if (!fill) {
     fill = document.createElement("div");
     fill.className = "mn-slider__fill";
@@ -13516,12 +13671,12 @@ function initSlider(el4, options) {
   }
   const fillEl = fill, thumbEl = thumb;
   let current = opts.value, dragging = false;
-  el4.setAttribute("tabindex", "0");
-  el4.setAttribute("role", "slider");
-  el4.setAttribute("aria-valuemin", String(opts.min));
-  el4.setAttribute("aria-valuemax", String(opts.max));
-  el4.setAttribute("aria-valuenow", String(current));
-  if (opts.label) el4.setAttribute("aria-label", opts.label);
+  el5.setAttribute("tabindex", "0");
+  el5.setAttribute("role", "slider");
+  el5.setAttribute("aria-valuemin", String(opts.min));
+  el5.setAttribute("aria-valuemax", String(opts.max));
+  el5.setAttribute("aria-valuenow", String(current));
+  if (opts.label) el5.setAttribute("aria-label", opts.label);
   function pctFromValue(v) {
     return (v - opts.min) / (opts.max - opts.min) * 100;
   }
@@ -13534,8 +13689,8 @@ function initSlider(el4, options) {
     fillEl.style.width = `${pct3}%`;
     thumbEl.style.left = `${pct3}%`;
     if (valueEl) valueEl.textContent = String(current);
-    el4.setAttribute("aria-valuenow", String(current));
-    if (opts.label) el4.setAttribute("aria-valuetext", `${current}${opts.unit}`);
+    el5.setAttribute("aria-valuenow", String(current));
+    if (opts.label) el5.setAttribute("aria-valuetext", `${current}${opts.unit}`);
   }
   function getPointerX(e) {
     if ("touches" in e) {
@@ -13552,13 +13707,13 @@ function initSlider(el4, options) {
       current = newVal;
       render5();
       opts.onChange?.(current);
-      eventBus.emit("slider-change", { element: el4, value: current });
+      eventBus.emit("slider-change", { element: el5, value: current });
     }
   }
   function onStart(e) {
     e.preventDefault();
     dragging = true;
-    el4.classList.add("mn-slider--active");
+    el5.classList.add("mn-slider--active");
     setFromX(getPointerX(e));
   }
   function onMove(e) {
@@ -13567,7 +13722,7 @@ function initSlider(el4, options) {
   }
   function onEnd() {
     dragging = false;
-    el4.classList.remove("mn-slider--active");
+    el5.classList.remove("mn-slider--active");
   }
   track.addEventListener("mousedown", onStart);
   track.addEventListener("touchstart", onStart, { passive: false });
@@ -13575,7 +13730,7 @@ function initSlider(el4, options) {
   document.addEventListener("touchmove", onMove, { passive: true });
   document.addEventListener("mouseup", onEnd);
   document.addEventListener("touchend", onEnd);
-  el4.addEventListener("keydown", (e) => {
+  el5.addEventListener("keydown", (e) => {
     if (e.key === "ArrowRight" || e.key === "ArrowUp") {
       e.preventDefault();
       current = Math.min(opts.max, current + opts.step);
@@ -13953,65 +14108,65 @@ function buildItemNode(item, animate) {
   }
   return row;
 }
-function enforceMax(el4, items, maxItems) {
+function enforceMax(el5, items, maxItems) {
   if (maxItems === void 0 || maxItems <= 0) return;
   while (items.length > maxItems) {
     items.pop();
-    const last = el4.lastElementChild;
+    const last = el5.lastElementChild;
     if (last) last.remove();
   }
 }
-function enforceMaxPrepend(el4, items, maxItems) {
+function enforceMaxPrepend(el5, items, maxItems) {
   if (maxItems === void 0 || maxItems <= 0) return;
   while (items.length > maxItems) {
     items.pop();
-    const last = el4.lastElementChild;
+    const last = el5.lastElementChild;
     if (last) last.remove();
   }
 }
-function activityFeed(el4, items, opts) {
+function activityFeed(el5, items, opts) {
   const animate = opts?.animate !== false;
   const maxItems = opts?.maxItems;
   const internal = [];
-  el4.classList.add("mn-feed");
-  el4.setAttribute("role", "feed");
-  el4.setAttribute("aria-label", "Activity feed");
-  el4.innerHTML = "";
+  el5.classList.add("mn-feed");
+  el5.setAttribute("role", "feed");
+  el5.setAttribute("aria-label", "Activity feed");
+  el5.innerHTML = "";
   if (items) {
     for (const item of items) {
       internal.push(item);
-      el4.appendChild(buildItemNode(item, false));
+      el5.appendChild(buildItemNode(item, false));
     }
-    enforceMax(el4, internal, maxItems);
+    enforceMax(el5, internal, maxItems);
   }
   const controller = {
     /** Append item to the bottom of the feed. */
     add(item) {
       internal.push(item);
-      el4.appendChild(buildItemNode(item, animate));
-      enforceMax(el4, internal, maxItems);
+      el5.appendChild(buildItemNode(item, animate));
+      enforceMax(el5, internal, maxItems);
     },
     /** Insert item at the top of the feed. */
     prepend(item) {
       internal.unshift(item);
       const node = buildItemNode(item, animate);
-      if (el4.firstChild) {
-        el4.insertBefore(node, el4.firstChild);
+      if (el5.firstChild) {
+        el5.insertBefore(node, el5.firstChild);
       } else {
-        el4.appendChild(node);
+        el5.appendChild(node);
       }
-      enforceMaxPrepend(el4, internal, maxItems);
+      enforceMaxPrepend(el5, internal, maxItems);
     },
     /** Remove all items from the feed. */
     clear() {
       internal.length = 0;
-      el4.innerHTML = "";
+      el5.innerHTML = "";
     },
     /** Tear down the feed and restore the container. */
     destroy() {
       internal.length = 0;
-      el4.classList.remove("mn-feed");
-      el4.innerHTML = "";
+      el5.classList.remove("mn-feed");
+      el5.innerHTML = "";
     }
   };
   return controller;
@@ -14052,7 +14207,7 @@ function parseISO(iso) {
 function mondayIdx(date) {
   return (date.getDay() + 6) % 7;
 }
-function dateRangePicker(el4, opts) {
+function dateRangePicker(el5, opts) {
   const o = opts ?? {};
   let range = { from: o.value?.from ?? null, to: o.value?.to ?? null };
   let viewYear, viewMonth;
@@ -14070,7 +14225,7 @@ function dateRangePicker(el4, opts) {
   const trigger = document.createElement("button");
   trigger.type = "button";
   trigger.className = "mn-drp__trigger mn-input";
-  el4.appendChild(trigger);
+  el5.appendChild(trigger);
   updateLabel();
   function updateLabel() {
     if (range.from && range.to) {
@@ -14123,7 +14278,7 @@ function dateRangePicker(el4, opts) {
   }
   function positionPopup() {
     if (!popup) return;
-    const r = el4.getBoundingClientRect();
+    const r = el5.getBoundingClientRect();
     popup.style.top = `${r.bottom + 4}px`;
     popup.style.left = `${r.left}px`;
   }
@@ -14156,7 +14311,7 @@ function dateRangePicker(el4, opts) {
   function onClickOutside(e) {
     if (!popup) return;
     const t = e.target;
-    if (popup.contains(t) || el4.contains(t)) return;
+    if (popup.contains(t) || el5.contains(t)) return;
     closePopup();
   }
   function openPopup() {
@@ -14223,8 +14378,8 @@ function dateRangePicker(el4, opts) {
 
 // src/ts/charts-bullet.ts
 function resolve(varName) {
-  const el4 = document.body ?? document.documentElement;
-  return getComputedStyle(el4).getPropertyValue(varName).trim() || "#888";
+  const el5 = document.body ?? document.documentElement;
+  return getComputedStyle(el5).getPropertyValue(varName).trim() || "#888";
 }
 function parseColor(color) {
   if (color.startsWith("var(")) {
@@ -14337,34 +14492,34 @@ function bulletChart(canvas, opts) {
 
 // src/ts/notification-center.ts
 function buildItem(n, onRemove, onAction) {
-  const el4 = document.createElement("div");
+  const el5 = document.createElement("div");
   const typeCls = `mn-notif-item--${n.type ?? "default"}`;
   const unreadCls = n.read ? "" : " mn-notif-item--unread";
-  el4.className = `mn-notif-item ${typeCls}${unreadCls}`;
-  el4.dataset.notifId = n.id;
+  el5.className = `mn-notif-item ${typeCls}${unreadCls}`;
+  el5.dataset.notifId = n.id;
   const dot = `<span class="mn-notif-item__dot mn-notif-item__dot--${n.type ?? "default"}"></span>`;
   const title = `<span class="mn-notif-item__title">${escapeHtml(n.title)}</span>`;
   const body = n.body ? `<span class="mn-notif-item__body">${escapeHtml(n.body)}</span>` : "";
   const meta = n.timestamp ? `<span class="mn-notif-item__meta">${escapeHtml(n.timestamp)}</span>` : "";
   const action = n.action ? `<button class="mn-notif-item__action">${escapeHtml(n.action.label)}</button>` : "";
   const remove = '<button class="mn-notif-item__remove" aria-label="Remove">&times;</button>';
-  el4.innerHTML = `${dot}<div class="mn-notif-item__content">${title}${body}${meta}${action}</div>${remove}`;
-  el4.querySelector(".mn-notif-item__remove")?.addEventListener("click", (e) => {
+  el5.innerHTML = `${dot}<div class="mn-notif-item__content">${title}${body}${meta}${action}</div>${remove}`;
+  el5.querySelector(".mn-notif-item__remove")?.addEventListener("click", (e) => {
     e.stopPropagation();
     onRemove(n.id);
   });
   if (n.action) {
-    el4.querySelector(".mn-notif-item__action")?.addEventListener("click", (e) => {
+    el5.querySelector(".mn-notif-item__action")?.addEventListener("click", (e) => {
       e.stopPropagation();
       n.action?.onClick();
     });
   }
-  el4.addEventListener("click", () => {
+  el5.addEventListener("click", () => {
     n.read = true;
-    el4.classList.remove("mn-notif-item--unread");
+    el5.classList.remove("mn-notif-item--unread");
     onAction?.(n);
   });
-  return el4;
+  return el5;
 }
 function notificationCenter(triggerEl, opts) {
   const maxVisible = opts?.maxVisible ?? 50;
@@ -14446,7 +14601,7 @@ function notificationCenter(triggerEl, opts) {
   markAllBtn.addEventListener("click", () => {
     for (const n of notifications) n.read = true;
     list.querySelectorAll(".mn-notif-item--unread").forEach(
-      (el4) => el4.classList.remove("mn-notif-item--unread")
+      (el5) => el5.classList.remove("mn-notif-item--unread")
     );
     updateBadge();
   });
@@ -14460,8 +14615,8 @@ function notificationCenter(triggerEl, opts) {
           list.querySelector(`[data-notif-id="${removed.id}"]`)?.remove();
         }
       }
-      const el4 = buildItem(n, removeItem, opts?.onAction);
-      list.prepend(el4);
+      const el5 = buildItem(n, removeItem, opts?.onAction);
+      list.prepend(el5);
       updateBadge();
       updateEmpty();
     },
@@ -14475,7 +14630,7 @@ function notificationCenter(triggerEl, opts) {
     markAllRead() {
       for (const n of notifications) n.read = true;
       list.querySelectorAll(".mn-notif-item--unread").forEach(
-        (el4) => el4.classList.remove("mn-notif-item--unread")
+        (el5) => el5.classList.remove("mn-notif-item--unread")
       );
       updateBadge();
     },
@@ -14504,8 +14659,8 @@ function notificationCenter(triggerEl, opts) {
 
 // src/ts/charts-waterfall.ts
 function resolveCssVar(name, fallback) {
-  const el4 = document.body ?? document.documentElement;
-  const v = getComputedStyle(el4).getPropertyValue(name).trim();
+  const el5 = document.body ?? document.documentElement;
+  const v = getComputedStyle(el5).getPropertyValue(name).trim();
   return v || fallback;
 }
 function easeOutCubic2(t) {
@@ -14712,8 +14867,8 @@ function waterfallChart(canvas, opts) {
 
 // src/ts/charts-confidence.ts
 function resolveCssVar2(name, fallback) {
-  const el4 = document.body ?? document.documentElement;
-  const v = getComputedStyle(el4).getPropertyValue(name).trim();
+  const el5 = document.body ?? document.documentElement;
+  const v = getComputedStyle(el5).getPropertyValue(name).trim();
   return v || fallback;
 }
 function resolveColor(color) {
@@ -14899,7 +15054,7 @@ function rankAlternatives(alts, criteria) {
   totals.forEach((t, i) => ranks.set(t.id, i + 1));
   return ranks;
 }
-function decisionMatrix(el4, opts) {
+function decisionMatrix(el5, opts) {
   let alternatives = structuredClone(opts.alternatives);
   const { criteria, editable = false, onChange } = opts;
   let activeInput = null;
@@ -14978,9 +15133,9 @@ function decisionMatrix(el4, opts) {
       }).join("");
       return `<tr${cls}><td>${escapeHtml(alt.label)}</td>${scoreCells}<td><span class="mn-decision-matrix__total">${total}</span> <span class="mn-decision-matrix__rank">#${rank}</span></td></tr>`;
     }).join("");
-    el4.innerHTML = `<div class="mn-decision-matrix__wrap"><table class="mn-decision-matrix" role="grid" aria-label="Decision matrix"><thead><tr><th scope="col">Alternative</th>${headCells}<th scope="col">Score</th></tr></thead><tbody>${rows}</tbody></table></div>`;
-    el4.querySelector("table")?.addEventListener("keydown", handleKeydown);
-    el4.querySelector("table")?.addEventListener("click", handleClick);
+    el5.innerHTML = `<div class="mn-decision-matrix__wrap"><table class="mn-decision-matrix" role="grid" aria-label="Decision matrix"><thead><tr><th scope="col">Alternative</th>${headCells}<th scope="col">Score</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+    el5.querySelector("table")?.addEventListener("keydown", handleKeydown);
+    el5.querySelector("table")?.addEventListener("click", handleClick);
   }
   render5();
   return {
@@ -14992,7 +15147,7 @@ function decisionMatrix(el4, opts) {
       return structuredClone(alternatives);
     },
     destroy() {
-      el4.innerHTML = "";
+      el5.innerHTML = "";
     }
   };
 }
@@ -15107,18 +15262,18 @@ function renderSourceCards(container, cards, opts) {
     container.setAttribute("aria-label", "Source citations");
     const limit = maxVisible && maxVisible < data.length ? maxVisible : data.length;
     for (let i = 0; i < limit; i++) {
-      const el4 = buildCard(data[i], onSelect);
-      el4.setAttribute("role", "listitem");
-      container.appendChild(el4);
+      const el5 = buildCard(data[i], onSelect);
+      el5.setAttribute("role", "listitem");
+      container.appendChild(el5);
     }
     if (maxVisible && maxVisible < data.length) {
       const remaining = data.length - maxVisible;
       const showMoreBtn = buildShowMore(remaining, () => {
         showMoreBtn.remove();
         for (let i = limit; i < data.length; i++) {
-          const el4 = buildCard(data[i], onSelect);
-          el4.setAttribute("role", "listitem");
-          container.appendChild(el4);
+          const el5 = buildCard(data[i], onSelect);
+          el5.setAttribute("role", "listitem");
+          container.appendChild(el5);
         }
       });
       container.appendChild(showMoreBtn);
@@ -15385,7 +15540,7 @@ function makeSpan(cls, text) {
   s.textContent = text;
   return s;
 }
-function nineBoxMatrix(el4, opts) {
+function nineBoxMatrix(el5, opts) {
   const xLabel = opts.xLabel ?? "Business Strength";
   const yLabel = opts.yLabel ?? "Industry Attractiveness";
   const xAxis = opts.xAxisLabels ?? ["Low", "Medium", "High"];
@@ -15394,7 +15549,7 @@ function nineBoxMatrix(el4, opts) {
   let selectedId = null;
   const ac = new AbortController();
   function render5() {
-    el4.innerHTML = "";
+    el5.innerHTML = "";
     const root = makeDiv("mn-nine-box");
     const yLabelEl = makeDiv("mn-nine-box__y-label", yLabel);
     yLabelEl.setAttribute("aria-hidden", "true");
@@ -15437,7 +15592,7 @@ function nineBoxMatrix(el4, opts) {
     xLabelEl.setAttribute("aria-hidden", "true");
     body.appendChild(xLabelEl);
     root.appendChild(body);
-    el4.appendChild(root);
+    el5.appendChild(root);
     bindEvents();
   }
   function buildItem2(item) {
@@ -15454,13 +15609,13 @@ function nineBoxMatrix(el4, opts) {
   }
   function selectItem(id) {
     selectedId = id;
-    for (const itemEl of el4.querySelectorAll(".mn-nine-box__item")) {
+    for (const itemEl of el5.querySelectorAll(".mn-nine-box__item")) {
       itemEl.classList.toggle(
         "mn-nine-box__item--selected",
         itemEl.getAttribute("data-id") === id
       );
     }
-    for (const cellEl of el4.querySelectorAll(".mn-nine-box__cell")) {
+    for (const cellEl of el5.querySelectorAll(".mn-nine-box__cell")) {
       cellEl.classList.toggle("mn-nine-box__cell--drop-target", id !== null);
     }
     if (id) {
@@ -15530,8 +15685,8 @@ function nineBoxMatrix(el4, opts) {
     }
   }
   function bindEvents() {
-    el4.addEventListener("click", handleClick, { signal: ac.signal });
-    el4.addEventListener("keydown", handleKey, { signal: ac.signal });
+    el5.addEventListener("click", handleClick, { signal: ac.signal });
+    el5.addEventListener("keydown", handleKey, { signal: ac.signal });
   }
   render5();
   return {
@@ -15548,7 +15703,7 @@ function nineBoxMatrix(el4, opts) {
     },
     destroy() {
       ac.abort();
-      el4.innerHTML = "";
+      el5.innerHTML = "";
     }
   };
 }
@@ -15636,19 +15791,19 @@ function buildItemEl(item, editable) {
   }
   return li;
 }
-function swotMatrix(el4, opts) {
+function swotMatrix(el5, opts) {
   const editable = opts?.editable !== false;
   const labels = { ...DEFAULTS3, ...opts?.quadrantLabels };
   let items = [...opts?.items ?? []];
   const uid2 = genId().slice(0, 8);
-  el4.classList.add("mn-swot");
-  el4.setAttribute("role", "region");
-  el4.setAttribute("aria-label", "SWOT Analysis");
+  el5.classList.add("mn-swot");
+  el5.setAttribute("role", "region");
+  el5.setAttribute("aria-label", "SWOT Analysis");
   const quadrantEls = /* @__PURE__ */ new Map();
   for (const q of QUADRANTS) {
     const qEl = buildQuadrant(q, labels[q], uid2, editable);
     quadrantEls.set(q, qEl);
-    el4.append(qEl);
+    el5.append(qEl);
   }
   function notify() {
     opts?.onChange?.([...items]);
@@ -15672,7 +15827,7 @@ function swotMatrix(el4, opts) {
     notify();
   }
   function removeItem(id) {
-    const li = el4.querySelector(`[data-id="${CSS.escape(id)}"]`);
+    const li = el5.querySelector(`[data-id="${CSS.escape(id)}"]`);
     if (li) {
       li.classList.add("mn-swot__item--removing");
       setTimeout(() => li.remove(), 200);
@@ -15725,8 +15880,8 @@ function swotMatrix(el4, opts) {
       qEl.querySelector(".mn-swot__add")?.focus();
     }
   }
-  el4.addEventListener("click", handleClick);
-  el4.addEventListener("keydown", handleKeydown);
+  el5.addEventListener("click", handleClick);
+  el5.addEventListener("keydown", handleKeydown);
   renderItems();
   return {
     getItems: () => [...items],
@@ -15738,12 +15893,12 @@ function swotMatrix(el4, opts) {
       notify();
     },
     destroy() {
-      el4.removeEventListener("click", handleClick);
-      el4.removeEventListener("keydown", handleKeydown);
-      el4.innerHTML = "";
-      el4.classList.remove("mn-swot");
-      el4.removeAttribute("role");
-      el4.removeAttribute("aria-label");
+      el5.removeEventListener("click", handleClick);
+      el5.removeEventListener("keydown", handleKeydown);
+      el5.innerHTML = "";
+      el5.classList.remove("mn-swot");
+      el5.removeAttribute("role");
+      el5.removeAttribute("aria-label");
     }
   };
 }
@@ -15827,17 +15982,17 @@ function buildConnector(prevStatus) {
   }
   return conn;
 }
-function render3(el4, steps, opts, ac) {
-  el4.innerHTML = "";
+function render3(el5, steps, opts, ac) {
+  el5.innerHTML = "";
   for (let i = 0; i < steps.length; i++) {
     if (i > 0) {
-      el4.appendChild(buildConnector(steps[i - 1].status));
+      el5.appendChild(buildConnector(steps[i - 1].status));
     }
-    el4.appendChild(buildNode(steps[i], opts.editable ?? false, ac, opts.onAction));
+    el5.appendChild(buildNode(steps[i], opts.editable ?? false, ac, opts.onAction));
   }
 }
-function patchNode(el4, id, status, timestamp) {
-  const node = el4.querySelector(`[data-id="${CSS.escape(id)}"]`);
+function patchNode(el5, id, status, timestamp) {
+  const node = el5.querySelector(`[data-id="${CSS.escape(id)}"]`);
   if (!node) return;
   node.className = node.className.replace(/mn-approval__node--\w+/, `mn-approval__node--${status}`);
   const avatar = node.querySelector(".mn-approval__avatar");
@@ -15863,38 +16018,38 @@ function patchNode(el4, id, status, timestamp) {
     node.querySelector(".mn-approval__actions")?.remove();
   }
 }
-function approvalChain(el4, steps, opts) {
+function approvalChain(el5, steps, opts) {
   const options = {
     editable: false,
     orientation: "horizontal",
     ...opts
   };
   const ac = new AbortController();
-  el4.setAttribute("role", "list");
-  el4.setAttribute("aria-label", "Approval chain");
-  el4.classList.add("mn-approval");
+  el5.setAttribute("role", "list");
+  el5.setAttribute("aria-label", "Approval chain");
+  el5.classList.add("mn-approval");
   if (options.orientation === "vertical") {
-    el4.classList.add("mn-approval--vertical");
+    el5.classList.add("mn-approval--vertical");
   }
   let currentSteps = [...steps];
-  render3(el4, currentSteps, options, ac);
+  render3(el5, currentSteps, options, ac);
   return {
     update(newSteps) {
       currentSteps = [...newSteps];
-      render3(el4, currentSteps, options, ac);
+      render3(el5, currentSteps, options, ac);
     },
     setStatus(id, status, timestamp) {
       const idx = currentSteps.findIndex((s) => s.id === id);
       if (idx < 0) return;
       currentSteps[idx] = { ...currentSteps[idx], status, timestamp: timestamp ?? currentSteps[idx].timestamp };
-      patchNode(el4, id, status, timestamp);
+      patchNode(el5, id, status, timestamp);
     },
     destroy() {
       ac.abort();
-      el4.innerHTML = "";
-      el4.removeAttribute("role");
-      el4.removeAttribute("aria-label");
-      el4.classList.remove("mn-approval", "mn-approval--vertical");
+      el5.innerHTML = "";
+      el5.removeAttribute("role");
+      el5.removeAttribute("aria-label");
+      el5.classList.remove("mn-approval", "mn-approval--vertical");
     }
   };
 }
@@ -15942,20 +16097,20 @@ function createStepEl(step) {
   div.innerHTML = buildStepHtml(step, false);
   return div;
 }
-function agentTrace(el4, steps, opts) {
+function agentTrace(el5, steps, opts) {
   const ac = new AbortController();
   const signal = ac.signal;
   const stepsArr = [];
   const expandedSet = /* @__PURE__ */ new Set();
-  el4.classList.add("mn-agent-trace");
-  el4.setAttribute("role", "list");
+  el5.classList.add("mn-agent-trace");
+  el5.setAttribute("role", "list");
   function toggleStep(stepId) {
     if (expandedSet.has(stepId)) {
       expandedSet.delete(stepId);
     } else {
       expandedSet.add(stepId);
     }
-    const stepEl = el4.querySelector(`[data-id="${stepId}"]`);
+    const stepEl = el5.querySelector(`[data-id="${stepId}"]`);
     const step = stepsArr.find((s) => s.id === stepId);
     if (!stepEl || !step) return;
     const isOpen = expandedSet.has(stepId);
@@ -15963,13 +16118,13 @@ function agentTrace(el4, steps, opts) {
     stepEl.innerHTML = buildStepHtml(step, isOpen);
     if (opts?.onSelect && isOpen) opts.onSelect(step);
   }
-  el4.addEventListener("click", (e) => {
+  el5.addEventListener("click", (e) => {
     const header = e.target.closest(".mn-agent-trace__header");
     if (!header) return;
     const stepEl = header.closest("[data-id]");
     if (stepEl?.dataset.id) toggleStep(stepEl.dataset.id);
   }, { signal });
-  el4.addEventListener("keydown", (e) => {
+  el5.addEventListener("keydown", (e) => {
     if (e.key !== "Enter" && e.key !== " ") return;
     const header = e.target.closest(".mn-agent-trace__header");
     if (!header) return;
@@ -15978,12 +16133,12 @@ function agentTrace(el4, steps, opts) {
     if (stepEl?.dataset.id) toggleStep(stepEl.dataset.id);
   }, { signal });
   function autoScroll() {
-    el4.scrollTop = el4.scrollHeight;
+    el5.scrollTop = el5.scrollHeight;
   }
   function add(step) {
     stepsArr.push(step);
     const node = createStepEl(step);
-    el4.appendChild(node);
+    el5.appendChild(node);
     autoScroll();
   }
   function update(id, partial) {
@@ -15991,27 +16146,27 @@ function agentTrace(el4, steps, opts) {
     if (idx === -1) return;
     const step = { ...stepsArr[idx], ...partial };
     stepsArr[idx] = step;
-    const node = el4.querySelector(`[data-id="${id}"]`);
+    const node = el5.querySelector(`[data-id="${id}"]`);
     if (!node) return;
     node.className = `mn-agent-trace__step mn-agent-trace__step--${step.status}`;
     if (expandedSet.has(id)) node.classList.add("mn-agent-trace__step--open");
     node.innerHTML = buildStepHtml(step, expandedSet.has(id));
   }
-  function clear() {
+  function clear2() {
     stepsArr.length = 0;
     expandedSet.clear();
-    el4.innerHTML = "";
+    el5.innerHTML = "";
   }
   function destroy() {
     ac.abort();
-    clear();
-    el4.classList.remove("mn-agent-trace");
-    el4.removeAttribute("role");
+    clear2();
+    el5.classList.remove("mn-agent-trace");
+    el5.removeAttribute("role");
   }
   if (steps) {
     for (const s of steps) add(s);
   }
-  return { add, update, clear, destroy };
+  return { add, update, clear: clear2, destroy };
 }
 
 // src/ts/token-meter.ts
@@ -16067,10 +16222,10 @@ function buildBreakdown(usage) {
   ].join("")).join("");
   return `<div class="mn-token-meter__breakdown">${html}</div>`;
 }
-function render4(el4, usage, opts) {
+function render4(el5, usage, opts) {
   const costHtml = opts.showCost && usage.costPerMToken ? `<span class="mn-token-meter__cost">${escapeHtml(costStr(usage))}</span>` : "";
   const safeLabel = escapeHtml(opts.label);
-  el4.innerHTML = [
+  el5.innerHTML = [
     `<div class="mn-token-meter${opts.animate ? "" : " mn-token-meter--no-anim"}">`,
     `<div class="mn-token-meter__header">`,
     `<span class="mn-token-meter__title">${safeLabel}</span>`,
@@ -16081,17 +16236,17 @@ function render4(el4, usage, opts) {
     `</div>`
   ].join("");
 }
-function updateDom(el4, usage, showCost) {
+function updateDom(el5, usage, showCost) {
   const total = usage.prompt + usage.completion;
   const max = usage.budget ?? total;
-  const bar = el4.querySelector(".mn-token-meter__bar");
+  const bar = el5.querySelector(".mn-token-meter__bar");
   if (bar) {
     bar.setAttribute("aria-valuenow", String(total));
     bar.setAttribute("aria-valuemax", String(max));
     const ariaLabel = `Token usage: ${NUM_FMT.format(total)} of ${NUM_FMT.format(max)}`;
     bar.setAttribute("aria-label", ariaLabel);
   }
-  const promptSeg = el4.querySelector(".mn-token-meter__seg--prompt");
+  const promptSeg = el5.querySelector(".mn-token-meter__seg--prompt");
   if (promptSeg) {
     promptSeg.style.width = `${pct2(usage.prompt, max).toFixed(2)}%`;
     const cachedEl = promptSeg.querySelector(".mn-token-meter__seg--cached");
@@ -16099,15 +16254,15 @@ function updateDom(el4, usage, showCost) {
       cachedEl.style.width = `${pct2(usage.cached, usage.prompt).toFixed(2)}%`;
     }
   }
-  const compSeg = el4.querySelector(".mn-token-meter__seg--completion");
+  const compSeg = el5.querySelector(".mn-token-meter__seg--completion");
   if (compSeg) {
     compSeg.style.width = `${pct2(usage.completion, max).toFixed(2)}%`;
   }
   if (showCost) {
-    const costEl = el4.querySelector(".mn-token-meter__cost");
+    const costEl = el5.querySelector(".mn-token-meter__cost");
     if (costEl) costEl.textContent = costStr(usage);
   }
-  const breakdown = el4.querySelector(".mn-token-meter__breakdown");
+  const breakdown = el5.querySelector(".mn-token-meter__breakdown");
   if (breakdown) {
     const counts = breakdown.querySelectorAll(".mn-token-meter__count");
     const pcts = breakdown.querySelectorAll(".mn-token-meter__pct");
@@ -16119,7 +16274,7 @@ function updateDom(el4, usage, showCost) {
     });
   }
 }
-function tokenMeter(el4, usage, opts) {
+function tokenMeter(el5, usage, opts) {
   const resolved = {
     label: opts?.label ?? "Token Usage",
     showCost: opts?.showCost ?? usage?.costPerMToken !== void 0,
@@ -16127,20 +16282,20 @@ function tokenMeter(el4, usage, opts) {
     animate: opts?.animate ?? true
   };
   let current = usage ?? { prompt: 0, completion: 0 };
-  render4(el4, current, resolved);
+  render4(el5, current, resolved);
   return {
     update(next) {
       current = next;
       resolved.showCost = opts?.showCost ?? next.costPerMToken !== void 0;
-      updateDom(el4, current, resolved.showCost);
+      updateDom(el5, current, resolved.showCost);
       opts?.onChange?.(current);
     },
     reset() {
       current = { prompt: 0, completion: 0 };
-      render4(el4, current, resolved);
+      render4(el5, current, resolved);
     },
     destroy() {
-      el4.innerHTML = "";
+      el5.innerHTML = "";
     }
   };
 }
@@ -16174,7 +16329,7 @@ function renderBuffer(raw, processMarkdown) {
   return result;
 }
 var CURSOR_HTML = '<span class="mn-stream__cursor" aria-hidden="true">|</span>';
-function streamingText(el4, opts) {
+function streamingText(el5, opts) {
   const options = {
     onCitationClick: opts?.onCitationClick ?? (() => {
     }),
@@ -16186,16 +16341,16 @@ function streamingText(el4, opts) {
   let buffer = "";
   let finished = false;
   const ac = new AbortController();
-  el4.setAttribute("role", "log");
-  el4.setAttribute("aria-live", "polite");
-  el4.setAttribute("aria-atomic", "false");
-  el4.setAttribute("aria-label", "Streaming response");
-  el4.classList.add("mn-stream");
+  el5.setAttribute("role", "log");
+  el5.setAttribute("aria-live", "polite");
+  el5.setAttribute("aria-atomic", "false");
+  el5.setAttribute("aria-label", "Streaming response");
+  el5.classList.add("mn-stream");
   const liveRegion = document.createElement("span");
   liveRegion.className = "mn-sr-only";
   liveRegion.setAttribute("aria-live", "polite");
-  el4.appendChild(liveRegion);
-  el4.addEventListener(
+  el5.appendChild(liveRegion);
+  el5.addEventListener(
     "click",
     (e) => {
       const target = e.target;
@@ -16209,8 +16364,8 @@ function streamingText(el4, opts) {
   function render5(showCursor) {
     const html = renderBuffer(buffer, options.processMarkdown);
     const cursor = showCursor && options.typingCursor ? CURSOR_HTML : "";
-    el4.innerHTML = `<span class="mn-stream__content">${html}${cursor}</span>`;
-    el4.appendChild(liveRegion);
+    el5.innerHTML = `<span class="mn-stream__content">${html}${cursor}</span>`;
+    el5.appendChild(liveRegion);
   }
   function append(chunk) {
     if (finished) return;
@@ -16221,7 +16376,7 @@ function streamingText(el4, opts) {
   function done() {
     if (finished) return;
     finished = true;
-    el4.classList.add("mn-stream--done");
+    el5.classList.add("mn-stream--done");
     render5(false);
     liveRegion.textContent = "";
     options.onDone();
@@ -16229,25 +16384,25 @@ function streamingText(el4, opts) {
   function reset() {
     buffer = "";
     finished = false;
-    el4.classList.remove("mn-stream--done");
+    el5.classList.remove("mn-stream--done");
     render5(true);
     liveRegion.textContent = "";
   }
   function setText(text) {
     buffer = text;
     finished = true;
-    el4.classList.add("mn-stream--done");
+    el5.classList.add("mn-stream--done");
     render5(false);
     liveRegion.textContent = "";
   }
   function destroy() {
     ac.abort();
-    el4.innerHTML = "";
-    el4.removeAttribute("role");
-    el4.removeAttribute("aria-live");
-    el4.removeAttribute("aria-atomic");
-    el4.removeAttribute("aria-label");
-    el4.classList.remove("mn-stream", "mn-stream--done");
+    el5.innerHTML = "";
+    el5.removeAttribute("role");
+    el5.removeAttribute("aria-live");
+    el5.removeAttribute("aria-atomic");
+    el5.removeAttribute("aria-label");
+    el5.classList.remove("mn-stream", "mn-stream--done");
     buffer = "";
     finished = true;
   }
@@ -16554,20 +16709,20 @@ function buildRow2(row, currency) {
     "</tr>"
   ].join("");
 }
-function kpiScorecard(el4, rows, opts) {
+function kpiScorecard(el5, rows, opts) {
   const currency = opts?.currency ?? "$";
   const onSelect = opts?.onSelect;
   const ac = new AbortController();
   function render5(data) {
     const bodyHtml = data.map((r) => buildRow2(r, currency)).join("");
-    el4.innerHTML = [
+    el5.innerHTML = [
       '<div class="mn-kpi">',
       `<table class="mn-kpi__table" role="table" aria-label="KPI Scorecard">`,
       buildHead(),
       `<tbody>${bodyHtml}</tbody>`,
       "</table></div>"
     ].join("");
-    const trendCells = el4.querySelectorAll(".mn-kpi__trend");
+    const trendCells = el5.querySelectorAll(".mn-kpi__trend");
     data.forEach((row, i) => {
       if (!row.trend || row.trend.length < 2) return;
       const cell = trendCells[i];
@@ -16580,7 +16735,7 @@ function kpiScorecard(el4, rows, opts) {
       cell.appendChild(canvas);
     });
     if (onSelect) {
-      el4.querySelectorAll(".mn-kpi__row").forEach((tr, i) => {
+      el5.querySelectorAll(".mn-kpi__row").forEach((tr, i) => {
         const row = data[i];
         tr.addEventListener("click", () => onSelect(row), { signal: ac.signal });
         tr.addEventListener("keydown", (e) => {
@@ -16599,7 +16754,7 @@ function kpiScorecard(el4, rows, opts) {
     },
     destroy() {
       ac.abort();
-      el4.innerHTML = "";
+      el5.innerHTML = "";
     }
   };
 }
@@ -16651,7 +16806,7 @@ function maxPeriods(rows) {
   }
   return max;
 }
-function buildTable(el4, rows, opts, ac) {
+function buildTable(el5, rows, opts, ac) {
   const showAbs = opts.showAbsolute ?? false;
   const highHex = resolveColor4(opts.colorHigh, "--signal-ok", "#00A651");
   const lowHex = resolveColor4(opts.colorLow, "--signal-danger", "#DC0000");
@@ -16729,23 +16884,23 @@ function buildTable(el4, rows, opts, ac) {
   }
   table2.appendChild(tbody);
   wrapper.appendChild(table2);
-  el4.appendChild(wrapper);
+  el5.appendChild(wrapper);
 }
-function cohortGrid(el4, rows, opts) {
+function cohortGrid(el5, rows, opts) {
   let ac = new AbortController();
   const resolved = opts ?? {};
-  buildTable(el4, rows, resolved, ac);
+  buildTable(el5, rows, resolved, ac);
   return {
     update(newRows, newOpts) {
       ac.abort();
       ac = new AbortController();
-      el4.innerHTML = "";
+      el5.innerHTML = "";
       const merged = { ...resolved, ...newOpts };
-      buildTable(el4, newRows, merged, ac);
+      buildTable(el5, newRows, merged, ac);
     },
     destroy() {
       ac.abort();
-      el4.innerHTML = "";
+      el5.innerHTML = "";
     }
   };
 }
@@ -16839,15 +16994,15 @@ function updateCounts(header, list) {
 function prune(list, max) {
   while (list.children.length > max) list.removeChild(list.lastChild);
 }
-function auditLog(el4, entries = [], opts = {}) {
+function auditLog(el5, entries = [], opts = {}) {
   const max = opts.maxEntries ?? 100;
   const filterable = opts.filterable ?? true;
   const ac = new AbortController();
   let activeFilter = "all";
-  el4.classList.add("mn-audit");
-  el4.setAttribute("role", "log");
-  el4.setAttribute("aria-label", "Audit log");
-  el4.innerHTML = "";
+  el5.classList.add("mn-audit");
+  el5.setAttribute("role", "log");
+  el5.setAttribute("aria-label", "Audit log");
+  el5.innerHTML = "";
   const header = document.createElement("div");
   header.className = "mn-audit__header";
   const tabBar = document.createElement("div");
@@ -16865,16 +17020,16 @@ function auditLog(el4, entries = [], opts = {}) {
     }
   }
   header.appendChild(tabBar);
-  el4.appendChild(header);
+  el5.appendChild(header);
   const liveRegion = document.createElement("div");
   liveRegion.setAttribute("aria-live", "polite");
   liveRegion.setAttribute("aria-atomic", "true");
   liveRegion.className = "mn-sr-only";
-  el4.appendChild(liveRegion);
+  el5.appendChild(liveRegion);
   const list = document.createElement("ul");
   list.className = "mn-audit__list";
   list.setAttribute("role", "list");
-  el4.appendChild(list);
+  el5.appendChild(list);
   for (const entry of entries) {
     list.appendChild(buildEntry(entry, ac, opts.onSelect));
   }
@@ -16916,8 +17071,8 @@ function auditLog(el4, entries = [], opts = {}) {
     },
     destroy: () => {
       ac.abort();
-      el4.innerHTML = "";
-      el4.classList.remove("mn-audit");
+      el5.innerHTML = "";
+      el5.classList.remove("mn-audit");
     }
   };
 }
@@ -17026,7 +17181,7 @@ function footerHtml(rows, fmt) {
     <td class="mn-cost-breakdown__cell num"><strong>${totCalls.toLocaleString()}</strong></td>
     <td class="mn-cost-breakdown__cell hide-mobile" colspan="3">&nbsp;</td></tr>`;
 }
-function agentCostBreakdown(el4, rows, opts) {
+function agentCostBreakdown(el5, rows, opts) {
   const currency = opts?.currency ?? "USD";
   const period = opts?.period ?? "This period";
   const sortable = opts?.sortable !== false;
@@ -17046,7 +17201,7 @@ function agentCostBreakdown(el4, rows, opts) {
       const sortCls = sortable ? " sortable" : "";
       return `<th class="mn-cost-breakdown__th ${c.cls}${sortCls}" data-sort="${c.key}"${aria}>${c.label}</th>`;
     }).join("");
-    el4.innerHTML = `<div class="mn-cost-breakdown">
+    el5.innerHTML = `<div class="mn-cost-breakdown">
       <div class="mn-cost-breakdown__header">
         <div class="mn-cost-breakdown__title-group">
           <h3 class="mn-cost-breakdown__title">Agent Cost Breakdown</h3>
@@ -17065,7 +17220,7 @@ function agentCostBreakdown(el4, rows, opts) {
   let current = rows.slice();
   renderAll(current);
   if (sortable) {
-    el4.addEventListener("click", (e) => {
+    el5.addEventListener("click", (e) => {
       const th = e.target.closest(".mn-cost-breakdown__th");
       if (!th?.dataset.sort) return;
       const key = th.dataset.sort;
@@ -17075,7 +17230,7 @@ function agentCostBreakdown(el4, rows, opts) {
     }, { signal: ac.signal });
   }
   if (opts?.onSelect) {
-    el4.addEventListener("click", (e) => {
+    el5.addEventListener("click", (e) => {
       const tr = e.target.closest("tbody tr[data-id]");
       if (!tr) return;
       const id = tr.dataset.id;
@@ -17090,7 +17245,7 @@ function agentCostBreakdown(el4, rows, opts) {
     },
     destroy() {
       ac.abort();
-      el4.innerHTML = "";
+      el5.innerHTML = "";
     }
   };
 }
@@ -17443,7 +17598,7 @@ function buildItemEl2(item, editable) {
   }
   return li;
 }
-function businessModelCanvas(el4, opts) {
+function businessModelCanvas(el5, opts) {
   const editable = opts?.editable !== false;
   const uid2 = genId2().slice(0, 8);
   const blocks = BLOCK_IDS.map((id) => ({
@@ -17452,14 +17607,14 @@ function businessModelCanvas(el4, opts) {
     icon: opts?.blocks?.[id]?.icon ?? DEFAULTS4[id].icon,
     items: [...opts?.blocks?.[id]?.items ?? []]
   }));
-  el4.classList.add("mn-bmc");
-  el4.setAttribute("role", "region");
-  el4.setAttribute("aria-label", "Business Model Canvas");
+  el5.classList.add("mn-bmc");
+  el5.setAttribute("role", "region");
+  el5.setAttribute("aria-label", "Business Model Canvas");
   const blockEls = /* @__PURE__ */ new Map();
   for (const b of blocks) {
     const bEl = buildBlock(b.id, b.title, b.icon, uid2, editable);
     blockEls.set(b.id, bEl);
-    el4.append(bEl);
+    el5.append(bEl);
   }
   function notify() {
     opts?.onChange?.(blocks.map((b) => ({ ...b, items: [...b.items] })));
@@ -17484,7 +17639,7 @@ function businessModelCanvas(el4, opts) {
     notify();
   }
   function removeItem(id) {
-    const li = el4.querySelector(`[data-id="${CSS.escape(id)}"]`);
+    const li = el5.querySelector(`[data-id="${CSS.escape(id)}"]`);
     if (li) {
       li.classList.add("mn-bmc__item--removing");
       setTimeout(() => li.remove(), 200);
@@ -17536,8 +17691,8 @@ function businessModelCanvas(el4, opts) {
       bEl.querySelector(".mn-bmc__add")?.focus();
     }
   }
-  el4.addEventListener("click", handleClick);
-  el4.addEventListener("keydown", handleKeydown);
+  el5.addEventListener("click", handleClick);
+  el5.addEventListener("keydown", handleKeydown);
   renderItems();
   return {
     getBlocks: () => blocks.map((b) => ({ ...b, items: [...b.items] })),
@@ -17550,12 +17705,12 @@ function businessModelCanvas(el4, opts) {
       notify();
     },
     destroy() {
-      el4.removeEventListener("click", handleClick);
-      el4.removeEventListener("keydown", handleKeydown);
-      el4.innerHTML = "";
-      el4.classList.remove("mn-bmc");
-      el4.removeAttribute("role");
-      el4.removeAttribute("aria-label");
+      el5.removeEventListener("click", handleClick);
+      el5.removeEventListener("keydown", handleKeydown);
+      el5.innerHTML = "";
+      el5.classList.remove("mn-bmc");
+      el5.removeAttribute("role");
+      el5.removeAttribute("aria-label");
     }
   };
 }
@@ -17599,7 +17754,7 @@ function rowHtml2(user, selectable) {
   const chk = selectable ? `<td class="${CLS}__td ${CLS}__td--check"><input type="checkbox" class="${CLS}__check" aria-label="Select ${escapeHtml(user.name)}" /></td>` : "";
   return `<tr class="${CLS}__row" role="row" tabindex="0" data-uid="${escapeHtml(user.id)}">` + chk + `<td class="${CLS}__td ${CLS}__td--user"><div class="${CLS}__identity">${avatarHtml(user)}<div class="${CLS}__name-group"><span class="${CLS}__name">${escapeHtml(user.name)}</span><span class="${CLS}__email">${escapeHtml(user.email)}</span></div></div></td><td class="${CLS}__td"><span class="${CLS}__status ${CLS}__status--${user.status}" aria-label="Status: ${statusLabel2(user.status)}">${statusLabel2(user.status)}</span></td><td class="${CLS}__td"><span class="${CLS}__role">${escapeHtml(user.role)}</span></td><td class="${CLS}__td ${CLS}__td--teams">${teamsHtml(user.teams)}</td><td class="${CLS}__td ${CLS}__td--last">${user.lastActive ? escapeHtml(user.lastActive) : "&mdash;"}</td><td class="${CLS}__td ${CLS}__td--actions">${actionsHtml(user)}</td></tr>`;
 }
-function userTable(el4, users, opts) {
+function userTable(el5, users, opts) {
   const o = { searchable: true, selectable: true, pageSize: 10, ...opts };
   const ac = new AbortController();
   const sig = ac.signal;
@@ -17612,11 +17767,11 @@ function userTable(el4, users, opts) {
     filtered = q ? data.filter((u) => u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q)) : data;
   }
   function renderCount() {
-    const badge = el4.querySelector(`.${CLS}__count`);
+    const badge = el5.querySelector(`.${CLS}__count`);
     if (badge) badge.textContent = `${filtered.length} user${filtered.length !== 1 ? "s" : ""}`;
   }
   function renderBody3() {
-    const tbody2 = el4.querySelector("tbody");
+    const tbody2 = el5.querySelector("tbody");
     if (!tbody2) return;
     tbody2.innerHTML = filtered.map((u) => rowHtml2(u, o.selectable)).join("");
     renderCount();
@@ -17630,11 +17785,11 @@ function userTable(el4, users, opts) {
   const toolbar = o.searchable ? `<div class="${CLS}__toolbar"><input type="search" class="${CLS}__search" placeholder="Search users\u2026" aria-label="Search users" /><span class="${CLS}__count"></span></div>` : `<div class="${CLS}__toolbar"><span class="${CLS}__count"></span></div>`;
   const thCheck = o.selectable ? `<th class="${CLS}__th ${CLS}__th--check" scope="col"><input type="checkbox" class="${CLS}__check-all" aria-label="Select all" /></th>` : "";
   const head = `<thead><tr role="row">${thCheck}<th class="${CLS}__th" scope="col">User</th><th class="${CLS}__th" scope="col">Status</th><th class="${CLS}__th" scope="col">Role</th><th class="${CLS}__th ${CLS}__th--teams" scope="col">Teams</th><th class="${CLS}__th" scope="col">Last active</th><th class="${CLS}__th ${CLS}__th--actions" scope="col"><span class="mn-sr-only">Actions</span></th></tr></thead>`;
-  el4.innerHTML = toolbar + `<div class="${CLS}__wrap"><table class="${CLS}" role="table">${head}<tbody></tbody></table></div>`;
+  el5.innerHTML = toolbar + `<div class="${CLS}__wrap"><table class="${CLS}" role="table">${head}<tbody></tbody></table></div>`;
   applyFilter();
   renderBody3();
   if (o.searchable) {
-    const input = el4.querySelector(`.${CLS}__search`);
+    const input = el5.querySelector(`.${CLS}__search`);
     const handler = debounce((e) => {
       query = e.target.value;
       applyFilter();
@@ -17642,7 +17797,7 @@ function userTable(el4, users, opts) {
     }, 150);
     input?.addEventListener("input", handler, { signal: sig });
   }
-  const tbody = el4.querySelector("tbody");
+  const tbody = el5.querySelector("tbody");
   tbody.addEventListener("click", (e) => {
     const target = e.target;
     const actionBtn = target.closest(`.${CLS}__action`);
@@ -17678,7 +17833,7 @@ function userTable(el4, users, opts) {
     if (user && o.onSelect) o.onSelect(user);
   }, { signal: sig });
   if (o.selectable) {
-    const checkAll = el4.querySelector(`.${CLS}__check-all`);
+    const checkAll = el5.querySelector(`.${CLS}__check-all`);
     checkAll?.addEventListener("change", () => {
       const checked = checkAll.checked;
       selected = checked ? new Set(filtered.map((u) => u.id)) : /* @__PURE__ */ new Set();
@@ -17696,7 +17851,7 @@ function userTable(el4, users, opts) {
     },
     setFilter(q) {
       query = q;
-      const input = el4.querySelector(`.${CLS}__search`);
+      const input = el5.querySelector(`.${CLS}__search`);
       if (input) input.value = q;
       applyFilter();
       renderBody3();
@@ -17706,7 +17861,7 @@ function userTable(el4, users, opts) {
     },
     destroy() {
       ac.abort();
-      el4.innerHTML = "";
+      el5.innerHTML = "";
     }
   };
 }
@@ -17771,17 +17926,17 @@ function buildPhase(phase, typeIcons, ac) {
   }
   return col;
 }
-function renderJourneyPhases(el4, phases, opts, ac, typeIcons) {
+function renderJourneyPhases(el5, phases, opts, ac, typeIcons) {
   for (const phase of phases) {
-    el4.appendChild(buildPhase(phase, typeIcons, ac));
+    el5.appendChild(buildPhase(phase, typeIcons, ac));
   }
 }
-function drawConnectors(el4, _phases) {
-  const phaseEls = el4.querySelectorAll(".mn-journey__phase");
+function drawConnectors(el5, _phases) {
+  const phaseEls = el5.querySelectorAll(".mn-journey__phase");
   if (phaseEls.length < 2) return;
-  const elRect = el4.getBoundingClientRect();
-  const w = el4.scrollWidth;
-  const h = el4.scrollHeight;
+  const elRect = el5.getBoundingClientRect();
+  const w = el5.scrollWidth;
+  const h = el5.scrollHeight;
   const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
   svg.classList.add("mn-journey__connectors");
   svg.setAttribute("aria-hidden", "true");
@@ -17808,10 +17963,10 @@ function drawConnectors(el4, _phases) {
     if (!srcCards.length || !dstCards.length) continue;
     const src = srcCards[srcCards.length - 1].getBoundingClientRect();
     const dst = dstCards[0].getBoundingClientRect();
-    const x1 = src.right - elRect.left + el4.scrollLeft;
-    const y1 = src.top + src.height / 2 - elRect.top + el4.scrollTop;
-    const x2 = dst.left - elRect.left + el4.scrollLeft;
-    const y2 = dst.top + dst.height / 2 - elRect.top + el4.scrollTop;
+    const x1 = src.right - elRect.left + el5.scrollLeft;
+    const y1 = src.top + src.height / 2 - elRect.top + el5.scrollTop;
+    const x2 = dst.left - elRect.left + el5.scrollLeft;
+    const y2 = dst.top + dst.height / 2 - elRect.top + el5.scrollTop;
     const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
     line.classList.add("mn-journey__connector-line");
     line.setAttribute("x1", String(x1));
@@ -17824,7 +17979,7 @@ function drawConnectors(el4, _phases) {
     line.setAttribute("marker-end", "url(#mn-journey-arrow)");
     svg.appendChild(line);
   }
-  el4.appendChild(svg);
+  el5.appendChild(svg);
 }
 
 // src/ts/customer-journey.ts
@@ -17843,13 +17998,13 @@ var TYPE_ICONS = {
 function journeyInitials(name) {
   return name.trim().split(/\s+/).map((w) => w[0]).join("").slice(0, 2).toUpperCase();
 }
-function setupKeyboard(el4, phases, opts, ac, selectFn) {
-  el4.addEventListener("keydown", (e) => {
+function setupKeyboard(el5, phases, opts, ac, selectFn) {
+  el5.addEventListener("keydown", (e) => {
     const target = e.target;
     if (!target.classList.contains("mn-journey__card")) return;
     const phaseEl = target.closest(".mn-journey__phase");
     if (!phaseEl) return;
-    const allPhases = [...el4.querySelectorAll(".mn-journey__phase")];
+    const allPhases = [...el5.querySelectorAll(".mn-journey__phase")];
     const phaseIdx = allPhases.indexOf(phaseEl);
     const cards = [...phaseEl.querySelectorAll(".mn-journey__card")];
     const cardIdx = cards.indexOf(target);
@@ -17878,9 +18033,9 @@ function setupKeyboard(el4, phases, opts, ac, selectFn) {
     }
   }, { signal: ac.signal });
 }
-function setupTooltip(el4, ac) {
+function setupTooltip(el5, ac) {
   let tip = null;
-  el4.addEventListener("pointerenter", (e) => {
+  el5.addEventListener("pointerenter", (e) => {
     const card = e.target.closest?.(".mn-journey__card");
     if (!card) return;
     const date = card.dataset.date ?? "";
@@ -17894,7 +18049,7 @@ function setupTooltip(el4, ac) {
     tip.innerHTML = parts.join("<br>");
     card.appendChild(tip);
   }, { capture: true, signal: ac.signal });
-  el4.addEventListener("pointerleave", (e) => {
+  el5.addEventListener("pointerleave", (e) => {
     const card = e.target.closest?.(".mn-journey__card");
     if (card && tip && card.contains(tip)) {
       tip.remove();
@@ -17902,7 +18057,7 @@ function setupTooltip(el4, ac) {
     }
   }, { capture: true, signal: ac.signal });
 }
-function customerJourney(el4, phases, opts) {
+function customerJourney(el5, phases, opts) {
   const options = {
     orientation: "horizontal",
     onSelect: () => {
@@ -17914,22 +18069,22 @@ function customerJourney(el4, phases, opts) {
   const ac = new AbortController();
   let selectedId = null;
   let currentPhases = [...phases];
-  el4.setAttribute("role", "list");
-  el4.setAttribute("aria-label", "Customer journey");
-  el4.classList.add("mn-journey");
-  if (options.orientation === "vertical") el4.classList.add("mn-journey--vertical");
-  if (options.compactMode) el4.classList.add("mn-journey--compact");
+  el5.setAttribute("role", "list");
+  el5.setAttribute("aria-label", "Customer journey");
+  el5.classList.add("mn-journey");
+  if (options.orientation === "vertical") el5.classList.add("mn-journey--vertical");
+  if (options.compactMode) el5.classList.add("mn-journey--compact");
   function render5() {
-    el4.innerHTML = "";
-    renderJourneyPhases(el4, currentPhases, options, ac, TYPE_ICONS);
+    el5.innerHTML = "";
+    renderJourneyPhases(el5, currentPhases, options, ac, TYPE_ICONS);
     if (options.showConnectors && currentPhases.length > 1) {
-      drawConnectors(el4, currentPhases);
+      drawConnectors(el5, currentPhases);
     }
     if (selectedId) markSelected(selectedId);
   }
   function markSelected(id) {
-    el4.querySelectorAll(".mn-journey__card--selected").forEach((c) => c.classList.remove("mn-journey__card--selected"));
-    const card = el4.querySelector(`[data-id="${CSS.escape(id)}"]`);
+    el5.querySelectorAll(".mn-journey__card--selected").forEach((c) => c.classList.remove("mn-journey__card--selected"));
+    const card = el5.querySelector(`[data-id="${CSS.escape(id)}"]`);
     if (card) {
       card.classList.add("mn-journey__card--selected");
       card.scrollIntoView({ block: "nearest", inline: "nearest" });
@@ -17939,7 +18094,7 @@ function customerJourney(el4, phases, opts) {
     selectedId = id;
     markSelected(id);
   }
-  el4.addEventListener("click", (e) => {
+  el5.addEventListener("click", (e) => {
     const card = e.target.closest?.(".mn-journey__card");
     if (!card) return;
     const id = card.dataset.id ?? "";
@@ -17948,8 +18103,8 @@ function customerJourney(el4, phases, opts) {
     if (eng?.onClick) eng.onClick();
     if (eng && opts?.onSelect) opts.onSelect(eng);
   }, { signal: ac.signal });
-  setupKeyboard(el4, currentPhases, options, ac, selectEngagement);
-  setupTooltip(el4, ac);
+  setupKeyboard(el5, currentPhases, options, ac, selectEngagement);
+  setupTooltip(el5, ac);
   render5();
   return {
     update(newPhases) {
@@ -17960,10 +18115,10 @@ function customerJourney(el4, phases, opts) {
     getSelected: () => selectedId,
     destroy() {
       ac.abort();
-      el4.innerHTML = "";
-      el4.removeAttribute("role");
-      el4.removeAttribute("aria-label");
-      el4.classList.remove("mn-journey", "mn-journey--vertical", "mn-journey--compact");
+      el5.innerHTML = "";
+      el5.removeAttribute("role");
+      el5.removeAttribute("aria-label");
+      el5.classList.remove("mn-journey", "mn-journey--vertical", "mn-journey--compact");
     }
   };
 }
@@ -18064,19 +18219,19 @@ function buildTopbar(pageLabel) {
 function findItem(nav, id) {
   return nav.find((n) => n.id === id);
 }
-function adminShell(el4, opts) {
+function adminShell(el5, opts) {
   const ac = new AbortController();
   const collapsible = opts.collapsible ?? true;
   const showTopBar = opts.topBar ?? true;
   let activePage = opts.initialPage ?? opts.sidebar.nav[0]?.id ?? "";
-  el4.innerHTML = "";
-  el4.classList.add("mn-admin-shell");
-  if (opts.initialCollapsed) el4.classList.add("mn-admin-shell--collapsed");
+  el5.innerHTML = "";
+  el5.classList.add("mn-admin-shell");
+  if (opts.initialCollapsed) el5.classList.add("mn-admin-shell--collapsed");
   const sidebar = document.createElement("nav");
   sidebar.className = "mn-admin-sidebar";
   sidebar.setAttribute("role", "navigation");
   sidebar.setAttribute("aria-label", "Admin navigation");
-  el4.appendChild(sidebar);
+  el5.appendChild(sidebar);
   if (opts.sidebar.header) {
     sidebar.appendChild(buildHeader(opts.sidebar.header));
   }
@@ -18148,7 +18303,7 @@ function adminShell(el4, opts) {
     toggle.setAttribute("aria-label", "Toggle sidebar");
     toggle.textContent = "\xAB";
     toggle.addEventListener("click", () => {
-      el4.classList.toggle("mn-admin-shell--collapsed");
+      el5.classList.toggle("mn-admin-shell--collapsed");
     }, { signal: ac.signal });
     sidebar.appendChild(toggle);
   }
@@ -18176,7 +18331,7 @@ function adminShell(el4, opts) {
   }
   const content = document.createElement("div");
   content.className = "mn-admin-content";
-  el4.appendChild(content);
+  el5.appendChild(content);
   let titleEl = null;
   if (showTopBar) {
     const initLabel = findItem(opts.sidebar.nav, activePage)?.label ?? "";
@@ -18200,12 +18355,12 @@ function adminShell(el4, opts) {
       if (titleEl) titleEl.textContent = title;
     },
     collapse(val) {
-      el4.classList.toggle("mn-admin-shell--collapsed", val);
+      el5.classList.toggle("mn-admin-shell--collapsed", val);
     },
     destroy() {
       ac.abort();
-      el4.innerHTML = "";
-      el4.classList.remove("mn-admin-shell", "mn-admin-shell--collapsed");
+      el5.innerHTML = "";
+      el5.classList.remove("mn-admin-shell", "mn-admin-shell--collapsed");
     }
   };
 }
@@ -18219,24 +18374,24 @@ var idCounter = 0;
 function renderAction(header, action, ac) {
   header.querySelector(".mn-section-card__action")?.remove();
   if (!action) return;
-  const el4 = document.createElement(action.href ? "a" : "button");
-  el4.className = "mn-section-card__action";
-  el4.textContent = escapeHtml(action.label);
-  if (action.href && el4 instanceof HTMLAnchorElement) {
-    el4.href = action.href;
+  const el5 = document.createElement(action.href ? "a" : "button");
+  el5.className = "mn-section-card__action";
+  el5.textContent = escapeHtml(action.label);
+  if (action.href && el5 instanceof HTMLAnchorElement) {
+    el5.href = action.href;
   }
   if (action.onClick) {
-    el4.addEventListener("click", (e) => {
+    el5.addEventListener("click", (e) => {
       if (!action.href) e.preventDefault();
       action.onClick();
     }, { signal: ac.signal });
   }
-  if (el4 instanceof HTMLButtonElement) {
-    el4.type = "button";
+  if (el5 instanceof HTMLButtonElement) {
+    el5.type = "button";
   }
-  header.appendChild(el4);
+  header.appendChild(el5);
 }
-function sectionCard(el4, opts) {
+function sectionCard(el5, opts) {
   const ac = new AbortController();
   const variant = opts.variant ?? "default";
   const titleId = `mn-sc-title-${++idCounter}`;
@@ -18258,7 +18413,7 @@ function sectionCard(el4, opts) {
   const body = document.createElement("div");
   body.className = "mn-section-card__body";
   section.appendChild(body);
-  el4.appendChild(section);
+  el5.appendChild(section);
   return {
     bodyEl: body,
     setTitle(t) {
@@ -18485,10 +18640,10 @@ function renderItem(item, ac, values) {
       return renderCustom(item);
   }
 }
-function settingsPanel(el4, opts) {
+function settingsPanel(el5, opts) {
   const ac = new AbortController();
   const values = /* @__PURE__ */ new Map();
-  el4.classList.add("mn-settings-panel");
+  el5.classList.add("mn-settings-panel");
   for (const section of opts.sections) {
     const fieldset = document.createElement("fieldset");
     fieldset.className = "mn-settings-section";
@@ -18510,7 +18665,7 @@ function settingsPanel(el4, opts) {
         values.set(key, values.get(item.label));
       }
     }
-    el4.appendChild(fieldset);
+    el5.appendChild(fieldset);
   }
   return {
     update(sectionId, itemLabel, value) {
@@ -18525,8 +18680,8 @@ function settingsPanel(el4, opts) {
     },
     destroy() {
       ac.abort();
-      el4.innerHTML = "";
-      el4.classList.remove("mn-settings-panel");
+      el5.innerHTML = "";
+      el5.classList.remove("mn-settings-panel");
     }
   };
 }

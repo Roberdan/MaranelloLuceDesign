@@ -1,7 +1,7 @@
 import type { AsyncDataProvider } from './async-select';
 import { AsyncSelect } from './async-select';
 import { BackStack } from './entity-workbench-backstack';
-import { renderWorkbench } from './entity-workbench-render';
+import { renderWorkbench, switchTab, updateSaveState, type RenderContext } from './entity-workbench-render';
 import { validateField as validateFormField } from './forms-validate';
 
 export interface EntityField {
@@ -41,6 +41,7 @@ export class EntityWorkbench {
   private readonly stack = new BackStack<StackEntry>();
   private readonly asyncControls: AsyncSelect[] = [];
   private readonly fieldEls = new Map<string, HTMLElement>();
+  private readonly renderedTabs = new Set<string>();
   private currentSchema: EntitySchema;
   private baseData: Record<string, unknown>;
   private currentData: Record<string, unknown>;
@@ -72,6 +73,7 @@ export class EntityWorkbench {
   }
 
   validate(): { valid: boolean; errors: Map<string, string> } {
+    this.ensureAllTabsRendered();
     const errors = new Map<string, string>();
     collectFields(this.currentSchema.tabs).forEach((field) => {
       if (field.type === 'group' || field.type === 'computed') return;
@@ -124,33 +126,65 @@ export class EntityWorkbench {
   destroy(): void {
     this.asyncControls.splice(0).forEach((ctrl) => ctrl.destroy());
     this.fieldEls.clear();
+    this.renderedTabs.clear();
     this.container.innerHTML = '';
   }
 
-  private render(): void {
-    this.destroy();
-    renderWorkbench({
+  private buildRenderContext(): RenderContext {
+    return {
       container: this.container,
       schema: this.currentSchema,
       activeTab: this.activeTab,
       data: this.currentData,
       editable: this.options.editable !== false,
       actions: this.options.actions ?? [],
-      breadcrumb: [this.rootLabel, ...this.stack.path().map((v) => v.label), getLabel(this.currentData, this.getCurrentDepth())].join(' / '),
+      breadcrumb: this.buildBreadcrumb(),
       isDirty: this.isDirty(),
       fieldEls: this.fieldEls,
       asyncControls: this.asyncControls,
-      onTab: (tabId) => { this.activeTab = tabId; this.render(); },
+      renderedTabs: this.renderedTabs,
+      onTab: (tabId) => this.handleTabSwitch(tabId),
       onField: (field, value) => this.onFieldChange(field, value),
       onSave: () => void this.handleSave(),
       onCancel: () => this.handleCancel(),
       onAction: (id) => this.options.onAction?.(id, this.currentData),
-    });
+    };
+  }
+
+  private buildBreadcrumb(): string {
+    return [
+      this.rootLabel,
+      ...this.stack.path().map((v) => v.label),
+      getLabel(this.currentData, this.getCurrentDepth()),
+    ].join(' / ');
+  }
+
+  /** Switch tab via CSS display toggle — no DOM rebuild. */
+  private handleTabSwitch(tabId: string): void {
+    this.activeTab = tabId;
+    switchTab(this.container, tabId, this.buildRenderContext());
+  }
+
+  /** Force-render any tabs not yet lazily rendered (needed for validate). */
+  private ensureAllTabsRendered(): void {
+    const ctx = this.buildRenderContext();
+    for (const tab of this.currentSchema.tabs) {
+      if (!this.renderedTabs.has(tab.id)) {
+        switchTab(this.container, tab.id, ctx);
+      }
+    }
+    // Restore the active tab visibility
+    switchTab(this.container, this.activeTab, ctx);
+  }
+
+  private render(): void {
+    this.destroy();
+    renderWorkbench(this.buildRenderContext());
   }
 
   private onFieldChange(field: EntityField, value: unknown): void {
     setValue(this.currentData, field.key, value);
-    this.render();
+    updateSaveState(this.container, this.isDirty());
   }
 
   private async handleSave(): Promise<void> {

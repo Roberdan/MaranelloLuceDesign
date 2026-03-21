@@ -28,7 +28,7 @@ Maranello.charts.donut(canvas, [{ label: 'A', value: 30 }, { label: 'B', value: 
         ${donutWrap('donut-sm',80,80,'87%','Budget Mix')}
         ${donutWrap('donut-md',140,140,'96','Accuracy')}
       </div>
-      ${legendRow(`${swatch('#FFC72C','Inference')}${swatch('#4EA8DE','Training')}${swatch('#00A651','Embeddings')}${swatch('#616161','Storage')}${swatch('#FFC72C','Completed')}${swatch('#2a2a2a','Remaining')}`,'margin-bottom:var(--space-2xl)')}
+      ${legendRow(`${swatch('var(--mn-accent)','Inference')}${swatch('var(--signal-info)','Training')}${swatch('var(--signal-ok)','Embeddings')}${swatch('var(--mn-text-muted)','Storage')}${swatch('var(--mn-accent)','Completed')}${swatch('var(--mn-border)','Remaining')}`,'margin-bottom:var(--space-2xl)')}
       <div style="display:flex;gap:var(--space-2xl);flex-wrap:wrap;margin-bottom:var(--space-2xl)">
         <div class="mn-card-dark" style="padding:var(--space-lg);flex:1;min-width:260px">
           <div class="mn-label" style="margin-bottom:var(--space-md)">Token Spend by Region — Bar Chart</div>
@@ -45,7 +45,7 @@ Maranello.charts.donut(canvas, [{ label: 'A', value: 30 }, { label: 'B', value: 
             <canvas id="area-chart-demo" width="460" height="200" style="width:100%;height:200px"></canvas>
           </div>
           <div style="${axisLabel()}">Monthly trend</div>
-          ${legendRow(`${swatch('#FFC72C','Token Spend')}${swatch('#00A651','Runs')}${swatch('#DC0000','Retries')}`)}
+          ${legendRow(`${swatch('var(--mn-accent)','Token Spend')}${swatch('var(--signal-ok)','Runs')}${swatch('var(--signal-danger)','Retries')}`)}
         </div>
       </div>
       <div style="display:flex;gap:var(--space-2xl);flex-wrap:wrap;margin-bottom:var(--space-2xl)">
@@ -117,41 +117,49 @@ function initCharts(section) {
   const C = window.Maranello?.charts;
   if (!C) { console.warn('[charts] Maranello.charts not ready'); return; }
   const g = id => section.querySelector(`#${id}`);
+  const M = window.Maranello;
+  const p = M.palette?.() ?? {};
+  const accent = p.accent || '#FFC72C';
+  const ok = p.signalOk || '#00A651';
+  const danger = p.signalDanger || '#DC0000';
+  const info = p.signalInfo || '#4EA8DE';
+  const muted = p.textMuted || '#616161';
+  const border = p.border || '#2a2a2a';
+  const warning = p.signalWarning || '#D4622B';
   const sparkData = [48,52,50,60,58,63,69,72,75,78,82,88];
-  const barData = [{ label: 'us-east-1', value: 420, color: '#FFC72C' }, { label: 'eu-west-1', value: 310, color: '#FFC72C' }, { label: 'ap-southeast-1', value: 280, color: '#FFC72C' }, { label: 'us-west-2', value: 195, color: '#FFC72C' }, { label: 'sa-east-1', value: 165, color: '#FFC72C' }];
+  const barData = [{ label: 'us-east-1', value: 420, color: accent }, { label: 'eu-west-1', value: 310, color: accent }, { label: 'ap-southeast-1', value: 280, color: accent }, { label: 'us-west-2', value: 195, color: accent }, { label: 'sa-east-1', value: 165, color: accent }];
   const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  const areaData = [{ label: 'Token Spend', color: '#FFC72C', data: [120,145,132,178,195,210,188,225,247,260,238,275] }, { label: 'Runs', color: '#00A651', data: [820,860,910,980,1020,1080,1045,1120,1160,1210,1185,1240] }, { label: 'Retries', color: '#DC0000', data: [34,28,32,26,24,22,20,18,16,15,17,14] }];
-  const donutSmall = [{ label: 'Inference', value: 45, color: '#FFC72C' }, { label: 'Training', value: 20, color: '#4EA8DE' }, { label: 'Embeddings', value: 20, color: '#00A651' }, { label: 'Storage', value: 15, color: '#616161' }];
-  const donutLarge = [{ label: 'Completed', value: 96, color: '#FFC72C' }, { label: 'Remaining', value: 4, color: '#2a2a2a' }];
+  const areaData = [{ label: 'Token Spend', color: accent, data: [120,145,132,178,195,210,188,225,247,260,238,275] }, { label: 'Runs', color: ok, data: [820,860,910,980,1020,1080,1045,1120,1160,1210,1185,1240] }, { label: 'Retries', color: danger, data: [34,28,32,26,24,22,20,18,16,15,17,14] }];
+  const donutSmall = [{ label: 'Inference', value: 45, color: accent }, { label: 'Training', value: 20, color: info }, { label: 'Embeddings', value: 20, color: ok }, { label: 'Storage', value: 15, color: muted }];
+  const donutLarge = [{ label: 'Completed', value: 96, color: accent }, { label: 'Remaining', value: 4, color: border }];
   const radarData = [{ label: 'Accuracy', value: 96 }, { label: 'Latency', value: 82 }, { label: 'Routing', value: 91 }, { label: 'Recovery', value: 88 }, { label: 'Safety', value: 94 }, { label: 'Throughput', value: 86 }];
-  const bubbleData = [{ x: 30, y: 96, z: 18, color: '#FFC72C', label: 'us-east-1' }, { x: 55, y: 92, z: 14, color: '#00A651', label: 'eu-west-1' }, { x: 75, y: 89, z: 22, color: '#4EA8DE', label: 'ap-southeast-1' }, { x: 45, y: 84, z: 10, color: '#DC0000', label: 'retry queue' }, { x: 85, y: 87, z: 16, color: '#D4622B', label: 'canary lane' }];
-  C.sparkline(g('spark-1'), sparkData, { color: '#FFC72C', width: 100, height: 32 });
-  C.sparkline(g('spark-2'), [320,360,410,480,530,610], { color: '#4EA8DE', width: 100, height: 32 });
-  C.sparkline(g('spark-3'), [80,92,88,104,110,118,126,134], { color: '#DC0000', width: 100, height: 32 });
-  C.sparkline(g('spark-4'), [4200,5100,6200,7400,8900,10400,11800,14560], { color: '#00A651', width: 100, height: 32 });
+  const bubbleData = [{ x: 30, y: 96, z: 18, color: accent, label: 'us-east-1' }, { x: 55, y: 92, z: 14, color: ok, label: 'eu-west-1' }, { x: 75, y: 89, z: 22, color: info, label: 'ap-southeast-1' }, { x: 45, y: 84, z: 10, color: danger, label: 'retry queue' }, { x: 85, y: 87, z: 16, color: warning, label: 'canary lane' }];
+  C.sparkline(g('spark-1'), sparkData, { color: accent, width: 100, height: 32 });
+  C.sparkline(g('spark-2'), [320,360,410,480,530,610], { color: info, width: 100, height: 32 });
+  C.sparkline(g('spark-3'), [80,92,88,104,110,118,126,134], { color: danger, width: 100, height: 32 });
+  C.sparkline(g('spark-4'), [4200,5100,6200,7400,8900,10400,11800,14560], { color: ok, width: 100, height: 32 });
   C.donut(g('donut-sm'), donutSmall, { width: 80, height: 80 });
   C.donut(g('donut-md'), donutLarge, { width: 140, height: 140 });
-  C.barChart(g('bar-chart-demo'), barData, { width: 460, height: 200, color: '#FFC72C' });
+  C.barChart(g('bar-chart-demo'), barData, { width: 460, height: 200, color: accent });
   C.areaChart(g('area-chart-demo'), areaData, { width: 460, height: 200 });
-  C.radar(g('radar-demo'), radarData, { width: 220, height: 220, color: '#FFC72C' });
+  C.radar(g('radar-demo'), radarData, { width: 220, height: 220, color: accent });
   C.bubble(g('bubble-demo'), bubbleData, { width: 440, height: 220 });
   C.halfGauge(g('hg-sm'), { value: 68, max: 100, width: 100, height: 60 });
   C.halfGauge(g('hg-md'), { value: 96, max: 100, width: 180, height: 108 });
   C.halfGauge(g('hg-lg'), { value: 84, max: 100, width: 260, height: 156 });
-  const M = window.Maranello;
   // liveGraph — two real-time streams with interval updates
   const lgData1 = Array.from({ length: 60 }, () => 80 + Math.random() * 60);
   const lgData2 = Array.from({ length: 60 }, () => 30 + Math.random() * 50);
   if (C.liveGraph) {
-    C.liveGraph(g('live-graph-1'), lgData1, { color: '#FFC72C', showRedLine: true, redLineValue: 120, unitLabel: 'ms' });
-    C.liveGraph(g('live-graph-2'), lgData2, { color: '#4EA8DE', showRedLine: true, redLineValue: 70, unitLabel: '%' });
+    C.liveGraph(g('live-graph-1'), lgData1, { color: accent, showRedLine: true, redLineValue: 120, unitLabel: 'ms' });
+    C.liveGraph(g('live-graph-2'), lgData2, { color: info, showRedLine: true, redLineValue: 70, unitLabel: '%' });
     let live = true;
     const tick = setInterval(() => {
       if (!live) return;
       lgData1.shift(); lgData1.push(80 + Math.random() * 60);
       lgData2.shift(); lgData2.push(30 + Math.random() * 50);
-      C.liveGraph(g('live-graph-1'), lgData1, { color: '#FFC72C', showRedLine: true, redLineValue: 120, unitLabel: 'ms' });
-      C.liveGraph(g('live-graph-2'), lgData2, { color: '#4EA8DE', showRedLine: true, redLineValue: 70, unitLabel: '%' });
+      C.liveGraph(g('live-graph-1'), lgData1, { color: accent, showRedLine: true, redLineValue: 120, unitLabel: 'ms' });
+      C.liveGraph(g('live-graph-2'), lgData2, { color: info, showRedLine: true, redLineValue: 70, unitLabel: '%' });
     }, 800);
     const btn = g('live-toggle');
     if (btn) btn.addEventListener('click', () => { live = !live; btn.textContent = live ? 'Pause' : 'Resume'; });
@@ -161,7 +169,7 @@ function initCharts(section) {
   if (M.progressRing) {
     M.progressRing(g('ring-1'), { value: 72, max: 100, size: 60 });
     M.progressRing(g('ring-2'), { value: 45, max: 100, size: 80 });
-    M.progressRing(g('ring-3'), { value: 96, max: 100, size: 100, color: '#00A651' });
+    M.progressRing(g('ring-3'), { value: 96, max: 100, size: 100, color: ok });
   }
   const f1 = M.flipCounter?.(section.querySelector('#flip-1'), { value: 14560 });
   const f2 = M.flipCounter?.(section.querySelector('#flip-2'), { value: 98240 });
@@ -183,10 +191,10 @@ function initCharts(section) {
     bind('donut-md', donutMeta(donutLarge, 140), donutLarge.map(({ color }) => color));
     bind('bar-chart-demo', { type: 'bar', data: barData, labels: barData.map(({ label }) => label), pad: barPad, gx: i => barPad.left + i * slotW + slotW / 2, gy: v => 200 - barPad.bottom - (v / barMax) * barChartH, barRects: barData.map((_, i) => ({ x: barPad.left + i * slotW + slotW * 0.15, w: barW })) }, barData.map(({ color }) => color));
     bind('area-chart-demo', { type: 'area', datasets: areaData, labels: months, pad: areaPad, maxLen: months.length, gx: i => areaPad.left + (i / (months.length - 1)) * (460 - areaPad.left - areaPad.right), gy: v => 200 - areaPad.bottom - (v / areaMax) * (200 - areaPad.top - areaPad.bottom) }, areaData.map(({ color }) => color));
-    bind('radar-demo', { type: 'radar', data: radarData, max: radarMax, points: radarData.map(({ value }, i) => ({ x: radarCx + Math.cos(-Math.PI / 2 + i * radarStep) * (value / radarMax) * radarRadius, y: radarCy + Math.sin(-Math.PI / 2 + i * radarStep) * (value / radarMax) * radarRadius, r: 10 })) }, ['#FFC72C']);
+    bind('radar-demo', { type: 'radar', data: radarData, max: radarMax, points: radarData.map(({ value }, i) => ({ x: radarCx + Math.cos(-Math.PI / 2 + i * radarStep) * (value / radarMax) * radarRadius, y: radarCy + Math.sin(-Math.PI / 2 + i * radarStep) * (value / radarMax) * radarRadius, r: 10 })) }, [accent]);
     bind('bubble-demo', { type: 'bubble', data: bubbleData, points: bubbleData.map(({ x, y, z }) => ({ x: bubbleGx(x), y: bubbleGy(y), r: bubbleGr(z) })) }, bubbleData.map(({ color }) => color));
   }
-  if (M.sparklineInteract) [['spark-1', sparkData], ['spark-2', [320,360,410,480,530,610]], ['spark-3', [80,92,88,104,110,118,126,134]], ['spark-4', [4200,5100,6200,7400,8900,10400,11800,14560]]].forEach(([id, data]) => { const el = g(id); if (el) M.sparklineInteract(el, data, { color: '#FFC72C' }); });
+  if (M.sparklineInteract) [['spark-1', sparkData], ['spark-2', [320,360,410,480,530,610]], ['spark-3', [80,92,88,104,110,118,126,134]], ['spark-4', [4200,5100,6200,7400,8900,10400,11800,14560]]].forEach(([id, data]) => { const el = g(id); if (el) M.sparklineInteract(el, data, { color: accent }); });
   addKeyboardAccess(section);
 }
 

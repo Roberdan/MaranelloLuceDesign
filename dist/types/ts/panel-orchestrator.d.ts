@@ -1,6 +1,7 @@
 import type { Placement } from './view-registry';
 import { ViewRegistry } from './view-registry';
 import { NavigationModel } from './navigation-model';
+import type { AppShellController } from './app-shell';
 export interface PanelHandle {
     viewId: string;
     placement: Placement;
@@ -11,8 +12,9 @@ export interface PanelHandle {
 export declare class PanelOrchestrator {
     private readonly registry;
     private readonly navigation;
+    private readonly shell?;
     private readonly openViews;
-    constructor(registry: ViewRegistry, navigation: NavigationModel);
+    constructor(registry: ViewRegistry, navigation: NavigationModel, shell?: AppShellController | undefined);
     open(viewId: string, target?: Placement, data?: unknown): PanelHandle;
     close(viewId: string): void;
     move(viewId: string, newTarget: Placement): void;
@@ -29,5 +31,6 @@ export declare class PanelOrchestrator {
     private mountView;
     private createModalHost;
     private ensureSlot;
+    private ensureFallbackSlot;
     private unmount;
 }

@@ -12,7 +12,7 @@ export function createHeroSection() {
 
     <div class="mn-container" style="text-align:center;position:relative;z-index:1">
       <div style="margin-bottom:var(--space-xl)">
-        <span class="mn-micro" style="display:inline-flex;align-items:center;gap:6px;padding:4px 16px;border:1px solid var(--mn-accent);border-radius:999px;color:var(--mn-accent);letter-spacing:0.12em;font-weight:600;margin-bottom:var(--space-lg)">INTERACTIVE DEMO · <span style="color:var(--rosso-corsa,#DC0000)">BETA</span></span>
+        <span class="mn-micro" style="display:inline-flex;align-items:center;gap:6px;padding:4px 16px;border:1px solid var(--mn-accent);border-radius:999px;color:var(--mn-accent);letter-spacing:0.12em;font-weight:600;margin-bottom:var(--space-lg)">INTERACTIVE DEMO · <span style="color:var(--mn-error)">BETA</span></span>
       </div>
 
       <p class="mn-section-number" style="letter-spacing:0.2em;margin-bottom:var(--space-md)">MARANELLO LUCE DESIGN SYSTEM · FOR AI AGENTS</p>
@@ -71,12 +71,12 @@ export function createHeroSection() {
         </div>
         <div style="text-align:center">
           <canvas id="hero-speedo-3" width="140" height="140" style="width:140px;height:140px"></canvas>
-          <div class="mn-micro" style="color:var(--azzurro-chiaro,#4EA8DE);margin-top:var(--space-xs);font-weight:600;letter-spacing:0.1em">PRECISION</div>
+          <div class="mn-micro" style="color:var(--signal-info);margin-top:var(--space-xs);font-weight:600;letter-spacing:0.1em">PRECISION</div>
           <div class="mn-micro" style="color:var(--grigio-medio);font-size:0.6rem">90+ Components</div>
         </div>
         <div style="text-align:center">
           <canvas id="hero-speedo-4" width="140" height="140" style="width:140px;height:140px"></canvas>
-          <div class="mn-micro" style="color:var(--rosso-corsa,#DC0000);margin-top:var(--space-xs);font-weight:600;letter-spacing:0.1em">ELEGANCE</div>
+          <div class="mn-micro" style="color:var(--signal-danger);margin-top:var(--space-xs);font-weight:600;letter-spacing:0.1em">ELEGANCE</div>
           <div class="mn-micro" style="color:var(--grigio-medio);font-size:0.6rem">Ferrari Luce DNA</div>
         </div>
       </div>
@@ -119,7 +119,7 @@ export function createHeroSection() {
       </div>
 
       <p class="mn-micro" style="margin-top:var(--space-3xl);color:var(--grigio-scuro)">
-        Scroll to explore 25+ component sections · (c) Roberdan 2026 · MIT License
+        Scroll to explore 25+ component sections · (c) Roberdan 2026 · MPL-2.0 License
       </p>
     </div>
   `;
@@ -127,24 +127,30 @@ export function createHeroSection() {
   setTimeout(() => {
     const M = window.Maranello;
     if (M?.speedometer) {
+      const p = M.palette();
+      const accent = p.accent;
+      const success = p.signalOk;
+      const info = p.signalInfo;
+      const danger = p.signalDanger;
+      const ticks = [0, 25, 50, 75, 100];
       M.speedometer(section.querySelector('#hero-speedo-1'), {
         value: 100, max: 100, unit: '%', size: 'sm',
-        ticks: [0, 25, 50, 75, 100], needleColor: '#FFC72C', arcColor: '#FFC72C',
+        ticks, needleColor: accent, arcColor: accent,
         subLabel: 'AA', animate: true,
       });
       M.speedometer(section.querySelector('#hero-speedo-2'), {
         value: 95, max: 100, unit: '%', size: 'sm',
-        ticks: [0, 25, 50, 75, 100], needleColor: '#00A651', arcColor: '#00A651',
+        ticks, needleColor: success, arcColor: success,
         subLabel: '0 deps', animate: true,
       });
       M.speedometer(section.querySelector('#hero-speedo-3'), {
         value: 90, max: 100, unit: '', size: 'sm',
-        ticks: [0, 25, 50, 75, 100], needleColor: '#4EA8DE', arcColor: '#4EA8DE',
+        ticks, needleColor: info, arcColor: info,
         subLabel: '90+', animate: true,
       });
       M.speedometer(section.querySelector('#hero-speedo-4'), {
         value: 100, max: 100, unit: '%', size: 'sm',
-        ticks: [0, 25, 50, 75, 100], needleColor: '#DC0000', arcColor: '#DC0000',
+        ticks, needleColor: danger, arcColor: danger,
         subLabel: 'Luce', animate: true,
       });
     }

@@ -5,6 +5,38 @@ All notable changes to this project will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.0.0] - 2026-03-21
+
+### Breaking Changes
+- [BC-1] StateScaffold: new `ready` state for successful data loads; `partial` reserved for degraded content only
+- [BC-2] PanelOrchestrator: accepts optional AppShellController for integrated slot-based rendering
+- [BC-3] CSS entrypoint (`./css`): `index.css` now includes full system (Sugar themes, responsive, runtime layouts, integration)
+- [BC-4] Sugar theme: `!important` declarations reduced from 128 to 9; replaced with higher-specificity selectors
+
+### Added
+- StateScaffold `ready` state with full CSS + WC support
+- AppShellController `getSlotForPlacement()` method for placement-to-slot mapping
+- CSS entrypoint parity: 51 missing imports added to index.css
+- Sugar + Sugar+Colorblind test coverage across visual regression, E2E, and contrast suites
+- AI Operations documentation sections in agent-cookbook.md and AGENT.md
+- Dashboard widgets safe DOM construction with XSS prevention (isValidColor, escapeHtml)
+- EntityWorkbench lazy tab rendering with CSS display toggle and tab cache
+- CSS entrypoint parity test suite (10 tests)
+- Migration guide: docs/migrations/v5.0.0.md
+
+### Changed
+- DashboardRenderer uses `setState('ready')` instead of `setState('partial')` after successful widget render
+- PanelOrchestrator uses AppShell slots when shell provided; standalone mode preserved
+- EntityWorkbench preserves DOM on tab switch instead of full rebuild
+- Sugar theme uses higher-specificity selectors instead of !important (93% reduction)
+
+### Fixed
+- Metadata drift: AGENT.md, CLAUDE.md, NaSra.agent.md aligned to v5.0.0 (5 themes, 32 WC tags)
+- Demo hero: MIT license to MPL-2.0, hardcoded hex colors to palette()
+- Demo section counter aligned to actual count (43 sections)
+- CSS injection vector in dashboard legend widget (isValidColor guard)
+- StateScaffold warns on invalid state values (fail-loud)
+
 ## [4.20.0] - 2026-03-21
 
 ### Added

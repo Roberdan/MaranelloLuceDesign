@@ -18,6 +18,16 @@
 @import './components-dividers-tags-cards.css';
 @import './components-footer-inputs.css';
 @import './components-tables-status.css';
+@import './components-source-card.css';
+@import './components-swot-matrix.css';
+@import './components-token-meter.css';
+@import './components-streaming-text.css';
+@import './components-kpi-scorecard.css';
+@import './components-cohort-grid.css';
+@import './components-agent-cost.css';
+@import './components-business-model-canvas.css';
+@import './components-user-table.css';
+@import './components-section-card.css';
 
 /* ── Layer: controls ── */
 @import './controls-advanced-controls.css';
@@ -36,6 +46,9 @@
 @import './forms-special-inputs.css';
 @import './forms-themes-avorio.css';
 @import './forms-themes-misc.css';
+@import './forms-fields-advanced.css';
+@import './forms-date-range.css';
+@import './forms-async-select.css';
 
 /* ── Layer: charts ── */
 @import './charts-base.css';
@@ -53,6 +66,7 @@
 @import './layouts-animations.css';
 @import './layouts-capacity-heatmap.css';
 @import './layouts-chat-login.css';
+@import './layouts-chat-fab.css';
 @import './layouts-column.css';
 @import './layouts-command-palette.css';
 @import './layouts-data-table-1.css';
@@ -61,13 +75,17 @@
 @import './layouts-data-table-compact-2.css';
 @import './layouts-data-table-compact-3.css';
 @import './layouts-data-table-panel.css';
+@import './layouts-data-table-v2.css';
 @import './layouts-detail-controls-1.css';
 @import './layouts-detail-controls-2.css';
 @import './layouts-detail-panel-base.css';
 @import './layouts-detail-panel-comments.css';
 @import './layouts-detail-panel-gantt.css';
 @import './layouts-detail-panel.css';
+@import './layouts-detail-panel-extras.css';
+@import './layouts-entity-workbench.css';
 @import './layouts-filter-chips.css';
+@import './layouts-facet-workbench.css';
 @import './layouts-funnel.css';
 @import './layouts-heatmap.css';
 @import './layouts-horizontal-bar-1.css';
@@ -80,7 +98,26 @@
 @import './layouts-page-header.css';
 @import './layouts-sidebar.css';
 @import './layouts-sim-panel.css';
+@import './layouts-sim-panel-2.css';
 @import './layouts-toolbar-drawer.css';
+@import './layouts-convergio-toolbar.css';
+@import './layouts-mapbox.css';
+@import './layouts-mesh-mission.css';
+@import './layouts-widget.css';
+@import './layouts-grid-templates.css';
+@import './layouts-search-drawer.css';
+@import './layouts-notification-center.css';
+@import './layouts-decision-matrix.css';
+@import './layouts-nine-box-matrix.css';
+@import './layouts-approval-chain.css';
+@import './layouts-agent-trace.css';
+@import './layouts-audit-log.css';
+@import './layouts-state-scaffold.css';
+@import './layouts-dashboard-renderer.css';
+@import './layouts-app-shell.css';
+@import './layouts-customer-journey.css';
+@import './layouts-admin-shell.css';
+@import './layouts-settings-panel.css';
 
 /* ── Layer: extended ── */
 @import './extended-avatar-spinner.css';
@@ -91,6 +128,8 @@
 /* ── Layer: patterns ── */
 @import './patterns-signal-binnacle.css';
 @import './patterns-strip-pod.css';
+@import './patterns-strip-dashboard.css';
+@import './patterns-activity-feed.css';
 
 /* ── Standalone (no layer group) ── */
 @import './icons.css';
@@ -99,8 +138,21 @@
 
 /* ── Layer: themes ── */
 @import './themes-base.css';
+@import './themes-avorio-components.css';
 @import './themes-colorblind-components.css';
 @import './themes-colorblind-layouts.css';
+@import './themes-sugar-components.css';
+@import './themes-sugar-colorblind.css';
 
 /* ── Layer: utilities ── */
 @import './utilities.css';
+
+/* ── Responsive overrides (after utilities, mobile-first) ── */
+@import './responsive-tokens.css';
+@import './responsive-layouts.css';
+@import './responsive-data.css';
+@import './responsive-forms.css';
+@import './responsive-charts.css';
+
+/* ── Integration ── */
+@import './integration.css';

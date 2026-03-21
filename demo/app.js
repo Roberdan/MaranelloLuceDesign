@@ -84,8 +84,8 @@ function safeErr(name, err) {
   const el = document.createElement('section');
   el.className = 'mn-section-dark';
   el.innerHTML = `<div class="mn-container" style="padding:var(--space-xl)">
-    <p style="color:var(--rosso-corsa)">⚠ Section "${name}" failed to render</p>
-    <pre class="mn-micro" style="color:var(--grigio-medio)">${String(err?.message ?? err)}</pre></div>`;
+    <p style="color:var(--mn-error)">Section "${name}" failed to render</p>
+    <pre class="mn-micro" style="color:var(--mn-text-muted)">${String(err?.message ?? err)}</pre></div>`;
   return el;
 }
 
