@@ -1,10 +1,11 @@
 /**
  * Maranello Luce Design - Theme toggle controller
- * 4-mode cycling: Editorial (mixed) > Nero (full dark) > Avorio (full light) > Colorblind
+ * 5-mode cycling: Editorial > Nero > Avorio > Colorblind > Sugar
  */
 
 import type { ThemeMode } from './core/types';
 import { setTheme, cycleTheme, getTheme } from './core/utils';
+import { icons } from './icons';
 
 export interface ThemeGaugeInstance {
   redraw: () => void;
@@ -16,12 +17,12 @@ export interface ThemeToggleController {
   destroy: () => void;
 }
 
-const ICONS: Record<ThemeMode, string> = {
-  editorial: '\u25D1',
-  nero: '\u25CF',
-  avorio: '\u25CB',
-  colorblind: '\u25D0',
-  sugar: '\u25A8',
+const ICON_NAMES: Record<ThemeMode, string> = {
+  editorial: 'contrast',
+  nero: 'moon',
+  avorio: 'sun',
+  colorblind: 'eye',
+  sugar: 'sparkle',
 };
 
 const LABELS: Record<ThemeMode, string> = {
@@ -32,9 +33,17 @@ const LABELS: Record<ThemeMode, string> = {
   sugar: 'Sugar',
 };
 
+function themeIcon(mode: ThemeMode): string {
+  const name = ICON_NAMES[mode];
+  const factory = icons[name];
+  if (!factory) return '';
+  const svg = factory();
+  return `<span class="mn-icon mn-icon--sm" aria-hidden="true">${svg}</span>`;
+}
+
 /**
  * Initialize theme toggle on a button element.
- * Cycles through the four theme modes on click, redrawing gauges after each switch.
+ * Cycles through the five theme modes on click, redrawing gauges after each switch.
  */
 export function initThemeToggle(
   toggleId: string | HTMLElement,
@@ -53,11 +62,11 @@ export function initThemeToggle(
   }
 
   let current = getTheme();
-  toggle.textContent = ICONS[current];
+  toggle.innerHTML = themeIcon(current);
   toggle.title = LABELS[current];
 
   function applyTheme(): void {
-    toggle!.textContent = ICONS[current];
+    toggle!.innerHTML = themeIcon(current);
     toggle!.title = LABELS[current];
     requestAnimationFrame(() => {
       gaugeInstances.forEach((g) => g.redraw());

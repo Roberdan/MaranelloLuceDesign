@@ -1,6 +1,6 @@
 /**
  * Maranello Luce Design - Theme toggle controller
- * 4-mode cycling: Editorial (mixed) > Nero (full dark) > Avorio (full light) > Colorblind
+ * 5-mode cycling: Editorial > Nero > Avorio > Colorblind > Sugar
  */
 import type { ThemeMode } from './core/types';
 export interface ThemeGaugeInstance {
@@ -13,6 +13,6 @@ export interface ThemeToggleController {
 }
 /**
  * Initialize theme toggle on a button element.
- * Cycles through the four theme modes on click, redrawing gauges after each switch.
+ * Cycles through the five theme modes on click, redrawing gauges after each switch.
  */
 export declare function initThemeToggle(toggleId: string | HTMLElement, gaugeInstances?: ThemeGaugeInstance[], onAutoContrast?: (selector: string) => void): ThemeToggleController;

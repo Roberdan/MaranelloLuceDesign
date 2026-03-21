@@ -18,7 +18,11 @@ export interface AdminShellOpts {
             onSearch?: (q: string) => void;
         };
         nav: AdminShellNavItem[];
-        footer?: HTMLElement | string;
+        footer?: HTMLElement | string | {
+            label: string;
+            onClick: () => void;
+        };
+        onFooterClick?: () => void;
     };
     collapsible?: boolean;
     initialCollapsed?: boolean;

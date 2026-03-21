@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.20.0] - 2026-03-21
+
+### Added
+- **Theme toggle SVG icons** — `initThemeToggle` renders SVG icons from the icon catalog instead of unicode text characters; new icons: `moon`, `sun`, `contrast` in platform icon set
+- **Sugar button states** — `:active`, `[aria-pressed="true"]`, `:focus-visible` styles for `.mn-btn` and `.mn-btn--ghost` on Sugar theme (fixes contrast collapse on pressed state)
+- **Avorio `[aria-pressed]` / `[aria-selected]` buttons** — new pressed/selected states with stronger contrast on warm ivory background
+- **Tab active background** — `.mn-tabs__tab--active` now gets a subtle background tint (`--mn-hover-bg`) for visual differentiation beyond underline alone
+- **`adminShell` footer click** — `footer` accepts `{ label, onClick }` object; new `onFooterClick` callback for string footers
+
+### Fixed
+- **Sugar `:active` buttons** — `!important` on base Sugar button styles no longer clobbers `:active` pseudo-class from base CSS
+- **Avorio `:active` buttons** — increased `box-shadow` depth and darkened background for stronger press feedback
+- **Avorio active tabs** — added `background: rgba(0,0,0,0.05)` to active tab on Avorio theme
+
 ## [4.19.3] - 2026-03-21
 
 ### Fixed

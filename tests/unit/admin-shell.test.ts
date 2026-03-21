@@ -151,6 +151,40 @@ describe('adminShell', () => {
     ctrl.destroy();
   });
 
+  it('string footer with onFooterClick renders as clickable button', () => {
+    const onClick = vi.fn();
+    const ctrl = adminShell(el, makeOpts({
+      sidebar: {
+        nav: [{ id: 'dash', label: 'Dashboard', icon: 'chart' }],
+        footer: '\u2190 Back to app' as unknown as HTMLElement,
+        onFooterClick: onClick,
+      },
+    }));
+    const footer = el.querySelector<HTMLElement>('.mn-admin-sidebar__footer');
+    expect(footer).toBeTruthy();
+    expect(footer?.tagName).toBe('BUTTON');
+    footer?.click();
+    expect(onClick).toHaveBeenCalledTimes(1);
+    ctrl.destroy();
+  });
+
+  it('object footer {label, onClick} renders as clickable button', () => {
+    const onClick = vi.fn();
+    const ctrl = adminShell(el, makeOpts({
+      sidebar: {
+        nav: [{ id: 'dash', label: 'Dashboard', icon: 'chart' }],
+        footer: { label: 'Back', onClick } as unknown as HTMLElement,
+      },
+    }));
+    const footer = el.querySelector<HTMLElement>('.mn-admin-sidebar__footer');
+    expect(footer).toBeTruthy();
+    expect(footer?.tagName).toBe('BUTTON');
+    expect(footer?.textContent).toBe('Back');
+    footer?.click();
+    expect(onClick).toHaveBeenCalledTimes(1);
+    ctrl.destroy();
+  });
+
   it('HTMLElement footer is appended directly', () => {
     const footerEl = document.createElement('button');
     footerEl.textContent = 'Back';
