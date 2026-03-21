@@ -3,6 +3,7 @@ import { openModal, closeModal } from './modal';
 import type { Placement } from './view-registry';
 import { ViewRegistry, type ViewConfig } from './view-registry';
 import { NavigationModel } from './navigation-model';
+import type { AppShellController } from './app-shell';
 export interface PanelHandle {
   viewId: string;
   placement: Placement;
@@ -22,6 +23,7 @@ export class PanelOrchestrator {
   constructor(
     private readonly registry: ViewRegistry,
     private readonly navigation: NavigationModel,
+    private readonly shell?: AppShellController,
   ) {}
   open(viewId: string, target?: Placement, data?: unknown): PanelHandle {
     const existing = this.openViews.get(viewId);
@@ -162,13 +164,20 @@ export class PanelOrchestrator {
     return id;
   }
   private ensureSlot(placement: Placement): HTMLElement {
+    if (this.shell) {
+      const shellSlot = this.shell.getSlotForPlacement(placement);
+      if (shellSlot) return shellSlot;
+    }
+    return this.ensureFallbackSlot(placement);
+  }
+  private ensureFallbackSlot(placement: Placement): HTMLElement {
     const id = `mn-slot-${placement}`;
     let slot = document.getElementById(id);
     if (!slot) {
       slot = document.createElement('div');
       slot.id = id;
       slot.className = `mn-slot mn-slot--${placement}`;
-      document.body.appendChild(slot);
+      document.querySelector('body')!.appendChild(slot);
     }
     return slot;
   }

@@ -58,4 +58,42 @@ describe('AppShellController', () => {
     expect(host.className).toBe('');
     expect(host.children.length).toBe(0);
   });
+
+  describe('getSlotForPlacement', () => {
+    it('maps page placement to main slot', () => {
+      const ctrl = new AppShellController(host);
+      const slot = ctrl.getSlotForPlacement('page');
+      expect(slot).toBe(ctrl.getSlot('main'));
+    });
+
+    it('maps side-panel placement to detail slot', () => {
+      const ctrl = new AppShellController(host);
+      expect(ctrl.getSlotForPlacement('side-panel')).toBe(ctrl.getSlot('detail'));
+    });
+
+    it('maps bottom-dock placement to bottom slot', () => {
+      const ctrl = new AppShellController(host);
+      expect(ctrl.getSlotForPlacement('bottom-dock')).toBe(ctrl.getSlot('bottom'));
+    });
+
+    it('maps overlay placement to overlay slot', () => {
+      const ctrl = new AppShellController(host);
+      expect(ctrl.getSlotForPlacement('overlay')).toBe(ctrl.getSlot('overlay'));
+    });
+
+    it('maps workspace placement to secondary slot', () => {
+      const ctrl = new AppShellController(host);
+      expect(ctrl.getSlotForPlacement('workspace')).toBe(ctrl.getSlot('secondary'));
+    });
+
+    it('returns null for modal placement (modal uses modal system)', () => {
+      const ctrl = new AppShellController(host);
+      expect(ctrl.getSlotForPlacement('modal')).toBeNull();
+    });
+
+    it('returns null for unknown placement strings', () => {
+      const ctrl = new AppShellController(host);
+      expect(ctrl.getSlotForPlacement('nonexistent' as never)).toBeNull();
+    });
+  });
 });

@@ -1,4 +1,7 @@
 import { AppShellController } from '../ts/app-shell.js';
+import { PanelOrchestrator } from '../ts/panel-orchestrator.js';
+import { ViewRegistry } from '../ts/view-registry.js';
+import { NavigationModel } from '../ts/navigation-model.js';
 
 const SLOT_NAMES = ['nav', 'toolbar', 'filter-bar', 'main', 'secondary', 'detail', 'bottom', 'overlay'];
 const VALID_LAYOUTS = new Set(['full', 'split', 'stacked', 'docked-bottom', 'dual-panel', 'side-detail']);
@@ -20,12 +23,18 @@ class MnAppShell extends HTMLElement {
       layout: this._resolveLayout(this.getAttribute('layout')),
     });
     this._mountSlots();
-    if (this._orchestrator) {
-      this._controller.orchestrator = this._orchestrator;
+    if (!this._orchestrator) {
+      this._orchestrator = new PanelOrchestrator(
+        ViewRegistry.getInstance(),
+        new NavigationModel(),
+        this._controller,
+      );
     }
   }
 
   disconnectedCallback() {
+    this._orchestrator?.destroy();
+    this._orchestrator = null;
     this._controller?.destroy();
     this._controller = null;
   }
@@ -38,9 +47,6 @@ class MnAppShell extends HTMLElement {
 
   set orchestrator(value) {
     this._orchestrator = value;
-    if (this._controller) {
-      this._controller.orchestrator = value;
-    }
   }
 
   get orchestrator() {

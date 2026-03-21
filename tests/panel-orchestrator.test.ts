@@ -5,6 +5,7 @@ import * as modal from '../src/ts/modal';
 import { ViewRegistry, type ViewConfig } from '../src/ts/view-registry';
 import { NavigationModel } from '../src/ts/navigation-model';
 import { PanelOrchestrator } from '../src/ts/panel-orchestrator';
+import { AppShellController } from '../src/ts/app-shell';
 
 function config(id: string, placement: ViewConfig['defaultPlacement'] = 'page'): ViewConfig {
   return {
@@ -161,5 +162,87 @@ describe('PanelOrchestrator', () => {
     expect(orchestrator.getOpen().size).toBe(0);
     expect(orchestrator.isOpen('alpha')).toBe(false);
     expect(orchestrator.isOpen('beta')).toBe(false);
+  });
+});
+
+describe('PanelOrchestrator with AppShellController', () => {
+  let shellHost: HTMLElement;
+
+  beforeEach(() => {
+    document.body.innerHTML = '';
+    ViewRegistry.reset();
+    vi.restoreAllMocks();
+  });
+
+  it('renders view into correct shell slot when shell is provided', () => {
+    shellHost = document.createElement('div');
+    document.body.appendChild(shellHost);
+    const shell = new AppShellController(shellHost, { layout: 'side-detail' });
+    const registry = ViewRegistry.getInstance();
+    registry.register(config('detail-view', 'side-panel'));
+    const nav = new NavigationModel();
+    const orchestrator = new PanelOrchestrator(registry, nav, shell);
+
+    const handle = orchestrator.open('detail-view');
+
+    const detailSlot = shell.getSlot('detail');
+    expect(detailSlot?.contains(handle.container)).toBe(true);
+    expect(handle.container.isConnected).toBe(true);
+  });
+
+  it('renders page placement into main slot', () => {
+    shellHost = document.createElement('div');
+    document.body.appendChild(shellHost);
+    const shell = new AppShellController(shellHost);
+    const registry = ViewRegistry.getInstance();
+    registry.register(config('main-view', 'page'));
+    const orchestrator = new PanelOrchestrator(registry, new NavigationModel(), shell);
+
+    const handle = orchestrator.open('main-view');
+
+    const mainSlot = shell.getSlot('main');
+    expect(mainSlot?.contains(handle.container)).toBe(true);
+  });
+
+  it('still uses modal system for modal placement even with shell', () => {
+    shellHost = document.createElement('div');
+    document.body.appendChild(shellHost);
+    const shell = new AppShellController(shellHost);
+    const registry = ViewRegistry.getInstance();
+    registry.register(config('modal-view', 'modal'));
+    const openSpy = vi.spyOn(modal, 'openModal');
+    const orchestrator = new PanelOrchestrator(registry, new NavigationModel(), shell);
+
+    orchestrator.open('modal-view');
+
+    expect(openSpy).toHaveBeenCalledOnce();
+    expect(document.querySelector('#mn-panel-modal-modal-view .mn-modal')).not.toBeNull();
+  });
+
+  it('standalone mode works without shell (backward compatible)', () => {
+    const registry = ViewRegistry.getInstance();
+    registry.register(config('standalone-view'));
+    const orchestrator = new PanelOrchestrator(registry, new NavigationModel());
+
+    const handle = orchestrator.open('standalone-view');
+
+    expect(handle.container.isConnected).toBe(true);
+    expect(document.getElementById('mn-slot-page')).not.toBeNull();
+  });
+
+  it('move transfers view between shell slots', () => {
+    shellHost = document.createElement('div');
+    document.body.appendChild(shellHost);
+    const shell = new AppShellController(shellHost, { layout: 'side-detail' });
+    const registry = ViewRegistry.getInstance();
+    registry.register(config('movable', 'page'));
+    const orchestrator = new PanelOrchestrator(registry, new NavigationModel(), shell);
+
+    const handle = orchestrator.open('movable');
+    expect(shell.getSlot('main')?.contains(handle.container)).toBe(true);
+
+    orchestrator.move('movable', 'side-panel');
+    expect(shell.getSlot('detail')?.contains(handle.container)).toBe(true);
+    expect(shell.getSlot('main')?.contains(handle.container)).toBe(false);
   });
 });
