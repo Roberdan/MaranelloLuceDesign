@@ -83,6 +83,10 @@ export { systemStatus } from './system-status';
 export { profileMenu } from './profile-menu';
 export type { ProfileMenuUser, ProfileMenuOptions, ProfileMenuController } from './profile-menu';
 
+// Header (3-zone navbar)
+export { header } from './header';
+export type { HeaderOptions, HeaderController, HeaderBrand, HeaderButton, HeaderSearch, HeaderProfile } from './header';
+
 // Theme picker
 export { themePicker } from './theme-picker';
 export type { ThemePickerOptions, ThemePickerController } from './theme-picker';
@@ -234,6 +238,10 @@ export * from './map-view-helpers';
 
 export { gridLayout } from './grid-layout';
 export type { GridTemplateName, GridLayoutOptions, GridLayoutController } from './grid-layout';
+
+// Layout state machine (lightweight 4-slot grid)
+export { createLayout } from './layout';
+export type { LayoutController, LayoutViewConfig, LayoutState } from './layout';
 
 // v4.5–v4.9 components — kept in barrel to stay under 250-line limit
 export * from './index-extras';

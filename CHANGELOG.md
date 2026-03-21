@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.2.0] - 2026-03-21
+
+### Added
+- `createLayout()` / `Maranello.layout` — 4-slot CSS grid with `:has()` auto-collapse + state machine (view registry, fullpage mode, slot toggles, CSP-safe)
+- `Maranello.header.init()` — 3-zone navbar component (brand, buttons, search, profile integration)
+- `layouts-mn-layout.css` — responsive grid layout (stacks under 900px)
+- `components-header.css` — header styling with semantic tokens
+- 36 new unit tests (19 layout + 17 header)
+
 ## [5.1.0] - 2026-03-21
 
 ### Added

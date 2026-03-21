@@ -22,6 +22,7 @@ import { commandPalette } from './command-palette';
 import { loginScreen } from './login';
 import { systemStatus } from './system-status';
 import { profileMenu } from './profile-menu';
+import { header } from './header';
 import { themePicker } from './theme-picker';
 import { FerrariGauge } from './gauge-engine';
 import { buildGaugePalette } from './gauge-engine-palette';
@@ -56,6 +57,7 @@ import { emit, on, off, bind, autoBind, onDrillDown } from './data-binding-event
 import { updateGauge, bindChart, autoBindSliders, bindControl } from './data-binding-ui';
 import { initGauges, initScrollReveal, initNavTracking, relativeLuminance, autoContrast } from './observers';
 import { gridLayout } from './grid-layout';
+import { createLayout } from './layout';
 import { socialGraph } from './social-graph';
 import { networkMessages } from './network-messages';
 import { neuralNodes } from './neural-nodes';
@@ -118,6 +120,7 @@ M.commandPalette = commandPalette;
 M.loginScreen = loginScreen;
 M.systemStatus = systemStatus;
 M.profileMenu = profileMenu;
+M.header = { init: header };
 M.themePicker = themePicker;
 
 // Gauge
@@ -145,6 +148,18 @@ M.neuralNodes = neuralNodes;
 M.hBarChart = hBarChart;
 M.okrPanel = okrPanel;
 M.gridLayout = gridLayout;
+M.createLayout = createLayout;
+
+// Lazy layout singleton — created when #mn-grid exists in DOM
+function _initLayout(): void {
+  const gridEl = document.getElementById('mn-grid');
+  if (gridEl) M.layout = createLayout(gridEl);
+}
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', _initLayout, { once: true });
+} else {
+  _initLayout();
+}
 M.socialGraph = socialGraph;
 M.chartInteract = chartInteract;
 M.sparklineInteract = sparklineInteract;

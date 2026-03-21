@@ -29,6 +29,7 @@
 @import './components-user-table.css';
 @import './components-section-card.css';
 @import './components-theme-picker.css';
+@import './components-header.css';
 
 /* ── Layer: controls ── */
 @import './controls-advanced-controls.css';
@@ -119,6 +120,7 @@
 @import './layouts-customer-journey.css';
 @import './layouts-admin-shell.css';
 @import './layouts-settings-panel.css';
+@import './layouts-mn-layout.css';
 
 /* ── Layer: extended ── */
 @import './extended-avatar-spinner.css';

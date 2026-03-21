@@ -1,0 +1,69 @@
+/* layouts-mn-layout.css — 4-slot CSS grid with :has()-based column collapse */
+@layer layouts {
+  #mn-grid {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    grid-template-columns: 1fr;
+    grid-template-areas: 'strip' 'center';
+    height: 100%;
+    overflow: hidden;
+  }
+
+  #mn-slot-strip { grid-area: strip; }
+  #mn-slot-left { grid-area: left; overflow-y: auto; }
+  #mn-slot-center { grid-area: center; overflow-y: auto; }
+  #mn-slot-right { grid-area: right; overflow-y: auto; }
+
+  /* Left sidebar visible */
+  #mn-grid:has(#mn-slot-left:not([hidden])) {
+    grid-template-columns: 260px 1fr;
+    grid-template-areas: 'strip strip' 'left center';
+  }
+
+  /* Right panel visible */
+  #mn-grid:has(#mn-slot-right:not([hidden])) {
+    grid-template-columns: 1fr minmax(320px, 30%);
+    grid-template-areas: 'strip strip' 'center right';
+  }
+
+  /* Both sidebars visible */
+  #mn-grid:has(#mn-slot-left:not([hidden])):has(#mn-slot-right:not([hidden])) {
+    grid-template-columns: 260px 1fr minmax(320px, 30%);
+    grid-template-areas: 'strip strip strip' 'left center right';
+  }
+
+  /* Strip hidden */
+  #mn-grid:has(#mn-slot-strip[hidden]) {
+    grid-template-rows: 1fr;
+    grid-template-areas: 'center';
+  }
+  #mn-grid:has(#mn-slot-strip[hidden]):has(#mn-slot-left:not([hidden])) {
+    grid-template-areas: 'left center';
+  }
+  #mn-grid:has(#mn-slot-strip[hidden]):has(#mn-slot-right:not([hidden])) {
+    grid-template-areas: 'center right';
+  }
+  #mn-grid:has(#mn-slot-strip[hidden]):has(#mn-slot-left:not([hidden])):has(#mn-slot-right:not([hidden])) {
+    grid-template-areas: 'left center right';
+  }
+
+  /* Fullpage mode: only center visible */
+  #mn-grid.mn-layout--fullpage {
+    grid-template-columns: 1fr !important;
+    grid-template-rows: 1fr !important;
+    grid-template-areas: 'center' !important;
+  }
+
+  /* Responsive: stack vertically under 900px */
+  @media (max-width: 900px) {
+    #mn-grid,
+    #mn-grid:has(#mn-slot-left:not([hidden])),
+    #mn-grid:has(#mn-slot-right:not([hidden])) {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto auto 1fr auto;
+      grid-template-areas: 'strip' 'left' 'center' 'right';
+    }
+  }
+
+  [hidden] { display: none !important; }
+}
