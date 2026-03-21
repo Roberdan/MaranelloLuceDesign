@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.2.1] - 2026-03-21
+
+### Fixed
+- StateScaffold: `aria-busy` set consistently on all state transitions + removed in `destroy()`
+- EntityWorkbench: tab switching uses `data-tab-id` instead of fragile `textContent` matching
+- EntityWorkbench: breadcrumb updates incrementally on name/title field change
+- mn-app-shell WC: orchestrator ownership tracking — only destroys if internally created
+- Dashboard widgets test: color assertion accepts both keyword and rgb() formats
+- CSS parity test: Windows-portable path resolution via `path.relative()`
+- ESM tests: `__dirname` replaced with `import.meta.dirname` in 3 test files
+- Sugar !important audit: threshold tightened from 77 to 15 (actual: 9)
+- Demo launch.js: install snippet updated to v5.2.0
+
 ## [5.2.0] - 2026-03-21
 
 ### Added
