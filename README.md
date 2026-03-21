@@ -2,7 +2,7 @@
 
 Ferrari Luce-inspired design system for AI agent dashboards. Zero runtime dependencies. 5 adaptive themes. WCAG 2.2 AA. Framework-agnostic.
 
-**v5.0.0** | [Live Demo](https://roberdan.github.io/MaranelloLuceDesign/) | [Migration Guide](docs/migrations/v5.0.0.md) | [CHANGELOG](CHANGELOG.md)
+**v5.2.1** | [Live Demo](https://roberdan.github.io/MaranelloLuceDesign/) | [Migration Guide](docs/migrations/v5.0.0.md) | [CHANGELOG](CHANGELOG.md)
 
 ## Install
 
@@ -247,6 +247,64 @@ scaffold.setState('partial', 'Historical data unavailable');
 | `docked-bottom` | Data + timeline, chat + canvas |
 | `dual-panel` | Side-by-side editors, diff views |
 | `side-detail` | Full apps with nav + drill-in |
+
+## App Layout (Simple Dashboard Framework)
+
+Lightweight alternative to AppShellController — 4-slot CSS grid with `:has()` auto-collapse + state machine.
+
+```html
+<div id="mn-grid">
+  <div id="mn-slot-strip" hidden></div>
+  <div id="mn-slot-left" hidden></div>
+  <div id="mn-slot-center"></div>
+  <div id="mn-slot-right" hidden></div>
+</div>
+```
+
+```js
+// Register views
+Maranello.layout.register('dashboard', { label: 'Dashboard', buttonId: 'btn-dash' });
+Maranello.layout.register('settings', { label: 'Settings', fullpage: true });
+
+// Switch views + toggle slots
+Maranello.layout.showView('dashboard');
+Maranello.layout.toggleLeft();
+Maranello.layout.openRight();
+Maranello.layout.wireButtons();
+
+// Listen for changes
+document.addEventListener('layout-changed', (e) => console.log(e.detail));
+```
+
+Features: fullpage mode (saves/restores sidebar state), responsive stacking under 900px, CSP-safe, `layout-changed` events.
+
+## Header (3-Zone Navbar)
+
+```js
+Maranello.header.init(navbar, {
+  brand: { label: 'MyApp', logo: svgString },
+  left: [{ id: 'dash', label: 'Dashboard', active: true }, 'separator', { id: 'reports', label: 'Reports' }],
+  center: { type: 'search', placeholder: 'Search...', shortcut: 'Cmd+K' },
+  right: [{ id: 'settings', label: 'Settings' }, { type: 'profile', name: 'User', sections: [{ title: 'Theme', type: 'theme-switcher' }] }]
+});
+```
+
+## Theme Picker (Grafana-Style)
+
+```js
+// Standalone
+const picker = Maranello.themePicker(container, {
+  onChange: (theme) => console.log(theme)
+});
+
+// Or embedded in profile menu
+Maranello.profileMenu(el, {
+  name: 'User',
+  sections: [{ title: 'Theme', type: 'theme-switcher' }]
+});
+```
+
+5 preview cards with surface/card/accent dots. ARIA radiogroup, keyboard nav (Tab/Enter/Space).
 
 ## AI Operations Components
 

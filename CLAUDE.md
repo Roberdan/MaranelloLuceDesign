@@ -1,4 +1,4 @@
-<!-- v5.0.0 | 2026-03-21 -->
+<!-- v5.2.1 | 2026-03-21 -->
 # MaranelloLuceDesign
 
 Ferrari Luce-inspired design system for business dashboards. Part of Convergio.
@@ -195,8 +195,8 @@ All responsive overrides live in `src/css/responsive-*.css` files, imported by `
 ### Map (2)
 `mapView` · `attachEvents`
 
-### Runtime (9)
-`AppShellController` · `ViewRegistry` · `PanelOrchestrator` · `NavigationModel` · `DashboardRenderer` · `FacetWorkbench` · `EntityWorkbench` · `AsyncSelect` · `StateScaffold`
+### Runtime (12)
+`AppShellController` · `ViewRegistry` · `PanelOrchestrator` · `NavigationModel` · `DashboardRenderer` · `FacetWorkbench` · `EntityWorkbench` · `AsyncSelect` · `StateScaffold` · `createLayout` / `layout` · `header` · `themePicker`
 
 ### Analytics & BI (11)
 `waterfallChart` · `confidenceChart` · `costTimeline` · `riskMatrix` · `kpiScorecard` · `agentCostBreakdown` · `tokenMeter` · `cohortGrid` · `approvalChain` · `decisionMatrix` · `renderSourceCards`
@@ -324,6 +324,9 @@ Sugar+Colorblind cross-theme: `body.mn-sugar.mn-colorblind` — cool gray surfac
 - `AppShellController.getSlotForPlacement(placement)` — maps PanelOrchestrator placements to shell slots: `page→main`, `side-panel→detail`, `bottom-dock→bottom`, `overlay→overlay`, `workspace→secondary`. Modal uses modal system.
 - `PanelOrchestrator(registry, nav, shell?)` — optional 3rd arg integrates with AppShellController for slot-based rendering. Without shell, falls back to standalone containers.
 - `dashboard-widgets` use safe DOM construction (`createElement` + `textContent`). Color values validated via `isValidColor()` from `core/sanitize.ts`.
+- `createLayout(gridEl?)` / `Maranello.layout` — 4-slot CSS grid (`#mn-grid` + `#mn-slot-strip/left/center/right`) with `:has()` auto-collapse. State machine: `register()`, `showView()`, `toggleLeft/Right/Strip()`, `openRight/closeRight()`, fullpage mode. Fires `layout-changed` CustomEvent. CSP-safe.
+- `header(el, opts)` / `Maranello.header.init()` — 3-zone navbar (brand + left buttons + center search + right buttons/profile). Integrates with `profileMenu()`. CSP-safe, keyboard accessible.
+- `themePicker(el, opts)` — Grafana-style theme selection with 5 preview cards. ARIA radiogroup, keyboard nav. Also available as `profileMenu` section via `type: 'theme-switcher'`.
 
 ## CI / GitHub Actions
 
