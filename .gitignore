@@ -5,3 +5,4 @@ dist/
 *.tgz
 coverage/
 .claude/
+docs/virtualbpm-integration-response.md
