@@ -13,7 +13,7 @@ import { objectIcons } from './icons-objects';
 import { platformIcons } from './icons-platform';
 
 /** Full icon catalog merging all icon groups. */
-export const icons: IconCatalog = {
+const baseIcons: IconCatalog = {
   ...navIcons,
   ...statusIcons,
   ...actionIcons,
@@ -21,6 +21,18 @@ export const icons: IconCatalog = {
   ...objectIcons,
   ...platformIcons,
 };
+
+/** Common aliases mapping expected names to existing icons. */
+const iconAliases: IconCatalog = {
+  fastForward: baseIcons.accelerator,
+  shuffle: baseIcons.sync,
+  target: baseIcons.compass,
+  share: baseIcons.network,
+  trendingUp: baseIcons.trendUp,
+  pieChart: baseIcons.dashboard,
+};
+
+export const icons: IconCatalog = { ...baseIcons, ...iconAliases };
 
 /** Render an icon into a target element. */
 export function renderIcon(

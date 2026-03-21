@@ -37,11 +37,13 @@ const LABELS: Record<ThemeMode, string> = {
  * Cycles through the four theme modes on click, redrawing gauges after each switch.
  */
 export function initThemeToggle(
-  toggleId: string,
+  toggleId: string | HTMLElement,
   gaugeInstances: ThemeGaugeInstance[] = [],
   onAutoContrast?: (selector: string) => void,
 ): ThemeToggleController {
-  const toggle = document.getElementById(toggleId);
+  const toggle = typeof toggleId === 'string'
+    ? document.getElementById(toggleId)
+    : toggleId;
   if (!toggle) {
     return {
       getMode: () => getTheme(),

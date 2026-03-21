@@ -135,4 +135,36 @@ describe('adminShell', () => {
     expect(nav?.getAttribute('aria-label')).toBe('Admin navigation');
     ctrl.destroy();
   });
+
+  it('string footer renders as span without breaking content area', () => {
+    const ctrl = adminShell(el, makeOpts({
+      sidebar: {
+        nav: [{ id: 'dash', label: 'Dashboard', icon: 'chart' }],
+        footer: '\u2190 Back to app' as unknown as HTMLElement,
+      },
+    }));
+    const footer = el.querySelector('.mn-admin-sidebar__footer');
+    expect(footer).toBeTruthy();
+    expect(footer?.textContent).toBe('\u2190 Back to app');
+    expect(ctrl.contentEl).toBeInstanceOf(HTMLElement);
+    expect(ctrl.contentEl.className).toBe('mn-admin-content__body');
+    ctrl.destroy();
+  });
+
+  it('HTMLElement footer is appended directly', () => {
+    const footerEl = document.createElement('button');
+    footerEl.textContent = 'Back';
+    footerEl.className = 'custom-footer';
+    const ctrl = adminShell(el, makeOpts({
+      sidebar: {
+        nav: [{ id: 'dash', label: 'Dashboard', icon: 'chart' }],
+        footer: footerEl,
+      },
+    }));
+    const found = el.querySelector('.custom-footer');
+    expect(found).toBeTruthy();
+    expect(found?.textContent).toBe('Back');
+    expect(ctrl.contentEl).toBeInstanceOf(HTMLElement);
+    ctrl.destroy();
+  });
 });

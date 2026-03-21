@@ -24,7 +24,7 @@ export interface AdminShellOpts {
       onSearch?: (q: string) => void;
     };
     nav: AdminShellNavItem[];
-    footer?: HTMLElement;
+    footer?: HTMLElement | string;
   };
   collapsible?: boolean;
   initialCollapsed?: boolean;
@@ -161,7 +161,16 @@ export function adminShell(
   }
 
   /* Footer */
-  if (opts.sidebar.footer) sidebar.appendChild(opts.sidebar.footer);
+  if (opts.sidebar.footer) {
+    if (typeof opts.sidebar.footer === 'string') {
+      const span = document.createElement('span');
+      span.className = 'mn-admin-sidebar__footer';
+      span.textContent = opts.sidebar.footer;
+      sidebar.appendChild(span);
+    } else {
+      sidebar.appendChild(opts.sidebar.footer);
+    }
+  }
 
   /* Content area */
   const content = document.createElement('div');

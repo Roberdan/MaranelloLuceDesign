@@ -27,7 +27,8 @@
   margin-bottom: -1px;
 }
 .mn-tabs__tab:hover { color: var(--mn-text-tertiary); }
-.mn-tabs__tab--active {
+.mn-tabs__tab--active,
+.mn-tabs__tab[aria-selected="true"] {
   color: var(--mn-text);
   border-bottom-color: var(--mn-accent);
 }
