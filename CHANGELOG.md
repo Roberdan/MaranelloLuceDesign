@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.9.3] - 2026-03-22
+
+### Fixed
+- Sugar theme: header active button invisible (black on black) — now uses `--active-bg` + underline
+- Sugar theme: header avatar profile solid black circle — now uses `--mn-surface-raised` bg
+- Sugar theme: comment box button invisible (`--mn-text` on `--mn-accent`) — fixed to `--mn-accent-text`
+- Sugar theme: detail panel ADO button invisible — same fix
+
 ## [5.9.2] - 2026-03-22
 
 ### Added
