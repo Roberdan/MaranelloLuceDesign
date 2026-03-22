@@ -55,9 +55,9 @@
   .mn-header-v2__filter { min-height: 2rem; }
   .mn-header-v2__status { white-space: nowrap; }
 
-  .mn-header-v2__status--ok { color: var(--mn-ok, #00a651); }
-  .mn-header-v2__status--warn { color: var(--mn-warning, #ffc72c); }
-  .mn-header-v2__status--error { color: var(--mn-danger, #dc0000); }
+  .mn-header-v2__status--ok { color: var(--mn-success); }
+  .mn-header-v2__status--warn { color: var(--mn-warning); }
+  .mn-header-v2__status--error { color: var(--mn-error); }
 
   .mn-header-v2__is-active {
     color: var(--mn-accent);

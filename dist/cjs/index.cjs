@@ -2380,27 +2380,27 @@ function drawNeedle(s, progress, sa, totalSweep, value, max, color) {
   ctx.fill();
 }
 function drawCenterText(s, c) {
-  const fsCtr = Math.max(16, s.size * 0.15);
+  const fsCtr = Math.max(20, s.size * 0.22);
   if (c.centerValue) {
     s.ctx.font = `700 ${fsCtr}px 'Barlow Condensed','Outfit',sans-serif`;
     s.ctx.fillStyle = s.palette.centerValue;
     s.ctx.textAlign = "center";
     s.ctx.textBaseline = "middle";
-    s.ctx.fillText(c.centerValue, s.cx, s.cy - s.size * 0.02);
+    s.ctx.fillText(c.centerValue, s.cx, s.cy);
   }
   if (c.centerUnit) {
-    s.ctx.font = `400 ${Math.max(7, s.size * 0.04)}px 'Inter',sans-serif`;
+    s.ctx.font = `500 ${Math.max(8, s.size * 0.055)}px 'Barlow Condensed','Outfit',sans-serif`;
     s.ctx.fillStyle = s.palette.centerUnit;
     s.ctx.textAlign = "center";
     s.ctx.textBaseline = "middle";
-    s.ctx.fillText(c.centerUnit, s.cx, s.cy + s.size * 0.06);
+    s.ctx.fillText(c.centerUnit, s.cx, s.cy + fsCtr * 0.55);
   }
   if (c.centerLabel) {
-    s.ctx.font = `600 ${Math.max(6, s.size * 0.035)}px 'Barlow Condensed','Outfit',sans-serif`;
+    s.ctx.font = `600 ${Math.max(7, s.size * 0.045)}px 'Barlow Condensed','Outfit',sans-serif`;
     s.ctx.fillStyle = s.palette.centerLabel;
     s.ctx.textAlign = "center";
     s.ctx.textBaseline = "middle";
-    s.ctx.fillText(c.centerLabel, s.cx, s.cy - s.size * 0.14);
+    s.ctx.fillText(c.centerLabel, s.cx, s.cy - fsCtr * 0.65);
   }
 }
 function drawSubDials(s, c, progress) {
@@ -7376,12 +7376,6 @@ function createSep() {
   el5.setAttribute("role", "separator");
   return el5;
 }
-function createSpacer(position) {
-  const el5 = document.createElement("span");
-  el5.className = `mn-header__spacer mn-header__spacer--${position}`;
-  el5.setAttribute("aria-hidden", "true");
-  return el5;
-}
 function header(container, options) {
   const opts = options ?? {};
   const nav = document.createElement("nav");
@@ -7394,7 +7388,7 @@ function header(container, options) {
   centerZone.className = "mn-header__zone mn-header__zone--center";
   const rightZone = document.createElement("div");
   rightZone.className = "mn-header__zone mn-header__zone--right";
-  if (opts.brand && (opts.brand.logo || opts.brand.label)) {
+  if (opts.brand) {
     const tag = opts.brand.href ? "a" : "span";
     const brand = document.createElement(tag);
     brand.className = "mn-header__brand";
@@ -7404,15 +7398,12 @@ function header(container, options) {
     if (opts.brand.logo) {
       const logoSpan = document.createElement("span");
       logoSpan.className = "mn-header__brand-logo";
-      if (opts.brand.label) logoSpan.setAttribute("aria-hidden", "true");
       logoSpan.innerHTML = opts.brand.logo;
       brand.appendChild(logoSpan);
     }
-    if (opts.brand.label) {
-      const labelSpan = document.createElement("span");
-      labelSpan.textContent = opts.brand.label;
-      brand.appendChild(labelSpan);
-    }
+    const labelSpan = document.createElement("span");
+    labelSpan.textContent = opts.brand.label;
+    brand.appendChild(labelSpan);
     leftZone.appendChild(brand);
   }
   if (opts.left) {
@@ -7448,9 +7439,7 @@ function header(container, options) {
       fb.addEventListener("click", opts.center.filterButton.onClick);
       searchWrap.appendChild(fb);
     }
-    centerZone.appendChild(createSpacer("start"));
     centerZone.appendChild(searchWrap);
-    centerZone.appendChild(createSpacer("end"));
   }
   const cleanups = [];
   if (opts.right) {
@@ -7479,11 +7468,7 @@ function header(container, options) {
   return {
     setActive(buttonId) {
       nav.querySelectorAll(".mn-header__btn[data-header-id]").forEach((el5) => {
-        if (el5.getAttribute("data-header-id") === buttonId) {
-          el5.classList.add("mn-header__btn--active");
-        } else {
-          el5.classList.remove("mn-header__btn--active");
-        }
+        el5.classList.toggle("mn-header__btn--active", el5.getAttribute("data-header-id") === buttonId);
       });
     },
     destroy() {
@@ -7494,6 +7479,15 @@ function header(container, options) {
 }
 
 // src/ts/header-v2.ts
+function appendSvg(host, svgString, className, hidden) {
+  const safeSvg = sanitizeSvg(svgString);
+  if (!safeSvg) return;
+  const wrapper = document.createElement("span");
+  wrapper.className = className;
+  if (hidden) wrapper.setAttribute("aria-hidden", "true");
+  wrapper.innerHTML = safeSvg;
+  host.appendChild(wrapper);
+}
 function createButton2(btn, variant) {
   const el5 = document.createElement("button");
   el5.type = "button";
@@ -7505,12 +7499,7 @@ function createButton2(btn, variant) {
   if (btn.active) el5.classList.add("mn-header-v2__is-active");
   if (btn.pressed) el5.classList.add("mn-header-v2__is-pressed");
   el5.setAttribute("aria-pressed", btn.pressed ? "true" : "false");
-  if (btn.icon) {
-    const icon = document.createElement("span");
-    icon.className = "mn-header-v2__icon";
-    icon.innerHTML = btn.icon;
-    el5.appendChild(icon);
-  }
+  if (btn.icon) appendSvg(el5, btn.icon, "mn-header-v2__icon");
   if (btn.label) {
     const label = document.createElement("span");
     label.textContent = btn.label;
@@ -7531,13 +7520,7 @@ function createBrand(brand) {
   const node = document.createElement(tag);
   node.className = "mn-header-v2__brand";
   if (brand.href && node instanceof HTMLAnchorElement) node.href = brand.href;
-  if (brand.logo) {
-    const mark = document.createElement("span");
-    mark.className = "mn-header-v2__brand-mark";
-    if (brand.label) mark.setAttribute("aria-hidden", "true");
-    mark.innerHTML = brand.logo;
-    node.appendChild(mark);
-  }
+  if (brand.logo) appendSvg(node, brand.logo, "mn-header-v2__brand-mark", !!brand.label);
   if (brand.label) {
     const text = document.createElement("span");
     text.className = "mn-header-v2__brand-label";
@@ -7552,12 +7535,16 @@ function headerV2(container, options) {
   nav.className = "mn-header-v2";
   nav.setAttribute("role", "navigation");
   nav.setAttribute("aria-label", "Main navigation");
+  nav.setAttribute("data-chrome", "header-v2");
   const left = document.createElement("div");
   left.className = "mn-header-v2__region mn-header-v2__region--left";
+  left.setAttribute("data-region", "left");
   const center = document.createElement("div");
   center.className = "mn-header-v2__region mn-header-v2__region--center";
+  center.setAttribute("data-region", "center");
   const right = document.createElement("div");
   right.className = "mn-header-v2__region mn-header-v2__region--right";
+  right.setAttribute("data-region", "right");
   const brand = createBrand(opts.brand);
   if (brand) left.appendChild(brand);
   if (opts.groups && opts.groups.length) {
@@ -20258,5 +20245,5 @@ M.charts = {
 registerExtras(M);
 
 // src/ts/index.ts
-var VERSION = "5.11.0";
+var VERSION = "5.11.1";
 //# sourceMappingURL=index.cjs.map
