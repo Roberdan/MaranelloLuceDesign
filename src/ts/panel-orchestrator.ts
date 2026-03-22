@@ -29,6 +29,14 @@ export class PanelOrchestrator {
     const existing = this.openViews.get(viewId);
     if (existing) {
       if (target && target !== existing.placement) this.move(viewId, target);
+      // Remount with new data if provided
+      if (data !== undefined) {
+        const config = this.registry.get(viewId);
+        if (config) {
+          this.unmount(existing.mountResult);
+          existing.mountResult = this.mountView(config, existing.handle.container, data);
+        }
+      }
       this.navigation.push(viewId, { placement: this.openViews.get(viewId)?.placement });
       return this.openViews.get(viewId)!.handle;
     }
@@ -88,6 +96,8 @@ export class PanelOrchestrator {
 
     entry.placement = newTarget;
     entry.handle.placement = newTarget;
+    // Update navigation entry to reflect new placement
+    this.navigation.replace(viewId, { placement: newTarget });
     eventBus.emit('panel-moved', { viewId, from, to: newTarget });
   }
 

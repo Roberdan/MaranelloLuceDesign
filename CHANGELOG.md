@@ -10,11 +10,20 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ### Added
 - `NavigationModel.remove()` and `clear()` emit navigate events (`'remove'` / `'clear'` actions)
 - `NavigateAction` type: `'push' | 'pop' | 'replace' | 'remove' | 'clear'`
+- `LayoutPersistState` includes `rightPanelId` and `stripPanelId` (symmetric with `leftPanelId`)
 
 ### Fixed
 - Slot locking re-implemented — `left: false` / `right: false` blocks manual toggles
 - StateScaffold warns on invalid constructor state (was silent fallback)
-- VERSION export: `4.20.0` → `5.8.0`; esbuild banner: `v4.14.1` → `v5.8.0`
+- `layout.state` getter returns frozen copy — external mutation no longer desyncs DOM
+- `NavigationModel.current()` / `history()` return cloned entries — no mutable internal state leak
+- `PanelOrchestrator.move()` updates navigation entry placement via `replace()`
+- `PanelOrchestrator.open(existing, data)` remounts with new data instead of silently ignoring it
+- `ViewRegistry.get()` / `list()` return cloned configs — no internal mutation leak
+- `ViewRegistry.reset()` clears configs before nulling singleton — no split-brain
+- WC `registerAll()` sets `_loaded` only after success — retryable on import failure
+- `NavigationModel.pop()` JSDoc clarifies: returns new current, not the removed entry
+- VERSION export: `4.20.0` → `5.8.0`; esbuild banner: `v4.14.1` → `5.8.0`
 - Demo WC count: 26 → 33; `sideEffects` flag: `false` → IIFE+WC paths
 - `NavigationModel.destroy()` no longer emits event on internal clear
 

@@ -26,6 +26,9 @@ export class ViewRegistry {
   }
 
   static reset(): void {
+    if (ViewRegistry.instance) {
+      ViewRegistry.instance.clear();
+    }
     ViewRegistry.instance = undefined;
   }
 
@@ -38,11 +41,12 @@ export class ViewRegistry {
   }
 
   get(id: string): ViewConfig | undefined {
-    return this.configs.get(id);
+    const cfg = this.configs.get(id);
+    return cfg ? { ...cfg } : undefined;
   }
 
   list(): ReadonlyArray<ViewConfig> {
-    return Object.freeze([...this.configs.values()]);
+    return Object.freeze([...this.configs.values()].map(c => ({ ...c })));
   }
 
   unregister(id: string): boolean {

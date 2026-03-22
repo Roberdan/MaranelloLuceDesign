@@ -42,6 +42,8 @@ export interface LayoutPersistState {
   left: boolean;
   right: boolean;
   leftPanelId?: string;
+  rightPanelId?: string;
+  stripPanelId?: string;
 }
 
 export interface LayoutOptions {
@@ -92,6 +94,8 @@ export function createLayout(gridEl?: HTMLElement, options?: LayoutOptions): Lay
 
   // Track left panel ID for persistence
   let leftPanelId: string | undefined = init && init.leftPanelId ? init.leftPanelId : undefined;
+  let rightPanelId: string | undefined = init && init.rightPanelId ? init.rightPanelId : undefined;
+  let stripPanelId: string | undefined = init && init.stripPanelId ? init.stripPanelId : undefined;
 
   // Apply initial state to DOM
   if (init) {
@@ -168,6 +172,8 @@ export function createLayout(gridEl?: HTMLElement, options?: LayoutOptions): Lay
       right: state.right,
     };
     if (leftPanelId) s.leftPanelId = leftPanelId;
+    if (rightPanelId) s.rightPanelId = rightPanelId;
+    if (stripPanelId) s.stripPanelId = stripPanelId;
     return s;
   }
 
@@ -275,6 +281,11 @@ export function createLayout(gridEl?: HTMLElement, options?: LayoutOptions): Lay
           (v) => { rightViewDriven = v; },
           rightViewDriven,
         );
+        if (typeof config.right === 'object' && config.right && config.right.id) {
+          rightPanelId = config.right.id;
+        } else if (config.right === false) {
+          rightPanelId = undefined;
+        }
 
         // Slot locking: config false blocks manual toggles
         leftLocked = config.left === false;
@@ -294,6 +305,7 @@ export function createLayout(gridEl?: HTMLElement, options?: LayoutOptions): Lay
       if (state.fullpage) return;
       state.strip = !state.strip;
       stripViewDriven = false;
+      if (config && config.id) stripPanelId = config.id;
       if (config && config.render) stripManualRender = config.render;
       setSlotHidden('mn-slot-strip', !state.strip);
       fireEvent();
@@ -321,6 +333,7 @@ export function createLayout(gridEl?: HTMLElement, options?: LayoutOptions): Lay
       if (state.fullpage || rightLocked) return;
       state.right = !state.right;
       rightViewDriven = false;
+      if (config && config.id) rightPanelId = config.id;
       if (config && config.render) rightManualRender = config.render;
       setSlotHidden('mn-slot-right', !state.right);
       fireEvent();
@@ -363,7 +376,7 @@ export function createLayout(gridEl?: HTMLElement, options?: LayoutOptions): Lay
     },
 
     get state(): Readonly<LayoutState> {
-      return state;
+      return Object.freeze({ ...state });
     },
 
     destroy(): void {

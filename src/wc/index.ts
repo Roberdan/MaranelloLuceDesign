@@ -49,7 +49,7 @@ let _loaded = false;
 /** Import all WC modules (side-effect: each calls customElements.define). */
 export async function registerAll(): Promise<void> {
   if (_loaded) return;
-  _loaded = true;
+  try {
   await Promise.all([
     import('./mn-app-shell.js'),
     import('./mn-a11y.js'),
@@ -87,6 +87,11 @@ export async function registerAll(): Promise<void> {
   // Auto-inject a11y FAB if not already in DOM
   if (typeof document !== 'undefined' && !document.querySelector('mn-a11y')) {
     document.body.appendChild(document.createElement('mn-a11y'));
+  }
+  _loaded = true;
+  } catch (err) {
+    // Allow retry on next call if imports fail
+    console.warn('Maranello WC registerAll failed — retry on next call', err);
   }
 }
 

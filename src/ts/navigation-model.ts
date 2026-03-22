@@ -25,6 +25,7 @@ export class NavigationModel {
     return entry;
   }
 
+  /** Remove top entry and return the NEW current (not the removed one). */
   pop(): ViewEntry | undefined {
     if (this.stack.length === 0) return undefined;
     this.stack.pop();
@@ -45,7 +46,8 @@ export class NavigationModel {
   }
 
   current(): ViewEntry | undefined {
-    return this.stack[this.stack.length - 1];
+    const entry = this.stack[this.stack.length - 1];
+    return entry ? { ...entry, params: entry.params ? { ...entry.params } : undefined } : undefined;
   }
 
   canGoBack(): boolean {
@@ -53,7 +55,7 @@ export class NavigationModel {
   }
 
   history(): ReadonlyArray<ViewEntry> {
-    return this.stack.slice();
+    return this.stack.map(e => ({ ...e, params: e.params ? { ...e.params } : undefined }));
   }
 
   remove(viewId: string): void {
