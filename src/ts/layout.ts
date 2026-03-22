@@ -35,6 +35,22 @@ export interface LayoutState {
   right: boolean;
 }
 
+/** Serializable state snapshot for persistence. */
+export interface LayoutPersistState {
+  view: string;
+  strip: boolean;
+  left: boolean;
+  right: boolean;
+  leftPanelId?: string;
+}
+
+export interface LayoutOptions {
+  /** Called on every state change — consumer decides where to persist. */
+  onStateChange?: (state: LayoutPersistState) => void;
+  /** Initial state from persistence layer — overrides DOM hidden attrs. */
+  initialState?: Partial<LayoutPersistState>;
+}
+
 export interface LayoutController {
   register(viewId: string, config: LayoutViewConfig): void;
   showView(viewId: string): void;
@@ -49,28 +65,40 @@ export interface LayoutController {
 }
 
 /** Create a layout controller bound to a grid element. */
-export function createLayout(gridEl?: HTMLElement): LayoutController {
+export function createLayout(gridEl?: HTMLElement, options?: LayoutOptions): LayoutController {
   const maybeGrid = gridEl ?? document.getElementById('mn-grid');
   if (!maybeGrid) {
     throw new Error('createLayout: grid element not found');
   }
   const grid: HTMLElement = maybeGrid;
+  const onStateChange = options && options.onStateChange;
+  const init = options && options.initialState;
 
   const views = new Map<string, LayoutViewConfig>();
   const buttonCleanups: Array<() => void> = [];
 
-  // Read initial hidden state from DOM — no flash, no override
+  // Read initial state: initialState option > DOM hidden attrs > defaults
   const initStrip = document.getElementById('mn-slot-strip');
   const initLeft = document.getElementById('mn-slot-left');
   const initRight = document.getElementById('mn-slot-right');
 
   const state: LayoutState = {
-    view: '',
+    view: init && init.view ? init.view : '',
     fullpage: false,
-    strip: initStrip ? !initStrip.hidden : true,
-    left: initLeft ? !initLeft.hidden : false,
-    right: initRight ? !initRight.hidden : false,
+    strip: init && typeof init.strip === 'boolean' ? init.strip : (initStrip ? !initStrip.hidden : true),
+    left: init && typeof init.left === 'boolean' ? init.left : (initLeft ? !initLeft.hidden : false),
+    right: init && typeof init.right === 'boolean' ? init.right : (initRight ? !initRight.hidden : false),
   };
+
+  // Track left panel ID for persistence
+  let leftPanelId: string | undefined = init && init.leftPanelId ? init.leftPanelId : undefined;
+
+  // Apply initial state to DOM
+  if (init) {
+    if (initStrip) initStrip.hidden = !state.strip;
+    if (initLeft) initLeft.hidden = !state.left;
+    if (initRight) initRight.hidden = !state.right;
+  }
 
   // Track whether each slot was opened by a view config (view-driven)
   // or by manual toggle. View-driven slots close on view switch;
@@ -127,13 +155,24 @@ export function createLayout(gridEl?: HTMLElement): LayoutController {
     }
   }
 
+  /** Build serializable state snapshot for persistence. */
+  function persistState(): LayoutPersistState {
+    const s: LayoutPersistState = {
+      view: state.view,
+      strip: state.strip,
+      left: state.left,
+      right: state.right,
+    };
+    if (leftPanelId) s.leftPanelId = leftPanelId;
+    return s;
+  }
+
   function fireEvent(): void {
+    const detail = { ...state };
     grid.dispatchEvent(
-      new CustomEvent('layout-changed', {
-        detail: { ...state },
-        bubbles: true,
-      }),
+      new CustomEvent('layout-changed', { detail, bubbles: true }),
     );
+    if (onStateChange) onStateChange(persistState());
   }
 
   function applyState(): void {
@@ -218,6 +257,14 @@ export function createLayout(gridEl?: HTMLElement): LayoutController {
           (v) => { leftViewDriven = v; },
           leftViewDriven,
         );
+        // Track left panel ID for persistence
+        if (typeof config.left === 'object' && config.left && config.left.id) {
+          leftPanelId = config.left.id;
+        } else if (config.left === undefined && leftViewDriven) {
+          // View-driven left closed — clear panel ID
+        } else if (config.left === false) {
+          leftPanelId = undefined;
+        }
         applySlotConfig(
           config.right, 'mn-slot-right',
           (v) => { state.right = v; },
@@ -252,6 +299,7 @@ export function createLayout(gridEl?: HTMLElement): LayoutController {
       if (state.fullpage) return;
       state.left = !state.left;
       leftViewDriven = false;
+      if (config && config.id) leftPanelId = config.id;
       if (config && config.render) leftManualRender = config.render;
       setSlotHidden('mn-slot-left', !state.left);
       fireEvent();

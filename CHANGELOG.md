@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.7.0] - 2026-03-22
+
+### Added
+- State persistence hooks: `createLayout(el, { onStateChange, initialState })`
+- `onStateChange` called on every state change with `{ view, strip, left, right, leftPanelId }`
+- `initialState` restores layout from persistence layer at init
+
 ## [5.6.4] - 2026-03-22
 
 ### Fixed
