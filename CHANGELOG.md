@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.6.2] - 2026-03-22
+
+### Fixed
+- **Strip CSS grid independence** — `:has()` rules for left/right no longer force strip into `grid-template-areas` when strip is hidden. Root cause of strip appearing as side effect of `toggleLeft()`.
+
 ## [5.6.1] - 2026-03-22
 
 ### Fixed

@@ -1,4 +1,4 @@
-<!-- v5.6.1 | 2026-03-22 -->
+<!-- v5.6.2 | 2026-03-22 -->
 # MaranelloLuceDesign
 
 Ferrari Luce-inspired design system for business dashboards. Part of Convergio.
