@@ -233,17 +233,17 @@ export function createLayout(gridEl?: HTMLElement): LayoutController {
       }
     },
 
-    // Independent toggles — accept optional SlotConfig for render
+    // Independent toggles — each writes ONLY its own slot, never others
     toggleStrip(config?: SlotConfig): void {
       if (state.fullpage) return;
       state.strip = !state.strip;
       stripViewDriven = false;
       if (config && config.render) stripManualRender = config.render;
-      applyState();
-      if (state.strip && (config && config.render)) {
-        renderToSlot('mn-slot-strip', config.render);
-      } else if (state.strip && stripManualRender) {
-        renderToSlot('mn-slot-strip', stripManualRender);
+      setSlotHidden('mn-slot-strip', !state.strip);
+      fireEvent();
+      if (state.strip) {
+        const render = (config && config.render) || stripManualRender;
+        if (render) renderToSlot('mn-slot-strip', render);
       }
     },
 
@@ -252,11 +252,11 @@ export function createLayout(gridEl?: HTMLElement): LayoutController {
       state.left = !state.left;
       leftViewDriven = false;
       if (config && config.render) leftManualRender = config.render;
-      applyState();
-      if (state.left && (config && config.render)) {
-        renderToSlot('mn-slot-left', config.render);
-      } else if (state.left && leftManualRender) {
-        renderToSlot('mn-slot-left', leftManualRender);
+      setSlotHidden('mn-slot-left', !state.left);
+      fireEvent();
+      if (state.left) {
+        const render = (config && config.render) || leftManualRender;
+        if (render) renderToSlot('mn-slot-left', render);
       }
     },
 
@@ -265,11 +265,11 @@ export function createLayout(gridEl?: HTMLElement): LayoutController {
       state.right = !state.right;
       rightViewDriven = false;
       if (config && config.render) rightManualRender = config.render;
-      applyState();
-      if (state.right && (config && config.render)) {
-        renderToSlot('mn-slot-right', config.render);
-      } else if (state.right && rightManualRender) {
-        renderToSlot('mn-slot-right', rightManualRender);
+      setSlotHidden('mn-slot-right', !state.right);
+      fireEvent();
+      if (state.right) {
+        const render = (config && config.render) || rightManualRender;
+        if (render) renderToSlot('mn-slot-right', render);
       }
     },
 
@@ -278,18 +278,17 @@ export function createLayout(gridEl?: HTMLElement): LayoutController {
       state.right = true;
       rightViewDriven = false;
       if (config && config.render) rightManualRender = config.render;
-      applyState();
-      if (config && config.render) {
-        renderToSlot('mn-slot-right', config.render);
-      } else if (rightManualRender) {
-        renderToSlot('mn-slot-right', rightManualRender);
-      }
+      setSlotHidden('mn-slot-right', !state.right);
+      fireEvent();
+      const render = (config && config.render) || rightManualRender;
+      if (render) renderToSlot('mn-slot-right', render);
     },
 
     closeRight(): void {
       state.right = false;
       rightViewDriven = false;
-      applyState();
+      setSlotHidden('mn-slot-right', !state.right);
+      fireEvent();
     },
 
     wireButtons(): void {
