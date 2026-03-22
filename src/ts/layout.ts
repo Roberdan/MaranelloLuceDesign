@@ -112,6 +112,10 @@ export function createLayout(gridEl?: HTMLElement, options?: LayoutOptions): Lay
   let rightManualRender: ((slot: HTMLElement) => void) | null = null;
   let stripManualRender: ((slot: HTMLElement) => void) | null = null;
 
+  // Slot locking: view config `false` blocks manual toggles until next showView
+  let leftLocked = false;
+  let rightLocked = false;
+
   // Fullpage saves/restores
   let savedStrip = state.strip;
   let savedLeft = state.left;
@@ -271,6 +275,10 @@ export function createLayout(gridEl?: HTMLElement, options?: LayoutOptions): Lay
           (v) => { rightViewDriven = v; },
           rightViewDriven,
         );
+
+        // Slot locking: config false blocks manual toggles
+        leftLocked = config.left === false;
+        rightLocked = config.right === false;
       }
 
       applyState();
@@ -296,7 +304,7 @@ export function createLayout(gridEl?: HTMLElement, options?: LayoutOptions): Lay
     },
 
     toggleLeft(config?: SlotConfig): void {
-      if (state.fullpage) return;
+      if (state.fullpage || leftLocked) return;
       state.left = !state.left;
       leftViewDriven = false;
       if (config && config.id) leftPanelId = config.id;
@@ -310,7 +318,7 @@ export function createLayout(gridEl?: HTMLElement, options?: LayoutOptions): Lay
     },
 
     toggleRight(config?: SlotConfig): void {
-      if (state.fullpage) return;
+      if (state.fullpage || rightLocked) return;
       state.right = !state.right;
       rightViewDriven = false;
       if (config && config.render) rightManualRender = config.render;
@@ -323,7 +331,7 @@ export function createLayout(gridEl?: HTMLElement, options?: LayoutOptions): Lay
     },
 
     openRight(config?: SlotConfig): void {
-      if (state.fullpage) return;
+      if (state.fullpage || rightLocked) return;
       state.right = true;
       rightViewDriven = false;
       if (config && config.render) rightManualRender = config.render;

@@ -2,7 +2,7 @@ import { build } from 'esbuild';
 import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 
-const banner = `/* Maranello Luce Design v4.14.1 | MPL-2.0 | github.com/Roberdan/MaranelloLuceDesign */`;
+const banner = `/* Maranello Luce Design v5.8.0 | MPL-2.0 | github.com/Roberdan/MaranelloLuceDesign */`;
 
 const shared = {
   bundle: true,

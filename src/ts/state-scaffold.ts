@@ -19,7 +19,11 @@ export class StateScaffold {
   private events: AbortController | null = null;
 
   constructor(container: HTMLElement, options: StateScaffoldOptions) {
-    const initial = options?.state && VALID_STATES.includes(options.state) ? options.state : 'loading';
+    const validInitial = options?.state && VALID_STATES.includes(options.state);
+    if (!validInitial && options?.state) {
+      console.warn(`StateScaffold: invalid initial state "${options.state}". Falling back to "loading". Valid states: ${VALID_STATES.join(', ')}`);
+    }
+    const initial = validInitial ? options.state : 'loading';
     this.container = container;
     this.options = { ...options, state: initial };
     this.state = initial;

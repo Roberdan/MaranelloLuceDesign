@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.8.0] - 2026-03-22
+
+### Added
+- `NavigationModel.remove()` and `clear()` emit navigate events (`'remove'` / `'clear'` actions)
+- `NavigateAction` type: `'push' | 'pop' | 'replace' | 'remove' | 'clear'`
+
+### Fixed
+- Slot locking re-implemented — `left: false` / `right: false` blocks manual toggles
+- StateScaffold warns on invalid constructor state (was silent fallback)
+- VERSION export: `4.20.0` → `5.8.0`; esbuild banner: `v4.14.1` → `v5.8.0`
+- Demo WC count: 26 → 33; `sideEffects` flag: `false` → IIFE+WC paths
+- `NavigationModel.destroy()` no longer emits event on internal clear
+
 ## [5.7.0] - 2026-03-22
 
 ### Added

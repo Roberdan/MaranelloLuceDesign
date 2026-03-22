@@ -2,7 +2,7 @@
 
 Ferrari Luce-inspired design system for AI agent dashboards. Zero runtime dependencies. 5 adaptive themes. WCAG 2.2 AA. Framework-agnostic.
 
-**v5.7.0** | [Live Demo](https://roberdan.github.io/MaranelloLuceDesign/) | [Migration Guide](docs/migrations/v5.3.0.md) | [CHANGELOG](CHANGELOG.md)
+**v5.8.0** | [Live Demo](https://roberdan.github.io/MaranelloLuceDesign/) | [Migration Guide](docs/migrations/v5.3.0.md) | [CHANGELOG](CHANGELOG.md)
 
 ## Install
 

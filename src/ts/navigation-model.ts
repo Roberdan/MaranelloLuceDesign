@@ -6,7 +6,7 @@ export interface ViewEntry {
   timestamp: number;
 }
 
-export type NavigateAction = 'push' | 'pop' | 'replace';
+export type NavigateAction = 'push' | 'pop' | 'replace' | 'remove' | 'clear';
 export type NavigateCallback = (entry: ViewEntry, action: NavigateAction) => void;
 
 interface NavigationEventMap extends Record<string, unknown> {
@@ -57,13 +57,28 @@ export class NavigationModel {
   }
 
   remove(viewId: string): void {
+    let removed = false;
     for (let i = this.stack.length - 1; i >= 0; i--) {
-      if (this.stack[i].viewId === viewId) this.stack.splice(i, 1);
+      if (this.stack[i].viewId === viewId) {
+        this.stack.splice(i, 1);
+        removed = true;
+      }
+    }
+    if (removed) {
+      const current = this.current();
+      if (current) {
+        this.notify(current, 'remove');
+      } else {
+        this.notify({ viewId, timestamp: Date.now() }, 'remove');
+      }
     }
   }
 
   clear(): void {
+    if (this.stack.length === 0) return;
+    const last = this.stack[this.stack.length - 1];
     this.stack.length = 0;
+    this.notify(last, 'clear');
   }
 
   onNavigate(cb: NavigateCallback): () => void {
@@ -81,7 +96,7 @@ export class NavigationModel {
   }
 
   destroy(): void {
-    this.clear();
+    this.stack.length = 0; // silent clear — no event on destroy
     this.callbacks.clear();
     this.bus.removeAll();
   }

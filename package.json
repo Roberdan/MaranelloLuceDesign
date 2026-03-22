@@ -1,6 +1,6 @@
 {
   "name": "maranello-luce-design-business",
-  "version": "5.7.0",
+  "version": "5.8.0",
   "description": "Ferrari Luce-inspired design system for business dashboards. Part of the Convergio project.",
   "type": "module",
   "exports": {
@@ -55,7 +55,11 @@
     "./vendor/*": "./dist/vendor/*"
   },
   "types": "./dist/types/ts/index.d.ts",
-  "sideEffects": false,
+  "sideEffects": [
+    "dist/iife/*.js",
+    "dist/wc/*.js",
+    "dist/esm/wc/*.js"
+  ],
   "peerDependencies": {
     "mapbox-gl": ">=2.0.0"
   },
