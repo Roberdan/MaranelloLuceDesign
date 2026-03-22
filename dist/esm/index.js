@@ -15040,7 +15040,7 @@ M.charts = {
 registerExtras(M);
 
 // src/ts/index.ts
-var VERSION = "5.11.1";
+var VERSION = "5.11.2";
 export {
   AppShellController,
   AsyncSelect,

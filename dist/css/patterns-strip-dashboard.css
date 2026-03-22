@@ -62,7 +62,7 @@
 
 /* ── Pipeline rows (stage bar + duration) ── */
 .mn-strip__pipeline-row,
-.mn-strip-pipeline { display:flex; flex-direction:column; gap:2px; margin-top:2px; }
+.mn-strip-pipeline { display:flex; flex-direction:column; gap:2px; flex:1; justify-content:center; }
 .mn-strip-row { display:flex; align-items:center; gap:6px; height:17px; }
 .mn-strip-row__label {
   font-family:var(--font-mono,'Barlow Condensed',sans-serif);
@@ -96,7 +96,7 @@
 /* ── Gauge canvas mount wrapper ── */
 .mn-strip__gauge-wrap,
 .mn-strip-gauge-wrap {
-  display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
   gap:2px; width:170px; flex:0 0 170px; padding:8px 4px 6px; border-radius:var(--radius-md);
 }
 /* Gauge canvas: dark circular face — gauges are designed for dark backgrounds */
@@ -105,24 +105,26 @@
   border-radius:50%;
 }
 
-/* ── KPI cells with sparklines ── */
+/* ── KPI cells with sparklines — fill all available height ── */
 .mn-strip-kpis {
-  display:grid; grid-template-columns:1fr 1fr;
-  gap:var(--space-sm) var(--space-xl); margin-top:2px;
+  display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr;
+  gap:var(--space-sm) var(--space-xl); flex:1;
 }
-.mn-strip-kpi { display:flex; flex-direction:column; align-items:center; gap:2px; min-width:80px; }
+.mn-strip-kpi { display:flex; flex-direction:column; align-items:stretch; justify-content:center; gap:2px; min-width:80px; }
 .mn-strip-kpi__label {
   font-family:var(--font-mono,'Barlow Condensed',sans-serif);
   font-size:0.55rem; text-transform:uppercase; letter-spacing:0.06em;
+  text-align:center;
 }
 .mn-strip-kpi__value {
   font-family:var(--font-display,'Outfit',sans-serif);
   font-size:1.8rem; font-weight:700; line-height:1;
+  text-align:center;
 }
 
-/* ── Sparkline mount ── */
+/* ── Sparkline mount — fills available width, taller for readability ── */
 .mn-strip__sparkline-mount,
-.mn-strip-kpi__spark { width:80px; height:28px; }
+.mn-strip-kpi__spark { width:100%; height:36px; }
 
 /* ── Flat legend ── */
 .mn-strip-legend {
@@ -137,14 +139,14 @@
 }
 
 /* ── Secondary board row (stats + gauge side by side) ── */
-.mn-strip-board-row { display:flex; align-items:center; gap:var(--space-lg); }
+.mn-strip-board-row { display:flex; align-items:stretch; gap:var(--space-lg); flex:1; }
 
-/* ── Secondary board cells (stacked vertically) ── */
-.mn-strip-board { display:flex; flex-direction:column; gap:8px; flex:1; }
+/* ── Secondary board cells (stacked vertically, fill height) ── */
+.mn-strip-board { display:flex; flex-direction:column; gap:8px; flex:1; justify-content:center; }
 .mn-strip-board__cell {
   display:flex; flex-direction:column; align-items:center; justify-content:center;
-  padding:8px 12px; border:1px solid var(--mn-border);
-  border-radius:var(--radius-md); min-width:60px; flex:1;
+  padding:10px 16px; border:1px solid var(--mn-border);
+  border-radius:var(--radius-md); min-width:80px; flex:1;
 }
 .mn-strip-board__label {
   font-family:var(--font-mono,'Barlow Condensed',sans-serif);
