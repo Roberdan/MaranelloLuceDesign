@@ -73,6 +73,12 @@ function createButton(btn: HeaderButton): HTMLButtonElement {
   labelSpan.textContent = btn.label;
   el.appendChild(labelSpan);
   if (btn.onClick) el.addEventListener('click', btn.onClick);
+  el.addEventListener('click', () => {
+    el.dispatchEvent(new CustomEvent('header-button-click', {
+      detail: { id: btn.id, label: btn.label },
+      bubbles: true,
+    }));
+  });
   return el;
 }
 

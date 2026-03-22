@@ -532,6 +532,7 @@ var StateScaffold = class {
       this.container.classList.remove(`mn-scaffold--${name}`);
     }
     this.container.classList.add(`mn-scaffold--${state}`);
+    this.container.setAttribute("aria-busy", state === "loading" ? "true" : "false");
     this.status.innerHTML = "";
     this.content.classList.toggle("mn-scaffold__content--hidden", state !== "partial" && state !== "ready");
     if (state === "loading") this.renderLoading();
@@ -555,6 +556,7 @@ var StateScaffold = class {
       this.container.appendChild(this.content.firstChild);
     }
     this.content.remove();
+    this.container.removeAttribute("aria-busy");
     this.container.classList.remove("mn-scaffold", "mn-scaffold__content--hidden");
     for (const name of VALID_STATES) {
       this.container.classList.remove(`mn-scaffold--${name}`);
@@ -562,7 +564,6 @@ var StateScaffold = class {
   }
   renderLoading() {
     const panel = this.buildPanel("loading");
-    panel.setAttribute("aria-busy", "true");
     panel.setAttribute("role", "status");
     panel.setAttribute("aria-live", "polite");
     for (let i = 0; i < 3; i += 1) {
@@ -603,7 +604,6 @@ var StateScaffold = class {
   }
   renderReady() {
     this.status.innerHTML = "";
-    this.container.setAttribute("aria-busy", "false");
   }
   renderNoResults() {
     const panel = this.buildMessageState(
@@ -1016,10 +1016,10 @@ function createFacetSection(facet) {
   const section = document.createElement("section");
   section.className = "mn-facet";
   section.dataset.facetId = facet.id;
-  const header = document.createElement("button");
-  header.type = "button";
-  header.className = "mn-facet__header";
-  header.setAttribute("aria-expanded", "true");
+  const header2 = document.createElement("button");
+  header2.type = "button";
+  header2.className = "mn-facet__header";
+  header2.setAttribute("aria-expanded", "true");
   const title = document.createElement("span");
   title.className = "mn-facet__title";
   title.textContent = facet.label;
@@ -1029,12 +1029,12 @@ function createFacetSection(facet) {
   chevron.className = "mn-facet__chevron";
   chevron.setAttribute("aria-hidden", "true");
   chevron.textContent = "\u25BE";
-  header.append(title, count, chevron);
+  header2.append(title, count, chevron);
   const body = document.createElement("div");
   body.className = "mn-facet__body";
   body.dataset.type = facet.type;
-  section.append(header, body);
-  return { section, header, body, count };
+  section.append(header2, body);
+  return { section, header: header2, body, count };
 }
 function setFacetCollapsed(refs, collapsed) {
   refs.section.classList.toggle("mn-facet--collapsed", collapsed);
@@ -1159,12 +1159,12 @@ function closeFacetFromNode(node) {
   const section = node.closest(".mn-facet");
   if (!section) return;
   section.classList.add("mn-facet--collapsed");
-  const header = section.querySelector(".mn-facet__header");
+  const header2 = section.querySelector(".mn-facet__header");
   const body = section.querySelector(".mn-facet__body");
-  if (header && body) {
-    header.setAttribute("aria-expanded", "false");
+  if (header2 && body) {
+    header2.setAttribute("aria-expanded", "false");
     body.hidden = true;
-    header.focus();
+    header2.focus();
   }
 }
 function bindFacetWorkbenchKeyboard(root) {
@@ -1904,7 +1904,7 @@ function renderWorkbench(ctx) {
 function switchTab(container, tabId, ctx) {
   const tabButtons = container.querySelectorAll(".mn-entity-workbench__tab");
   tabButtons.forEach((btn) => {
-    btn.classList.toggle("mn-entity-workbench__tab--active", btn.textContent === labelForTab(ctx.schema, tabId));
+    btn.classList.toggle("mn-entity-workbench__tab--active", btn.dataset.tabId === tabId);
   });
   const panels = container.querySelectorAll(".mn-entity-workbench__tab-panel");
   panels.forEach((panel) => {
@@ -1923,9 +1923,6 @@ function updateSaveState(container, isDirty) {
   const saveBtn = container.querySelector('[data-action="save"]');
   if (saveBtn) saveBtn.disabled = !isDirty;
 }
-function labelForTab(schema, tabId) {
-  return schema.tabs.find((t) => t.id === tabId)?.label ?? "";
-}
 function renderBreadcrumb(content) {
   const nav = document.createElement("nav");
   nav.className = "mn-entity-workbench__breadcrumb";
@@ -1939,6 +1936,7 @@ function renderTabs(ctx) {
     const btn = document.createElement("button");
     btn.type = "button";
     btn.className = `mn-entity-workbench__tab${tab.id === ctx.activeTab ? " mn-entity-workbench__tab--active" : ""}`;
+    btn.dataset.tabId = tab.id;
     btn.textContent = tab.label;
     btn.addEventListener("click", () => ctx.onTab(tab.id));
     tabs.appendChild(btn);
@@ -2182,6 +2180,10 @@ var EntityWorkbench = class {
   onFieldChange(field, value) {
     setValue(this.currentData, field.key, value);
     updateSaveState(this.container, this.isDirty());
+    if (field.key === "name" || field.key === "title") {
+      const breadcrumbEl = this.container.querySelector(".mn-entity-workbench__breadcrumb");
+      if (breadcrumbEl) breadcrumbEl.textContent = this.buildBreadcrumb();
+    }
   }
   async handleSave() {
     if (!this.validate().valid) return;
@@ -3866,7 +3868,7 @@ function buildUI(container, opts) {
   panel.appendChild(el2("div", "mn-chat-panel__accent"));
   const resizeHandle = el2("div", "mn-chat-panel__resize");
   panel.appendChild(resizeHandle);
-  const header = el2("div", "mn-chat-panel__header");
+  const header2 = el2("div", "mn-chat-panel__header");
   const headerLeft = el2("div", "mn-chat-panel__header-left");
   if (opts.avatar) {
     const ha = el2("img", "mn-chat-panel__header-avatar");
@@ -3888,9 +3890,9 @@ function buildUI(container, opts) {
   headerActions.appendChild(closeBtn);
   headerLeft.appendChild(titleEl);
   if (opts.agents?.length) headerLeft.appendChild(agentSelector);
-  header.appendChild(headerLeft);
-  header.appendChild(headerActions);
-  panel.appendChild(header);
+  header2.appendChild(headerLeft);
+  header2.appendChild(headerActions);
+  panel.appendChild(header2);
   const agentGrid = el2("div", "mn-chat-agent-grid", { "aria-hidden": "true" });
   panel.appendChild(agentGrid);
   const messagesEl = el2("div", "mn-chat-panel__messages");
@@ -4263,6 +4265,100 @@ function systemStatus(container, opts) {
   };
 }
 
+// src/ts/theme-picker.ts
+var THEMES = [
+  { id: "editorial", label: "Editorial", surface: "#111111", card: "#1a1a1a", accent: "#FFC72C", error: "#DC0000", info: "#448AFF" },
+  { id: "nero", label: "Nero", surface: "#050505", card: "#111111", accent: "#FFC72C", error: "#DC0000", info: "#448AFF" },
+  { id: "avorio", label: "Avorio", surface: "#FAF3E6", card: "#FFFFFF", accent: "#DC0000", error: "#DC0000", info: "#448AFF" },
+  { id: "colorblind", label: "Colorblind", surface: "#111111", card: "#1a1a1a", accent: "#0072B2", error: "#C94000", info: "#0072B2" },
+  { id: "sugar", label: "Sugar", surface: "#E4E4E8", card: "#FFFFFF", accent: "#000000", error: "#DC0000", info: "#448AFF" }
+];
+function buildCard(theme, isActive) {
+  const card = document.createElement("div");
+  card.className = "mn-theme-picker__card" + (isActive ? " mn-theme-picker__card--active" : "");
+  card.setAttribute("role", "radio");
+  card.setAttribute("aria-checked", String(isActive));
+  card.setAttribute("tabindex", "0");
+  card.setAttribute("data-theme", theme.id);
+  card.setAttribute("aria-label", `${escapeHtml(theme.label)} theme`);
+  const header2 = document.createElement("div");
+  header2.className = "mn-theme-picker__header";
+  const radio = document.createElement("span");
+  radio.className = "mn-theme-picker__radio";
+  radio.setAttribute("aria-hidden", "true");
+  header2.appendChild(radio);
+  const name = document.createElement("span");
+  name.className = "mn-theme-picker__name";
+  name.textContent = theme.label;
+  header2.appendChild(name);
+  card.appendChild(header2);
+  const preview = document.createElement("div");
+  preview.className = "mn-theme-picker__preview";
+  preview.style.backgroundColor = theme.surface;
+  const previewCard = document.createElement("div");
+  previewCard.className = "mn-theme-picker__preview-card";
+  previewCard.style.backgroundColor = theme.card;
+  const formLabel = document.createElement("div");
+  formLabel.className = "mn-theme-picker__preview-label";
+  const isLight = theme.id === "avorio" || theme.id === "sugar";
+  formLabel.style.backgroundColor = isLight ? "#999" : "#555";
+  const formInput = document.createElement("div");
+  formInput.className = "mn-theme-picker__preview-input";
+  formInput.style.borderColor = isLight ? "#ccc" : "#444";
+  const dots = document.createElement("div");
+  dots.className = "mn-theme-picker__dots";
+  for (const color of [theme.accent, theme.error, theme.info]) {
+    const dot = document.createElement("span");
+    dot.className = "mn-theme-picker__dot";
+    dot.style.backgroundColor = color;
+    dots.appendChild(dot);
+  }
+  previewCard.appendChild(formLabel);
+  previewCard.appendChild(formInput);
+  previewCard.appendChild(dots);
+  preview.appendChild(previewCard);
+  card.appendChild(preview);
+  return card;
+}
+function themePicker(container, options) {
+  const current = options?.current ?? getTheme();
+  let selected = THEMES.some((t) => t.id === current) ? current : "editorial";
+  const grid = document.createElement("div");
+  grid.className = "mn-theme-picker" + (options?.compact ? " mn-theme-picker--compact" : "");
+  grid.setAttribute("role", "radiogroup");
+  grid.setAttribute("aria-label", "Theme selection");
+  function render5() {
+    grid.innerHTML = "";
+    for (const theme of THEMES) {
+      const card = buildCard(theme, theme.id === selected);
+      card.addEventListener("click", () => select(theme.id));
+      card.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          select(theme.id);
+        }
+      });
+      grid.appendChild(card);
+    }
+  }
+  function select(id) {
+    selected = id;
+    setTheme(id);
+    render5();
+    options?.onChange?.(id);
+  }
+  render5();
+  container.appendChild(grid);
+  return {
+    destroy() {
+      grid.remove();
+    },
+    getTheme() {
+      return selected;
+    }
+  };
+}
+
 // src/ts/profile-menu-dom.ts
 function getIcon3(name) {
   if (icons[name]) return icons[name]();
@@ -4305,9 +4401,9 @@ function buildDropdown(opts, closeFn) {
   dd.className = "mn-profile-dropdown";
   dd.setAttribute("role", "menu");
   dd.setAttribute("aria-label", "User menu");
-  const header = document.createElement("div");
-  header.className = "mn-profile-dropdown__header";
-  header.appendChild(buildLargeAvatar(opts.name, opts.avatarUrl));
+  const header2 = document.createElement("div");
+  header2.className = "mn-profile-dropdown__header";
+  header2.appendChild(buildLargeAvatar(opts.name, opts.avatarUrl));
   const info = document.createElement("div");
   info.className = "mn-profile-dropdown__info";
   const nameEl = document.createElement("div");
@@ -4320,8 +4416,8 @@ function buildDropdown(opts, closeFn) {
     emailEl.textContent = opts.email;
     info.appendChild(emailEl);
   }
-  header.appendChild(info);
-  dd.appendChild(header);
+  header2.appendChild(info);
+  dd.appendChild(header2);
   for (const section of opts.sections) {
     if (section.divider) {
       dd.appendChild(document.createElement("div")).className = "mn-profile-dropdown__divider";
@@ -4334,6 +4430,13 @@ function buildDropdown(opts, closeFn) {
       titleEl.className = "mn-profile-dropdown__section-title";
       titleEl.textContent = section.title;
       sectionEl.appendChild(titleEl);
+    }
+    if (section.type === "theme-switcher") {
+      const pickerHost = document.createElement("div");
+      sectionEl.appendChild(pickerHost);
+      dd.appendChild(sectionEl);
+      themePicker(pickerHost, { compact: true });
+      continue;
     }
     for (const item of section.items ?? []) {
       const row = document.createElement("div");
@@ -4508,6 +4611,145 @@ function profileMenu(trigger, options) {
   };
 }
 
+// src/ts/header.ts
+function isProfile(item) {
+  return typeof item === "object" && "type" in item && item.type === "profile";
+}
+function isSeparator(item) {
+  return item === "separator";
+}
+function createButton(btn) {
+  const el5 = document.createElement("button");
+  el5.type = "button";
+  el5.className = "mn-header__btn";
+  el5.dataset.headerId = btn.id;
+  if (btn.active) el5.classList.add("mn-header__btn--active");
+  if (btn.icon) {
+    const iconSpan = document.createElement("span");
+    iconSpan.className = "mn-header__btn-icon";
+    iconSpan.innerHTML = btn.icon;
+    el5.appendChild(iconSpan);
+  }
+  const labelSpan = document.createElement("span");
+  labelSpan.textContent = btn.label;
+  el5.appendChild(labelSpan);
+  if (btn.onClick) el5.addEventListener("click", btn.onClick);
+  el5.addEventListener("click", () => {
+    el5.dispatchEvent(new CustomEvent("header-button-click", {
+      detail: { id: btn.id, label: btn.label },
+      bubbles: true
+    }));
+  });
+  return el5;
+}
+function createSep() {
+  const el5 = document.createElement("span");
+  el5.className = "mn-header__sep";
+  el5.setAttribute("role", "separator");
+  return el5;
+}
+function header(container, options) {
+  const opts = options ?? {};
+  const nav = document.createElement("nav");
+  nav.className = "mn-header";
+  nav.setAttribute("role", "navigation");
+  nav.setAttribute("aria-label", "Main navigation");
+  const leftZone = document.createElement("div");
+  leftZone.className = "mn-header__zone mn-header__zone--left";
+  const centerZone = document.createElement("div");
+  centerZone.className = "mn-header__zone mn-header__zone--center";
+  const rightZone = document.createElement("div");
+  rightZone.className = "mn-header__zone mn-header__zone--right";
+  if (opts.brand) {
+    const tag = opts.brand.href ? "a" : "span";
+    const brand = document.createElement(tag);
+    brand.className = "mn-header__brand";
+    if (opts.brand.href && brand instanceof HTMLAnchorElement) {
+      brand.href = opts.brand.href;
+    }
+    if (opts.brand.logo) {
+      const logoSpan = document.createElement("span");
+      logoSpan.className = "mn-header__brand-logo";
+      logoSpan.innerHTML = opts.brand.logo;
+      brand.appendChild(logoSpan);
+    }
+    const labelSpan = document.createElement("span");
+    labelSpan.textContent = opts.brand.label;
+    brand.appendChild(labelSpan);
+    leftZone.appendChild(brand);
+  }
+  if (opts.left) {
+    for (const item of opts.left) {
+      leftZone.appendChild(item === "separator" ? createSep() : createButton(item));
+    }
+  }
+  if (opts.center) {
+    const searchWrap = document.createElement("div");
+    searchWrap.className = "mn-header__search";
+    const input = document.createElement("input");
+    input.type = "search";
+    input.className = "mn-header__search-input";
+    input.placeholder = opts.center.placeholder ?? "Search...";
+    if (opts.center.onSearch) {
+      const cb = opts.center.onSearch;
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") cb(input.value);
+      });
+    }
+    searchWrap.appendChild(input);
+    if (opts.center.shortcut) {
+      const kbd = document.createElement("kbd");
+      kbd.className = "mn-header__shortcut";
+      kbd.textContent = opts.center.shortcut;
+      searchWrap.appendChild(kbd);
+    }
+    if (opts.center.filterButton) {
+      const fb = document.createElement("button");
+      fb.type = "button";
+      fb.className = "mn-header__filter-btn mn-header__btn";
+      fb.textContent = opts.center.filterButton.label;
+      fb.addEventListener("click", opts.center.filterButton.onClick);
+      searchWrap.appendChild(fb);
+    }
+    centerZone.appendChild(searchWrap);
+  }
+  const cleanups = [];
+  if (opts.right) {
+    for (const item of opts.right) {
+      if (isSeparator(item)) {
+        rightZone.appendChild(createSep());
+      } else if (isProfile(item)) {
+        const wrap = document.createElement("div");
+        wrap.className = "mn-header__profile";
+        const ctrl = profileMenu(wrap, {
+          name: item.name,
+          avatarUrl: item.avatarUrl,
+          sections: item.sections
+        });
+        cleanups.push(() => ctrl.destroy());
+        rightZone.appendChild(wrap);
+      } else {
+        rightZone.appendChild(createButton(item));
+      }
+    }
+  }
+  nav.appendChild(leftZone);
+  nav.appendChild(centerZone);
+  nav.appendChild(rightZone);
+  container.appendChild(nav);
+  return {
+    setActive(buttonId) {
+      nav.querySelectorAll(".mn-header__btn[data-header-id]").forEach((el5) => {
+        el5.classList.toggle("mn-header__btn--active", el5.getAttribute("data-header-id") === buttonId);
+      });
+    },
+    destroy() {
+      cleanups.forEach((fn) => fn());
+      nav.remove();
+    }
+  };
+}
+
 // src/ts/auto-resize.ts
 function autoResize(canvas, factory, data, opts) {
   if (typeof window === "undefined" || !window.ResizeObserver) return () => {
@@ -4569,7 +4811,7 @@ function autoResizeAll(selector = "canvas[data-auto-resize]", chartLib) {
 var DPR = window.devicePixelRatio || 1;
 var TAU = Math.PI * 2;
 var SIZE_PX = { sm: 6, md: 10, lg: 14 };
-var THEMES = {
+var THEMES2 = {
   editorial: { land: "#333330", water: "#0d0d0d", border: "#444440", grid: "rgba(200,200,200,0.06)", text: "#c8c8c8", muted: "#616161" },
   nero: { land: "#2e2e2a", water: "#080808", border: "#444440", grid: "rgba(200,200,200,0.05)", text: "#c8c8c8", muted: "#555" },
   avorio: { land: "#e8d5b0", water: "#faf3e6", border: "#d7c39a", grid: "rgba(0,0,0,0.05)", text: "#1a1a1a", muted: "#888" },
@@ -4590,7 +4832,7 @@ var CONTINENTS = {
 function detectTheme() {
   const b = document.body.classList;
   const name = b.contains("mn-colorblind") ? "colorblind" : b.contains("mn-sugar") ? "sugar" : b.contains("mn-nero") ? "nero" : b.contains("mn-avorio") ? "avorio" : "editorial";
-  const t = THEMES[name];
+  const t = THEMES2[name];
   return { ...t, coast: t.border, bg: t.water };
 }
 function getMarkerColors() {
@@ -5964,9 +6206,9 @@ function render2(state, opts, tbody, paginationEl, liveRegion) {
       const grow = grouped.groups[gname];
       const isCollapsed = state.groupCollapsed[gname] === true || state.expandedGroups[gname] === false;
       const isExpanded = !isCollapsed;
-      const header = buildGroupHeader(gname, grow.length, isExpanded, colSpan, state, renderFn);
-      header.setAttribute("data-group", gname);
-      tbody.appendChild(header);
+      const header2 = buildGroupHeader(gname, grow.length, isExpanded, colSpan, state, renderFn);
+      header2.setAttribute("data-group", gname);
+      tbody.appendChild(header2);
       if (isExpanded) for (const row of grow) tbody.appendChild(buildRow(row, rowIdx++, opts, state, tbody));
       else rowIdx += grow.length;
     }
@@ -7087,7 +7329,7 @@ function createObjectiveCard(objective, index) {
   card.style.setProperty("--mn-okr-scope", scopeColor);
   card.style.setProperty("--mn-okr-status", STATUS_COLORS2[status]);
   card.style.animationDelay = index * 45 + "ms";
-  const header = el4("div", "mn-okr__objective-header");
+  const header2 = el4("div", "mn-okr__objective-header");
   const left = el4("div", "mn-okr__objective-main");
   left.appendChild(el4("span", "mn-okr__scope-badge", { text: objective.scope }));
   left.appendChild(el4("h3", "mn-okr__objective-title", { text: objective.title }));
@@ -7101,11 +7343,11 @@ function createObjectiveCard(objective, index) {
     "mn-okr__ring-track",
     "mn-okr__ring-progress"
   );
-  header.appendChild(left);
-  header.appendChild(right);
+  header2.appendChild(left);
+  header2.appendChild(right);
   const krList = el4("ul", "mn-okr__kr-list");
   objective.keyResults.forEach((kr) => krList.appendChild(createKRRow(kr, status)));
-  card.appendChild(header);
+  card.appendChild(header2);
   card.appendChild(krList);
   return card;
 }
@@ -7124,9 +7366,9 @@ function okrPanel(container, opts) {
   function render5() {
     el_host.innerHTML = "";
     const root = el4("div", "mn-okr");
-    const header = el4("div", "mn-okr__header");
-    header.appendChild(el4("h2", "mn-okr__title", { text: title }));
-    root.appendChild(header);
+    const header2 = el4("div", "mn-okr__header");
+    header2.appendChild(el4("h2", "mn-okr__title", { text: title }));
+    root.appendChild(header2);
     const stats = calculateStats(objectives);
     root.appendChild(createHero(stats, period));
     const summaryRow = el4("div", "mn-okr__summary-row");
@@ -7674,13 +7916,13 @@ function buildDOM(container, opts, activeTab, onTabClick) {
   const backdrop2 = createElement("div", "mn-detail-panel__backdrop");
   if (isInline) backdrop2.style.display = "none";
   else container.parentNode.insertBefore(backdrop2, container);
-  const header = createElement("div", "mn-detail-panel__header");
+  const header2 = createElement("div", "mn-detail-panel__header");
   if (opts.parentLink) {
     const back = createElement("button", "mn-detail__back");
     back.type = "button";
     back.textContent = "\u2190 " + opts.parentLink.label;
     back.addEventListener("click", () => opts.parentLink.onClick());
-    header.appendChild(back);
+    header2.appendChild(back);
   }
   const titleRow = createElement("div", "mn-detail-panel__title-row");
   const titleEl = createElement("div", "mn-detail-panel__title");
@@ -7699,7 +7941,7 @@ function buildDOM(container, opts, activeTab, onTabClick) {
       titleRow.appendChild(a);
     }
   }
-  header.appendChild(titleRow);
+  header2.appendChild(titleRow);
   const headerActions = createElement("div", "mn-detail-panel__header-actions");
   const editBtn = createElement("button", "mn-detail-panel__action-btn mn-detail-panel__edit-btn");
   editBtn.textContent = "Edit";
@@ -7714,8 +7956,8 @@ function buildDOM(container, opts, activeTab, onTabClick) {
   closeBtn.innerHTML = "\u2715";
   closeBtn.title = "Close panel";
   headerActions.append(editBtn, saveBtn, cancelBtn, closeBtn);
-  header.appendChild(headerActions);
-  container.appendChild(header);
+  header2.appendChild(headerActions);
+  container.appendChild(header2);
   let tabBar = null;
   if (opts.tabs && opts.tabs.length > 1) {
     tabBar = createElement("div", "mn-detail-panel__tabs");
@@ -8741,6 +8983,123 @@ function gridLayout(container, template = "masonry-auto", options) {
   };
 }
 
+// src/ts/layout.ts
+function createLayout(gridEl) {
+  const maybeGrid = gridEl ?? document.getElementById("mn-grid");
+  if (!maybeGrid) {
+    throw new Error("createLayout: grid element not found");
+  }
+  const grid = maybeGrid;
+  const slots = {
+    grid,
+    strip: grid.querySelector("#mn-slot-strip"),
+    left: grid.querySelector("#mn-slot-left"),
+    center: grid.querySelector("#mn-slot-center"),
+    right: grid.querySelector("#mn-slot-right")
+  };
+  const views = /* @__PURE__ */ new Map();
+  const buttonCleanups = [];
+  const state = {
+    view: "",
+    fullpage: false,
+    strip: true,
+    left: false,
+    right: false
+  };
+  let savedStrip = true;
+  function syncDOM() {
+    if (slots.strip) slots.strip.hidden = !state.strip;
+    if (slots.left) slots.left.hidden = !state.left;
+    if (slots.right) slots.right.hidden = !state.right;
+    grid.classList.toggle("mn-layout--fullpage", state.fullpage);
+  }
+  function fireEvent() {
+    grid.dispatchEvent(
+      new CustomEvent("layout-changed", {
+        detail: { ...state },
+        bubbles: true
+      })
+    );
+  }
+  function applyState() {
+    syncDOM();
+    fireEvent();
+  }
+  syncDOM();
+  const controller = {
+    register(viewId, config) {
+      views.set(viewId, config);
+    },
+    showView(viewId) {
+      const config = views.get(viewId);
+      if (!config) {
+        throw new Error(`createLayout.showView: unknown view "${viewId}"`);
+      }
+      if (state.fullpage && !config.fullpage) {
+        state.strip = savedStrip;
+      }
+      if (!state.fullpage && config.fullpage) {
+        savedStrip = state.strip;
+      }
+      state.view = viewId;
+      state.right = false;
+      if (config.fullpage) {
+        state.fullpage = true;
+        state.strip = false;
+        state.left = false;
+      } else {
+        state.fullpage = false;
+      }
+      applyState();
+    },
+    toggleStrip() {
+      if (state.fullpage) return;
+      state.strip = !state.strip;
+      applyState();
+    },
+    toggleLeft() {
+      if (state.fullpage) return;
+      state.left = !state.left;
+      applyState();
+    },
+    toggleRight() {
+      if (state.fullpage) return;
+      state.right = !state.right;
+      applyState();
+    },
+    openRight() {
+      if (state.fullpage) return;
+      state.right = true;
+      applyState();
+    },
+    closeRight() {
+      state.right = false;
+      applyState();
+    },
+    wireButtons() {
+      for (const [viewId, config] of views) {
+        if (!config.buttonId) continue;
+        const btn = document.getElementById(config.buttonId);
+        if (!btn) continue;
+        const handler = () => {
+          controller.showView(viewId);
+        };
+        btn.addEventListener("click", handler);
+        buttonCleanups.push(() => btn.removeEventListener("click", handler));
+      }
+    },
+    get state() {
+      return state;
+    },
+    destroy() {
+      for (const cleanup of buttonCleanups) cleanup();
+      buttonCleanups.length = 0;
+      views.clear();
+    }
+  };
+  return controller;
+}
+
 // src/ts/search-drawer.ts
 var drawerCounter = 0;
 function openSearchDrawer(opts) {
@@ -9334,9 +9693,9 @@ function notificationCenter(triggerEl, opts) {
   panel.className = `mn-notif-panel${posCls}`;
   panel.setAttribute("role", "dialog");
   panel.setAttribute("aria-label", "Notifications");
-  const header = document.createElement("div");
-  header.className = "mn-notif-panel__header";
-  header.innerHTML = '<span class="mn-notif-panel__title">Notifications <span class="mn-notif-panel__badge">0</span></span><button class="mn-notif-panel__mark-all">Mark all read</button>';
+  const header2 = document.createElement("div");
+  header2.className = "mn-notif-panel__header";
+  header2.innerHTML = '<span class="mn-notif-panel__title">Notifications <span class="mn-notif-panel__badge">0</span></span><button class="mn-notif-panel__mark-all">Mark all read</button>';
   const list = document.createElement("div");
   list.className = "mn-notif-panel__list";
   const empty = document.createElement("div");
@@ -9344,13 +9703,13 @@ function notificationCenter(triggerEl, opts) {
   empty.textContent = "No notifications";
   const backdrop2 = document.createElement("div");
   backdrop2.className = "mn-notif-backdrop";
-  panel.appendChild(header);
+  panel.appendChild(header2);
   panel.appendChild(list);
   panel.appendChild(empty);
   document.body.appendChild(panel);
   document.body.appendChild(backdrop2);
-  const badge = header.querySelector(".mn-notif-panel__badge");
-  const markAllBtn = header.querySelector(".mn-notif-panel__mark-all");
+  const badge = header2.querySelector(".mn-notif-panel__badge");
+  const markAllBtn = header2.querySelector(".mn-notif-panel__mark-all");
   function getUnreadCount() {
     return notifications.filter((n) => !n.read).length;
   }
@@ -9965,7 +10324,7 @@ function scoreClass(score) {
 function formatScore(score) {
   return `${(score * 100).toFixed(0)}%`;
 }
-function buildCard(card, onSelect) {
+function buildCard2(card, onSelect) {
   const article = document.createElement("article");
   article.className = "mn-source-card";
   article.tabIndex = 0;
@@ -9976,13 +10335,13 @@ function buildCard(card, onSelect) {
   }
   article.setAttribute("aria-label", ariaParts.join(" - "));
   if (card.badge || card.score !== void 0) {
-    const header = document.createElement("header");
-    header.className = "mn-source-card__header";
+    const header2 = document.createElement("header");
+    header2.className = "mn-source-card__header";
     if (card.badge) {
       const badge = document.createElement("span");
       badge.className = "mn-source-card__badge mn-badge";
       badge.textContent = card.badge;
-      header.appendChild(badge);
+      header2.appendChild(badge);
     }
     if (card.score !== void 0) {
       const score = document.createElement("span");
@@ -9990,9 +10349,9 @@ function buildCard(card, onSelect) {
       score.className = `mn-source-card__score ${scoreClass(card.score)}`;
       score.textContent = pct3;
       score.setAttribute("aria-label", `Relevance: ${pct3}`);
-      header.appendChild(score);
+      header2.appendChild(score);
     }
-    article.appendChild(header);
+    article.appendChild(header2);
   }
   const title = document.createElement("h4");
   title.className = "mn-source-card__title";
@@ -10066,7 +10425,7 @@ function renderSourceCards(container, cards, opts) {
     container.setAttribute("aria-label", "Source citations");
     const limit = maxVisible && maxVisible < data.length ? maxVisible : data.length;
     for (let i = 0; i < limit; i++) {
-      const el5 = buildCard(data[i], onSelect);
+      const el5 = buildCard2(data[i], onSelect);
       el5.setAttribute("role", "listitem");
       container.appendChild(el5);
     }
@@ -10075,7 +10434,7 @@ function renderSourceCards(container, cards, opts) {
       const showMoreBtn = buildShowMore(remaining, () => {
         showMoreBtn.remove();
         for (let i = limit; i < data.length; i++) {
-          const el5 = buildCard(data[i], onSelect);
+          const el5 = buildCard2(data[i], onSelect);
           el5.setAttribute("role", "listitem");
           container.appendChild(el5);
         }
@@ -10923,17 +11282,17 @@ function agentTrace(el5, steps, opts) {
     if (opts?.onSelect && isOpen) opts.onSelect(step);
   }
   el5.addEventListener("click", (e) => {
-    const header = e.target.closest(".mn-agent-trace__header");
-    if (!header) return;
-    const stepEl = header.closest("[data-id]");
+    const header2 = e.target.closest(".mn-agent-trace__header");
+    if (!header2) return;
+    const stepEl = header2.closest("[data-id]");
     if (stepEl?.dataset.id) toggleStep(stepEl.dataset.id);
   }, { signal });
   el5.addEventListener("keydown", (e) => {
     if (e.key !== "Enter" && e.key !== " ") return;
-    const header = e.target.closest(".mn-agent-trace__header");
-    if (!header) return;
+    const header2 = e.target.closest(".mn-agent-trace__header");
+    if (!header2) return;
     e.preventDefault();
-    const stepEl = header.closest("[data-id]");
+    const stepEl = header2.closest("[data-id]");
     if (stepEl?.dataset.id) toggleStep(stepEl.dataset.id);
   }, { signal });
   function autoScroll() {
@@ -11782,7 +12141,7 @@ function buildEntry(entry, ac, onSelect) {
   }, { signal: ac.signal });
   return li;
 }
-function updateCounts(header, list) {
+function updateCounts(header2, list) {
   const items = list.querySelectorAll(".mn-audit__entry");
   const counts = { all: items.length };
   for (const sev of SEVERITIES) counts[sev] = 0;
@@ -11790,7 +12149,7 @@ function updateCounts(header, list) {
     const s = li.dataset.severity ?? "";
     counts[s] = (counts[s] ?? 0) + 1;
   });
-  header.querySelectorAll(".mn-audit__tab").forEach((tab) => {
+  header2.querySelectorAll(".mn-audit__tab").forEach((tab) => {
     const badge = tab.querySelector(".mn-audit__tab-count");
     if (badge) badge.textContent = String(counts[tab.dataset.filter ?? "all"] ?? 0);
   });
@@ -11807,8 +12166,8 @@ function auditLog(el5, entries = [], opts = {}) {
   el5.setAttribute("role", "log");
   el5.setAttribute("aria-label", "Audit log");
   el5.innerHTML = "";
-  const header = document.createElement("div");
-  header.className = "mn-audit__header";
+  const header2 = document.createElement("div");
+  header2.className = "mn-audit__header";
   const tabBar = document.createElement("div");
   tabBar.className = "mn-audit__tabs";
   tabBar.setAttribute("role", "tablist");
@@ -11823,8 +12182,8 @@ function auditLog(el5, entries = [], opts = {}) {
       tabBar.appendChild(btn);
     }
   }
-  header.appendChild(tabBar);
-  el5.appendChild(header);
+  header2.appendChild(tabBar);
+  el5.appendChild(header2);
   const liveRegion = document.createElement("div");
   liveRegion.setAttribute("aria-live", "polite");
   liveRegion.setAttribute("aria-atomic", "true");
@@ -11838,7 +12197,7 @@ function auditLog(el5, entries = [], opts = {}) {
     list.appendChild(buildEntry(entry, ac, opts.onSelect));
   }
   prune(list, max);
-  updateCounts(header, list);
+  updateCounts(header2, list);
   const applyFilter = (sev) => {
     activeFilter = sev;
     tabBar.querySelectorAll(".mn-audit__tab").forEach((tab) => {
@@ -11863,7 +12222,7 @@ function auditLog(el5, entries = [], opts = {}) {
     }
     if (activeFilter !== "all" && entry.severity !== activeFilter) node.style.display = "none";
     prune(list, max);
-    updateCounts(header, list);
+    updateCounts(header2, list);
   };
   return {
     prepend: (entry) => addEntry(entry, "prepend"),
@@ -11871,7 +12230,7 @@ function auditLog(el5, entries = [], opts = {}) {
     setFilter: applyFilter,
     clear: () => {
       list.innerHTML = "";
-      updateCounts(header, list);
+      updateCounts(header2, list);
     },
     destroy: () => {
       ac.abort();
@@ -12677,7 +13036,7 @@ var STATUS_LABELS4 = {
   pending: "Pending",
   blocked: "Blocked"
 };
-function buildCard2(eng, typeIcons, ac) {
+function buildCard3(eng, typeIcons, ac) {
   const card = document.createElement("div");
   card.className = `mn-journey__card mn-journey__card--${eng.status}`;
   card.setAttribute("role", "listitem");
@@ -12726,7 +13085,7 @@ function buildPhase(phase, typeIcons, ac) {
   heading.textContent = escapeHtml(phase.label);
   col.appendChild(heading);
   for (const eng of phase.engagements) {
-    col.appendChild(buildCard2(eng, typeIcons, ac));
+    col.appendChild(buildCard3(eng, typeIcons, ac));
   }
   return col;
 }
@@ -13175,8 +13534,8 @@ function isInputFocused() {
 
 // src/ts/section-card.ts
 var idCounter = 0;
-function renderAction(header, action, ac) {
-  header.querySelector(".mn-section-card__action")?.remove();
+function renderAction(header2, action, ac) {
+  header2.querySelector(".mn-section-card__action")?.remove();
   if (!action) return;
   const el5 = document.createElement(action.href ? "a" : "button");
   el5.className = "mn-section-card__action";
@@ -13193,7 +13552,7 @@ function renderAction(header, action, ac) {
   if (el5 instanceof HTMLButtonElement) {
     el5.type = "button";
   }
-  header.appendChild(el5);
+  header2.appendChild(el5);
 }
 function sectionCard(el5, opts) {
   const ac = new AbortController();
@@ -13205,15 +13564,15 @@ function sectionCard(el5, opts) {
   if (opts.className) section.classList.add(opts.className);
   section.setAttribute("role", "region");
   section.setAttribute("aria-labelledby", titleId);
-  const header = document.createElement("header");
-  header.className = "mn-section-card__header";
+  const header2 = document.createElement("header");
+  header2.className = "mn-section-card__header";
   const h3 = document.createElement("h3");
   h3.className = "mn-section-card__title";
   h3.id = titleId;
   h3.textContent = escapeHtml(opts.title);
-  header.appendChild(h3);
-  renderAction(header, opts.action, ac);
-  section.appendChild(header);
+  header2.appendChild(h3);
+  renderAction(header2, opts.action, ac);
+  section.appendChild(header2);
   const body = document.createElement("div");
   body.className = "mn-section-card__body";
   section.appendChild(body);
@@ -13224,7 +13583,7 @@ function sectionCard(el5, opts) {
       h3.textContent = escapeHtml(t);
     },
     setAction(a) {
-      renderAction(header, a, ac);
+      renderAction(header2, a, ac);
     }
   };
 }
@@ -13684,6 +14043,8 @@ M.commandPalette = commandPalette;
 M.loginScreen = loginScreen;
 M.systemStatus = systemStatus;
 M.profileMenu = profileMenu;
+M.header = { init: header };
+M.themePicker = themePicker;
 M.FerrariGauge = FerrariGauge;
 M.buildGaugePalette = buildGaugePalette;
 M.createGauge = createGauge;
@@ -13706,7 +14067,20 @@ M.neuralNodes = neuralNodes;
 M.hBarChart = hBarChart;
 M.okrPanel = okrPanel;
 M.gridLayout = gridLayout;
+M.createLayout = createLayout;
+function _initLayout() {
+  const gridEl = document.getElementById("mn-grid");
+  if (gridEl && gridEl.hasAttribute("data-mn-auto-layout")) {
+    M.layout = createLayout(gridEl);
+  }
+}
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", _initLayout, { once: true });
+} else {
+  _initLayout();
+}
 M.socialGraph = socialGraph;
+M.sparkline = sparkline;
 M.chartInteract = chartInteract;
 M.sparklineInteract = sparklineInteract;
 M.openDetailPanel = openDetailPanel;
@@ -13858,6 +14232,7 @@ export {
   createElement,
   createGauge,
   createGaugesInContainer,
+  createLayout,
   cruiseLever,
   cssVar,
   customerJourney,
@@ -13896,6 +14271,7 @@ export {
   gridLayout,
   hBarChart,
   halfGauge,
+  header,
   hexLum,
   hexToRgba2 as hexToRgba,
   hiDpiCanvas,
@@ -13989,6 +14365,7 @@ export {
   streamingText,
   swotMatrix,
   systemStatus,
+  themePicker,
   themeRotary,
   throttle,
   toast,
