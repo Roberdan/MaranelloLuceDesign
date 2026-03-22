@@ -50,7 +50,6 @@ describe('createLayout', () => {
   // -- register --
   it('register() stores view config', () => {
     ctrl.register('dash', makeView('Dashboard'));
-    // Verify by showing it (would throw if not registered)
     ctrl.showView('dash');
     expect(ctrl.state.view).toBe('dash');
   });
@@ -62,11 +61,20 @@ describe('createLayout', () => {
     expect(ctrl.state.view).toBe('overview');
   });
 
-  it('showView() closes right slot', () => {
+  it('showView() preserves manual right toggle (slot independence)', () => {
     ctrl.register('v1', makeView('View 1'));
     ctrl.openRight();
     expect(ctrl.state.right).toBe(true);
-    ctrl.showView('v1');
+    ctrl.showView('v1'); // no right config — manual toggle persists
+    expect(ctrl.state.right).toBe(true);
+  });
+
+  it('showView() closes view-driven right on switch', () => {
+    ctrl.register('copilot', makeView('Copilot', { right: { render: () => {} } }));
+    ctrl.register('gantt', makeView('Gantt'));
+    ctrl.showView('copilot');
+    expect(ctrl.state.right).toBe(true);
+    ctrl.showView('gantt'); // no right config — view-driven closes
     expect(ctrl.state.right).toBe(false);
   });
 
@@ -77,8 +85,8 @@ describe('createLayout', () => {
   // -- fullpage --
   it('fullpage view hides strip, left, and right', () => {
     ctrl.register('editor', makeView('Editor', { fullpage: true }));
-    ctrl.toggleLeft(); // show left
-    ctrl.openRight();  // show right
+    ctrl.toggleLeft();
+    ctrl.openRight();
     ctrl.showView('editor');
     expect(ctrl.state.fullpage).toBe(true);
     expect(ctrl.state.strip).toBe(false);
@@ -86,15 +94,72 @@ describe('createLayout', () => {
     expect(ctrl.state.right).toBe(false);
   });
 
-  it('exiting fullpage restores strip state', () => {
+  it('exiting fullpage restores all slot states', () => {
     ctrl.register('editor', makeView('Editor', { fullpage: true }));
     ctrl.register('dash', makeView('Dashboard'));
-    // strip starts visible (true)
+    ctrl.toggleLeft();
     expect(ctrl.state.strip).toBe(true);
+    expect(ctrl.state.left).toBe(true);
     ctrl.showView('editor');
     expect(ctrl.state.strip).toBe(false);
+    expect(ctrl.state.left).toBe(false);
     ctrl.showView('dash');
     expect(ctrl.state.strip).toBe(true);
+    expect(ctrl.state.left).toBe(true);
+  });
+
+  // -- slot independence --
+  it('toggleLeft does not affect strip or right', () => {
+    expect(ctrl.state.strip).toBe(true);
+    expect(ctrl.state.right).toBe(false);
+    ctrl.toggleLeft();
+    expect(ctrl.state.left).toBe(true);
+    expect(ctrl.state.strip).toBe(true);
+    expect(ctrl.state.right).toBe(false);
+  });
+
+  it('toggleStrip does not affect left or right', () => {
+    ctrl.toggleLeft();
+    expect(ctrl.state.left).toBe(true);
+    ctrl.toggleStrip();
+    expect(ctrl.state.strip).toBe(false);
+    expect(ctrl.state.left).toBe(true);
+    expect(ctrl.state.right).toBe(false);
+  });
+
+  it('showView does not touch slots without config', () => {
+    ctrl.register('gantt', makeView('Gantt'));
+    ctrl.toggleLeft(); // manual
+    ctrl.toggleStrip(); // manual
+    ctrl.showView('gantt');
+    expect(ctrl.state.left).toBe(true);  // manual persists
+    expect(ctrl.state.strip).toBe(false); // manual persists
+  });
+
+  // -- view-driven vs manual toggle --
+  it('view-driven left closes on switch, manual left persists', () => {
+    ctrl.register('copilot', makeView('Copilot', {
+      left: { render: () => {} },
+    }));
+    ctrl.register('gantt', makeView('Gantt'));
+    ctrl.register('table', makeView('Table'));
+
+    // Manual toggle pipeline
+    ctrl.showView('gantt');
+    ctrl.toggleLeft(); // manual
+    expect(ctrl.state.left).toBe(true);
+
+    // Switch view — manual left persists
+    ctrl.showView('table');
+    expect(ctrl.state.left).toBe(true);
+
+    // View-driven left
+    ctrl.showView('copilot');
+    expect(ctrl.state.left).toBe(true);
+
+    // Switch away — view-driven left closes
+    ctrl.showView('gantt');
+    expect(ctrl.state.left).toBe(false);
   });
 
   // -- toggleLeft / toggleRight / toggleStrip --
@@ -126,7 +191,7 @@ describe('createLayout', () => {
   it('openRight() sets right to true', () => {
     ctrl.openRight();
     expect(ctrl.state.right).toBe(true);
-    ctrl.openRight(); // idempotent
+    ctrl.openRight();
     expect(ctrl.state.right).toBe(true);
   });
 
@@ -191,7 +256,6 @@ describe('createLayout', () => {
     ctrl.wireButtons();
     ctrl.destroy();
 
-    // After destroy, clicking button should not change state
     btn.click();
     expect(ctrl.state.view).toBe('');
 
@@ -200,8 +264,8 @@ describe('createLayout', () => {
 
   // -- DOM hidden attribute sync --
   it('applies hidden attribute to right slot when closed', () => {
-    const right = grid.querySelector('#mn-slot-right') as HTMLElement;
-    expect(right.hidden).toBe(true); // starts hidden
+    const right = document.getElementById('mn-slot-right') as HTMLElement;
+    expect(right.hidden).toBe(true);
     ctrl.openRight();
     expect(right.hidden).toBe(false);
     ctrl.closeRight();
@@ -209,7 +273,7 @@ describe('createLayout', () => {
   });
 
   it('applies hidden attribute to left slot', () => {
-    const left = grid.querySelector('#mn-slot-left') as HTMLElement;
+    const left = document.getElementById('mn-slot-left') as HTMLElement;
     expect(left.hidden).toBe(true);
     ctrl.toggleLeft();
     expect(left.hidden).toBe(false);
@@ -219,6 +283,17 @@ describe('createLayout', () => {
     ctrl.register('fp', makeView('Fullpage', { fullpage: true }));
     ctrl.showView('fp');
     expect(grid.classList.contains('mn-layout--fullpage')).toBe(true);
+  });
+
+  // -- slot content rendering --
+  it('calls render callback on showView', () => {
+    const renderFn = vi.fn();
+    ctrl.register('copilot', makeView('Copilot', {
+      left: { render: renderFn },
+    }));
+    ctrl.showView('copilot');
+    expect(renderFn).toHaveBeenCalledTimes(1);
+    expect(renderFn.mock.calls[0][0]).toBeInstanceOf(HTMLElement);
   });
 
   // -- defaults to getElementById when no arg --

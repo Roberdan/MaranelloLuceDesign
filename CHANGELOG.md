@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.6.0] - 2026-03-22
+
+### Added
+- Independent slot state — `toggleLeft/Strip/Right` affect ONLY their slot
+- View-driven vs manual toggle — manual toggles persist across view switches, view-driven slots close when switching away
+- Slot render callbacks — `left: { render: (slot) => { ... } }` called on `showView()`
+- Fullpage saves/restores all three slot states
+
+### Changed
+- `showView()` no longer resets strip or right unless view config declares them
+- `SlotConfig.content` renamed to `SlotConfig.render`
+
 ## [5.5.0] - 2026-03-22
 
 ### Added

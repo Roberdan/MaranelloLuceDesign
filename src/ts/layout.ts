@@ -4,22 +4,26 @@
  *
  * Slots: #mn-slot-strip, #mn-slot-left, #mn-slot-center, #mn-slot-right
  * Grid: #mn-grid (CSS :has()-based column collapse in layouts-mn-layout.css)
+ *
+ * Slot independence: toggleLeft/Strip/Right affect ONLY their slot.
+ * showView() only touches slots declared in the view config.
+ * Manual toggles persist across view switches unless overridden by config.
  */
 
-/** Slot routing config: boolean or object with content callback. */
+/** Slot routing config: object with optional render callback. */
 export interface SlotConfig {
-  panel?: string;
-  content?: (slot: HTMLElement) => void;
+  id?: string;
+  render?: (slot: HTMLElement) => void;
 }
 
 export interface LayoutViewConfig {
   label: string;
   fullpage?: boolean;
   buttonId?: string;
-  /** Slot routing — true: allow toggle, false: force closed, object: open + render content */
-  left?: boolean | SlotConfig;
-  right?: boolean | SlotConfig;
-  strip?: boolean | SlotConfig;
+  /** Slot routing — undefined: don't touch, false: force closed, object: open + render */
+  left?: false | SlotConfig;
+  right?: false | SlotConfig;
+  strip?: false | SlotConfig;
   center?: (slot: HTMLElement) => void;
 }
 
@@ -68,12 +72,17 @@ export function createLayout(gridEl?: HTMLElement): LayoutController {
     right: initRight ? !initRight.hidden : false,
   };
 
-  let savedStrip = state.strip;
+  // Track whether each slot was opened by a view config (view-driven)
+  // or by manual toggle. View-driven slots close on view switch;
+  // manual toggles persist.
+  let leftViewDriven = false;
+  let rightViewDriven = false;
+  let stripViewDriven = false;
 
-  // Slot lock: when a view config sets slot to false, manual toggles are blocked
-  let stripLocked = false;
-  let leftLocked = false;
-  let rightLocked = false;
+  // Fullpage saves/restores
+  let savedStrip = state.strip;
+  let savedLeft = state.left;
+  let savedRight = state.right;
 
   /**
    * Sync DOM to match internal state. Uses document.getElementById
@@ -107,21 +116,6 @@ export function createLayout(gridEl?: HTMLElement): LayoutController {
     }
   }
 
-  /** Resolve slot config to open/closed boolean. */
-  function resolveSlot(cfg: boolean | SlotConfig | undefined, fallback: boolean): boolean {
-    if (cfg === undefined) return fallback;
-    if (typeof cfg === 'boolean') return cfg;
-    return true; // object config = open
-  }
-
-  /** Call content callback if slot config has one. */
-  function renderSlot(cfg: boolean | SlotConfig | undefined, slotId: string): void {
-    if (typeof cfg === 'object' && cfg !== null && cfg.content) {
-      const el = document.getElementById(slotId);
-      if (el) cfg.content(el);
-    }
-  }
-
   function fireEvent(): void {
     grid.dispatchEvent(
       new CustomEvent('layout-changed', {
@@ -136,6 +130,37 @@ export function createLayout(gridEl?: HTMLElement): LayoutController {
     fireEvent();
   }
 
+  /** Apply a slot config: false = close (view-driven), object = open + render. */
+  function applySlotConfig(
+    cfg: false | SlotConfig | undefined,
+    slotId: string,
+    setOpen: (v: boolean) => void,
+    setViewDriven: (v: boolean) => void,
+    wasViewDriven: boolean,
+  ): void {
+    if (cfg === undefined) {
+      // Config doesn't mention this slot — close if previous view owned it
+      if (wasViewDriven) {
+        setOpen(false);
+        setViewDriven(false);
+      }
+      // Manual toggle state persists unchanged
+      return;
+    }
+    if (cfg === false) {
+      setOpen(false);
+      setViewDriven(false);
+      return;
+    }
+    // Object config — open and render
+    setOpen(true);
+    setViewDriven(true);
+    if (cfg.render) {
+      const el = document.getElementById(slotId);
+      if (el) cfg.render(el);
+    }
+  }
+
   const controller: LayoutController = {
     register(viewId: string, config: LayoutViewConfig): void {
       views.set(viewId, config);
@@ -147,14 +172,16 @@ export function createLayout(gridEl?: HTMLElement): LayoutController {
         throw new Error(`createLayout.showView: unknown view "${viewId}"`);
       }
 
-      // Exiting fullpage? Restore saved strip state
+      // Fullpage transitions
       if (state.fullpage && !config.fullpage) {
         state.strip = savedStrip;
+        state.left = savedLeft;
+        state.right = savedRight;
       }
-
-      // Entering fullpage? Save current strip state
       if (!state.fullpage && config.fullpage) {
         savedStrip = state.strip;
+        savedLeft = state.left;
+        savedRight = state.right;
       }
 
       state.view = viewId;
@@ -164,62 +191,71 @@ export function createLayout(gridEl?: HTMLElement): LayoutController {
         state.strip = false;
         state.left = false;
         state.right = false;
-        stripLocked = true;
-        leftLocked = true;
-        rightLocked = true;
       } else {
         state.fullpage = false;
 
-        // Apply slot routing from view config
-        state.strip = resolveSlot(config.strip, state.strip);
-        state.left = resolveSlot(config.left, state.left);
-        state.right = resolveSlot(config.right, false);
-
-        // Lock slots set to false — manual toggles blocked
-        stripLocked = config.strip === false;
-        leftLocked = config.left === false;
-        rightLocked = config.right === false;
+        // Apply each slot independently
+        applySlotConfig(
+          config.left, 'mn-slot-left',
+          (v) => { state.left = v; },
+          (v) => { leftViewDriven = v; },
+          leftViewDriven,
+        );
+        applySlotConfig(
+          config.right, 'mn-slot-right',
+          (v) => { state.right = v; },
+          (v) => { rightViewDriven = v; },
+          rightViewDriven,
+        );
+        applySlotConfig(
+          config.strip, 'mn-slot-strip',
+          (v) => { state.strip = v; },
+          (v) => { stripViewDriven = v; },
+          stripViewDriven,
+        );
       }
 
       applyState();
 
-      // Render slot content callbacks
-      renderSlot(config.left, 'mn-slot-left');
-      renderSlot(config.right, 'mn-slot-right');
-      renderSlot(config.strip, 'mn-slot-strip');
-
+      // Render center content
       if (config.center) {
         const center = document.getElementById('mn-slot-center');
         if (center) config.center(center);
       }
     },
 
+    // Independent toggles — affect ONLY their slot
     toggleStrip(): void {
-      if (state.fullpage || stripLocked) return;
+      if (state.fullpage) return;
       state.strip = !state.strip;
+      stripViewDriven = false; // manual toggle overrides view-driven
       applyState();
     },
 
     toggleLeft(): void {
-      if (state.fullpage || leftLocked) return;
+      if (state.fullpage) return;
       state.left = !state.left;
+      leftViewDriven = false;
       applyState();
     },
 
     toggleRight(): void {
-      if (state.fullpage || rightLocked) return;
+      if (state.fullpage) return;
       state.right = !state.right;
+      rightViewDriven = false;
       applyState();
     },
 
     openRight(): void {
-      if (state.fullpage || rightLocked) return;
+      if (state.fullpage) return;
       state.right = true;
+      rightViewDriven = false;
       applyState();
     },
 
     closeRight(): void {
       state.right = false;
+      rightViewDriven = false;
       applyState();
     },
 
