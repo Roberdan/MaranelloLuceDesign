@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.5.0] - 2026-03-22
+
+### Added
+- Declarative view config with slot routing — `register()` accepts `left`, `right`, `strip`, `center` properties to control slot visibility and content rendering per view
+- Slot content callbacks — `left: { content: (slot) => { ... } }` renders content into slots on `showView()`
+- Slot locking — `right: false` forces slot closed and blocks manual `toggleRight()` for that view
+- `center` callback — `center: (slot) => { ... }` renders center content on view switch
+
 ## [5.4.1] - 2026-03-22
 
 ### Fixed

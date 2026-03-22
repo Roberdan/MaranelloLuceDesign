@@ -6,10 +6,21 @@
  * Grid: #mn-grid (CSS :has()-based column collapse in layouts-mn-layout.css)
  */
 
+/** Slot routing config: boolean or object with content callback. */
+export interface SlotConfig {
+  panel?: string;
+  content?: (slot: HTMLElement) => void;
+}
+
 export interface LayoutViewConfig {
   label: string;
   fullpage?: boolean;
   buttonId?: string;
+  /** Slot routing — true: allow toggle, false: force closed, object: open + render content */
+  left?: boolean | SlotConfig;
+  right?: boolean | SlotConfig;
+  strip?: boolean | SlotConfig;
+  center?: (slot: HTMLElement) => void;
 }
 
 export interface LayoutState {
@@ -57,8 +68,12 @@ export function createLayout(gridEl?: HTMLElement): LayoutController {
     right: initRight ? !initRight.hidden : false,
   };
 
-  // Sidebar state saved when entering fullpage, restored on exit
   let savedStrip = state.strip;
+
+  // Slot lock: when a view config sets slot to false, manual toggles are blocked
+  let stripLocked = false;
+  let leftLocked = false;
+  let rightLocked = false;
 
   /**
    * Sync DOM to match internal state. Uses document.getElementById
@@ -89,6 +104,21 @@ export function createLayout(gridEl?: HTMLElement): LayoutController {
           child.hidden = child.dataset.view !== state.view;
         }
       }
+    }
+  }
+
+  /** Resolve slot config to open/closed boolean. */
+  function resolveSlot(cfg: boolean | SlotConfig | undefined, fallback: boolean): boolean {
+    if (cfg === undefined) return fallback;
+    if (typeof cfg === 'boolean') return cfg;
+    return true; // object config = open
+  }
+
+  /** Call content callback if slot config has one. */
+  function renderSlot(cfg: boolean | SlotConfig | undefined, slotId: string): void {
+    if (typeof cfg === 'object' && cfg !== null && cfg.content) {
+      const el = document.getElementById(slotId);
+      if (el) cfg.content(el);
     }
   }
 
@@ -128,39 +158,62 @@ export function createLayout(gridEl?: HTMLElement): LayoutController {
       }
 
       state.view = viewId;
-      state.right = false; // detail is per-engagement
 
       if (config.fullpage) {
         state.fullpage = true;
         state.strip = false;
         state.left = false;
+        state.right = false;
+        stripLocked = true;
+        leftLocked = true;
+        rightLocked = true;
       } else {
         state.fullpage = false;
+
+        // Apply slot routing from view config
+        state.strip = resolveSlot(config.strip, state.strip);
+        state.left = resolveSlot(config.left, state.left);
+        state.right = resolveSlot(config.right, false);
+
+        // Lock slots set to false — manual toggles blocked
+        stripLocked = config.strip === false;
+        leftLocked = config.left === false;
+        rightLocked = config.right === false;
       }
 
       applyState();
+
+      // Render slot content callbacks
+      renderSlot(config.left, 'mn-slot-left');
+      renderSlot(config.right, 'mn-slot-right');
+      renderSlot(config.strip, 'mn-slot-strip');
+
+      if (config.center) {
+        const center = document.getElementById('mn-slot-center');
+        if (center) config.center(center);
+      }
     },
 
     toggleStrip(): void {
-      if (state.fullpage) return;
+      if (state.fullpage || stripLocked) return;
       state.strip = !state.strip;
       applyState();
     },
 
     toggleLeft(): void {
-      if (state.fullpage) return;
+      if (state.fullpage || leftLocked) return;
       state.left = !state.left;
       applyState();
     },
 
     toggleRight(): void {
-      if (state.fullpage) return;
+      if (state.fullpage || rightLocked) return;
       state.right = !state.right;
       applyState();
     },
 
     openRight(): void {
-      if (state.fullpage) return;
+      if (state.fullpage || rightLocked) return;
       state.right = true;
       applyState();
     },
