@@ -7288,6 +7288,10 @@ function createButton(btn) {
   el5.type = "button";
   el5.className = "mn-header__btn";
   el5.dataset.headerId = btn.id;
+  if (btn.label) {
+    el5.title = btn.label;
+    el5.setAttribute("aria-label", btn.label);
+  }
   if (btn.active) el5.classList.add("mn-header__btn--active");
   if (btn.icon) {
     const iconSpan = document.createElement("span");
