@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.9.0] - 2026-03-22
+
+### Changed
+- **layout.ts refactored** — extracted `SlotState` class to `layout-slot.ts`. Each slot (strip/left/right) is now a self-contained object with `visible`, `viewDriven`, `manualRender`, `panelId`, `locked`. Eliminates 12 parallel closure variables. `layout.ts` 393→230 lines, `layout-slot.ts` 99 lines. Both under 250-line limit.
+- All toggle/open/close operations delegate to `SlotState` methods — single source of truth per slot
+
 ## [5.8.0] - 2026-03-22
 
 ### Added

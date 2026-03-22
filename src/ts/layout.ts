@@ -7,20 +7,17 @@
  *
  * Slot independence: each toggle affects ONLY its slot.
  * showView() only touches slots declared in the view config.
- * Manual toggles persist across view switches unless overridden by config.
+ * Strip is exclusively controlled by toggleStrip() — showView never touches it.
  */
 
-/** Slot routing config: object with optional render callback. */
-export interface SlotConfig {
-  id?: string;
-  render?: (slot: HTMLElement) => void;
-}
+import { SlotState } from './layout-slot';
+import type { SlotConfig } from './layout-slot';
+export type { SlotConfig } from './layout-slot';
 
 export interface LayoutViewConfig {
   label: string;
   fullpage?: boolean;
   buttonId?: string;
-  /** Slot routing — undefined: don't touch, false: force closed, object: open + render */
   left?: false | SlotConfig;
   right?: false | SlotConfig;
   strip?: false | SlotConfig;
@@ -35,7 +32,6 @@ export interface LayoutState {
   right: boolean;
 }
 
-/** Serializable state snapshot for persistence. */
 export interface LayoutPersistState {
   view: string;
   strip: boolean;
@@ -47,9 +43,7 @@ export interface LayoutPersistState {
 }
 
 export interface LayoutOptions {
-  /** Called on every state change — consumer decides where to persist. */
   onStateChange?: (state: LayoutPersistState) => void;
-  /** Initial state from persistence layer — overrides DOM hidden attrs. */
   initialState?: Partial<LayoutPersistState>;
 }
 
@@ -66,91 +60,58 @@ export interface LayoutController {
   destroy(): void;
 }
 
-/** Create a layout controller bound to a grid element. */
+function initVisible(domId: string, init: Partial<LayoutPersistState> | undefined, key: 'strip' | 'left' | 'right', fallback: boolean): boolean {
+  if (init && typeof init[key] === 'boolean') return init[key];
+  const el = document.getElementById(domId);
+  return el ? !el.hidden : fallback;
+}
+
 export function createLayout(gridEl?: HTMLElement, options?: LayoutOptions): LayoutController {
   const maybeGrid = gridEl ?? document.getElementById('mn-grid');
-  if (!maybeGrid) {
-    throw new Error('createLayout: grid element not found');
-  }
+  if (!maybeGrid) throw new Error('createLayout: grid element not found');
   const grid: HTMLElement = maybeGrid;
-  const onStateChange = options && options.onStateChange;
+
+  const onChange = options && options.onStateChange;
   const init = options && options.initialState;
 
   const views = new Map<string, LayoutViewConfig>();
-  const buttonCleanups: Array<() => void> = [];
+  const btnCleanups: Array<() => void> = [];
 
-  // Read initial state: initialState option > DOM hidden attrs > defaults
-  const initStrip = document.getElementById('mn-slot-strip');
-  const initLeft = document.getElementById('mn-slot-left');
-  const initRight = document.getElementById('mn-slot-right');
+  const strip = new SlotState('mn-slot-strip', initVisible('mn-slot-strip', init, 'strip', true), init && init.stripPanelId);
+  const left = new SlotState('mn-slot-left', initVisible('mn-slot-left', init, 'left', false), init && init.leftPanelId);
+  const right = new SlotState('mn-slot-right', initVisible('mn-slot-right', init, 'right', false), init && init.rightPanelId);
 
   const state: LayoutState = {
     view: init && init.view ? init.view : '',
     fullpage: false,
-    strip: init && typeof init.strip === 'boolean' ? init.strip : (initStrip ? !initStrip.hidden : true),
-    left: init && typeof init.left === 'boolean' ? init.left : (initLeft ? !initLeft.hidden : false),
-    right: init && typeof init.right === 'boolean' ? init.right : (initRight ? !initRight.hidden : false),
+    strip: strip.visible,
+    left: left.visible,
+    right: right.visible,
   };
 
-  // Track left panel ID for persistence
-  let leftPanelId: string | undefined = init && init.leftPanelId ? init.leftPanelId : undefined;
-  let rightPanelId: string | undefined = init && init.rightPanelId ? init.rightPanelId : undefined;
-  let stripPanelId: string | undefined = init && init.stripPanelId ? init.stripPanelId : undefined;
+  // Apply initial overrides to DOM
+  if (init) { strip.sync(); left.sync(); right.sync(); }
 
-  // Apply initial state to DOM
-  if (init) {
-    if (initStrip) initStrip.hidden = !state.strip;
-    if (initLeft) initLeft.hidden = !state.left;
-    if (initRight) initRight.hidden = !state.right;
+  function syncState(): void {
+    state.strip = strip.visible;
+    state.left = left.visible;
+    state.right = right.visible;
   }
 
-  // Track whether each slot was opened by a view config (view-driven)
-  // or by manual toggle. View-driven slots close on view switch;
-  // manual toggles persist.
-  let leftViewDriven = false;
-  let rightViewDriven = false;
-  let stripViewDriven = false;
-
-  // Manual toggle render callbacks — persisted so content survives view switches
-  let leftManualRender: ((slot: HTMLElement) => void) | null = null;
-  let rightManualRender: ((slot: HTMLElement) => void) | null = null;
-  let stripManualRender: ((slot: HTMLElement) => void) | null = null;
-
-  // Slot locking: view config `false` blocks manual toggles until next showView
-  let leftLocked = false;
-  let rightLocked = false;
-
-  // Fullpage saves/restores
-  let savedStrip = state.strip;
-  let savedLeft = state.left;
-  let savedRight = state.right;
-
-  /**
-   * Apply hidden to a single slot. Only writes if the value differs
-   * from the current DOM — prevents side effects on unrelated slots.
-   */
-  function setSlotHidden(slotId: string, hidden: boolean): void {
-    const el = document.getElementById(slotId);
-    if (el && el.hidden !== hidden) el.hidden = hidden;
+  function persistState(): LayoutPersistState {
+    const s: LayoutPersistState = { view: state.view, strip: state.strip, left: state.left, right: state.right };
+    if (left.panelId) s.leftPanelId = left.panelId;
+    if (right.panelId) s.rightPanelId = right.panelId;
+    if (strip.panelId) s.stripPanelId = strip.panelId;
+    return s;
   }
 
-  /**
-   * Sync left, right, fullpage, and center views to DOM.
-   * Strip is NEVER written here — only toggleStrip() and fullpage control strip.
-   */
-  function syncDOM(): void {
-    setSlotHidden('mn-slot-left', !state.left);
-    setSlotHidden('mn-slot-right', !state.right);
+  function fireEvent(): void {
+    grid.dispatchEvent(new CustomEvent('layout-changed', { detail: { ...state }, bubbles: true }));
+    if (onChange) onChange(persistState());
+  }
 
-    if (state.fullpage) {
-      grid.classList.add('mn-layout--fullpage');
-      // Fullpage hides everything including strip
-      setSlotHidden('mn-slot-strip', true);
-    } else {
-      grid.classList.remove('mn-layout--fullpage');
-    }
-
-    // Toggle view children inside center slot
+  function syncCenter(): void {
     const center = document.getElementById('mn-slot-center');
     if (center && state.view) {
       const children = center.children;
@@ -163,201 +124,83 @@ export function createLayout(gridEl?: HTMLElement, options?: LayoutOptions): Lay
     }
   }
 
-  /** Build serializable state snapshot for persistence. */
-  function persistState(): LayoutPersistState {
-    const s: LayoutPersistState = {
-      view: state.view,
-      strip: state.strip,
-      left: state.left,
-      right: state.right,
-    };
-    if (leftPanelId) s.leftPanelId = leftPanelId;
-    if (rightPanelId) s.rightPanelId = rightPanelId;
-    if (stripPanelId) s.stripPanelId = stripPanelId;
-    return s;
-  }
-
-  function fireEvent(): void {
-    const detail = { ...state };
-    grid.dispatchEvent(
-      new CustomEvent('layout-changed', { detail, bubbles: true }),
-    );
-    if (onStateChange) onStateChange(persistState());
-  }
-
-  function applyState(): void {
-    syncDOM();
-    fireEvent();
-  }
-
-  /** Call a render callback on a slot element. */
-  function renderToSlot(slotId: string, render: (el: HTMLElement) => void): void {
-    const el = document.getElementById(slotId);
-    if (el) render(el);
-  }
-
-  /** Apply a slot config from showView: false = close, object = open + render. */
-  function applySlotConfig(
-    cfg: false | SlotConfig | undefined,
-    slotId: string,
-    setOpen: (v: boolean) => void,
-    setViewDriven: (v: boolean) => void,
-    wasViewDriven: boolean,
-  ): void {
-    if (cfg === undefined) {
-      // Config doesn't mention this slot — close if previous view owned it
-      if (wasViewDriven) {
-        setOpen(false);
-        setViewDriven(false);
-      }
-      // Manual toggle state persists unchanged
-      return;
-    }
-    if (cfg === false) {
-      setOpen(false);
-      setViewDriven(false);
-      return;
-    }
-    // Object config — open and render
-    setOpen(true);
-    setViewDriven(true);
-    if (cfg.render) renderToSlot(slotId, cfg.render);
-  }
-
-  const controller: LayoutController = {
+  const ctrl: LayoutController = {
     register(viewId: string, config: LayoutViewConfig): void {
       views.set(viewId, config);
     },
 
     showView(viewId: string): void {
       const config = views.get(viewId);
-      if (!config) {
-        throw new Error(`createLayout.showView: unknown view "${viewId}"`);
-      }
+      if (!config) throw new Error(`createLayout.showView: unknown view "${viewId}"`);
 
       // Fullpage transitions
       if (state.fullpage && !config.fullpage) {
-        state.strip = savedStrip;
-        state.left = savedLeft;
-        state.right = savedRight;
-        // Restore strip DOM since syncDOM doesn't write it
-        setSlotHidden('mn-slot-strip', !state.strip);
+        strip.restore(); left.restore(); right.restore();
+        strip.sync();
       }
       if (!state.fullpage && config.fullpage) {
-        savedStrip = state.strip;
-        savedLeft = state.left;
-        savedRight = state.right;
+        strip.save(); left.save(); right.save();
       }
 
       state.view = viewId;
 
       if (config.fullpage) {
         state.fullpage = true;
-        state.strip = false;
-        state.left = false;
-        state.right = false;
+        strip.visible = false; left.visible = false; right.visible = false;
+        left.sync(); right.sync();
+        const el = document.getElementById('mn-slot-strip');
+        if (el) el.hidden = true;
+        grid.classList.add('mn-layout--fullpage');
       } else {
         state.fullpage = false;
-
-        // Apply left/right independently — only declared slots change
-        // Strip is NEVER modified by showView — only toggleStrip() controls it
-        applySlotConfig(
-          config.left, 'mn-slot-left',
-          (v) => { state.left = v; },
-          (v) => { leftViewDriven = v; },
-          leftViewDriven,
-        );
-        // Track left panel ID for persistence
-        if (typeof config.left === 'object' && config.left && config.left.id) {
-          leftPanelId = config.left.id;
-        } else if (config.left === undefined && leftViewDriven) {
-          // View-driven left closed — clear panel ID
-        } else if (config.left === false) {
-          leftPanelId = undefined;
-        }
-        applySlotConfig(
-          config.right, 'mn-slot-right',
-          (v) => { state.right = v; },
-          (v) => { rightViewDriven = v; },
-          rightViewDriven,
-        );
-        if (typeof config.right === 'object' && config.right && config.right.id) {
-          rightPanelId = config.right.id;
-        } else if (config.right === false) {
-          rightPanelId = undefined;
-        }
-
-        // Slot locking: config false blocks manual toggles
-        leftLocked = config.left === false;
-        rightLocked = config.right === false;
+        grid.classList.remove('mn-layout--fullpage');
+        left.applyConfig(config.left);
+        right.applyConfig(config.right);
+        // Strip is NEVER modified by showView
+        left.sync(); right.sync();
       }
 
-      applyState();
+      syncState();
+      syncCenter();
+      fireEvent();
 
-      // Render center content
       if (config.center) {
-        renderToSlot('mn-slot-center', config.center);
+        const center = document.getElementById('mn-slot-center');
+        if (center) config.center(center);
       }
     },
 
-    // Independent toggles — each writes ONLY its own slot, never others
     toggleStrip(config?: SlotConfig): void {
       if (state.fullpage) return;
-      state.strip = !state.strip;
-      stripViewDriven = false;
-      if (config && config.id) stripPanelId = config.id;
-      if (config && config.render) stripManualRender = config.render;
-      setSlotHidden('mn-slot-strip', !state.strip);
+      strip.toggle(config);
+      syncState();
       fireEvent();
-      if (state.strip) {
-        const render = (config && config.render) || stripManualRender;
-        if (render) renderToSlot('mn-slot-strip', render);
-      }
     },
 
     toggleLeft(config?: SlotConfig): void {
-      if (state.fullpage || leftLocked) return;
-      state.left = !state.left;
-      leftViewDriven = false;
-      if (config && config.id) leftPanelId = config.id;
-      if (config && config.render) leftManualRender = config.render;
-      setSlotHidden('mn-slot-left', !state.left);
+      if (state.fullpage || left.locked) return;
+      left.toggle(config);
+      syncState();
       fireEvent();
-      if (state.left) {
-        const render = (config && config.render) || leftManualRender;
-        if (render) renderToSlot('mn-slot-left', render);
-      }
     },
 
     toggleRight(config?: SlotConfig): void {
-      if (state.fullpage || rightLocked) return;
-      state.right = !state.right;
-      rightViewDriven = false;
-      if (config && config.id) rightPanelId = config.id;
-      if (config && config.render) rightManualRender = config.render;
-      setSlotHidden('mn-slot-right', !state.right);
+      if (state.fullpage || right.locked) return;
+      right.toggle(config);
+      syncState();
       fireEvent();
-      if (state.right) {
-        const render = (config && config.render) || rightManualRender;
-        if (render) renderToSlot('mn-slot-right', render);
-      }
     },
 
     openRight(config?: SlotConfig): void {
-      if (state.fullpage || rightLocked) return;
-      state.right = true;
-      rightViewDriven = false;
-      if (config && config.render) rightManualRender = config.render;
-      setSlotHidden('mn-slot-right', !state.right);
+      if (state.fullpage || right.locked) return;
+      right.open(config);
+      syncState();
       fireEvent();
-      const render = (config && config.render) || rightManualRender;
-      if (render) renderToSlot('mn-slot-right', render);
     },
 
     closeRight(): void {
-      state.right = false;
-      rightViewDriven = false;
-      setSlotHidden('mn-slot-right', !state.right);
+      right.close();
+      syncState();
       fireEvent();
     },
 
@@ -366,12 +209,9 @@ export function createLayout(gridEl?: HTMLElement, options?: LayoutOptions): Lay
         if (!config.buttonId) continue;
         const btn = document.getElementById(config.buttonId);
         if (!btn) continue;
-
-        const handler = (): void => {
-          controller.showView(viewId);
-        };
+        const handler = (): void => { ctrl.showView(viewId); };
         btn.addEventListener('click', handler);
-        buttonCleanups.push(() => btn.removeEventListener('click', handler));
+        btnCleanups.push(() => btn.removeEventListener('click', handler));
       }
     },
 
@@ -380,14 +220,11 @@ export function createLayout(gridEl?: HTMLElement, options?: LayoutOptions): Lay
     },
 
     destroy(): void {
-      for (const cleanup of buttonCleanups) cleanup();
-      buttonCleanups.length = 0;
+      for (const fn of btnCleanups) fn();
+      btnCleanups.length = 0;
       views.clear();
-      leftManualRender = null;
-      rightManualRender = null;
-      stripManualRender = null;
     },
   };
 
-  return controller;
+  return ctrl;
 }
