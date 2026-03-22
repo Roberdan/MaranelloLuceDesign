@@ -39,7 +39,7 @@
 }
 .mn-comment-box__btn {
   background: var(--mn-accent);
-  color: var(--mn-text);
+  color: var(--mn-accent-text);
   border: none;
   border-radius: var(--radius-sm);
   padding: 6px 14px;

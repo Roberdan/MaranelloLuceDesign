@@ -10723,7 +10723,7 @@
 
   .mn-comment-box__btn {
     background: var(--mn-accent);
-    color: var(--mn-text);
+    color: var(--mn-accent-text);
     border-radius: var(--radius-sm);
     cursor: pointer;
     border: none;
@@ -11262,7 +11262,7 @@
 
   .mn-detail-panel__ado-btn.mn-detail-panel__ado-btn {
     background: var(--mn-accent);
-    color: var(--mn-text);
+    color: var(--mn-accent-text);
     border-radius: var(--radius-sm);
     align-items: center;
     gap: 4px;
@@ -20854,6 +20854,23 @@
 
   body.mn-sugar .mn-nav a:hover {
     color: var(--mn-accent);
+  }
+
+  body.mn-sugar .mn-header__btn--active {
+    color: var(--mn-text);
+    background: var(--mn-active-bg);
+    border-bottom: 2px solid var(--mn-accent);
+  }
+
+  body.mn-sugar .mn-header__btn:hover {
+    background: var(--mn-hover-bg);
+    color: var(--mn-text);
+  }
+
+  body.mn-sugar .mn-header__profile .mn-avatar {
+    background: var(--mn-surface-raised);
+    color: var(--mn-text);
+    border: 1px solid var(--mn-border);
   }
 
   body.mn-sugar .mn-footer {

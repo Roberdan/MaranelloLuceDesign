@@ -105,6 +105,9 @@ body.mn-sugar .mn-sidebar__link--active { color: var(--mn-text); background: var
 body.mn-sugar .mn-nav, body.mn-sugar header, body.mn-sugar .mn-header { background: var(--mn-surface-sunken); color: var(--mn-text); border-bottom: 1px solid var(--mn-border); }
 body.mn-sugar .mn-nav a, body.mn-sugar .mn-nav span { color: var(--mn-text); }
 body.mn-sugar .mn-nav a:hover { color: var(--mn-accent); }
+body.mn-sugar .mn-header__btn--active { color: var(--mn-text); background: var(--mn-active-bg); border-bottom: 2px solid var(--mn-accent); }
+body.mn-sugar .mn-header__btn:hover { background: var(--mn-hover-bg); color: var(--mn-text); }
+body.mn-sugar .mn-header__profile .mn-avatar { background: var(--mn-surface-raised); color: var(--mn-text); border: 1px solid var(--mn-border); }
 body.mn-sugar .mn-footer { background: var(--mn-surface-raised); color: var(--mn-text-muted); }
 
 /* Gantt — light container (canvas is now theme-aware via JS) */
