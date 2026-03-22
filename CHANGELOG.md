@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.10.0] - 2026-03-22
+
+### Added
+- `filterPanel(anchor, options)` — generic multi-column dropdown for filters (single/multi-select, color dots, counts, keyboard nav, ARIA)
+- Search bar CSS (`mn-search-bar__*` classes) now included in bundle
+- i18n locale system: `setLocale()`, `getLocale()`, `resetLocale()` — optional string overrides for a11y panel, state scaffold, theme picker
+- Theme auto-restore from `localStorage('mn-theme')` on IIFE boot
+
+### Fixed
+- Icon SVG paths aligned to production: `funnel`, `gantt`, `table`, `clock`, `link`
+
 ## [5.9.3] - 2026-03-22
 
 ### Fixed
