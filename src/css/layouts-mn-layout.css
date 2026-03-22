@@ -31,7 +31,7 @@
     background: var(--mn-surface);
     border-right: 1px solid var(--mn-border);
   }
-  #mn-slot-center { grid-area: center; overflow-y: auto; }
+  #mn-slot-center { grid-area: center; overflow-y: auto; background: var(--mn-surface); }
   #mn-slot-right {
     grid-area: right;
     overflow-y: auto;

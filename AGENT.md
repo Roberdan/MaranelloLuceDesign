@@ -1,6 +1,6 @@
 # Maranello Luce Design — Agent Reference
 
-> Ferrari Luce-inspired design system. Zero deps. 5 themes. 150+ APIs. v5.4.0
+> Ferrari Luce-inspired design system. Zero deps. 5 themes. 150+ APIs. v5.4.1
 > Repo: github.com/Roberdan/MaranelloLuceDesign
 > Demo: roberdan.github.io/MaranelloLuceDesign/
 > AI Expert: @NaSra (see `.github/agents/NaSra.agent.md`)

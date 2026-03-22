@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.4.1] - 2026-03-22
+
+### Fixed
+- Add `background: var(--mn-surface)` to `#mn-slot-center` — center slot now has consistent background across all themes
+
 ## [5.4.0] - 2026-03-22
 
 ### Added
