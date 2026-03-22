@@ -9,3 +9,4 @@ export * from './data-types';
 export * from './control-types';
 export * from './panel-types';
 export * from './component-types';
+export * from './strip-types';

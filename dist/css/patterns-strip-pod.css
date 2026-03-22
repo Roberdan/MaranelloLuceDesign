@@ -45,7 +45,9 @@
   overflow: hidden;
 }
 
-.mn-strip__section { flex: 1; min-width: 0; }
+.mn-strip__section { flex:1; min-width:0; overflow:visible; }
+.mn-strip__section[data-section="gauge"] { flex:0 0 auto; }
+.mn-strip__section[data-section="board"] { flex:0 0 auto; }
 .mn-strip__section--wide { flex: 2; }
 .mn-strip__section--pod {
   flex: 0 0 auto;

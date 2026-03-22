@@ -4738,6 +4738,12 @@ function createSep() {
   el5.setAttribute("role", "separator");
   return el5;
 }
+function createSpacer(position) {
+  const el5 = document.createElement("span");
+  el5.className = `mn-header__spacer mn-header__spacer--${position}`;
+  el5.setAttribute("aria-hidden", "true");
+  return el5;
+}
 function header(container, options) {
   const opts = options ?? {};
   const nav = document.createElement("nav");
@@ -4750,7 +4756,7 @@ function header(container, options) {
   centerZone.className = "mn-header__zone mn-header__zone--center";
   const rightZone = document.createElement("div");
   rightZone.className = "mn-header__zone mn-header__zone--right";
-  if (opts.brand) {
+  if (opts.brand && (opts.brand.logo || opts.brand.label)) {
     const tag = opts.brand.href ? "a" : "span";
     const brand = document.createElement(tag);
     brand.className = "mn-header__brand";
@@ -4760,12 +4766,15 @@ function header(container, options) {
     if (opts.brand.logo) {
       const logoSpan = document.createElement("span");
       logoSpan.className = "mn-header__brand-logo";
+      if (opts.brand.label) logoSpan.setAttribute("aria-hidden", "true");
       logoSpan.innerHTML = opts.brand.logo;
       brand.appendChild(logoSpan);
     }
-    const labelSpan = document.createElement("span");
-    labelSpan.textContent = opts.brand.label;
-    brand.appendChild(labelSpan);
+    if (opts.brand.label) {
+      const labelSpan = document.createElement("span");
+      labelSpan.textContent = opts.brand.label;
+      brand.appendChild(labelSpan);
+    }
     leftZone.appendChild(brand);
   }
   if (opts.left) {
@@ -4801,7 +4810,9 @@ function header(container, options) {
       fb.addEventListener("click", opts.center.filterButton.onClick);
       searchWrap.appendChild(fb);
     }
+    centerZone.appendChild(createSpacer("start"));
     centerZone.appendChild(searchWrap);
+    centerZone.appendChild(createSpacer("end"));
   }
   const cleanups = [];
   if (opts.right) {
@@ -4830,7 +4841,192 @@ function header(container, options) {
   return {
     setActive(buttonId) {
       nav.querySelectorAll(".mn-header__btn[data-header-id]").forEach((el5) => {
-        el5.classList.toggle("mn-header__btn--active", el5.getAttribute("data-header-id") === buttonId);
+        if (el5.getAttribute("data-header-id") === buttonId) {
+          el5.classList.add("mn-header__btn--active");
+        } else {
+          el5.classList.remove("mn-header__btn--active");
+        }
+      });
+    },
+    destroy() {
+      cleanups.forEach((fn) => fn());
+      nav.remove();
+    }
+  };
+}
+
+// src/ts/header-v2.ts
+function createButton2(btn, variant) {
+  const el5 = document.createElement("button");
+  el5.type = "button";
+  el5.className = variant === "segmented" ? "mn-segmented__item" : "mn-btn-cluster__item";
+  el5.dataset.headerV2Id = btn.id;
+  const a11y = btn.title || btn.label || btn.id;
+  el5.setAttribute("aria-label", a11y);
+  if (btn.title) el5.title = btn.title;
+  if (btn.active) el5.classList.add("mn-header-v2__is-active");
+  if (btn.pressed) el5.classList.add("mn-header-v2__is-pressed");
+  el5.setAttribute("aria-pressed", btn.pressed ? "true" : "false");
+  if (btn.icon) {
+    const icon = document.createElement("span");
+    icon.className = "mn-header-v2__icon";
+    icon.innerHTML = btn.icon;
+    el5.appendChild(icon);
+  }
+  if (btn.label) {
+    const label = document.createElement("span");
+    label.textContent = btn.label;
+    el5.appendChild(label);
+  }
+  if (btn.onClick) el5.addEventListener("click", btn.onClick);
+  el5.addEventListener("click", () => {
+    el5.dispatchEvent(new CustomEvent("header-v2-action-click", {
+      detail: { id: btn.id },
+      bubbles: true
+    }));
+  });
+  return el5;
+}
+function createBrand(brand) {
+  if (!brand || !brand.logo && !brand.label) return null;
+  const tag = brand.href ? "a" : "span";
+  const node = document.createElement(tag);
+  node.className = "mn-header-v2__brand";
+  if (brand.href && node instanceof HTMLAnchorElement) node.href = brand.href;
+  if (brand.logo) {
+    const mark = document.createElement("span");
+    mark.className = "mn-header-v2__brand-mark";
+    if (brand.label) mark.setAttribute("aria-hidden", "true");
+    mark.innerHTML = brand.logo;
+    node.appendChild(mark);
+  }
+  if (brand.label) {
+    const text = document.createElement("span");
+    text.className = "mn-header-v2__brand-label";
+    text.textContent = brand.label;
+    node.appendChild(text);
+  }
+  return node;
+}
+function headerV2(container, options) {
+  const opts = options || {};
+  const nav = document.createElement("nav");
+  nav.className = "mn-header-v2";
+  nav.setAttribute("role", "navigation");
+  nav.setAttribute("aria-label", "Main navigation");
+  const left = document.createElement("div");
+  left.className = "mn-header-v2__region mn-header-v2__region--left";
+  const center = document.createElement("div");
+  center.className = "mn-header-v2__region mn-header-v2__region--center";
+  const right = document.createElement("div");
+  right.className = "mn-header-v2__region mn-header-v2__region--right";
+  const brand = createBrand(opts.brand);
+  if (brand) left.appendChild(brand);
+  if (opts.groups && opts.groups.length) {
+    const groups = document.createElement("div");
+    groups.className = "mn-header-v2__groups";
+    opts.groups.forEach((group) => {
+      const segmented = document.createElement("div");
+      segmented.className = "mn-segmented mn-header-v2__group";
+      segmented.dataset.groupId = group.id;
+      group.items.forEach((item) => segmented.appendChild(createButton2(item, "segmented")));
+      groups.appendChild(segmented);
+    });
+    left.appendChild(groups);
+  }
+  if (opts.search) {
+    const shell = document.createElement("div");
+    shell.className = "mn-search-bar mn-header-v2__search-shell";
+    const input = document.createElement("input");
+    input.type = "search";
+    input.className = "mn-search-bar__input mn-header-v2__search-input";
+    input.placeholder = opts.search.placeholder || "Search workspaces\u2026";
+    if (opts.search.onSearch) {
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          opts.search?.onSearch?.(input.value);
+          input.dispatchEvent(new CustomEvent("header-v2-search-submit", {
+            detail: { query: input.value },
+            bubbles: true
+          }));
+        }
+      });
+    }
+    shell.appendChild(input);
+    if (opts.search.shortcut) {
+      const kbd = document.createElement("kbd");
+      kbd.className = "mn-search-bar__kbd";
+      kbd.textContent = opts.search.shortcut;
+      shell.appendChild(kbd);
+    }
+    if (opts.search.filterLabel) {
+      const filter = document.createElement("button");
+      filter.type = "button";
+      filter.className = "mn-btn mn-btn--ghost mn-header-v2__filter";
+      filter.textContent = opts.search.filterLabel;
+      if (opts.search.onFilter) filter.addEventListener("click", opts.search.onFilter);
+      shell.appendChild(filter);
+    }
+    center.appendChild(shell);
+  }
+  const cleanups = [];
+  const utility = document.createElement("div");
+  utility.className = "mn-header-v2__utility";
+  if (opts.actions && opts.actions.length) {
+    const actions = document.createElement("div");
+    actions.className = "mn-btn-cluster mn-header-v2__actions";
+    opts.actions.forEach((action) => actions.appendChild(createButton2(action, "cluster")));
+    utility.appendChild(actions);
+  }
+  if (opts.status) {
+    const status = document.createElement("div");
+    const tone = opts.status.tone || "ok";
+    status.className = `mn-led mn-header-v2__status mn-header-v2__status--${tone}`;
+    status.innerHTML = '<span class="mn-led__housing"><span class="mn-led__bulb"></span></span>';
+    const label = document.createElement("span");
+    label.className = "mn-led__text";
+    label.textContent = opts.status.label;
+    status.appendChild(label);
+    utility.appendChild(status);
+  }
+  if (opts.profile) {
+    const profile = document.createElement("div");
+    profile.className = "mn-header-v2__profile";
+    const ctrl = profileMenu(profile, {
+      name: opts.profile.name,
+      avatarUrl: opts.profile.avatarUrl,
+      sections: opts.profile.sections
+    });
+    cleanups.push(() => ctrl.destroy());
+    utility.appendChild(profile);
+  }
+  if (utility.childElementCount > 0 || opts.status || opts.actions && opts.actions.length) right.appendChild(utility);
+  nav.appendChild(left);
+  nav.appendChild(center);
+  nav.appendChild(right);
+  container.appendChild(nav);
+  return {
+    setActive(id) {
+      const buttons = nav.querySelectorAll("button[data-header-v2-id]");
+      buttons.forEach((button) => {
+        if (button.dataset.headerV2Id === id) button.classList.add("mn-header-v2__is-active");
+        else button.classList.remove("mn-header-v2__is-active");
+      });
+    },
+    setPressed(ids) {
+      const lookup = {};
+      ids.forEach((id) => {
+        lookup[id] = true;
+      });
+      const buttons = nav.querySelectorAll("button[data-header-v2-id]");
+      buttons.forEach((button) => {
+        if (button.dataset.headerV2Id && lookup[button.dataset.headerV2Id]) {
+          button.classList.add("mn-header-v2__is-pressed");
+          button.setAttribute("aria-pressed", "true");
+        } else {
+          button.classList.remove("mn-header-v2__is-pressed");
+          button.setAttribute("aria-pressed", "false");
+        }
       });
     },
     destroy() {
@@ -7499,17 +7695,17 @@ function describeArc(cx, cy, r, sa, ea) {
   return `M ${x1.toFixed(2)} ${y1.toFixed(2)} A ${r} ${r} 0 ${ea - sa > Math.PI ? 1 : 0} 1 ${x2.toFixed(2)} ${y2.toFixed(2)}`;
 }
 function ringTemplate(size, stroke, percent, color, centerText, trackClass, progressClass) {
-  const safeColor2 = isValidColor(color) ? color : "#999";
+  const safeColor3 = isValidColor(color) ? color : "#999";
   const radius = (size - stroke) / 2, cx = size / 2;
   const circ = 2 * Math.PI * radius;
   const bounded = clamp(safeNumber(percent), 0, 100);
   const off2 = circ - bounded / 100 * circ;
-  let svg = `<svg class="mn-okr__ring" viewBox="0 0 ${size} ${size}" aria-hidden="true"><circle class="${trackClass}" cx="${cx}" cy="${cx}" r="${radius}" stroke-width="${stroke}"></circle><circle class="${progressClass}" cx="${cx}" cy="${cx}" r="${radius}" stroke-width="${stroke}" stroke="${safeColor2}" data-circumference="${circ.toFixed(2)}" data-target-offset="${off2.toFixed(2)}" stroke-dasharray="${circ.toFixed(2)}" stroke-dashoffset="${circ.toFixed(2)}"></circle>`;
+  let svg = `<svg class="mn-okr__ring" viewBox="0 0 ${size} ${size}" aria-hidden="true"><circle class="${trackClass}" cx="${cx}" cy="${cx}" r="${radius}" stroke-width="${stroke}"></circle><circle class="${progressClass}" cx="${cx}" cy="${cx}" r="${radius}" stroke-width="${stroke}" stroke="${safeColor3}" data-circumference="${circ.toFixed(2)}" data-target-offset="${off2.toFixed(2)}" stroke-dasharray="${circ.toFixed(2)}" stroke-dashoffset="${circ.toFixed(2)}"></circle>`;
   if (centerText != null) svg += `<text class="mn-okr__ring-text" x="50%" y="50%" dominant-baseline="middle" text-anchor="middle">${escapeHtml(String(centerText))}</text>`;
   return svg + "</svg>";
 }
 function heroGaugeSVG(percent, color) {
-  const safeColor2 = isValidColor(color) ? color : "#999";
+  const safeColor3 = isValidColor(color) ? color : "#999";
   const w = 240, h = 140, cx = w / 2, cy = h - 10, r = 100;
   const startAngle = Math.PI;
   const bounded = clamp(safeNumber(percent), 0, 100);
@@ -7530,7 +7726,7 @@ function heroGaugeSVG(percent, color) {
   const progressEnd = startAngle + bounded / 100 * Math.PI;
   const progressPath = describeArc(cx, cy, r, startAngle, progressEnd);
   const nx = cx + Math.cos(needleAngle) * (r - 28), ny = cy + Math.sin(needleAngle) * (r - 28);
-  return `<svg class="mn-okr__gauge" viewBox="0 0 ${w} ${h}" aria-hidden="true"><defs><filter id="okr-glow"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><path d="${trackPath}" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="8" stroke-linecap="round"/><path class="mn-okr__gauge-progress" d="${progressPath}" fill="none" stroke="${safeColor2}" stroke-width="8" stroke-linecap="round" filter="url(#okr-glow)" stroke-dasharray="${(Math.PI * r).toFixed(1)}" stroke-dashoffset="${(Math.PI * r).toFixed(1)}" data-target="0"/>` + ticks.join("") + `<line class="mn-okr__needle" x1="${cx}" y1="${cy}" x2="${nx.toFixed(1)}" y2="${ny.toFixed(1)}" stroke="${safeColor2}" stroke-width="2.5" stroke-linecap="round" filter="url(#okr-glow)" data-cx="${cx}" data-cy="${cy}" data-r="${r - 28}" data-target-angle="${needleAngle.toFixed(4)}"/><circle cx="${cx}" cy="${cy}" r="5" fill="${safeColor2}"/><circle cx="${cx}" cy="${cy}" r="2.5" fill="#111"/></svg>`;
+  return `<svg class="mn-okr__gauge" viewBox="0 0 ${w} ${h}" aria-hidden="true"><defs><filter id="okr-glow"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><path d="${trackPath}" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="8" stroke-linecap="round"/><path class="mn-okr__gauge-progress" d="${progressPath}" fill="none" stroke="${safeColor3}" stroke-width="8" stroke-linecap="round" filter="url(#okr-glow)" stroke-dasharray="${(Math.PI * r).toFixed(1)}" stroke-dashoffset="${(Math.PI * r).toFixed(1)}" data-target="0"/>` + ticks.join("") + `<line class="mn-okr__needle" x1="${cx}" y1="${cy}" x2="${nx.toFixed(1)}" y2="${ny.toFixed(1)}" stroke="${safeColor3}" stroke-width="2.5" stroke-linecap="round" filter="url(#okr-glow)" data-cx="${cx}" data-cy="${cy}" data-r="${r - 28}" data-target-angle="${needleAngle.toFixed(4)}"/><circle cx="${cx}" cy="${cy}" r="5" fill="${safeColor3}"/><circle cx="${cx}" cy="${cy}" r="2.5" fill="#111"/></svg>`;
 }
 function animateRings(container) {
   const rings = Array.from(container.querySelectorAll(".mn-okr__ring-progress"));
@@ -8147,8 +8343,8 @@ function renderRows(ctx, bars, maxValue) {
     const valueEl = createEl("div", "mn-hbar__value");
     const pct3 = clampVal(bar.value / maxValue * 100, 0, 100);
     const txtColor = hexLum2(bar.color) > 0.55 ? "#111111" : "#FFFFFF";
-    const safeColor2 = isValidColor(bar.color) ? bar.color : cssVar("--mn-accent");
-    fill.style.background = safeColor2;
+    const safeColor3 = isValidColor(bar.color) ? bar.color : cssVar("--mn-accent");
+    fill.style.background = safeColor3;
     fill.style.height = (state.opts.barHeight || 28) + "px";
     fill.style.width = state.opts.animate ? "0%" : pct3 + "%";
     valueEl.style.color = txtColor;
@@ -14329,6 +14525,227 @@ function settingsPanel(el5, opts) {
   };
 }
 
+// src/ts/dashboard-strip-zones.ts
+function safeColor2(el5, prop, value) {
+  if (isValidColor(value)) {
+    el5.style[prop] = value;
+  }
+}
+function sectionTitle(parent, title) {
+  if (!title) return;
+  const el5 = createElement("div", "mn-strip__section-title");
+  el5.textContent = title;
+  parent.appendChild(el5);
+}
+function renderGaugeZone(section, zone, _animate) {
+  section.classList.add("mn-strip__section--col");
+  sectionTitle(section, zone.label);
+  const wrap = createElement("div", "mn-strip-gauge-wrap");
+  const canvas = document.createElement("canvas");
+  canvas.className = "mn-strip-gauge__canvas";
+  canvas.dataset.gauge = JSON.stringify(zone.gaugeConfig);
+  canvas.dataset.size = String(zone.size || "sm");
+  wrap.appendChild(canvas);
+  section.appendChild(wrap);
+  const gauge2 = new FerrariGauge(canvas);
+  return {
+    update() {
+    },
+    destroy() {
+      if (gauge2) gauge2.destroy();
+      wrap.remove();
+    }
+  };
+}
+function renderPipelineZone(section, zone, _animate) {
+  section.classList.add("mn-strip__section--col");
+  sectionTitle(section, zone.title);
+  const pipe = createElement("div", "mn-strip-pipeline");
+  const maxVal = zone.maxValue || Math.max(...zone.rows.map((r) => r.value), 1);
+  for (const row of zone.rows) {
+    const rowEl = createElement("div", "mn-strip-row");
+    const label = createElement("span", "mn-strip-row__label");
+    label.textContent = row.label;
+    safeColor2(label, "color", row.color);
+    rowEl.appendChild(label);
+    const count = createElement("span", "mn-strip-row__count");
+    count.textContent = String(row.value);
+    rowEl.appendChild(count);
+    const track = createElement("div", "mn-strip-row__track");
+    const fill = createElement("div", "mn-strip-row__fill");
+    safeColor2(fill, "backgroundColor", row.color);
+    const pct3 = Math.min(row.value / maxVal * 100, 100);
+    fill.style.width = pct3 + "%";
+    track.appendChild(fill);
+    rowEl.appendChild(track);
+    if (row.secondary) {
+      const dur = createElement("span", "mn-strip-row__dur");
+      dur.textContent = row.secondary;
+      rowEl.appendChild(dur);
+    }
+    pipe.appendChild(rowEl);
+  }
+  if (zone.footer) {
+    const footerEl = createElement("div", "mn-strip-row mn-strip-row--e2e");
+    const fLabel = createElement("span", "mn-strip-row__label");
+    fLabel.textContent = zone.footer.label;
+    footerEl.appendChild(fLabel);
+    const fVal = createElement("span", "mn-strip-row__dur mn-strip-row__dur--e2e");
+    fVal.textContent = zone.footer.value;
+    footerEl.appendChild(fVal);
+    pipe.appendChild(footerEl);
+  }
+  section.appendChild(pipe);
+  return {
+    update() {
+    },
+    destroy() {
+      pipe.remove();
+    }
+  };
+}
+function renderTrendZone(section, zone, _animate) {
+  section.classList.add("mn-strip__section--col");
+  sectionTitle(section, zone.title);
+  const kpis = createElement("div", "mn-strip-kpis");
+  for (const item of zone.items) {
+    const kpi2 = createElement("div", "mn-strip-kpi");
+    const label = createElement("span", "mn-strip-kpi__label");
+    label.textContent = item.label;
+    kpi2.appendChild(label);
+    const value = createElement("span", "mn-strip-kpi__value");
+    value.textContent = String(item.value);
+    safeColor2(value, "color", item.color);
+    kpi2.appendChild(value);
+    const canvas = createElement("canvas", "mn-strip-kpi__spark");
+    kpi2.appendChild(canvas);
+    kpis.appendChild(kpi2);
+    sparkline(canvas, item.data, { color: item.color });
+  }
+  section.appendChild(kpis);
+  return {
+    update() {
+    },
+    destroy() {
+      kpis.remove();
+    }
+  };
+}
+function renderBoardZone(section, zone, _animate) {
+  section.classList.add("mn-strip__section--col");
+  sectionTitle(section, zone.title);
+  let boardGauge = null;
+  const els = [];
+  const row = createElement("div", "mn-strip-board-row");
+  els.push(row);
+  if (zone.stats) {
+    const board = createElement("div", "mn-strip-board");
+    for (const stat2 of zone.stats) {
+      const cell = createElement("div", "mn-strip-board__cell");
+      const lbl = createElement("span", "mn-strip-board__label");
+      lbl.textContent = stat2.label;
+      cell.appendChild(lbl);
+      const val = createElement("span", "mn-strip-board__val");
+      val.textContent = String(stat2.value);
+      cell.appendChild(val);
+      board.appendChild(cell);
+    }
+    row.appendChild(board);
+  }
+  if (zone.gauge) {
+    const wrap = createElement("div", "mn-strip-gauge-wrap");
+    const canvas = document.createElement("canvas");
+    canvas.className = "mn-strip-gauge__canvas";
+    canvas.dataset.gauge = JSON.stringify(zone.gauge);
+    canvas.dataset.size = String(zone.gaugeSize || "sm");
+    wrap.appendChild(canvas);
+    row.appendChild(wrap);
+    boardGauge = new FerrariGauge(canvas);
+  }
+  section.appendChild(row);
+  return {
+    update() {
+    },
+    destroy() {
+      if (boardGauge) boardGauge.destroy();
+      for (const el5 of els) el5.remove();
+    }
+  };
+}
+
+// src/ts/dashboard-strip.ts
+function renderZone(section, zone, animate) {
+  switch (zone.type) {
+    case "gauge":
+      return renderGaugeZone(section, zone, animate);
+    case "pipeline":
+      return renderPipelineZone(section, zone, animate);
+    case "trend":
+      return renderTrendZone(section, zone, animate);
+    case "board":
+      return renderBoardZone(section, zone, animate);
+    default:
+      console.warn("[Maranello] dashboardStrip: unknown zone type");
+      return { update() {
+      }, destroy() {
+      } };
+  }
+}
+function dashboardStrip(container, opts) {
+  const root = typeof container === "string" ? document.getElementById(container) || document.querySelector(container) : container;
+  if (!root) {
+    console.warn("[Maranello] dashboardStrip: container not found");
+    return null;
+  }
+  const strip = createElement("div", "mn-strip mn-strip--dashboard");
+  strip.setAttribute("role", "region");
+  strip.setAttribute("aria-label", opts.ariaLabel || "Dashboard strip");
+  const inner = createElement("div", "mn-strip__inner");
+  strip.appendChild(inner);
+  const animate = opts.animate !== false;
+  const zoneControllers = [];
+  function gridCols(zones) {
+    return zones.map((z) => {
+      if (z.type === "gauge") return "auto";
+      if (z.type === "board") return "auto";
+      if (z.type === "pipeline") return "2fr";
+      return "1fr";
+    }).join(" ");
+  }
+  function buildZones() {
+    inner.textContent = "";
+    zoneControllers.length = 0;
+    inner.style.display = "grid";
+    inner.style.gridTemplateColumns = gridCols(opts.zones);
+    for (let i = 0; i < opts.zones.length; i++) {
+      const section = createElement("div", "mn-strip__section");
+      section.setAttribute("data-section", opts.zones[i].type);
+      inner.appendChild(section);
+      zoneControllers.push(renderZone(section, opts.zones[i], animate));
+    }
+  }
+  root.appendChild(strip);
+  buildZones();
+  return {
+    updateZone(index, data) {
+      if (index < 0 || index >= opts.zones.length) return;
+      Object.assign(opts.zones[index], data);
+      const section = inner.querySelectorAll(
+        ".mn-strip__section"
+      )[index];
+      if (!section || !zoneControllers[index]) return;
+      zoneControllers[index].destroy();
+      section.textContent = "";
+      zoneControllers[index] = renderZone(section, opts.zones[index], false);
+    },
+    destroy() {
+      for (const c of zoneControllers) c.destroy();
+      zoneControllers.length = 0;
+      strip.remove();
+    }
+  };
+}
+
 // src/ts/ai-chat-iife.ts
 function aiChat(container, opts) {
   const full = {
@@ -14481,6 +14898,7 @@ function registerExtras(M2) {
   M2.adminShell = adminShell;
   M2.sectionCard = sectionCard;
   M2.settingsPanel = settingsPanel;
+  M2.dashboardStrip = dashboardStrip;
 }
 
 // src/ts/maranello.ts
@@ -14527,6 +14945,7 @@ M.loginScreen = loginScreen;
 M.systemStatus = systemStatus;
 M.profileMenu = profileMenu;
 M.header = { init: header };
+M.headerV2 = { init: headerV2 };
 M.themePicker = themePicker;
 M.filterPanel = filterPanel;
 M.FerrariGauge = FerrariGauge;
@@ -14634,7 +15053,7 @@ M.charts = {
 registerExtras(M);
 
 // src/ts/index.ts
-var VERSION = "5.10.0";
+var VERSION = "5.11.0";
 export {
   AppShellController,
   AsyncSelect,
@@ -14727,6 +15146,7 @@ export {
   cssVar,
   customerJourney,
   cycleTheme,
+  dashboardStrip,
   dataIcons,
   dataTable,
   datePicker,
@@ -14764,6 +15184,7 @@ export {
   hBarChart,
   halfGauge,
   header,
+  headerV2,
   hexLum,
   hexToRgba2 as hexToRgba,
   hiDpiCanvas,

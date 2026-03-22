@@ -2,6 +2,7 @@
 /* ══════════════════════════════════════════════════════════════
    patterns-strip-dashboard.css — Dashboard Strip Widget + Pods
    Maranello Design System · Maranello Luce
+   Uses ONLY semantic tokens — adapts to all 5 themes.
    ══════════════════════════════════════════════════════════════ */
 
 /* ── Dashboard strip modifier ── */
@@ -9,9 +10,55 @@
 .mn-strip--dashboard[hidden] { display:none !important; }
 .mn-strip--dashboard .mn-strip__inner {
   padding:8px 14px; min-height:120px; gap:var(--space-lg);
-  align-items:flex-start;
+  align-items:stretch;
 }
-.mn-strip__label-dim { color:var(--mn-text-muted); }
+
+/* ── Strip surface — theme-adaptive ── */
+.mn-strip--dashboard .mn-strip__inner {
+  background:var(--mn-surface-sunken);
+  box-shadow:inset 0 1px 4px var(--mn-border-subtle), var(--shadow-sm);
+  color:var(--mn-text);
+}
+.mn-strip--dashboard .mn-strip__section-title { color:var(--mn-text); }
+.mn-strip--dashboard .mn-strip-row__label { color:inherit; }
+.mn-strip--dashboard .mn-strip-row__count { color:var(--mn-text); }
+.mn-strip--dashboard .mn-strip-row__dur { color:var(--mn-text-tertiary); }
+.mn-strip--dashboard .mn-strip-row__track { background:var(--mn-border); }
+.mn-strip--dashboard .mn-strip-row--e2e { border-top-color:var(--mn-border); }
+.mn-strip--dashboard .mn-strip-kpi__label { color:var(--mn-text-tertiary); }
+.mn-strip--dashboard .mn-strip-gauge-label { color:var(--mn-text-tertiary); }
+.mn-strip--dashboard .mn-strip-board__cell {
+  background:var(--mn-surface); border-color:var(--mn-border);
+  box-shadow:inset 0 1px 2px var(--mn-border-subtle);
+}
+.mn-strip--dashboard .mn-strip-board__label { color:var(--mn-text-tertiary); }
+.mn-strip--dashboard .mn-strip-board__val { color:var(--mn-text); }
+.mn-strip__label-dim { color:var(--mn-text-tertiary); }
+
+/* ── Section titles + gauge labels (unified at top) ── */
+.mn-strip-gauge-label,
+.mn-strip__section-title {
+  font-family:var(--font-mono,'Barlow Condensed',sans-serif);
+  font-size:0.5rem; font-weight:700; text-transform:uppercase;
+  letter-spacing:0.1em; color:var(--mn-text-tertiary); text-align:center;
+  margin-bottom:4px;
+}
+
+/* Section as flex column — title at top, content centered */
+.mn-strip__section--col {
+  display:flex; flex-direction:column; align-items:stretch;
+}
+.mn-strip__section--col > .mn-strip__section-title {
+  align-self:center; flex-shrink:0;
+}
+.mn-strip__section--col > :not(.mn-strip__section-title) {
+  margin-top:auto; margin-bottom:auto;
+}
+
+/* Board section: centered between neighbors */
+.mn-strip__section[data-section="board"] {
+  justify-content:center; align-items:center;
+}
 
 /* ── Pipeline rows (stage bar + duration) ── */
 .mn-strip__pipeline-row,
@@ -25,10 +72,9 @@
 .mn-strip-row__count {
   font-family:var(--font-mono,'Barlow Condensed',sans-serif);
   font-size:0.8rem; font-weight:700; min-width:22px; text-align:right;
-  color:inherit; opacity:0.7;
 }
 .mn-strip-row__track {
-  flex:1; height:6px; background:var(--mn-surface);
+  flex:1; height:6px; background:var(--mn-border);
   border-radius:var(--radius-xs); overflow:hidden;
 }
 .mn-strip-row__fill {
@@ -38,9 +84,8 @@
 .mn-strip-row__dur {
   font-family:var(--font-mono,'Barlow Condensed',sans-serif);
   font-size:0.8rem; font-weight:600; min-width:36px; text-align:right;
-  color:inherit; opacity:0.7;
 }
-.mn-strip-row__dur small { font-size:0.6rem; color:var(--mn-text-muted); margin-left:1px; }
+.mn-strip-row__dur small { font-size:0.6rem; margin-left:1px; }
 .mn-strip-row--e2e {
   border-top:1px solid var(--mn-border); margin-top:1px; padding-top:2px;
   justify-content:flex-end; gap:8px;
@@ -54,19 +99,21 @@
   display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
   gap:2px; width:170px; flex:0 0 170px; padding:8px 4px 6px; border-radius:var(--radius-md);
 }
-.mn-strip-gauge-label {
-  font-family:var(--font-mono,'Barlow Condensed',sans-serif);
-  font-size:0.5rem; text-transform:uppercase; letter-spacing:0.1em;
-  color:var(--mn-text-muted); text-align:center;
+/* Gauge canvas: dark circular face — gauges are designed for dark backgrounds */
+.mn-strip-gauge__canvas {
+  background:radial-gradient(circle, var(--mn-surface-sunken) 48%, transparent 48%);
+  border-radius:50%;
 }
 
 /* ── KPI cells with sparklines ── */
-.mn-strip-kpis { display:flex; gap:var(--space-xl); align-items:flex-start; margin-top:2px; }
+.mn-strip-kpis {
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:var(--space-sm) var(--space-xl); margin-top:2px;
+}
 .mn-strip-kpi { display:flex; flex-direction:column; align-items:center; gap:2px; min-width:80px; }
 .mn-strip-kpi__label {
   font-family:var(--font-mono,'Barlow Condensed',sans-serif);
   font-size:0.55rem; text-transform:uppercase; letter-spacing:0.06em;
-  color:var(--mn-text-muted);
 }
 .mn-strip-kpi__value {
   font-family:var(--font-display,'Outfit',sans-serif);
@@ -77,46 +124,39 @@
 .mn-strip__sparkline-mount,
 .mn-strip-kpi__spark { width:80px; height:28px; }
 
-/* ── Flat legend (aliased for consumers using mn-strip-legend) ── */
+/* ── Flat legend ── */
 .mn-strip-legend {
   display:flex; gap:8px; flex-wrap:wrap; margin-top:2px;
   font-family:var(--font-mono,'Barlow Condensed',sans-serif);
   font-size:0.45rem; text-transform:uppercase; letter-spacing:0.04em;
-  color:var(--mn-text-muted);
+  color:var(--mn-text-tertiary);
 }
 .mn-strip-legend__dot {
   width:6px; height:6px; border-radius:50%; display:inline-block;
   margin-right:2px; vertical-align:middle;
 }
 
-/* ── Secondary board cells ── */
-.mn-strip-board { display:flex; gap:8px; margin-top:2px; }
+/* ── Secondary board row (stats + gauge side by side) ── */
+.mn-strip-board-row { display:flex; align-items:center; gap:var(--space-lg); }
+
+/* ── Secondary board cells (stacked vertically) ── */
+.mn-strip-board { display:flex; flex-direction:column; gap:8px; flex:1; }
 .mn-strip-board__cell {
   display:flex; flex-direction:column; align-items:center; justify-content:center;
   padding:8px 12px; border:1px solid var(--mn-border);
   border-radius:var(--radius-md); min-width:60px; flex:1;
-  background:var(--mn-surface);
 }
 .mn-strip-board__label {
   font-family:var(--font-mono,'Barlow Condensed',sans-serif);
   font-size:0.5rem; text-transform:uppercase; letter-spacing:0.08em;
-  color:var(--mn-text-muted); margin-bottom:2px;
+  margin-bottom:2px;
 }
 .mn-strip-board__val {
   font-family:var(--font-display,'Outfit',sans-serif);
-  font-size:1.4rem; font-weight:700; color:inherit; line-height:1;
+  font-size:1.4rem; font-weight:700; line-height:1;
 }
 
-/* ═══ Avorio theme ═══ */
-body.mn-avorio .mn-strip__inner { background:var(--avorio-caldo); }
-body.mn-avorio .mn-strip-row__track { background:var(--avorio-scuro); }
-body.mn-avorio .mn-strip-kpi__value { color:var(--mn-text); }
-body.mn-avorio .mn-strip-kpi__label { color:var(--mn-text-tertiary); }
-body.mn-avorio .mn-strip-board__cell { border-color:rgba(0,0,0,0.2); background:var(--avorio-chiaro); }
-body.mn-avorio .mn-strip-board__label { color:var(--mn-text-tertiary); }
-body.mn-avorio .mn-strip-gauge-label { color:var(--mn-text-tertiary); }
-
-/* ═══ Fluid sizing (container-query) ═══ */
+/* ── Fluid sizing (container-query) ── */
 .mn-strip--dashboard .mn-strip__inner {
   padding:clamp(4px,1cqi,14px) clamp(6px,1.5cqi,14px);
   gap:clamp(8px,2cqi,16px);
@@ -125,30 +165,30 @@ body.mn-avorio .mn-strip-gauge-label { color:var(--mn-text-tertiary); }
 .mn-strip-kpi__value { font-size:clamp(1.2rem,2.5cqi,1.8rem); }
 .mn-strip-board__val { font-size:clamp(1rem,2cqi,1.4rem); }
 
-/* ═══ Container queries: compact layouts ═══ */
+/* ── Container queries: compact layouts ── */
+
+/* Medium: 2x2 grid — gauges pair with their neighbors */
 @container strip (max-width: 1000px) {
-  .mn-strip__inner { flex-wrap:wrap; min-height:auto; }
-  .mn-strip__section[data-section="pipeline"] { flex:2 1 280px; }
-  .mn-strip__section[data-section="board"] { flex:1 1 180px; }
-  .mn-strip__section[data-section="counters"] { flex:0 1 120px; }
-  .mn-strip__divider { display:none; }
-  .mn-strip-gauge-wrap { width:140px; flex:0 0 140px; }
-}
-
-@container strip (max-width: 700px) {
-  .mn-strip-gauge-wrap { width:120px; flex:0 0 120px; }
-  .mn-strip-kpi__spark,
-  .mn-strip__sparkline-mount { width:60px; height:22px; }
-}
-
-@container strip (max-width: 480px) {
-  .mn-strip__inner {
-    overflow-x:auto; flex-wrap:nowrap;
-    -webkit-overflow-scrolling:touch; scroll-snap-type:x mandatory;
+  .mn-strip--dashboard .mn-strip__inner {
+    display:grid !important;
+    grid-template-columns:auto 1fr;
+    gap:var(--space-md);
   }
-  .mn-strip__section { scroll-snap-align:start; flex-shrink:0; }
-  .mn-strip__section[data-section="pipeline"] { min-width:240px; }
-  .mn-strip__section[data-section="board"] { min-width:180px; }
+  .mn-strip__divider { display:none; }
+  .mn-strip-gauge-wrap { width:120px; flex:0 0 120px; }
+}
+
+/* Narrow: single column, horizontal scroll with snap */
+@container strip (max-width: 600px) {
+  .mn-strip--dashboard .mn-strip__inner {
+    display:flex !important;
+    flex-wrap:nowrap;
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+    scroll-snap-type:x mandatory;
+    gap:var(--space-lg);
+  }
+  .mn-strip__section { scroll-snap-align:start; flex-shrink:0; min-width:140px; }
   .mn-strip-gauge-wrap { width:100px; flex:0 0 100px; }
   .mn-strip-kpi__spark,
   .mn-strip__sparkline-mount { width:50px; height:18px; }

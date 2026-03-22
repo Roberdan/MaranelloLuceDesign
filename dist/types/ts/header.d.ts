@@ -4,7 +4,7 @@
  */
 import type { ProfileMenuSection } from './core/types';
 export interface HeaderBrand {
-    label: string;
+    label?: string;
     logo?: string;
     href?: string;
 }

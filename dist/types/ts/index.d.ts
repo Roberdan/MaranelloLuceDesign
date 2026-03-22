@@ -1,5 +1,5 @@
 /** Maranello Luce Design - Main ES module entry point. Public API surface. */
-export declare const VERSION = "5.10.0";
+export declare const VERSION = "5.11.0";
 export * from './core/types';
 export { EventBus, eventBus } from './core/events';
 export type { EventCallback } from './core/events';
@@ -33,6 +33,8 @@ export { profileMenu } from './profile-menu';
 export type { ProfileMenuUser, ProfileMenuOptions, ProfileMenuController } from './profile-menu';
 export { header } from './header';
 export type { HeaderOptions, HeaderController, HeaderBrand, HeaderButton, HeaderSearch, HeaderProfile } from './header';
+export { headerV2 } from './header-v2';
+export type { HeaderV2Options, HeaderV2Controller, HeaderV2Brand, HeaderV2Group, HeaderV2Action, HeaderV2Search, HeaderV2Status, HeaderV2Profile, } from './header-v2';
 export { themePicker } from './theme-picker';
 export type { ThemePickerOptions, ThemePickerController } from './theme-picker';
 export { filterPanel } from './filter-panel';
