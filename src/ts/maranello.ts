@@ -150,10 +150,12 @@ M.okrPanel = okrPanel;
 M.gridLayout = gridLayout;
 M.createLayout = createLayout;
 
-// Lazy layout singleton — created when #mn-grid exists in DOM
+// Lazy layout singleton — opt-in via data-mn-auto-layout attribute
 function _initLayout(): void {
   const gridEl = document.getElementById('mn-grid');
-  if (gridEl) M.layout = createLayout(gridEl);
+  if (gridEl && gridEl.hasAttribute('data-mn-auto-layout')) {
+    M.layout = createLayout(gridEl);
+  }
 }
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', _initLayout, { once: true });
@@ -161,6 +163,7 @@ if (document.readyState === 'loading') {
   _initLayout();
 }
 M.socialGraph = socialGraph;
+M.sparkline = sparkline;
 M.chartInteract = chartInteract;
 M.sparklineInteract = sparklineInteract;
 

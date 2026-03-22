@@ -2,7 +2,7 @@
 
 Ferrari Luce-inspired design system for AI agent dashboards. Zero runtime dependencies. 5 adaptive themes. WCAG 2.2 AA. Framework-agnostic.
 
-**v5.2.1** | [Live Demo](https://roberdan.github.io/MaranelloLuceDesign/) | [Migration Guide](docs/migrations/v5.0.0.md) | [CHANGELOG](CHANGELOG.md)
+**v5.3.0** | [Live Demo](https://roberdan.github.io/MaranelloLuceDesign/) | [Migration Guide](docs/migrations/v5.3.0.md) | [CHANGELOG](CHANGELOG.md)
 
 ## Install
 
@@ -253,6 +253,15 @@ scaffold.setState('partial', 'Historical data unavailable');
 Lightweight alternative to AppShellController — 4-slot CSS grid with `:has()` auto-collapse + state machine.
 
 ```html
+<!-- Option A: auto-init layout on DOMContentLoaded (add data-mn-auto-layout) -->
+<div id="mn-grid" data-mn-auto-layout>
+  <div id="mn-slot-strip" hidden></div>
+  <div id="mn-slot-left" hidden></div>
+  <div id="mn-slot-center"></div>
+  <div id="mn-slot-right" hidden></div>
+</div>
+
+<!-- Option B: CSS-only grid (no auto-init, call createLayout() yourself) -->
 <div id="mn-grid">
   <div id="mn-slot-strip" hidden></div>
   <div id="mn-slot-left" hidden></div>
@@ -262,15 +271,19 @@ Lightweight alternative to AppShellController — 4-slot CSS grid with `:has()` 
 ```
 
 ```js
-// Register views
+// Option A: auto-init — Maranello.layout is ready after DOMContentLoaded
 Maranello.layout.register('dashboard', { label: 'Dashboard', buttonId: 'btn-dash' });
 Maranello.layout.register('settings', { label: 'Settings', fullpage: true });
 
+// Option B: explicit init — for framework consumers (Svelte, React, etc.)
+const layout = Maranello.createLayout(document.getElementById('mn-grid'));
+layout.register('dashboard', { label: 'Dashboard' });
+
 // Switch views + toggle slots
-Maranello.layout.showView('dashboard');
-Maranello.layout.toggleLeft();
-Maranello.layout.openRight();
-Maranello.layout.wireButtons();
+layout.showView('dashboard');
+layout.toggleLeft();
+layout.openRight();
+layout.wireButtons();
 
 // Listen for changes
 document.addEventListener('layout-changed', (e) => console.log(e.detail));
@@ -283,9 +296,18 @@ Features: fullpage mode (saves/restores sidebar state), responsive stacking unde
 ```js
 Maranello.header.init(navbar, {
   brand: { label: 'MyApp', logo: svgString },
-  left: [{ id: 'dash', label: 'Dashboard', active: true }, 'separator', { id: 'reports', label: 'Reports' }],
+  left: [
+    { id: 'dash', label: 'Dashboard', active: true, onClick: () => showView('dash') },
+    'separator',
+    { id: 'reports', label: 'Reports', onClick: () => showView('reports') }
+  ],
   center: { type: 'search', placeholder: 'Search...', shortcut: 'Cmd+K' },
   right: [{ id: 'settings', label: 'Settings' }, { type: 'profile', name: 'User', sections: [{ title: 'Theme', type: 'theme-switcher' }] }]
+});
+
+// Buttons support both onClick callbacks and bubbling CustomEvents:
+document.addEventListener('header-button-click', (e) => {
+  console.log(e.detail.id, e.detail.label);
 });
 ```
 

@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.3.0] - 2026-03-22
+
+### Breaking Changes
+- [BC-1] Layout auto-init now requires `data-mn-auto-layout` attribute on `#mn-grid` — prevents state conflicts with framework consumers (Svelte, React, Next.js). See `docs/migrations/v5.3.0.md`.
+
+### Added
+- Header buttons emit `header-button-click` CustomEvent (bubbles) with `{ id, label }` detail
+- `Maranello.sparkline` top-level IIFE export for sparkline chart factory
+
+### Fixed
+- `components-header.css` missing from `maranello.css` barrel — header had zero styles in `maranello.min.css`
+- Header invisible on Safari/WebKit when using `maranello.min.css` (root cause: missing CSS above)
+
 ## [5.2.1] - 2026-03-21
 
 ### Fixed

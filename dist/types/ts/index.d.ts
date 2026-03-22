@@ -31,6 +31,10 @@ export { initMessages } from './ai-chat-messages';
 export { systemStatus } from './system-status';
 export { profileMenu } from './profile-menu';
 export type { ProfileMenuUser, ProfileMenuOptions, ProfileMenuController } from './profile-menu';
+export { header } from './header';
+export type { HeaderOptions, HeaderController, HeaderBrand, HeaderButton, HeaderSearch, HeaderProfile } from './header';
+export { themePicker } from './theme-picker';
+export type { ThemePickerOptions, ThemePickerController } from './theme-picker';
 export * from './charts';
 export { chartInteract, sparklineInteract } from './chart-interact';
 export { autoResize, autoResizeAll } from './auto-resize';
@@ -93,5 +97,7 @@ export type { TipElements, MapEventState, MapEventCallbacks, EventCleanup, } fro
 export * from './map-view-helpers';
 export { gridLayout } from './grid-layout';
 export type { GridTemplateName, GridLayoutOptions, GridLayoutController } from './grid-layout';
+export { createLayout } from './layout';
+export type { LayoutController, LayoutViewConfig, LayoutState } from './layout';
 export * from './index-extras';
 export { Maranello } from './maranello';
