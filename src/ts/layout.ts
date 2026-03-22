@@ -41,15 +41,6 @@ export function createLayout(gridEl?: HTMLElement): LayoutController {
   }
   const grid: HTMLElement = maybeGrid;
 
-  /**
-   * Re-query slot from live DOM. Try grid subtree first, fall back to
-   * document.getElementById for Safari compat (WebKit querySelector
-   * with ID selectors can miss elements in certain DOM timings).
-   */
-  function getSlot(id: string): HTMLElement | null {
-    return grid.querySelector('#' + id) || document.getElementById(id);
-  }
-
   const views = new Map<string, LayoutViewConfig>();
   const buttonCleanups: Array<() => void> = [];
 
@@ -64,17 +55,20 @@ export function createLayout(gridEl?: HTMLElement): LayoutController {
   // Sidebar state saved when entering fullpage, restored on exit
   let savedStrip = true;
 
+  /**
+   * Sync DOM to match internal state. Uses document.getElementById
+   * exclusively — querySelector('#id') is unreliable on Safari/WebKit.
+   */
   function syncDOM(): void {
-    const strip = getSlot('mn-slot-strip');
-    const left = getSlot('mn-slot-left');
-    const right = getSlot('mn-slot-right');
-    const center = getSlot('mn-slot-center');
+    const strip = document.getElementById('mn-slot-strip');
+    const left = document.getElementById('mn-slot-left');
+    const right = document.getElementById('mn-slot-right');
+    const center = document.getElementById('mn-slot-center');
 
     if (strip) strip.hidden = !state.strip;
     if (left) left.hidden = !state.left;
     if (right) right.hidden = !state.right;
 
-    // Avoid classList.toggle(name, force) — Safari compat
     if (state.fullpage) {
       grid.classList.add('mn-layout--fullpage');
     } else {

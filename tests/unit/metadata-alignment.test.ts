@@ -8,10 +8,10 @@ function readFile(rel: string): string {
   return readFileSync(join(ROOT, rel), 'utf8');
 }
 
-describe('metadata alignment — v5.3.3', () => {
-  it('AGENT.md references v5.3.3', () => {
+describe('metadata alignment — v5.3.4', () => {
+  it('AGENT.md references v5.3.4', () => {
     const content = readFile('AGENT.md');
-    expect(content).toContain('v5.3.3');
+    expect(content).toContain('v5.3.4');
   });
 
   it('AGENT.md references 5 themes', () => {
@@ -24,15 +24,15 @@ describe('metadata alignment — v5.3.3', () => {
     expect(content).toContain('32');
   });
 
-  it('NaSra.agent.md references v5.3.3', () => {
+  it('NaSra.agent.md references v5.3.4', () => {
     const content = readFile('.github/agents/NaSra.agent.md');
-    expect(content).toContain('v5.3.3');
+    expect(content).toContain('v5.3.4');
   });
 
-  it('CLAUDE.md header references v5.3.3', () => {
+  it('CLAUDE.md header references v5.3.4', () => {
     const content = readFile('CLAUDE.md');
     const firstLine = content.split('\n')[0];
-    expect(firstLine).toContain('v5.3.3');
+    expect(firstLine).toContain('v5.3.4');
   });
 
   it('hero.js does not reference MIT license', () => {
