@@ -98,14 +98,18 @@ export function createLayout(gridEl?: HTMLElement): LayoutController {
     if (el && el.hidden !== hidden) el.hidden = hidden;
   }
 
-  /** Sync DOM to match internal state. Each slot is independent. */
+  /**
+   * Sync left, right, fullpage, and center views to DOM.
+   * Strip is NEVER written here — only toggleStrip() and fullpage control strip.
+   */
   function syncDOM(): void {
-    setSlotHidden('mn-slot-strip', !state.strip);
     setSlotHidden('mn-slot-left', !state.left);
     setSlotHidden('mn-slot-right', !state.right);
 
     if (state.fullpage) {
       grid.classList.add('mn-layout--fullpage');
+      // Fullpage hides everything including strip
+      setSlotHidden('mn-slot-strip', true);
     } else {
       grid.classList.remove('mn-layout--fullpage');
     }
@@ -187,6 +191,8 @@ export function createLayout(gridEl?: HTMLElement): LayoutController {
         state.strip = savedStrip;
         state.left = savedLeft;
         state.right = savedRight;
+        // Restore strip DOM since syncDOM doesn't write it
+        setSlotHidden('mn-slot-strip', !state.strip);
       }
       if (!state.fullpage && config.fullpage) {
         savedStrip = state.strip;
@@ -204,7 +210,8 @@ export function createLayout(gridEl?: HTMLElement): LayoutController {
       } else {
         state.fullpage = false;
 
-        // Apply each slot independently — only declared slots change
+        // Apply left/right independently — only declared slots change
+        // Strip is NEVER modified by showView — only toggleStrip() controls it
         applySlotConfig(
           config.left, 'mn-slot-left',
           (v) => { state.left = v; },
@@ -216,12 +223,6 @@ export function createLayout(gridEl?: HTMLElement): LayoutController {
           (v) => { state.right = v; },
           (v) => { rightViewDriven = v; },
           rightViewDriven,
-        );
-        applySlotConfig(
-          config.strip, 'mn-slot-strip',
-          (v) => { state.strip = v; },
-          (v) => { stripViewDriven = v; },
-          stripViewDriven,
         );
       }
 

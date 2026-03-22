@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.6.4] - 2026-03-22
+
+### Fixed
+- **`showView()` no longer touches strip** — strip removed from `syncDOM()` and `applySlotConfig()`. Only `toggleStrip()` and fullpage save/restore control strip. Strip is a global user toggle, not view-driven.
+
 ## [5.6.3] - 2026-03-22
 
 ### Fixed
