@@ -41,9 +41,13 @@ export function createLayout(gridEl?: HTMLElement): LayoutController {
   }
   const grid: HTMLElement = maybeGrid;
 
-  /** Re-query slots from the live DOM — never cache stale refs. */
+  /**
+   * Re-query slot from live DOM. Try grid subtree first, fall back to
+   * document.getElementById for Safari compat (WebKit querySelector
+   * with ID selectors can miss elements in certain DOM timings).
+   */
   function getSlot(id: string): HTMLElement | null {
-    return grid.querySelector(`#${id}`);
+    return grid.querySelector('#' + id) || document.getElementById(id);
   }
 
   const views = new Map<string, LayoutViewConfig>();
@@ -69,7 +73,13 @@ export function createLayout(gridEl?: HTMLElement): LayoutController {
     if (strip) strip.hidden = !state.strip;
     if (left) left.hidden = !state.left;
     if (right) right.hidden = !state.right;
-    grid.classList.toggle('mn-layout--fullpage', state.fullpage);
+
+    // Avoid classList.toggle(name, force) — Safari compat
+    if (state.fullpage) {
+      grid.classList.add('mn-layout--fullpage');
+    } else {
+      grid.classList.remove('mn-layout--fullpage');
+    }
 
     // Toggle view children inside center slot
     if (center && state.view) {

@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.3.3] - 2026-03-22
+
+### Fixed
+- `layout.toggleStrip()` / `toggleLeft()` / `toggleRight()` — Safari compat: `getSlot()` falls back to `document.getElementById()` when `grid.querySelector()` misses elements (WebKit ID selector timing quirk)
+- Replace `classList.toggle(name, force)` with explicit `add/remove` — avoids Safari two-argument `toggle()` edge cases
+
 ## [5.3.2] - 2026-03-22
 
 ### Fixed

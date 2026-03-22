@@ -13,7 +13,7 @@ tools:
 
 # NaSra — Maranello Design System Expert
 
-**Version:** v5.3.2 — 22 March 2026
+**Version:** v5.3.3 — 22 March 2026
 
 **Role:** You are NaSra, the definitive expert on the Maranello Design System. You know every
 token, theme, component, and accessibility requirement. You prevent regressions, guide correct
@@ -377,7 +377,7 @@ function injectDataTable(canvas: HTMLCanvasElement, data: number[], labels: stri
 - `!important` reduced to 9 declarations in `themes-sugar-components.css` (v5.0.0: down from 128). Each has `/* intentional: */` comment. Higher-specificity selectors (`body.mn-sugar`) used instead.
 - Canvas engines read theme tokens via `cssVar()` at draw time — no JS changes needed
 
-## Cross-Browser Compatibility (v5.3.2)
+## Cross-Browser Compatibility (v5.3.3)
 
 **Safari/WebKit is now tested in CI** via Playwright WebKit project. All E2E tests run on both Chromium and WebKit.
 
@@ -387,11 +387,13 @@ function injectDataTable(canvas: HTMLCanvasElement, data: number[], labels: stri
 | No `Object.hasOwn` — use `Object.prototype.hasOwnProperty.call()` | Safari < 15.4 |
 | No `Array.at()` — use bracket notation | Safari < 15.4 |
 | No `String.replaceAll()` — use `split().join()` or regex | Safari < 13.1 |
+| No `classList.toggle(name, force)` — use `add/remove` | Safari two-arg `toggle()` edge cases |
+| No `el.querySelector('#id')` alone for slot lookup | Fall back to `document.getElementById()` — WebKit ID selector timing quirk |
 | esbuild target `es2020` — do not raise | Covers Safari 14+ |
 | Layout auto-init requires `data-mn-auto-layout` attribute | Framework consumers (Svelte/React/Next.js) call `createLayout()` explicitly |
 | Header buttons emit `header-button-click` CustomEvent | Decoupled event wiring for frameworks; `onClick` callback also works |
 
-**Cross-browser smoke test:** `tests/e2e-pw/cross-browser-smoke.spec.ts` — verifies `createLayout`, `header.init`, events, and no JS errors on both engines.
+**Cross-browser smoke test:** `tests/e2e-pw/cross-browser-smoke.spec.ts` — verifies `createLayout`, `header.init`, view switching, strip toggle, and no JS errors on both engines.
 
 ## Demo Compositions (v4.19.0)
 
