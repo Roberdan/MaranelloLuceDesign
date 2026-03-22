@@ -58,6 +58,61 @@ test.describe('Cross-browser IIFE smoke', () => {
     expect(result.afterToggle.left).toBe(true);
   });
 
+  test('showView toggles data-view children and strip visibility', async ({ page }) => {
+    const result = await page.evaluate(() => {
+      const div = document.createElement('div');
+      div.innerHTML = [
+        '<div id="mn-slot-strip" hidden></div>',
+        '<div id="mn-slot-left" hidden></div>',
+        '<div id="mn-slot-center">',
+        '  <div data-view="v1">View 1</div>',
+        '  <div data-view="v2" hidden>View 2</div>',
+        '</div>',
+        '<div id="mn-slot-right" hidden></div>',
+      ].join('');
+      document.body.appendChild(div);
+
+      const layout = window.Maranello.createLayout(div);
+      layout.register('v1', { label: 'View 1' });
+      layout.register('v2', { label: 'View 2' });
+
+      // Initial: strip should be visible (state.strip=true)
+      const stripAfterInit = div.querySelector('#mn-slot-strip').hidden;
+
+      layout.showView('v1');
+      const v1AfterShow1 = div.querySelector('[data-view="v1"]').hidden;
+      const v2AfterShow1 = div.querySelector('[data-view="v2"]').hidden;
+
+      layout.showView('v2');
+      const v1AfterShow2 = div.querySelector('[data-view="v1"]').hidden;
+      const v2AfterShow2 = div.querySelector('[data-view="v2"]').hidden;
+
+      // toggleStrip: strip visible -> hidden
+      layout.toggleStrip();
+      const stripAfterToggle = div.querySelector('#mn-slot-strip').hidden;
+
+      layout.destroy();
+      div.remove();
+      return {
+        stripAfterInit,
+        v1AfterShow1, v2AfterShow1,
+        v1AfterShow2, v2AfterShow2,
+        stripAfterToggle,
+      };
+    });
+
+    // After init, strip should be visible (hidden=false)
+    expect(result.stripAfterInit).toBe(false);
+    // showView('v1'): v1 visible, v2 hidden
+    expect(result.v1AfterShow1).toBe(false);
+    expect(result.v2AfterShow1).toBe(true);
+    // showView('v2'): v1 hidden, v2 visible
+    expect(result.v1AfterShow2).toBe(true);
+    expect(result.v2AfterShow2).toBe(false);
+    // toggleStrip: strip now hidden
+    expect(result.stripAfterToggle).toBe(true);
+  });
+
   test('header.init renders and fires events', async ({ page }) => {
     const result = await page.evaluate(() => {
       const el = document.createElement('div');

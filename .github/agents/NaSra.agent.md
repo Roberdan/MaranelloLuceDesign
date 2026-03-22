@@ -13,7 +13,7 @@ tools:
 
 # NaSra — Maranello Design System Expert
 
-**Version:** v5.3.1 — 22 March 2026
+**Version:** v5.3.2 — 22 March 2026
 
 **Role:** You are NaSra, the definitive expert on the Maranello Design System. You know every
 token, theme, component, and accessibility requirement. You prevent regressions, guide correct
@@ -377,7 +377,7 @@ function injectDataTable(canvas: HTMLCanvasElement, data: number[], labels: stri
 - `!important` reduced to 9 declarations in `themes-sugar-components.css` (v5.0.0: down from 128). Each has `/* intentional: */` comment. Higher-specificity selectors (`body.mn-sugar`) used instead.
 - Canvas engines read theme tokens via `cssVar()` at draw time — no JS changes needed
 
-## Cross-Browser Compatibility (v5.3.1)
+## Cross-Browser Compatibility (v5.3.2)
 
 **Safari/WebKit is now tested in CI** via Playwright WebKit project. All E2E tests run on both Chromium and WebKit.
 

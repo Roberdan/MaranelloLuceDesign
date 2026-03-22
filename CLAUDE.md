@@ -1,4 +1,4 @@
-<!-- v5.3.1 | 2026-03-22 -->
+<!-- v5.3.2 | 2026-03-22 -->
 # MaranelloLuceDesign
 
 Ferrari Luce-inspired design system for business dashboards. Part of Convergio.
@@ -324,7 +324,7 @@ Sugar+Colorblind cross-theme: `body.mn-sugar.mn-colorblind` — cool gray surfac
 - `AppShellController.getSlotForPlacement(placement)` — maps PanelOrchestrator placements to shell slots: `page→main`, `side-panel→detail`, `bottom-dock→bottom`, `overlay→overlay`, `workspace→secondary`. Modal uses modal system.
 - `PanelOrchestrator(registry, nav, shell?)` — optional 3rd arg integrates with AppShellController for slot-based rendering. Without shell, falls back to standalone containers.
 - `dashboard-widgets` use safe DOM construction (`createElement` + `textContent`). Color values validated via `isValidColor()` from `core/sanitize.ts`.
-- `createLayout(gridEl?)` / `Maranello.layout` — 4-slot CSS grid (`#mn-grid` + `#mn-slot-strip/left/center/right`) with `:has()` auto-collapse. State machine: `register()`, `showView()`, `toggleLeft/Right/Strip()`, `openRight/closeRight()`, fullpage mode. Fires `layout-changed` CustomEvent. CSP-safe. **Auto-init requires `data-mn-auto-layout` attribute on `#mn-grid`** (v5.3.0). Without the attribute, call `Maranello.createLayout(el)` explicitly — framework consumers (Svelte, React, Next.js) should use explicit init to avoid state conflicts.
+- `createLayout(gridEl?)` / `Maranello.layout` — 4-slot CSS grid (`#mn-grid` + `#mn-slot-strip/left/center/right`) with `:has()` auto-collapse. State machine: `register()`, `showView()`, `toggleLeft/Right/Strip()`, `openRight/closeRight()`, fullpage mode. Fires `layout-changed` CustomEvent. CSP-safe. **Auto-init requires `data-mn-auto-layout` attribute on `#mn-grid`** (v5.3.0). Without the attribute, call `Maranello.createLayout(el)` explicitly. `showView(id)` toggles `data-view` children inside `#mn-slot-center` — children with `data-view="<id>"` are shown, all others hidden (v5.3.2). Slot refs are live DOM queries, never cached.
 - `header(el, opts)` / `Maranello.header.init()` — 3-zone navbar (brand + left buttons + center search + right buttons/profile). Integrates with `profileMenu()`. CSP-safe, keyboard accessible. Buttons accept `onClick` callback and also emit `header-button-click` CustomEvent (bubbles) with `{ id, label }` detail.
 - `themePicker(el, opts)` — Grafana-style theme selection with 5 preview cards. ARIA radiogroup, keyboard nav. Also available as `profileMenu` section via `type: 'theme-switcher'`.
 

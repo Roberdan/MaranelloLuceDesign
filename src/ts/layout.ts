@@ -33,14 +33,6 @@ export interface LayoutController {
   destroy(): void;
 }
 
-interface SlotRefs {
-  grid: HTMLElement;
-  strip: HTMLElement | null;
-  left: HTMLElement | null;
-  center: HTMLElement | null;
-  right: HTMLElement | null;
-}
-
 /** Create a layout controller bound to a grid element. */
 export function createLayout(gridEl?: HTMLElement): LayoutController {
   const maybeGrid = gridEl ?? document.getElementById('mn-grid');
@@ -49,13 +41,10 @@ export function createLayout(gridEl?: HTMLElement): LayoutController {
   }
   const grid: HTMLElement = maybeGrid;
 
-  const slots: SlotRefs = {
-    grid,
-    strip: grid.querySelector('#mn-slot-strip'),
-    left: grid.querySelector('#mn-slot-left'),
-    center: grid.querySelector('#mn-slot-center'),
-    right: grid.querySelector('#mn-slot-right'),
-  };
+  /** Re-query slots from the live DOM — never cache stale refs. */
+  function getSlot(id: string): HTMLElement | null {
+    return grid.querySelector(`#${id}`);
+  }
 
   const views = new Map<string, LayoutViewConfig>();
   const buttonCleanups: Array<() => void> = [];
@@ -72,10 +61,26 @@ export function createLayout(gridEl?: HTMLElement): LayoutController {
   let savedStrip = true;
 
   function syncDOM(): void {
-    if (slots.strip) slots.strip.hidden = !state.strip;
-    if (slots.left) slots.left.hidden = !state.left;
-    if (slots.right) slots.right.hidden = !state.right;
+    const strip = getSlot('mn-slot-strip');
+    const left = getSlot('mn-slot-left');
+    const right = getSlot('mn-slot-right');
+    const center = getSlot('mn-slot-center');
+
+    if (strip) strip.hidden = !state.strip;
+    if (left) left.hidden = !state.left;
+    if (right) right.hidden = !state.right;
     grid.classList.toggle('mn-layout--fullpage', state.fullpage);
+
+    // Toggle view children inside center slot
+    if (center && state.view) {
+      const children = center.children;
+      for (let i = 0; i < children.length; i++) {
+        const child = children[i] as HTMLElement;
+        if (child.dataset && 'view' in child.dataset) {
+          child.hidden = child.dataset.view !== state.view;
+        }
+      }
+    }
   }
 
   function fireEvent(): void {
