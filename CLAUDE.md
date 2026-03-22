@@ -1,4 +1,4 @@
-<!-- v5.3.0 | 2026-03-22 -->
+<!-- v5.3.1 | 2026-03-22 -->
 # MaranelloLuceDesign
 
 Ferrari Luce-inspired design system for business dashboards. Part of Convergio.
@@ -327,6 +327,16 @@ Sugar+Colorblind cross-theme: `body.mn-sugar.mn-colorblind` — cool gray surfac
 - `createLayout(gridEl?)` / `Maranello.layout` — 4-slot CSS grid (`#mn-grid` + `#mn-slot-strip/left/center/right`) with `:has()` auto-collapse. State machine: `register()`, `showView()`, `toggleLeft/Right/Strip()`, `openRight/closeRight()`, fullpage mode. Fires `layout-changed` CustomEvent. CSP-safe. **Auto-init requires `data-mn-auto-layout` attribute on `#mn-grid`** (v5.3.0). Without the attribute, call `Maranello.createLayout(el)` explicitly — framework consumers (Svelte, React, Next.js) should use explicit init to avoid state conflicts.
 - `header(el, opts)` / `Maranello.header.init()` — 3-zone navbar (brand + left buttons + center search + right buttons/profile). Integrates with `profileMenu()`. CSP-safe, keyboard accessible. Buttons accept `onClick` callback and also emit `header-button-click` CustomEvent (bubbles) with `{ id, label }` detail.
 - `themePicker(el, opts)` — Grafana-style theme selection with 5 preview cards. ARIA radiogroup, keyboard nav. Also available as `profileMenu` section via `type: 'theme-switcher'`.
+
+## Safari/WebKit Compatibility (NON-NEGOTIABLE)
+
+Do NOT use these APIs in `src/ts/` — they break Safari < 15.4:
+- `structuredClone` — use `JSON.parse(JSON.stringify())` for plain data
+- `Object.hasOwn` — use `Object.prototype.hasOwnProperty.call()`
+- `Array.at()` — use bracket notation
+- esbuild target is `es2020` — do not raise
+
+Playwright E2E runs on both Chromium + WebKit. Cross-browser smoke test: `tests/e2e-pw/cross-browser-smoke.spec.ts`.
 
 ## CI / GitHub Actions
 

@@ -3,6 +3,11 @@
 
 import { escapeHtml } from './core/sanitize';
 
+/** Deep clone plain data — avoids deepClone (Safari < 15.4). */
+function deepClone<T>(obj: T): T {
+  return JSON.parse(JSON.stringify(obj));
+}
+
 export interface DecisionCriterion {
   id: string;
   label: string;
@@ -74,7 +79,7 @@ export function decisionMatrix(
   el: HTMLElement,
   opts: DecisionMatrixOptions,
 ): DecisionMatrixController {
-  let alternatives = structuredClone(opts.alternatives);
+  let alternatives = deepClone(opts.alternatives);
   const { criteria, editable = false, onChange } = opts;
   let activeInput: HTMLInputElement | null = null;
 
@@ -86,7 +91,7 @@ export function decisionMatrix(
     const alt = alternatives.find((a) => a.id === altId);
     if (alt) {
       alt.scores[critId] = val;
-      onChange?.(structuredClone(alternatives));
+      onChange?.(deepClone(alternatives));
     }
     activeInput = null;
     render();
@@ -188,11 +193,11 @@ export function decisionMatrix(
 
   return {
     update(alts: DecisionAlternative[]): void {
-      alternatives = structuredClone(alts);
+      alternatives = deepClone(alts);
       render();
     },
     getScores(): DecisionAlternative[] {
-      return structuredClone(alternatives);
+      return deepClone(alternatives);
     },
     destroy(): void {
       el.innerHTML = '';
