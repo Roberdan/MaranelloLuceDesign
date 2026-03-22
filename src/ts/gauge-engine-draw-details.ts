@@ -48,24 +48,24 @@ export function drawNeedle(
 }
 
 export function drawCenterText(s: GaugeDrawState, c: Record<string, unknown>): void {
-  const fsCtr = Math.max(16, s.size * 0.15);
+  const fsCtr = Math.max(20, s.size * 0.22);
   if (c.centerValue) {
     s.ctx.font = `700 ${fsCtr}px 'Barlow Condensed','Outfit',sans-serif`;
     s.ctx.fillStyle = s.palette.centerValue; s.ctx.textAlign = 'center';
     s.ctx.textBaseline = 'middle';
-    s.ctx.fillText(c.centerValue as string, s.cx, s.cy - s.size * 0.02);
+    s.ctx.fillText(c.centerValue as string, s.cx, s.cy);
   }
   if (c.centerUnit) {
-    s.ctx.font = `400 ${Math.max(7, s.size * 0.04)}px 'Inter',sans-serif`;
+    s.ctx.font = `500 ${Math.max(8, s.size * 0.055)}px 'Barlow Condensed','Outfit',sans-serif`;
     s.ctx.fillStyle = s.palette.centerUnit; s.ctx.textAlign = 'center';
     s.ctx.textBaseline = 'middle';
-    s.ctx.fillText(c.centerUnit as string, s.cx, s.cy + s.size * 0.06);
+    s.ctx.fillText(c.centerUnit as string, s.cx, s.cy + fsCtr * 0.55);
   }
   if (c.centerLabel) {
-    s.ctx.font = `600 ${Math.max(6, s.size * 0.035)}px 'Barlow Condensed','Outfit',sans-serif`;
+    s.ctx.font = `600 ${Math.max(7, s.size * 0.045)}px 'Barlow Condensed','Outfit',sans-serif`;
     s.ctx.fillStyle = s.palette.centerLabel; s.ctx.textAlign = 'center';
     s.ctx.textBaseline = 'middle';
-    s.ctx.fillText(c.centerLabel as string, s.cx, s.cy - s.size * 0.14);
+    s.ctx.fillText(c.centerLabel as string, s.cx, s.cy - fsCtr * 0.65);
   }
 }
 

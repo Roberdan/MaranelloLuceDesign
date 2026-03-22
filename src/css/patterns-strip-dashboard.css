@@ -22,25 +22,25 @@
 .mn-strip--dashboard .mn-strip__section-title { color:var(--mn-text); }
 .mn-strip--dashboard .mn-strip-row__label { color:inherit; }
 .mn-strip--dashboard .mn-strip-row__count { color:var(--mn-text); }
-.mn-strip--dashboard .mn-strip-row__dur { color:var(--mn-text-tertiary); }
+.mn-strip--dashboard .mn-strip-row__dur { color:var(--mn-text-muted); }
 .mn-strip--dashboard .mn-strip-row__track { background:var(--mn-border); }
 .mn-strip--dashboard .mn-strip-row--e2e { border-top-color:var(--mn-border); }
-.mn-strip--dashboard .mn-strip-kpi__label { color:var(--mn-text-tertiary); }
-.mn-strip--dashboard .mn-strip-gauge-label { color:var(--mn-text-tertiary); }
+.mn-strip--dashboard .mn-strip-kpi__label { color:var(--mn-text-muted); }
+.mn-strip--dashboard .mn-strip-gauge-label { color:var(--mn-text-muted); }
 .mn-strip--dashboard .mn-strip-board__cell {
   background:var(--mn-surface); border-color:var(--mn-border);
   box-shadow:inset 0 1px 2px var(--mn-border-subtle);
 }
-.mn-strip--dashboard .mn-strip-board__label { color:var(--mn-text-tertiary); }
+.mn-strip--dashboard .mn-strip-board__label { color:var(--mn-text-muted); }
 .mn-strip--dashboard .mn-strip-board__val { color:var(--mn-text); }
-.mn-strip__label-dim { color:var(--mn-text-tertiary); }
+.mn-strip__label-dim { color:var(--mn-text-muted); }
 
 /* ── Section titles + gauge labels (unified at top) ── */
 .mn-strip-gauge-label,
 .mn-strip__section-title {
   font-family:var(--font-mono,'Barlow Condensed',sans-serif);
   font-size:0.5rem; font-weight:700; text-transform:uppercase;
-  letter-spacing:0.1em; color:var(--mn-text-tertiary); text-align:center;
+  letter-spacing:0.1em; color:var(--mn-text-muted); text-align:center;
   margin-bottom:4px;
 }
 
@@ -129,7 +129,7 @@
   display:flex; gap:8px; flex-wrap:wrap; margin-top:2px;
   font-family:var(--font-mono,'Barlow Condensed',sans-serif);
   font-size:0.45rem; text-transform:uppercase; letter-spacing:0.04em;
-  color:var(--mn-text-tertiary);
+  color:var(--mn-text-muted);
 }
 .mn-strip-legend__dot {
   width:6px; height:6px; border-radius:50%; display:inline-block;
