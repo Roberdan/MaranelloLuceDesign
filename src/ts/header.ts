@@ -62,6 +62,10 @@ function createButton(btn: HeaderButton): HTMLButtonElement {
   el.type = 'button';
   el.className = 'mn-header__btn';
   el.dataset.headerId = btn.id;
+  if (btn.label) {
+    el.title = btn.label;
+    el.setAttribute('aria-label', btn.label);
+  }
   if (btn.active) el.classList.add('mn-header__btn--active');
   if (btn.icon) {
     const iconSpan = document.createElement('span');
