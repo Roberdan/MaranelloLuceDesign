@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.11.3] - 2026-03-23
+
+### Fixed
+- All viz components fill parent container by default (width+height 100%)
+- Gantt: removed fixed 480px height, now flex:1 + `var(--mn-gantt-height)`
+- Heatmap: added `var(--mn-heatmap-height)` CSS variable override
+- Network: min-height 400->200px, `var(--mn-network-height)` override
+- Data Table: `var(--mn-dt-width)` / `var(--mn-dt-height)` overrides
+- Consumer sets custom size via CSS variable on parent: `style="--mn-gantt-height:600px"`
+
 ## [5.11.2] - 2026-03-22
 
 ### Fixed
