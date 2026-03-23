@@ -54,7 +54,7 @@
 
   <script src="../dist/iife/maranello.min.js"></script>
   <script>
-    // Exact gauge config format from VirtualBPM (complications-based)
+    // Exact gauge config format for the dashboard strip complications
     var utilGaugeConfig = {
       value: 79,
       max: 100,
@@ -96,7 +96,7 @@
     };
 
     var fullStrip = Maranello.dashboardStrip('strip-full', {
-      ariaLabel: 'VirtualBPM Dashboard Strip',
+      ariaLabel: 'Maranello Dashboard Strip',
       zones: [
         {
           type: 'gauge',
