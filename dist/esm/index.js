@@ -4865,6 +4865,270 @@ function header(container, options) {
   };
 }
 
+// src/ts/header-shell-events.ts
+function emitShellEvent(host, type, detail) {
+  host.dispatchEvent(new CustomEvent(type, { detail, bubbles: true }));
+}
+
+// src/ts/header-shell-filters.ts
+function createFilterState(groups) {
+  const state = {};
+  if (!groups) return state;
+  groups.forEach((group) => {
+    if (group.options.length > 0) state[group.id] = [group.options[0].id];
+  });
+  return state;
+}
+function setFilterValues(filters, group, nextValues) {
+  const defaultId = group.options[0]?.id;
+  const allowed = [];
+  group.options.forEach((option) => {
+    if (nextValues.indexOf(option.id) !== -1) allowed.push(option.id);
+  });
+  if (group.multi && defaultId && allowed.length > 1) {
+    const defaultIndex = allowed.indexOf(defaultId);
+    if (defaultIndex !== -1) allowed.splice(defaultIndex, 1);
+  }
+  if (!allowed.length && defaultId) allowed.push(defaultId);
+  filters[group.id] = group.multi ? allowed : [allowed[0]];
+  return filters[group.id].slice();
+}
+
+// src/ts/header-shell-config.ts
+function normalizeSections(sections) {
+  return Array.isArray(sections) ? sections.slice() : [];
+}
+
+// src/ts/header-shell.ts
+function applySvg(host, svg2, className) {
+  if (!svg2) return;
+  const safe = sanitizeSvg(svg2);
+  if (!safe) return;
+  const icon = document.createElement("span");
+  icon.className = className;
+  icon.setAttribute("aria-hidden", "true");
+  icon.innerHTML = safe;
+  host.appendChild(icon);
+}
+function buildAction(action, role, onClick) {
+  const el5 = document.createElement("button");
+  el5.type = "button";
+  el5.className = "mn-header-shell__action";
+  el5.dataset.headerShellActionId = action.id;
+  const title = action.title || action.label || action.id;
+  el5.setAttribute("aria-label", title);
+  if (action.title) el5.title = action.title;
+  applySvg(el5, action.icon, "mn-header-shell__icon");
+  if (action.label) {
+    const label = document.createElement("span");
+    label.textContent = action.label;
+    el5.appendChild(label);
+  }
+  if (action.active) el5.classList.add("mn-header-shell__action--active");
+  if (action.pressed) el5.setAttribute("aria-pressed", "true");
+  if (action.disabled) el5.disabled = true;
+  el5.addEventListener("click", () => onClick(action.id, role));
+  return el5;
+}
+function buildFilters(host, groups, state, onFilter) {
+  if (!groups || !groups.length) return null;
+  const panel = document.createElement("div");
+  panel.className = "mn-header-shell__filters";
+  groups.forEach((group) => {
+    const fieldset = document.createElement("fieldset");
+    fieldset.className = "mn-header-shell__filter-group";
+    fieldset.setAttribute("data-filter-group-id", group.id);
+    const legend2 = document.createElement("legend");
+    legend2.textContent = group.label;
+    fieldset.appendChild(legend2);
+    group.options.forEach((option) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "mn-header-shell__filter-option";
+      btn.textContent = option.label;
+      if (state.filters[group.id] && state.filters[group.id].indexOf(option.id) !== -1) btn.classList.add("is-selected");
+      btn.addEventListener("click", () => {
+        const defaultId = group.options[0]?.id;
+        const current2 = state.filters[group.id] || (defaultId ? [defaultId] : []);
+        let next;
+        if (!group.multi) {
+          next = [option.id];
+        } else if (option.id === defaultId) {
+          next = defaultId ? [defaultId] : [];
+        } else {
+          const normalized = defaultId && current2[0] === defaultId ? [] : current2.slice();
+          const index = normalized.indexOf(option.id);
+          if (index === -1) normalized.push(option.id);
+          else normalized.splice(index, 1);
+          next = normalized.length ? normalized : defaultId ? [defaultId] : [];
+        }
+        onFilter(group.id, next);
+      });
+      fieldset.appendChild(btn);
+    });
+    panel.appendChild(fieldset);
+  });
+  host.appendChild(panel);
+  return panel;
+}
+function applySelection(buttons, activeId) {
+  buttons.forEach((button) => {
+    if (button.dataset.headerShellActionId === activeId) button.classList.add("mn-header-shell__action--active");
+    else button.classList.remove("mn-header-shell__action--active");
+  });
+}
+function headerShell(container, options) {
+  const sections = normalizeSections(options.sections || []);
+  const nav = document.createElement("nav");
+  nav.className = "mn-header-shell";
+  nav.setAttribute("role", "navigation");
+  nav.setAttribute("aria-label", options.ariaLabel || "Header shell navigation");
+  const cleanups = [];
+  const filterGroups = sections.find((section) => section.type === "search" && section.filters);
+  const state = { query: "", filters: createFilterState(filterGroups?.filters), activeActionId: "", themeMode: "nero" };
+  const onAction = (id, role) => {
+    state.activeActionId = id;
+    applySelection(nav.querySelectorAll("button[data-header-shell-action-id]"), id);
+    const detail = { id, role };
+    options.callbacks?.onAction?.(detail);
+    emitShellEvent(nav, "header-shell-action", detail);
+  };
+  const onFilter = (groupId, values) => {
+    if (!filterGroups || !filterGroups.filters) return;
+    const group = filterGroups.filters.find((item) => item.id === groupId);
+    if (!group) return;
+    const next = setFilterValues(state.filters, group, values);
+    nav.querySelectorAll(".mn-header-shell__filters").forEach((panel) => panel.remove());
+    const searchHost = nav.querySelector(".mn-header-shell__search");
+    if (searchHost instanceof HTMLElement) buildFilters(searchHost, filterGroups.filters, state, onFilter);
+    const detail = { groupId, values: next };
+    options.callbacks?.onFilter?.(detail);
+    emitShellEvent(nav, "header-shell-filter", detail);
+  };
+  sections.forEach((section) => {
+    if (section.type === "divider") {
+      const divider = document.createElement("span");
+      divider.className = "mn-header-shell__divider";
+      divider.setAttribute("aria-hidden", "true");
+      nav.appendChild(divider);
+      return;
+    }
+    if (section.type === "spacer") {
+      const spacer = document.createElement("span");
+      spacer.className = "mn-header-shell__spacer";
+      nav.appendChild(spacer);
+      return;
+    }
+    if (section.type === "brand") {
+      const brand = document.createElement(section.href ? "a" : "span");
+      brand.className = "mn-header-shell__brand";
+      brand.setAttribute("data-shell-role", "brand");
+      if (section.href && brand instanceof HTMLAnchorElement) brand.href = section.href;
+      if (section.logoSrc) {
+        const image = document.createElement("img");
+        image.className = "mn-header-shell__brand-logo";
+        image.src = section.logoSrc;
+        image.alt = section.logoAlt || "";
+        brand.appendChild(image);
+      }
+      applySvg(brand, section.logo, "mn-header-shell__brand-logo");
+      if (section.label) {
+        const label = document.createElement("span");
+        label.textContent = section.label;
+        brand.appendChild(label);
+      }
+      nav.appendChild(brand);
+      return;
+    }
+    if (section.type === "actions") {
+      const group = document.createElement("div");
+      group.className = "mn-header-shell__actions";
+      group.setAttribute("data-shell-role", section.role === "pre" ? "pre-actions" : "post-actions");
+      const presentation = section.presentation || (section.role === "pre" ? "segmented" : "cluster");
+      group.setAttribute("data-presentation", presentation);
+      group.classList.add(`mn-header-shell__actions--${presentation}`);
+      section.items.forEach((action) => group.appendChild(buildAction(action, section.role, onAction)));
+      nav.appendChild(group);
+      return;
+    }
+    if (section.type === "search") {
+      const search = document.createElement("div");
+      search.className = "mn-header-shell__search";
+      search.setAttribute("data-shell-role", "search");
+      const input = document.createElement("input");
+      input.className = "mn-header-shell__search-input";
+      input.type = "search";
+      input.placeholder = section.placeholder || "Search";
+      const emitSearch = () => {
+        state.query = input.value;
+        const detail = { query: input.value };
+        options.callbacks?.onSearch?.(detail);
+        emitShellEvent(nav, "header-shell-search", detail);
+      };
+      input.addEventListener("input", emitSearch);
+      input.addEventListener("search", emitSearch);
+      search.appendChild(input);
+      buildFilters(search, section.filters, state, onFilter);
+      if (section.shortcut) {
+        const kbd = document.createElement("kbd");
+        kbd.className = "mn-header-shell__shortcut";
+        kbd.textContent = section.shortcut;
+        search.appendChild(kbd);
+      }
+      nav.appendChild(search);
+      return;
+    }
+    if (section.type === "theme") {
+      const wrap = document.createElement("div");
+      wrap.className = "mn-header-shell__theme";
+      wrap.setAttribute("data-shell-role", "theme");
+      if (section.modes && section.modes.length) wrap.setAttribute("data-theme-modes", section.modes.join(","));
+      const toggle = document.createElement("mn-theme-toggle");
+      toggle.setAttribute("mode", state.themeMode);
+      toggle.addEventListener("mn-theme-change", (event) => {
+        const detail = event.detail;
+        const mode = detail && detail.theme ? detail.theme : state.themeMode;
+        state.themeMode = mode;
+        options.callbacks?.onTheme?.({ mode });
+        emitShellEvent(nav, "header-shell-theme", { mode });
+      });
+      wrap.appendChild(toggle);
+      nav.appendChild(wrap);
+      return;
+    }
+    if (section.type === "profile") {
+      const wrap = document.createElement("div");
+      wrap.className = "mn-header-shell__profile";
+      wrap.setAttribute("data-shell-role", "profile");
+      const ctrl = profileMenu(wrap, { name: section.name, avatarUrl: section.avatarUrl, sections: section.sections });
+      cleanups.push(() => ctrl.destroy());
+      nav.appendChild(wrap);
+    }
+  });
+  container.appendChild(nav);
+  return {
+    getState() {
+      const filters = {};
+      Object.keys(state.filters).forEach((key) => {
+        filters[key] = state.filters[key].slice();
+      });
+      return { query: state.query, filters, activeActionId: state.activeActionId, themeMode: state.themeMode };
+    },
+    setQuery(query) {
+      state.query = query;
+      const input = nav.querySelector(".mn-header-shell__search-input");
+      if (input) input.value = query;
+    },
+    setFilter(groupId, values) {
+      onFilter(groupId, values);
+    },
+    destroy() {
+      cleanups.forEach((fn) => fn());
+      nav.remove();
+    }
+  };
+}
+
 // src/ts/filter-panel-dom.ts
 function buildItem(item, selected) {
   const row = createElement("div", "mn-filter-panel__item", {
@@ -15172,6 +15436,7 @@ export {
   hBarChart,
   halfGauge,
   header,
+  headerShell,
   heatmap,
   hexLum,
   hexToRgba2 as hexToRgba,

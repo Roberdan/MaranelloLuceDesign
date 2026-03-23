@@ -6,7 +6,7 @@
  *   import { registerAll } from '@maranello/wc';
  *   registerAll(); // ensures all WCs are loaded and registered
  */
-declare const WC_TAGS: readonly ["mn-app-shell", "mn-a11y", "mn-async-select", "mn-chart", "mn-chat", "mn-command-palette", "mn-dashboard", "mn-data-table", "mn-date-picker", "mn-detail-panel", "mn-entity-workbench", "mn-ferrari-control", "mn-facet-workbench", "mn-funnel", "mn-gantt", "mn-gauge", "mn-hbar", "mn-login", "mn-map", "mn-mapbox", "mn-modal", "mn-okr", "mn-profile", "mn-speedometer", "mn-state-scaffold", "mn-system-status", "mn-tab", "mn-tabs", "mn-theme-rotary", "mn-section-nav", "mn-theme-toggle", "mn-toast"];
+declare const WC_TAGS: readonly ["mn-app-shell", "mn-a11y", "mn-async-select", "mn-chart", "mn-chat", "mn-command-palette", "mn-dashboard", "mn-data-table", "mn-date-picker", "mn-detail-panel", "mn-entity-workbench", "mn-ferrari-control", "mn-facet-workbench", "mn-funnel", "mn-gantt", "mn-gauge", "mn-header-shell", "mn-hbar", "mn-login", "mn-map", "mn-mapbox", "mn-modal", "mn-okr", "mn-profile", "mn-speedometer", "mn-state-scaffold", "mn-system-status", "mn-tab", "mn-tabs", "mn-theme-rotary", "mn-section-nav", "mn-theme-toggle", "mn-toast"];
 type WcTag = (typeof WC_TAGS)[number];
 /** Import all WC modules (side-effect: each calls customElements.define). */
 export declare function registerAll(): Promise<void>;

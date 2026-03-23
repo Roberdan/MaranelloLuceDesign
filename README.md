@@ -173,6 +173,63 @@ const GanttView = dynamic(() => import('./GanttView'), { ssr: false });
 
 Web Components self-register, handle resize, and fire standard DOM events. No adapter needed.
 
+#### `mn-header-shell` (rich responsive header shell)
+
+```html
+<mn-header-shell id="ops-header"></mn-header-shell>
+<script type="module">
+  import 'maranello-luce-design-business/wc/mn-header-shell';
+
+  const shell = document.getElementById('ops-header');
+  shell.config = {
+    sections: [
+      {
+        type: 'brand',
+        label: 'Maranello Luce',
+        logoSrc: '/logo.svg',
+        logoAlt: 'Maranello Luce mark',
+        href: '#',
+      },
+      {
+        type: 'actions',
+        role: 'pre',
+        presentation: 'segmented',
+        items: [
+          { id: 'gantt', label: 'Gantt', active: true },
+          { id: 'table', label: 'Table' },
+        ],
+      },
+      {
+        type: 'search',
+        placeholder: 'Filter by name, owner, account…',
+        shortcut: '⌘K',
+        filters: [
+          { id: 'status', label: 'Status', multi: true, options: [{ id: 'all', label: 'All' }, { id: 'active', label: 'Active' }] },
+        ],
+      },
+      { type: 'divider' },
+      { type: 'theme' },
+      { type: 'profile', name: 'Roberdan D.' },
+    ],
+  };
+
+  await shell.whenReady();
+  shell.addEventListener('header-shell-action', (event) => {
+    console.log('clicked shell action:', event.detail.id);
+  });
+</script>
+```
+
+- `config.sections` controls order, spacing, and composition of brand, pre/post button groups, search, divider/spacer, theme, and profile.
+- Buttons are consumer-defined: `id`, `label`, `title`, `icon`, `active`, `pressed`, `disabled`, and whether they live before or after search.
+- Brand image and brand text are independently optional via `logoSrc`/`logo` and `label`.
+- Search is live: `onSearch` and `header-shell-search` fire while the user types.
+- Filters are injected by the consumer through `search.filters`; external filter menus can coordinate with `whenReady()`, `getState()`, `setQuery()`, and `setFilter()`.
+- Colors remain Maranello-native via semantic tokens and can be themed by body theme classes or scoped CSS variables on the consumer side.
+- Data is consumer-owned by design: the shell emits state, and the app decides what to filter, count, persist, and render.
+- See `demo/header-responsive.html` for the header-only demo using the same `mn-header-shell` plus an external grouped filter menu.
+- The imperative `headerShell(container, options)` API is exported for non-Web Component integrations.
+
 ### Important: SSR Limitation
 
 Maranello is a **client-side** design system. All JS APIs require a DOM (`document`, `canvas`, `ResizeObserver`). For SSR frameworks (Next.js, Nuxt, SvelteKit, Astro):

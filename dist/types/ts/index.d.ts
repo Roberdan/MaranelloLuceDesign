@@ -33,6 +33,8 @@ export { profileMenu } from './profile-menu';
 export type { ProfileMenuUser, ProfileMenuOptions, ProfileMenuController } from './profile-menu';
 export { header } from './header';
 export type { HeaderOptions, HeaderController, HeaderBrand, HeaderButton, HeaderSearch, HeaderProfile } from './header';
+export { headerShell } from './header-shell';
+export type { HeaderShellOptions, HeaderShellController, HeaderShellSection, HeaderShellAction, HeaderShellFilterGroup, HeaderShellState, } from './header-shell';
 export { themePicker } from './theme-picker';
 export type { ThemePickerOptions, ThemePickerController } from './theme-picker';
 export { filterPanel } from './filter-panel';

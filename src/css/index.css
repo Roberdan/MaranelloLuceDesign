@@ -30,6 +30,7 @@
 @import './components-section-card.css';
 @import './components-theme-picker.css';
 @import './components-header.css';
+@import './components-header-shell.css';
 
 /* ── Layer: controls ── */
 @import './controls-advanced-controls.css';
