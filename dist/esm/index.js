@@ -4890,7 +4890,7 @@ function setFilterValues(filters, group, nextValues) {
     if (defaultIndex !== -1) allowed.splice(defaultIndex, 1);
   }
   if (!allowed.length && defaultId) allowed.push(defaultId);
-  filters[group.id] = group.multi ? allowed : [allowed[0]];
+  filters[group.id] = !allowed.length ? [] : group.multi ? allowed : [allowed[0]];
   return filters[group.id].slice();
 }
 
@@ -15254,9 +15254,7 @@ function _initLayout() {
 }
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", _initLayout, { once: true });
-} else {
-  _initLayout();
-}
+} else _initLayout();
 M.socialGraph = socialGraph;
 M.sparkline = sparkline;
 M.chartInteract = chartInteract;
@@ -15289,9 +15287,7 @@ function _mountA11y() {
 }
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", _mountA11y, { once: true });
-} else {
-  requestAnimationFrame(_mountA11y);
-}
+} else requestAnimationFrame(_mountA11y);
 M.bind = bind;
 M.autoBind = autoBind;
 M.onDrillDown = onDrillDown;
@@ -15308,17 +15304,7 @@ M.autoResize = autoResize;
 M.autoResizeAll = autoResizeAll;
 M.initSidebarToggle = initSidebarToggle;
 M.initSidebarToggleAuto = initSidebarToggleAuto;
-M.charts = {
-  sparkline,
-  donut,
-  barChart,
-  areaChart,
-  radar,
-  halfGauge,
-  bubble,
-  liveGraph,
-  hBarChart
-};
+M.charts = { sparkline, donut, barChart, areaChart, radar, halfGauge, bubble, liveGraph, hBarChart };
 registerExtras(M);
 
 // src/ts/index.ts

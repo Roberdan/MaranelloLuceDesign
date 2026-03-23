@@ -24,6 +24,6 @@ export function setFilterValues(
     if (defaultIndex !== -1) allowed.splice(defaultIndex, 1);
   }
   if (!allowed.length && defaultId) allowed.push(defaultId);
-  filters[group.id] = group.multi ? allowed : [allowed[0]];
+  filters[group.id] = !allowed.length ? [] : (group.multi ? allowed : [allowed[0]]);
   return filters[group.id].slice();
 }

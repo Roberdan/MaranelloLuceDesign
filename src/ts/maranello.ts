@@ -36,9 +36,7 @@ import { mapView } from './map-view';
 import { mapboxView } from './map-mapbox';
 import { funnel } from './funnel';
 import { hBarChart } from './charts-hbar';
-import {
-  sparkline, donut, barChart, areaChart, radar, halfGauge, bubble, liveGraph,
-} from './charts';
+import { sparkline, donut, barChart, areaChart, radar, halfGauge, bubble, liveGraph } from './charts';
 import { chartInteract, sparklineInteract } from './chart-interact';
 import { autoResize, autoResizeAll } from './auto-resize';
 import { openDetailPanel, closeDetailPanel, openDrawer, closeDrawer, initOrgTree } from './controls';
@@ -171,9 +169,7 @@ function _initLayout(): void {
 }
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', _initLayout, { once: true });
-} else {
-  _initLayout();
-}
+} else _initLayout();
 M.socialGraph = socialGraph;
 M.sparkline = sparkline;
 M.chartInteract = chartInteract;
@@ -220,9 +216,7 @@ function _mountA11y(): void {
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', _mountA11y, { once: true });
-} else {
-  requestAnimationFrame(_mountA11y);
-}
+} else requestAnimationFrame(_mountA11y);
 
 // Data binding
 M.bind = bind;
@@ -247,9 +241,7 @@ M.initSidebarToggle = initSidebarToggle;
 M.initSidebarToggleAuto = initSidebarToggleAuto;
 
 // Charts namespace (mn-chart WC looks up M.charts[type])
-M.charts = {
-  sparkline, donut, barChart, areaChart, radar, halfGauge, bubble, liveGraph, hBarChart,
-};
+M.charts = { sparkline, donut, barChart, areaChart, radar, halfGauge, bubble, liveGraph, hBarChart };
 
 // W3/W4 draw primitives and map internals
 registerExtras(M);

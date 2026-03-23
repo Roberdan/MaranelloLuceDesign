@@ -182,4 +182,12 @@ describe('headerShell', () => {
     expect(ctrl.getState().filters.status).toEqual(['all']);
     ctrl.destroy();
   });
+
+  it('keeps empty filter groups from leaking undefined values into state', () => {
+    const host = document.createElement('div');
+    const ctrl = headerShell(host, { sections: [{ type: 'search', filters: [{ id: 'empty', label: 'Empty', options: [] }] }] });
+    ctrl.setFilter('empty', ['missing']);
+    expect(ctrl.getState().filters.empty).toEqual([]);
+    ctrl.destroy();
+  });
 });

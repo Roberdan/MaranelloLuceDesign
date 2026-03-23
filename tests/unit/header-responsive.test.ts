@@ -16,6 +16,8 @@ const rootHtml = readFileSync(path.join(rootDir, 'header-responsive.html'), 'utf
 describe('headerShell responsive demo', () => {
   it('uses mn-header-shell as a real consumer with declarative sections', () => {
     expect(demoHtml).toContain('id="navbar"');
+    expect(demoHtml).toContain('<header id="navbar"></header>');
+    expect(demoHtml).not.toContain('<nav id="navbar"');
     expect(demoHtml).not.toContain('id="navbar-left"');
     expect(demoHtml).toContain('../src/wc/mn-header-shell.js');
     expect(demoShellJs).toContain("document.createElement('mn-header-shell')");
