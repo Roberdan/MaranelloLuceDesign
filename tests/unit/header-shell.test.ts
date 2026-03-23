@@ -2,13 +2,17 @@
  * HeaderShell unit tests.
  * @vitest-environment happy-dom
  */
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { header } from '../../src/ts/header';
 import { headerShell } from '../../src/ts/header-shell';
 import { headerShell as headerShellFromIndex } from '../../src/ts/index';
 
 describe('headerShell', () => {
+  afterEach(() => {
+    document.body.className = '';
+  });
+
   it('exports from index and keeps header callable', () => {
     expect(typeof header).toBe('function');
     expect(typeof headerShell).toBe('function');
@@ -90,7 +94,7 @@ describe('headerShell', () => {
     ctrl.destroy();
   });
 
-  it('supports segmented/cluster action presentation with event bubbling', () => {
+  it('keeps segmented actions selected when cluster utilities are clicked', () => {
     const host = document.createElement('div');
     const seen: string[] = [];
     host.addEventListener('header-shell-action', (event) => {
@@ -99,29 +103,36 @@ describe('headerShell', () => {
     });
     const ctrl = headerShell(host, {
       sections: [
-        { type: 'actions', role: 'pre', presentation: 'segmented', items: [{ id: 'gantt', label: 'Gantt' }] },
+        { type: 'actions', role: 'pre', presentation: 'segmented', items: [{ id: 'gantt', label: 'Gantt', active: true }, { id: 'table', label: 'Table' }] },
         { type: 'actions', role: 'post', presentation: 'cluster', items: [{ id: 'alerts', title: 'Alerts', icon: '<svg><circle cx=\"12\" cy=\"12\" r=\"5\" /></svg>' }] },
       ],
     });
 
     expect(host.querySelector('[data-presentation="segmented"]')).not.toBeNull();
     expect(host.querySelector('[data-presentation="cluster"]')).not.toBeNull();
+    expect(ctrl.getState().activeActionId).toBe('gantt');
     const alertsButton = host.querySelector('[data-header-shell-action-id="alerts"]') as HTMLButtonElement;
+    const ganttButton = host.querySelector('[data-header-shell-action-id="gantt"]') as HTMLButtonElement;
     expect(alertsButton.textContent).toBe('');
     alertsButton.click();
-    expect(ctrl.getState().activeActionId).toBe('alerts');
+    expect(ctrl.getState().activeActionId).toBe('gantt');
+    expect(ganttButton.classList.contains('mn-header-shell__action--active')).toBe(true);
+    expect(alertsButton.classList.contains('mn-header-shell__action--active')).toBe(false);
     expect(seen).toEqual(['alerts']);
     ctrl.destroy();
   });
 
-  it('wires declarative theme and profile sections with callback/state sync', () => {
+  it('preserves the current theme and passes allowed theme modes through to the toggle', () => {
     const host = document.createElement('div');
     const onTheme = vi.fn();
+    document.body.classList.add('mn-avorio');
     const ctrl = headerShell(host, {
       sections: [{ type: 'theme', modes: ['nero', 'avorio'] }, { type: 'profile', name: 'Allegra Bianchi' }],
       callbacks: { onTheme },
     });
     const toggle = host.querySelector('mn-theme-toggle') as HTMLElement;
+    expect(toggle.getAttribute('mode')).toBe('avorio');
+    expect(toggle.getAttribute('modes')).toBe('nero,avorio');
     toggle.dispatchEvent(new CustomEvent('mn-theme-change', { detail: { theme: 'avorio' }, bubbles: true }));
     expect(onTheme).toHaveBeenCalledWith({ mode: 'avorio' });
     expect(ctrl.getState().themeMode).toBe('avorio');
@@ -151,10 +162,16 @@ describe('headerShell', () => {
     });
 
     expect(host.querySelectorAll('[data-filter-group-id]').length).toBe(2);
+    const initialStatusButtons = host.querySelectorAll('[data-filter-group-id="status"] .mn-header-shell__filter-option');
+    expect(initialStatusButtons[0]?.getAttribute('aria-pressed')).toBe('true');
+    expect(initialStatusButtons[1]?.getAttribute('aria-pressed')).toBe('false');
     ctrl.setFilter('status', ['watch', 'active']);
     ctrl.setFilter('region', ['na']);
     expect(ctrl.getState().filters.status).toEqual(['watch', 'active']);
     expect(ctrl.getState().filters.region).toEqual(['na']);
+    const nextStatusButtons = host.querySelectorAll('[data-filter-group-id="status"] .mn-header-shell__filter-option');
+    expect(nextStatusButtons[0]?.getAttribute('aria-pressed')).toBe('false');
+    expect(nextStatusButtons[1]?.getAttribute('aria-pressed')).toBe('true');
     ctrl.setFilter('status', []);
     expect(ctrl.getState().filters.status).toEqual(['all']);
     ctrl.destroy();

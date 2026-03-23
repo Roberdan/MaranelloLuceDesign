@@ -39,6 +39,8 @@ describe('headerShell responsive demo', () => {
     expect(demoShellJs).toContain('filteredRecords()');
     expect(demoFilterJs).toContain('legacy-filter-board');
     expect(demoFilterJs).toContain('Save as default');
+    expect(demoFilterJs).toContain('label.textContent = options.label');
+    expect(demoFilterJs).not.toContain('trigger.innerHTML');
     expect(demoShellJs).toContain('mn-header-shell-defaults');
   });
 

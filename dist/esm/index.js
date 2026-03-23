@@ -4900,6 +4900,16 @@ function normalizeSections(sections) {
 }
 
 // src/ts/header-shell.ts
+function getInitialActiveActionId(sections) {
+  for (const section of sections) {
+    if (section.type !== "actions") continue;
+    const presentation = section.presentation || (section.role === "pre" ? "segmented" : "cluster");
+    if (presentation !== "segmented") continue;
+    const active = section.items.find((action) => action.active);
+    if (active) return active.id;
+  }
+  return "";
+}
 function applySvg(host, svg2, className) {
   if (!svg2) return;
   const safe = sanitizeSvg(svg2);
@@ -4910,11 +4920,12 @@ function applySvg(host, svg2, className) {
   icon.innerHTML = safe;
   host.appendChild(icon);
 }
-function buildAction(action, role, onClick) {
+function buildAction(action, role, isSelectable, isActive, onClick) {
   const el5 = document.createElement("button");
   el5.type = "button";
   el5.className = "mn-header-shell__action";
   el5.dataset.headerShellActionId = action.id;
+  if (isSelectable) el5.dataset.headerShellSelectable = "true";
   const title = action.title || action.label || action.id;
   el5.setAttribute("aria-label", title);
   if (action.title) el5.title = action.title;
@@ -4924,10 +4935,10 @@ function buildAction(action, role, onClick) {
     label.textContent = action.label;
     el5.appendChild(label);
   }
-  if (action.active) el5.classList.add("mn-header-shell__action--active");
+  if (isActive) el5.classList.add("mn-header-shell__action--active");
   if (action.pressed) el5.setAttribute("aria-pressed", "true");
   if (action.disabled) el5.disabled = true;
-  el5.addEventListener("click", () => onClick(action.id, role));
+  el5.addEventListener("click", () => onClick(action.id, role, isSelectable));
   return el5;
 }
 function buildFilters(host, groups, state, onFilter) {
@@ -4943,10 +4954,12 @@ function buildFilters(host, groups, state, onFilter) {
     fieldset.appendChild(legend2);
     group.options.forEach((option) => {
       const btn = document.createElement("button");
+      const selected = !!(state.filters[group.id] && state.filters[group.id].indexOf(option.id) !== -1);
       btn.type = "button";
       btn.className = "mn-header-shell__filter-option";
       btn.textContent = option.label;
-      if (state.filters[group.id] && state.filters[group.id].indexOf(option.id) !== -1) btn.classList.add("is-selected");
+      if (selected) btn.classList.add("is-selected");
+      btn.setAttribute("aria-pressed", String(selected));
       btn.addEventListener("click", () => {
         const defaultId = group.options[0]?.id;
         const current2 = state.filters[group.id] || (defaultId ? [defaultId] : []);
@@ -4985,10 +4998,12 @@ function headerShell(container, options) {
   nav.setAttribute("aria-label", options.ariaLabel || "Header shell navigation");
   const cleanups = [];
   const filterGroups = sections.find((section) => section.type === "search" && section.filters);
-  const state = { query: "", filters: createFilterState(filterGroups?.filters), activeActionId: "", themeMode: "nero" };
-  const onAction = (id, role) => {
-    state.activeActionId = id;
-    applySelection(nav.querySelectorAll("button[data-header-shell-action-id]"), id);
+  const state = { query: "", filters: createFilterState(filterGroups?.filters), activeActionId: getInitialActiveActionId(sections), themeMode: getTheme() };
+  const onAction = (id, role, isSelectable) => {
+    if (isSelectable) {
+      state.activeActionId = id;
+      applySelection(nav.querySelectorAll('button[data-header-shell-selectable="true"]'), id);
+    }
     const detail = { id, role };
     options.callbacks?.onAction?.(detail);
     emitShellEvent(nav, "header-shell-action", detail);
@@ -5047,7 +5062,8 @@ function headerShell(container, options) {
       const presentation = section.presentation || (section.role === "pre" ? "segmented" : "cluster");
       group.setAttribute("data-presentation", presentation);
       group.classList.add(`mn-header-shell__actions--${presentation}`);
-      section.items.forEach((action) => group.appendChild(buildAction(action, section.role, onAction)));
+      const isSelectable = presentation === "segmented";
+      section.items.forEach((action) => group.appendChild(buildAction(action, section.role, isSelectable, isSelectable ? action.id === state.activeActionId : !!action.active, onAction)));
       nav.appendChild(group);
       return;
     }
@@ -5084,6 +5100,7 @@ function headerShell(container, options) {
       wrap.setAttribute("data-shell-role", "theme");
       if (section.modes && section.modes.length) wrap.setAttribute("data-theme-modes", section.modes.join(","));
       const toggle = document.createElement("mn-theme-toggle");
+      if (section.modes && section.modes.length) toggle.setAttribute("modes", section.modes.join(","));
       toggle.setAttribute("mode", state.themeMode);
       toggle.addEventListener("mn-theme-change", (event) => {
         const detail = event.detail;

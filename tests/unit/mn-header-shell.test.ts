@@ -81,6 +81,7 @@ describe('mn-header-shell', () => {
     shell.addEventListener('header-shell-action', onEvent);
     shell.config = {
       sections: [
+        { type: 'actions', role: 'pre', items: [{ id: 'overview', label: 'Overview', active: true }] },
         { type: 'actions', role: 'post', items: [{ id: 'alerts', title: 'Alerts' }] },
         { type: 'search', filters: [{ id: 'status', label: 'Status', options: [{ id: 'all', label: 'All' }, { id: 'watch', label: 'Watch' }] }] },
       ],
@@ -95,6 +96,6 @@ describe('mn-header-shell', () => {
 
     shell.setFilter?.('status', ['watch']);
     expect(shell.getState?.().filters?.status).toEqual(['watch']);
-    expect(shell.getState?.().activeActionId).toBe('alerts');
+    expect(shell.getState?.().activeActionId).toBe('overview');
   });
 });

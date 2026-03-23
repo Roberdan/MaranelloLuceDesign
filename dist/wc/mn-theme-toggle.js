@@ -14,12 +14,13 @@ const resolve = (path, fallback = null) => {
 };
 class MnThemeToggle extends HTMLElement {
   static get observedAttributes() {
-    return ["mode"];
+    return ["mode", "modes"];
   }
   constructor() {
     super();
     this.attachShadow({ mode: "open" });
-    this._modes = ["editorial", "nero", "avorio", "colorblind", "sugar"];
+    this._allModes = ["editorial", "nero", "avorio", "colorblind", "sugar"];
+    this._modes = this._allModes.slice();
     this._icons = ["\u25D1", "\u25CF", "\u25CB", "\u25D0", "\u2B22"];
     this._labels = ["Editorial (mixed)", "Full Nero", "Full Avorio", "Colorblind-safe", "Sugar"];
     this._idx = 1;
@@ -48,15 +49,16 @@ class MnThemeToggle extends HTMLElement {
   }
   connectedCallback() {
     this._btn.addEventListener("click", this._onBtnClick);
+    this._syncModes();
     const attr = this.getAttribute("mode");
     let saved = null;
     try {
       saved = localStorage.getItem("mn-theme");
     } catch (_) {
     }
-    const mode = attr || saved;
+    const mode = attr || saved || this._getTheme();
     if (mode) {
-      const idx = this._modes.indexOf(mode);
+      const idx = this._allModes.indexOf(mode);
       if (idx >= 0) this._idx = idx;
     }
     this._applyTheme(false);
@@ -65,9 +67,15 @@ class MnThemeToggle extends HTMLElement {
     this._btn.removeEventListener("click", this._onBtnClick);
   }
   attributeChangedCallback(name, oldVal, newVal) {
-    if (name === "mode" && oldVal !== newVal) {
-      const idx = this._modes.indexOf(newVal);
-      if (idx >= 0 && idx !== this._idx) {
+    if (!this.isConnected || oldVal === newVal) return;
+    if (name === "modes") {
+      this._syncModes();
+      this._applyTheme(false);
+      return;
+    }
+    if (name === "mode") {
+      const idx = this._allModes.indexOf(newVal);
+      if (idx >= 0) {
         this._idx = idx;
         this._applyTheme(false);
       }
@@ -75,11 +83,35 @@ class MnThemeToggle extends HTMLElement {
   }
   /* ── Private ────────────────────────────────────────────── */
   _cycle() {
-    this._idx = (this._idx + 1) % this._modes.length;
+    const current = this._allModes[this._idx];
+    const currentIndex = this._modes.indexOf(current);
+    const nextMode = currentIndex === -1 ? this._modes[0] : this._modes[(currentIndex + 1) % this._modes.length];
+    const nextIndex = this._allModes.indexOf(nextMode);
+    if (nextIndex >= 0) this._idx = nextIndex;
     this._applyTheme(true);
   }
+  _getTheme() {
+    const getTheme = resolve("getTheme");
+    if (typeof getTheme === "function") return getTheme();
+    const cl = document.body.classList;
+    if (cl.contains("mn-nero")) return "nero";
+    if (cl.contains("mn-avorio")) return "avorio";
+    if (cl.contains("mn-colorblind")) return "colorblind";
+    if (cl.contains("mn-sugar")) return "sugar";
+    return "editorial";
+  }
+  _syncModes() {
+    const attr = this.getAttribute("modes");
+    if (!attr) {
+      this._modes = this._allModes.slice();
+      return;
+    }
+    const requested = attr.split(",").map((mode) => mode.trim()).filter(Boolean);
+    const nextModes = this._allModes.filter((mode) => requested.indexOf(mode) !== -1);
+    this._modes = nextModes.length ? nextModes : this._allModes.slice();
+  }
   _applyTheme(emit) {
-    const mode = this._modes[this._idx];
+    const mode = this._allModes[this._idx];
     const setTheme = resolve("setTheme");
     if (typeof setTheme === "function") setTheme(mode);
     else {

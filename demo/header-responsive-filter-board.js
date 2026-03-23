@@ -1,4 +1,16 @@
 (function () {
+  function appendSvg(host, svg) {
+    var doc;
+    var root;
+    if (!svg) return;
+    try {
+      doc = new DOMParser().parseFromString(svg, 'image/svg+xml');
+      root = doc && doc.documentElement;
+      if (!root || root.nodeName.toLowerCase() !== 'svg') return;
+      host.appendChild(document.importNode(root, true));
+    } catch (_error) {}
+  }
+
   function createHeaderResponsiveFilterBoard(options) {
     var searchHost = null;
     var trigger = null;
@@ -112,7 +124,10 @@
       trigger.className = 'shell-filter-trigger';
       trigger.setAttribute('aria-haspopup', 'dialog');
       trigger.setAttribute('aria-expanded', 'false');
-      trigger.innerHTML = '<span>' + options.label + '</span>' + (options.chevronSvg || '');
+      var label = document.createElement('span');
+      label.textContent = options.label;
+      trigger.appendChild(label);
+      appendSvg(trigger, options.chevronSvg);
       trigger.addEventListener('click', function () {
         if (board && !board.hidden) close();
         else open();
