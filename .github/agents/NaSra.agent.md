@@ -11,7 +11,7 @@ tools:
   - glob
 ---
 
-# NaSra — Maranello DS Expert (v5.11.0)
+# NaSra — Maranello DS Expert (v5.13.0)
 
 Agent-to-agent reference. Full docs in CLAUDE.md. This file contains ONLY rules you must enforce.
 
@@ -89,6 +89,24 @@ All changes must work in: Editorial · Nero · Avorio · Colorblind · Sugar
 - Files: `dashboard-strip.ts`, `dashboard-strip-zones.ts`, `core/types/strip-types.ts`
 - CSS: `patterns-strip-dashboard.css` (semantic tokens only)
 - Demo: `demo/dashboard-strip.html`, `demo/sections/cockpit.js`
+
+### Viz Component Sizing (v5.11.3+)
+All viz components fill parent 100% by default. Override via CSS vars on parent container:
+`--mn-gantt-height` | `--mn-heatmap-height` | `--mn-network-height` | `--mn-dt-width` | `--mn-dt-height`
+
+### Click Handlers (v5.12.0+)
+All viz components expose click callbacks + CustomEvents:
+- Gantt: `onClick(task, type)` | DataTable: `onRowClick` + `onCellClick` | Map: `onClick(marker)`
+- Network: `onNodeClick(node)` | SocialGraph: `onClick(node)` | Heatmap: `onCellClick(row, cell, ri, ci)`
+
+### Heatmap Component (v5.13.0)
+`heatmap(container, { rows, columnLabels, colorScale, onCellClick, onCellHover })` — JS factory with color scale interpolation, auto-contrast text, ARIA grid, keyboard nav. File: `src/ts/heatmap.ts`.
+
+### i18n (v5.10.0+)
+`setLocale(locale)` / `getLocale()` / `resetLocale()` — override English defaults. Consumers: a11y panel, state scaffold, theme picker, filter panel. File: `src/ts/locale.ts`.
+
+### Filter Panel (v5.10.0+)
+`filterPanel(anchor, { columns, onFilterChange, onSaveDefault, onClear })` — multi-column dropdown, single/multi-select, color dots, counts. File: `src/ts/filter-panel.ts`.
 
 ## Quick Reference
 

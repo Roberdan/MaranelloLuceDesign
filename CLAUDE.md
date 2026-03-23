@@ -1,7 +1,7 @@
-<!-- v5.11.0 | 2026-03-22 -->
+<!-- v5.13.0 | 2026-03-23 -->
 # MaranelloLuceDesign
 
-Ferrari Luce-inspired DS for dashboards. 5 themes. 110+ IIFE exports. 33 WC. WCAG 2.2 AA.
+Ferrari Luce-inspired DS for dashboards. 5 themes. 115+ IIFE exports. 33 WC. WCAG 2.2 AA.
 
 ## Commands
 
@@ -30,6 +30,23 @@ Key: `layout.ts`+`layout-slot.ts` (state machine) · `header.ts` (navbar) · `to
 ## Dashboard Strip
 
 `dashboardStrip(container, { zones, ariaLabel })` — composite instrument nacelle. Zone types: `gauge` (FerrariGauge + complications), `pipeline` (colored bar rows), `trend` (2-col sparkline KPIs), `board` (stat cells). CSS Grid layout, container queries, all 5 themes. `updateZone(i, data)` + `destroy()`. Canvas class: `mn-strip-gauge__canvas` (not `mn-gauge__canvas`).
+
+## Viz Components
+
+All fill parent by default (100% width/height). Override via CSS vars: `--mn-gantt-height`, `--mn-heatmap-height`, `--mn-network-height`, `--mn-dt-width/height`.
+
+| Component | Click handler | CustomEvent |
+|---|---|---|
+| `gantt` | `onClick(task, type)` | — |
+| `dataTable` | `onRowClick(row, i)` + `onCellClick(row, col, val)` | `mn:table-cell-click` |
+| `mapView` / `mapboxView` | `onClick(marker)` | — |
+| `networkMessages` | `onNodeClick(node)` | `mn-network-node-click` |
+| `socialGraph` | `onClick(node)` + `onHover(node)` | — |
+| `heatmap` | `onCellClick(row, cell, ri, ci)` + `onCellHover` | `mn-heatmap-cell-click` |
+
+## i18n
+
+`setLocale(locale)` / `getLocale()` / `resetLocale()` — override default English strings for a11y panel, state scaffold, theme picker, filter panel.
 
 ## NON-NEGOTIABLE
 
