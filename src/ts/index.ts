@@ -86,18 +86,6 @@ export type { ProfileMenuUser, ProfileMenuOptions, ProfileMenuController } from 
 // Header (3-zone navbar)
 export { header } from './header';
 export type { HeaderOptions, HeaderController, HeaderBrand, HeaderButton, HeaderSearch, HeaderProfile } from './header';
-export { headerV2 } from './header-v2';
-export type {
-  HeaderV2Options,
-  HeaderV2Controller,
-  HeaderV2Brand,
-  HeaderV2Group,
-  HeaderV2Action,
-  HeaderV2Search,
-  HeaderV2Status,
-  HeaderV2Profile,
-} from './header-v2';
-
 // Theme picker
 export { themePicker } from './theme-picker';
 export type { ThemePickerOptions, ThemePickerController } from './theme-picker';

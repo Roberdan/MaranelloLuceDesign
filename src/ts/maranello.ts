@@ -23,7 +23,6 @@ import { loginScreen } from './login';
 import { systemStatus } from './system-status';
 import { profileMenu } from './profile-menu';
 import { header } from './header';
-import { headerV2 } from './header-v2';
 import { themePicker } from './theme-picker';
 import { filterPanel } from './filter-panel';
 import { FerrariGauge } from './gauge-engine';
@@ -127,7 +126,6 @@ M.loginScreen = loginScreen;
 M.systemStatus = systemStatus;
 M.profileMenu = profileMenu;
 M.header = { init: header };
-M.headerV2 = { init: headerV2 };
 M.themePicker = themePicker;
 M.filterPanel = filterPanel;
 
