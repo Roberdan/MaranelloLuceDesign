@@ -74,8 +74,9 @@
 .mn-gantt-timeline__canvas-wrap {
   position: relative;
   width: 100%;
-  min-height: 300px;
-  height: 480px;
+  min-height: 200px;
+  height: var(--mn-gantt-height, 100%);
+  flex: 1;
   overflow: hidden;
 }
 .mn-gantt-timeline__canvas-wrap canvas {

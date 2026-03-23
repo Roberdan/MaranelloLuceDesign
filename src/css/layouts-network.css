@@ -4,7 +4,7 @@
    Maranello Design System · Maranello Luce
    ══════════════════════════════════════════════════════════════ */
 
-.mn-network { display:flex; flex-direction:column; overflow:hidden; min-height:400px; }
+.mn-network { display:flex; flex-direction:column; overflow:hidden; min-height:200px; width:100%; height:var(--mn-network-height, 100%); }
 .mn-network__canvas { width:100%; flex:1; border-radius:var(--radius-sm); background:var(--mn-surface-sunken); }
 
 /* ── Avorio theme ── */
