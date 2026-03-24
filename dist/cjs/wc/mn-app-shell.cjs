@@ -1,8 +1,8 @@
 "use strict";
-var import_app_shell = require("../ts/app-shell.js");
-var import_panel_orchestrator = require("../ts/panel-orchestrator.js");
-var import_view_registry = require("../ts/view-registry.js");
-var import_navigation_model = require("../ts/navigation-model.js");
+var import_app_shell = require("../index.cjs");
+var import_panel_orchestrator = require("../index.cjs");
+var import_view_registry = require("../index.cjs");
+var import_navigation_model = require("../index.cjs");
 const SLOT_NAMES = ["nav", "toolbar", "filter-bar", "main", "secondary", "detail", "bottom", "overlay"];
 const VALID_LAYOUTS = /* @__PURE__ */ new Set(["full", "split", "stacked", "docked-bottom", "dual-panel", "side-detail"]);
 class MnAppShell extends HTMLElement {
@@ -66,4 +66,3 @@ class MnAppShell extends HTMLElement {
 if (!customElements.get("mn-app-shell")) {
   customElements.define("mn-app-shell", MnAppShell);
 }
-//# sourceMappingURL=mn-app-shell.cjs.map

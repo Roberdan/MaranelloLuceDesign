@@ -131,4 +131,3 @@ class MnTabs extends HTMLElement {
   }
 }
 customElements.define("mn-tabs", MnTabs);
-//# sourceMappingURL=mn-tabs.cjs.map

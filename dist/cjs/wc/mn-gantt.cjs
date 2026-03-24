@@ -153,4 +153,3 @@ class MnGantt extends HTMLElement {
   }
 }
 customElements.define("mn-gantt", MnGantt);
-//# sourceMappingURL=mn-gantt.cjs.map

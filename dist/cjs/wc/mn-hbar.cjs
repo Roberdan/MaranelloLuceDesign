@@ -125,4 +125,3 @@ class MnHbar extends HTMLElement {
   }
 }
 customElements.define("mn-hbar", MnHbar);
-//# sourceMappingURL=mn-hbar.cjs.map

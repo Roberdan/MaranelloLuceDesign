@@ -171,4 +171,3 @@ class MnDataTable extends HTMLElement {
   }
 }
 customElements.define("mn-data-table", MnDataTable);
-//# sourceMappingURL=mn-data-table.cjs.map

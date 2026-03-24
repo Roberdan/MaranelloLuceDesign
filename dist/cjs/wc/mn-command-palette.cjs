@@ -194,4 +194,3 @@ class MnCommandPalette extends HTMLElement {
   }
 }
 customElements.define("mn-command-palette", MnCommandPalette);
-//# sourceMappingURL=mn-command-palette.cjs.map

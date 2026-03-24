@@ -203,4 +203,3 @@ class MnSystemStatus extends HTMLElement {
   }
 }
 customElements.define("mn-system-status", MnSystemStatus);
-//# sourceMappingURL=mn-system-status.cjs.map

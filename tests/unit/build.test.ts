@@ -11,6 +11,7 @@ import { Window } from 'happy-dom';
 const DIST = join(import.meta.dirname, '../../dist');
 const ROOT = join(import.meta.dirname, '../..');
 const cjsRequire = createRequire(import.meta.url);
+const DIST_CJS = join(DIST, 'cjs');
 
 type DomGlobals = {
   window?: Window;
@@ -20,11 +21,12 @@ type DomGlobals = {
   CustomEvent?: typeof CustomEvent;
   Node?: typeof Node;
   MutationObserver?: typeof MutationObserver;
+  getComputedStyle?: typeof getComputedStyle;
   requestAnimationFrame?: typeof requestAnimationFrame;
   cancelAnimationFrame?: typeof cancelAnimationFrame;
 };
 
-function withHappyDom(run: () => void) {
+async function withHappyDom<T>(run: () => T | Promise<T>): Promise<T> {
   const globalScope = globalThis as typeof globalThis & DomGlobals;
   const previous: DomGlobals = {
     window: globalScope.window,
@@ -34,6 +36,7 @@ function withHappyDom(run: () => void) {
     CustomEvent: globalScope.CustomEvent,
     Node: globalScope.Node,
     MutationObserver: globalScope.MutationObserver,
+    getComputedStyle: globalScope.getComputedStyle,
     requestAnimationFrame: globalScope.requestAnimationFrame,
     cancelAnimationFrame: globalScope.cancelAnimationFrame,
   };
@@ -45,10 +48,11 @@ function withHappyDom(run: () => void) {
   globalScope.CustomEvent = window.CustomEvent;
   globalScope.Node = window.Node;
   globalScope.MutationObserver = window.MutationObserver;
+  globalScope.getComputedStyle = window.getComputedStyle.bind(window);
   globalScope.requestAnimationFrame = window.requestAnimationFrame.bind(window);
   globalScope.cancelAnimationFrame = window.cancelAnimationFrame.bind(window);
   try {
-    run();
+    return await run();
   } finally {
     globalScope.window = previous.window;
     globalScope.document = previous.document;
@@ -57,9 +61,16 @@ function withHappyDom(run: () => void) {
     globalScope.CustomEvent = previous.CustomEvent;
     globalScope.Node = previous.Node;
     globalScope.MutationObserver = previous.MutationObserver;
+    globalScope.getComputedStyle = previous.getComputedStyle;
     globalScope.requestAnimationFrame = previous.requestAnimationFrame;
     globalScope.cancelAnimationFrame = previous.cancelAnimationFrame;
   }
+}
+
+function clearCjsDistRequireCache() {
+  Object.keys(cjsRequire.cache).forEach((key) => {
+    if (key.startsWith(DIST_CJS)) delete cjsRequire.cache[key];
+  });
 }
 
 // Domain-specific strings that must NOT appear in published dist
@@ -169,23 +180,48 @@ describe('dist/wc/ web components', () => {
   it('rewrites local CJS WC requires to emitted .cjs files', () => {
     const headerShell = readFileSync(join(DIST, 'cjs/wc/mn-header-shell.cjs'), 'utf8');
     const a11y = readFileSync(join(DIST, 'cjs/wc/mn-a11y.cjs'), 'utf8');
+    const appShell = readFileSync(join(DIST, 'cjs/wc/mn-app-shell.cjs'), 'utf8');
+    const barrel = readFileSync(join(DIST, 'cjs/wc/index.cjs'), 'utf8');
     expect(headerShell).toContain('require("./mn-theme-toggle.cjs")');
     expect(headerShell).not.toContain('require("./mn-theme-toggle.js")');
+    expect(headerShell).toContain('import("../index.cjs")');
+    expect(headerShell).not.toContain('import("../ts/header-shell.js")');
     expect(a11y).toContain('require("./mn-a11y-fallback.cjs")');
     expect(a11y).not.toContain('require("./mn-a11y-fallback.js")');
+    expect(appShell).toContain('require("../index.cjs")');
+    expect(appShell).not.toContain('require("../ts/app-shell.js")');
+    expect(barrel).toContain('import("./mn-header-shell.cjs")');
+    expect(barrel).not.toMatch(/import\("\.\/mn-[^"]+\.js"\)/);
   });
 
-  it('polyfills import.meta.url in emitted CJS WC modules', () => {
+  it('initializes import.meta.url from __filename in emitted CJS WC modules', () => {
     const toast = readFileSync(join(DIST, 'cjs/wc/mn-toast.cjs'), 'utf8');
     expect(toast).toContain('pathToFileURL(__filename).href');
-    expect(toast).not.toContain('const import_meta = {};');
+    expect(toast).toContain('new URL(".", import_meta.url)');
   });
 
-  it('loads emitted CJS WC modules under a DOM runtime', () => {
-    withHappyDom(() => {
+  it('does not ship stale sourcemaps for post-processed CJS WC modules', () => {
+    expect(existsSync(join(DIST, 'cjs/wc/index.cjs.map'))).toBe(false);
+    expect(existsSync(join(DIST, 'cjs/wc/mn-header-shell.cjs.map'))).toBe(false);
+  });
+
+  it('loads emitted CJS WC modules under a DOM runtime', async () => {
+    await withHappyDom(() => {
+      clearCjsDistRequireCache();
       expect(() => cjsRequire(join(DIST, 'cjs/wc/mn-header-shell.cjs'))).not.toThrow();
       expect(() => cjsRequire(join(DIST, 'cjs/wc/mn-toast.cjs'))).not.toThrow();
       expect(() => cjsRequire(join(DIST, 'cjs/wc/mn-a11y.cjs'))).not.toThrow();
+    });
+  });
+
+  it('registers emitted CJS WC barrel modules under a DOM runtime', async () => {
+    await withHappyDom(async () => {
+      clearCjsDistRequireCache();
+      const barrel = cjsRequire(join(DIST, 'cjs/wc/index.cjs'));
+      await barrel.registerAll();
+      expect(barrel.isRegistered('mn-header-shell')).toBe(true);
+      expect(barrel.isRegistered('mn-theme-toggle')).toBe(true);
+      expect(barrel.isRegistered('mn-toast')).toBe(true);
     });
   });
 });

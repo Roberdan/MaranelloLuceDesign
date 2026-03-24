@@ -213,4 +213,3 @@ class MnFerrariControl extends HTMLElement {
   }
 }
 customElements.define("mn-ferrari-control", MnFerrariControl);
-//# sourceMappingURL=mn-ferrari-control.cjs.map

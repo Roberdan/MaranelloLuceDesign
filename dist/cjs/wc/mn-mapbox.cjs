@@ -87,4 +87,3 @@ class MnMapbox extends HTMLElement {
   }
 }
 customElements.define("mn-mapbox", MnMapbox);
-//# sourceMappingURL=mn-mapbox.cjs.map

@@ -82,4 +82,3 @@ class MnLogin extends HTMLElement {
   }
 }
 customElements.define("mn-login", MnLogin);
-//# sourceMappingURL=mn-login.cjs.map

@@ -114,4 +114,3 @@ class MnOkr extends HTMLElement {
   }
 }
 customElements.define("mn-okr", MnOkr);
-//# sourceMappingURL=mn-okr.cjs.map

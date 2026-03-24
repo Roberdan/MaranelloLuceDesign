@@ -1,5 +1,5 @@
 "use strict";
-var import_dashboard_renderer = require("../ts/dashboard-renderer.js");
+var import_dashboard_renderer = require("../index.cjs");
 class MnDashboard extends HTMLElement {
   constructor() {
     super();
@@ -70,4 +70,3 @@ class MnDashboard extends HTMLElement {
   }
 }
 customElements.define("mn-dashboard", MnDashboard);
-//# sourceMappingURL=mn-dashboard.cjs.map

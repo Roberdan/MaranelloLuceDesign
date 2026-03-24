@@ -37,6 +37,9 @@ function patchCjsModule(file) {
   const content = readFileSync(path, 'utf8');
   const next = content
     .replace(/require\("(\.\/[^"]+)\.js"\)/g, 'require("$1.cjs")')
+    .replace(/import\("(\.\/[^"]+)\.js"\)/g, 'import("$1.cjs")')
+    .replace(/require\("\.\.\/ts\/[^"]+\.js"\)/g, 'require("../index.cjs")')
+    .replace(/import\("\.\.\/ts\/[^"]+\.js"\)/g, 'import("../index.cjs")')
     .replace(
       /const import_meta = \{\};/g,
       'const import_meta = { url: require("url").pathToFileURL(__filename).href };'
@@ -82,7 +85,7 @@ async function buildWCs() {
           target: 'es2020',
           outbase: srcDir,
           outExtension: { '.js': '.cjs' },
-          sourcemap: true,
+          sourcemap: false,
           logLevel: 'silent',
         }),
       ]

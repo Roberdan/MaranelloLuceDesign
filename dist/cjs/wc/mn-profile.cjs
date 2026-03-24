@@ -117,4 +117,3 @@ class MnProfile extends HTMLElement {
   }
 }
 customElements.define("mn-profile", MnProfile);
-//# sourceMappingURL=mn-profile.cjs.map

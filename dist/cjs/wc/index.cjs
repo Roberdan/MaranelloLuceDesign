@@ -74,39 +74,39 @@ async function registerAll() {
   if (_loaded) return;
   try {
     await Promise.all([
-      import("./mn-app-shell.js"),
-      import("./mn-a11y.js"),
-      import("./mn-async-select.js"),
-      import("./mn-chart.js"),
-      import("./mn-chat.js"),
-      import("./mn-command-palette.js"),
-      import("./mn-dashboard.js"),
-      import("./mn-data-table.js"),
-      import("./mn-date-picker.js"),
-      import("./mn-detail-panel.js"),
-      import("./mn-entity-workbench.js"),
-      import("./mn-ferrari-control.js"),
-      import("./mn-facet-workbench.js"),
-      import("./mn-funnel.js"),
-      import("./mn-gantt.js"),
-      import("./mn-gauge.js"),
-      import("./mn-header-shell.js"),
-      import("./mn-hbar.js"),
-      import("./mn-login.js"),
-      import("./mn-map.js"),
-      import("./mn-mapbox.js"),
-      import("./mn-modal.js"),
-      import("./mn-okr.js"),
-      import("./mn-profile.js"),
-      import("./mn-speedometer.js"),
-      import("./mn-state-scaffold.js"),
-      import("./mn-system-status.js"),
-      import("./mn-tabs.js"),
+      import("./mn-app-shell.cjs"),
+      import("./mn-a11y.cjs"),
+      import("./mn-async-select.cjs"),
+      import("./mn-chart.cjs"),
+      import("./mn-chat.cjs"),
+      import("./mn-command-palette.cjs"),
+      import("./mn-dashboard.cjs"),
+      import("./mn-data-table.cjs"),
+      import("./mn-date-picker.cjs"),
+      import("./mn-detail-panel.cjs"),
+      import("./mn-entity-workbench.cjs"),
+      import("./mn-ferrari-control.cjs"),
+      import("./mn-facet-workbench.cjs"),
+      import("./mn-funnel.cjs"),
+      import("./mn-gantt.cjs"),
+      import("./mn-gauge.cjs"),
+      import("./mn-header-shell.cjs"),
+      import("./mn-hbar.cjs"),
+      import("./mn-login.cjs"),
+      import("./mn-map.cjs"),
+      import("./mn-mapbox.cjs"),
+      import("./mn-modal.cjs"),
+      import("./mn-okr.cjs"),
+      import("./mn-profile.cjs"),
+      import("./mn-speedometer.cjs"),
+      import("./mn-state-scaffold.cjs"),
+      import("./mn-system-status.cjs"),
+      import("./mn-tabs.cjs"),
       // also registers mn-tab
-      import("./mn-section-nav.js"),
-      import("./mn-theme-rotary.js"),
-      import("./mn-theme-toggle.js"),
-      import("./mn-toast.js")
+      import("./mn-section-nav.cjs"),
+      import("./mn-theme-rotary.cjs"),
+      import("./mn-theme-toggle.cjs"),
+      import("./mn-toast.cjs")
     ]);
     if (typeof document !== "undefined" && !document.querySelector("mn-a11y")) {
       document.body.appendChild(document.createElement("mn-a11y"));
@@ -125,4 +125,3 @@ function getAvailableTags() {
 function getRegistered() {
   return WC_TAGS.filter((tag) => !!customElements.get(tag));
 }
-//# sourceMappingURL=index.cjs.map

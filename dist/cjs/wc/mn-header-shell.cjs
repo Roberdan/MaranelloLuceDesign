@@ -35,7 +35,7 @@ function normalizeConfig(value) {
 }
 async function importHeaderShellModule() {
   try {
-    const sourceModule = await import("../ts/header-shell.js");
+    const sourceModule = await import("../index.cjs");
     if (typeof sourceModule.headerShell === "function") return sourceModule.headerShell;
   } catch (_) {
   }
@@ -120,4 +120,3 @@ class MnHeaderShell extends HTMLElement {
 if (!customElements.get("mn-header-shell")) {
   customElements.define("mn-header-shell", MnHeaderShell);
 }
-//# sourceMappingURL=mn-header-shell.cjs.map

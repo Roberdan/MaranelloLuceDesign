@@ -65,7 +65,7 @@ class MnCustomerJourney extends HTMLElement {
     if (!phasesAttr) return;
     try {
       const phases = JSON.parse(phasesAttr);
-      const { customerJourney } = await import("../ts/customer-journey.js");
+      const { customerJourney } = await import("../index.cjs");
       const layoutMode = this.getAttribute("layout") || "horizontal";
       this._ctrl = customerJourney(this._container, phases, {
         orientation: layoutMode,
@@ -81,4 +81,3 @@ class MnCustomerJourney extends HTMLElement {
   }
 }
 customElements.define("mn-customer-journey", MnCustomerJourney);
-//# sourceMappingURL=mn-customer-journey.cjs.map

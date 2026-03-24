@@ -141,4 +141,3 @@ class MnDatePicker extends HTMLElement {
   }
 }
 customElements.define("mn-date-picker", MnDatePicker);
-//# sourceMappingURL=mn-date-picker.cjs.map

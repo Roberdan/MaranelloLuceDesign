@@ -163,4 +163,3 @@ class MnMap extends HTMLElement {
   }
 }
 customElements.define("mn-map", MnMap);
-//# sourceMappingURL=mn-map.cjs.map

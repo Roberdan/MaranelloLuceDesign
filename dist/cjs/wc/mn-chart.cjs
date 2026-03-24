@@ -191,4 +191,3 @@ class MnChart extends HTMLElement {
   }
 }
 customElements.define("mn-chart", MnChart);
-//# sourceMappingURL=mn-chart.cjs.map

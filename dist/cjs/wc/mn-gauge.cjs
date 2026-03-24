@@ -177,4 +177,3 @@ class MnGauge extends HTMLElement {
   }
 }
 customElements.define("mn-gauge", MnGauge);
-//# sourceMappingURL=mn-gauge.cjs.map

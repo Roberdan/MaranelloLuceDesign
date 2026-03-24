@@ -1,5 +1,5 @@
 "use strict";
-var import_facet_workbench = require("../ts/facet-workbench.js");
+var import_facet_workbench = require("../index.cjs");
 class MnFacetWorkbench extends HTMLElement {
   static get observedAttributes() {
     return [];
@@ -47,4 +47,3 @@ class MnFacetWorkbench extends HTMLElement {
   }
 }
 customElements.define("mn-facet-workbench", MnFacetWorkbench);
-//# sourceMappingURL=mn-facet-workbench.cjs.map

@@ -147,4 +147,3 @@ class MnThemeToggle extends HTMLElement {
   }
 }
 customElements.define("mn-theme-toggle", MnThemeToggle);
-//# sourceMappingURL=mn-theme-toggle.cjs.map

@@ -137,4 +137,3 @@ class MnModal extends HTMLElement {
   }
 }
 customElements.define("mn-modal", MnModal);
-//# sourceMappingURL=mn-modal.cjs.map

@@ -197,4 +197,3 @@ class MnSectionNav extends HTMLElement {
 }
 __publicField(MnSectionNav, "observedAttributes", ["sections", "current", "data-theme", "data-pos"]);
 customElements.define("mn-section-nav", MnSectionNav);
-//# sourceMappingURL=mn-section-nav.cjs.map

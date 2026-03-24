@@ -61,4 +61,3 @@ class MnAsyncSelect extends HTMLElement {
   }
 }
 customElements.define("mn-async-select", MnAsyncSelect);
-//# sourceMappingURL=mn-async-select.cjs.map

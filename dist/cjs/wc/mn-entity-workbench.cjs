@@ -1,5 +1,5 @@
 "use strict";
-var import_entity_workbench = require("../ts/entity-workbench.js");
+var import_entity_workbench = require("../index.cjs");
 class MnEntityWorkbench extends HTMLElement {
   static get observedAttributes() {
     return ["open"];
@@ -90,4 +90,3 @@ class MnEntityWorkbench extends HTMLElement {
   }
 }
 customElements.define("mn-entity-workbench", MnEntityWorkbench);
-//# sourceMappingURL=mn-entity-workbench.cjs.map

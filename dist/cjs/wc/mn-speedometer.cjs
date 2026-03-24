@@ -160,4 +160,3 @@ class MnSpeedometer extends HTMLElement {
   }
 }
 customElements.define("mn-speedometer", MnSpeedometer);
-//# sourceMappingURL=mn-speedometer.cjs.map

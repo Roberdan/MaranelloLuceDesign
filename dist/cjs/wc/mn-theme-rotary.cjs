@@ -196,4 +196,3 @@ class MnThemeRotary extends HTMLElement {
   }
 }
 customElements.define("mn-theme-rotary", MnThemeRotary);
-//# sourceMappingURL=mn-theme-rotary.cjs.map

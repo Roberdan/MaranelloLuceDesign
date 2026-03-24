@@ -1,5 +1,5 @@
 "use strict";
-var import_state_scaffold = require("../ts/state-scaffold.js");
+var import_state_scaffold = require("../index.cjs");
 const VALID_STATES = /* @__PURE__ */ new Set(["loading", "empty", "error", "partial", "no-results", "ready"]);
 class MnStateScaffold extends HTMLElement {
   static get observedAttributes() {
@@ -51,4 +51,3 @@ class MnStateScaffold extends HTMLElement {
   }
 }
 customElements.define("mn-state-scaffold", MnStateScaffold);
-//# sourceMappingURL=mn-state-scaffold.cjs.map

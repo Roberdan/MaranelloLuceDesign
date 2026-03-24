@@ -146,4 +146,3 @@ class MnA11y extends HTMLElement {
   }
 }
 customElements.define("mn-a11y", MnA11y);
-//# sourceMappingURL=mn-a11y.cjs.map

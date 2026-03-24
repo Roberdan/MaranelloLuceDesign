@@ -161,4 +161,3 @@ class MnDetailPanel extends HTMLElement {
   }
 }
 customElements.define("mn-detail-panel", MnDetailPanel);
-//# sourceMappingURL=mn-detail-panel.cjs.map

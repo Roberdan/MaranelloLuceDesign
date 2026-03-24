@@ -127,4 +127,3 @@ class MnFunnel extends HTMLElement {
   }
 }
 customElements.define("mn-funnel", MnFunnel);
-//# sourceMappingURL=mn-funnel.cjs.map

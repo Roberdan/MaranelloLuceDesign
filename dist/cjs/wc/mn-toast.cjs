@@ -99,4 +99,3 @@ class MnToast extends HTMLElement {
   }
 }
 customElements.define("mn-toast", MnToast);
-//# sourceMappingURL=mn-toast.cjs.map

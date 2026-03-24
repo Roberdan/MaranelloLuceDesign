@@ -185,4 +185,3 @@ function buildA11yFallback(shadowRoot) {
     }
   };
 }
-//# sourceMappingURL=mn-a11y-fallback.cjs.map

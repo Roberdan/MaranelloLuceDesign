@@ -97,4 +97,3 @@ class MnChat extends HTMLElement {
   }
 }
 customElements.define("mn-chat", MnChat);
-//# sourceMappingURL=mn-chat.cjs.map
