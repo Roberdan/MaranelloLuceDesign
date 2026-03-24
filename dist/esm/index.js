@@ -1,4 +1,4 @@
-/* Maranello Luce Design v5.13.1 | MPL-2.0 | github.com/Roberdan/MaranelloLuceDesign */
+/* Maranello Luce Design v5.14.0 | MPL-2.0 | github.com/Roberdan/MaranelloLuceDesign */
 import {
   SERIES,
   applyChartA11y,
@@ -19,7 +19,7 @@ import {
   radar,
   sparkline,
   sparklineInteract
-} from "./chunks/chunk-JOA2BMHD.js";
+} from "./chunks/chunk-FYC3ENSR.js";
 import {
   FerrariGauge,
   SPEEDO_FONT,
@@ -31,10 +31,10 @@ import {
   speedoPalette,
   speedometer,
   valueToAngle
-} from "./chunks/chunk-KZHNLLFF.js";
+} from "./chunks/chunk-DWJXJGCT.js";
 import {
   gantt
-} from "./chunks/chunk-QFV2MX7R.js";
+} from "./chunks/chunk-ZFJ2MBUA.js";
 import {
   closeDetailPanel,
   closeDrawer,
@@ -47,7 +47,7 @@ import {
   steppedRotary,
   toggleLever,
   toggleNotifications
-} from "./chunks/chunk-HW3VUORX.js";
+} from "./chunks/chunk-QWRL3L6W.js";
 import {
   ALLOWED_BIND_PROPERTIES,
   clamp,
@@ -69,7 +69,7 @@ import {
   sanitizeSvg,
   setTheme,
   throttle
-} from "./chunks/chunk-FO3D2CED.js";
+} from "./chunks/chunk-2LVJNN22.js";
 import {
   addValidator,
   defaultMessages,
@@ -88,11 +88,11 @@ import {
   validateField,
   validateForm,
   validators
-} from "./chunks/chunk-2Q5AXHRB.js";
+} from "./chunks/chunk-7CMGEQSP.js";
 import {
   EventBus,
   eventBus
-} from "./chunks/chunk-WBOK36LK.js";
+} from "./chunks/chunk-JIVE4X5Z.js";
 
 // src/ts/navigation-model.ts
 var NavigationModel = class {
@@ -5020,7 +5020,9 @@ function headerShell(container, options) {
     const group = filterGroups.filters.find((item) => item.id === groupId);
     if (!group) return;
     const next = setFilterValues(state.filters, group, values);
+    const activeButton = document.activeElement instanceof HTMLButtonElement ? document.activeElement : null;
     syncFilterButtons(nav, state.filters);
+    if (activeButton?.isConnected) activeButton.focus();
     const detail = { groupId, values: next };
     options.callbacks?.onFilter?.(detail);
     emitShellEvent(nav, "header-shell-filter", detail);
@@ -15319,7 +15321,7 @@ M.charts = { sparkline, donut, barChart, areaChart, radar, halfGauge, bubble, li
 registerExtras(M);
 
 // src/ts/index.ts
-var VERSION = "5.13.0";
+var VERSION = "5.14.0";
 export {
   AppShellController,
   AsyncSelect,

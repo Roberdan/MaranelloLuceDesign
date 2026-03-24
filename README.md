@@ -2,7 +2,7 @@
 
 Ferrari Luce-inspired design system for AI agent dashboards. Zero runtime dependencies. 5 adaptive themes. WCAG 2.2 AA. Framework-agnostic.
 
-**v5.13.1** | [Live Demo](https://roberdan.github.io/MaranelloLuceDesign/) | [CHANGELOG](CHANGELOG.md)
+**v5.14.0** | [Live Demo](https://roberdan.github.io/MaranelloLuceDesign/) | [CHANGELOG](CHANGELOG.md)
 
 ## Install
 
@@ -50,8 +50,8 @@ import { barChart, donut } from 'maranello-luce-design-business/charts';
 ### 4. IIFE (CDN, no bundler)
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v5.13.1/dist/css/index.css">
-<script src="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v5.13.1/dist/iife/maranello.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v5.14.0/dist/css/index.css">
+<script src="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v5.14.0/dist/iife/maranello.min.js"></script>
 <script>
   Maranello.sparkline(document.getElementById('chart'), [10, 20, 15, 30]);
   new Maranello.FerrariGauge(document.getElementById('gauge'));
@@ -65,14 +65,14 @@ Three independent layers. Use together or separately.
 | Layer | Import | What you get |
 |---|---|---|
 | CSS-only | `maranello-luce-design-business/css` | Tokens, 5 themes, 120+ component stylesheets, responsive breakpoints |
-| Headless JS | `maranello-luce-design-business` | 100+ exports: charts, gauges, controls, forms, data binding, runtime |
+| Headless JS | `maranello-luce-design-business` | 150+ exports: charts, gauges, controls, forms, data binding, runtime |
 | Web Components | `maranello-luce-design-business/wc` | 35 `mn-*` tags that self-register, auto-resize, and emit DOM events |
 
 ### Package Exports
 
 | Path | Content |
 |---|---|
-| `.` | Main ESM/CJS entry (100+ exports) with TypeScript types |
+| `.` | Main ESM/CJS entry (150+ exports) with TypeScript types |
 | `./css` | Full CSS system (tokens + themes + components + responsive + integration) |
 | `./css/*` | Individual CSS files for selective imports |
 | `./wc` | All 35 Web Component tags with auto-registration |

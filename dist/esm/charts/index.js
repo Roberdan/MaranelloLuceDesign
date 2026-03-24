@@ -1,4 +1,4 @@
-/* Maranello Luce Design v5.13.1 | MPL-2.0 | github.com/Roberdan/MaranelloLuceDesign */
+/* Maranello Luce Design v5.14.0 | MPL-2.0 | github.com/Roberdan/MaranelloLuceDesign */
 import {
   SERIES,
   areaChart,
@@ -17,8 +17,8 @@ import {
   radar,
   sparkline,
   sparklineInteract
-} from "../chunks/chunk-JOA2BMHD.js";
-import "../chunks/chunk-FO3D2CED.js";
+} from "../chunks/chunk-FYC3ENSR.js";
+import "../chunks/chunk-2LVJNN22.js";
 export {
   SERIES,
   areaChart,

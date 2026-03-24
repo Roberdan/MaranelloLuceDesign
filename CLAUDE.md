@@ -1,7 +1,7 @@
-<!-- v5.13.1 | 2026-03-23 -->
+<!-- v5.14.0 | 2026-03-24 -->
 # MaranelloLuceDesign
 
-Ferrari Luce-inspired DS for dashboards. 5 themes. 115+ IIFE exports. 33 WC. WCAG 2.2 AA.
+Ferrari Luce-inspired DS for dashboards. 5 themes. 115+ IIFE exports. 35 WC. WCAG 2.2 AA.
 
 ## Commands
 
@@ -9,7 +9,7 @@ Ferrari Luce-inspired DS for dashboards. 5 themes. 115+ IIFE exports. 33 WC. WCA
 
 ## Architecture
 
-`src/css/` tokens+themes+components (123 files) | `src/ts/` headless JS+runtime | `src/wc/` 33 `mn-*` WC | `dist/` build output
+`src/css/` tokens+themes+components (123 files) | `src/ts/` headless JS+runtime | `src/wc/` 35 `mn-*` WC | `dist/` build output
 
 Key: `layout.ts`+`layout-slot.ts` (state machine) · `header.ts` (navbar) · `tokens.css` · `themes-*.css` · `layouts-mn-layout.css` (grid `:has()`)
 
