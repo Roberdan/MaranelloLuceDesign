@@ -38,8 +38,7 @@ test.describe('Accessibility', () => {
 
     expect(focusStyles).not.toBeNull();
     expect(
-      focusStyles?.outlineStyle !== 'none'
-      || focusStyles?.outlineWidth !== '0px'
+      (focusStyles?.outlineStyle !== 'none' && focusStyles?.outlineWidth !== '0px')
       || focusStyles?.boxShadow !== 'none',
     ).toBe(true);
   });
