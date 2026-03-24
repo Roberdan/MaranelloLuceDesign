@@ -20,18 +20,7 @@ export { neuralNodes } from './neural-nodes';
 export type { NeuralNodeData, NeuralConnection, NeuralNodesOptions, NeuralNodesController } from './neural-nodes';
 
 // Design tokens
-export {
-  COLOR,
-  FONT,
-  TEXT_SIZE,
-  SPACE,
-  DURATION,
-  EASE,
-  RADIUS,
-  SHADOW,
-  SCOPE_COLOR,
-  Z_INDEX,
-} from './core/tokens';
+export { COLOR, FONT, TEXT_SIZE, SPACE, DURATION, EASE, RADIUS, SHADOW, SCOPE_COLOR, Z_INDEX } from './core/tokens';
 export type { TokenName } from './core/tokens';
 
 // Icons
@@ -61,12 +50,7 @@ export { commandPalette } from './command-palette';
 
 // Login screen
 export { loginScreen } from './login';
-export type {
-  LoginScreenOptions,
-  LoginScreenController,
-  LoginHealthData,
-  LoginServiceCheck,
-} from './login';
+export type { LoginScreenOptions, LoginScreenController, LoginHealthData, LoginServiceCheck } from './login';
 
 // AI Chat
 export { buildUI, ICON_SPARK, getIcon, renderContent, formatTime } from './ai-chat-dom';
@@ -86,6 +70,8 @@ export type { ProfileMenuUser, ProfileMenuOptions, ProfileMenuController } from 
 // Header (3-zone navbar)
 export { header } from './header';
 export type { HeaderOptions, HeaderController, HeaderBrand, HeaderButton, HeaderSearch, HeaderProfile } from './header';
+export { headerShell } from './header-shell';
+export type { HeaderShellOptions, HeaderShellController, HeaderShellSection, HeaderShellAction, HeaderShellFilterGroup, HeaderShellState } from './header-shell';
 // Theme picker
 export { themePicker } from './theme-picker';
 export type { ThemePickerOptions, ThemePickerController } from './theme-picker';
@@ -126,11 +112,7 @@ export type { MapboxMarker, MapboxViewOptions, MapboxViewController } from './ma
 export { socialGraph } from './social-graph';
 
 // Controls (panels, drawers, org tree)
-export {
-  openDetailPanel, closeDetailPanel,
-  openDrawer, closeDrawer,
-  initOrgTree, toggleNotifications, initDrillDown,
-} from './controls';
+export { openDetailPanel, closeDetailPanel, openDrawer, closeDrawer, initOrgTree, toggleNotifications, initDrillDown } from './controls';
 
 // Sidebar toggle (mobile)
 export { initSidebarToggle, initSidebarToggleAuto } from './sidebar-toggle';
@@ -156,16 +138,9 @@ export { flipCounter } from './flip-counter';
 
 // Forms
 export { initForms, forms } from './forms';
-export {
-  validateField, validateForm, initLiveValidation,
-  addValidator, getFieldInput, validators, defaultMessages,
-} from './forms-validate';
+export { validateField, validateForm, initLiveValidation, addValidator, getFieldInput, validators, defaultMessages } from './forms-validate';
 export type { FormInputElement, FormValidator, FormValidators, FormMessages } from './forms-validate';
-export {
-  initAutoResize, initTagInput, initPasswordToggle,
-  initFileUpload, initFormSteps, initInlineEdit,
-  initCharCounter, initSearchClear,
-} from './forms-widgets';
+export { initAutoResize, initTagInput, initPasswordToggle, initFileUpload, initFormSteps, initInlineEdit, initCharCounter, initSearchClear } from './forms-widgets';
 export type { TagInputApi, FileUploadApi, FormStepsApi } from './forms-widgets';
 export { initTagsField } from './forms-tags-field';
 export type { TagsFieldOptions, TagsFieldApi } from './forms-tags-field';
@@ -187,18 +162,11 @@ export { okrPanel } from './okr-panel';
 export type { OkrPanelOptions, OkrPanelController } from './okr-panel';
 
 // Observers (initGauges, scroll reveal, nav tracking, contrast helpers)
-export {
-  initGauges, initScrollReveal, initNavTracking,
-  relativeLuminance, autoContrast,
-} from './observers';
-export type {
-  GaugeInitOptions, ScrollRevealOptions, NavTrackingOptions, ContrastResult,
-} from './observers';
+export { initGauges, initScrollReveal, initNavTracking, relativeLuminance, autoContrast } from './observers';
+export type { GaugeInitOptions, ScrollRevealOptions, NavTrackingOptions, ContrastResult } from './observers';
 
 // Gauge factory / lifecycle utilities
-export {
-  createGauge, createGaugesInContainer, redrawAll, reinitAll, GAUGE_SIZES,
-} from './gauge-engine-class';
+export { createGauge, createGaugesInContainer, redrawAll, reinitAll, GAUGE_SIZES } from './gauge-engine-class';
 export type { GaugeFactoryOptions, GaugeEntry } from './gauge-engine-class';
 
 // Speedometer internals (palette + draw primitives)
@@ -210,9 +178,7 @@ export * from './h-bar-chart-draw';
 
 // Data binding events (off + event types not in data-binding)
 export { off } from './data-binding-events';
-export type {
-  DrillDownContext, DrillDownHandler, ElementBindOptions,
-} from './data-binding-events';
+export type { DrillDownContext, DrillDownHandler, ElementBindOptions } from './data-binding-events';
 
 // Icons A-Z
 export { azIcons } from './icons-az';
@@ -221,10 +187,7 @@ export type { AzIconName } from './icons-az';
 // Detail panel (create + sub-modules)
 export { createDetailPanel } from './detail-panel';
 export { registerDatePicker, editors } from './detail-panel-editors';
-export {
-  updateStatusSelectColor, renderPersonResults,
-  renderers, getInitials, formatDateSimple,
-} from './detail-panel-renderers';
+export { updateStatusSelectColor, renderPersonResults, renderers, getInitials, formatDateSimple } from './detail-panel-renderers';
 export * from './detail-panel-ui';
 
 // A11y panel
@@ -238,9 +201,7 @@ export { initRotary, initSlider } from './controls-drag';
 
 // Map view internals (events + helpers)
 export { attachEvents } from './map-view-events';
-export type {
-  TipElements, MapEventState, MapEventCallbacks, EventCleanup,
-} from './map-view-events';
+export type { TipElements, MapEventState, MapEventCallbacks, EventCleanup } from './map-view-events';
 export * from './map-view-helpers';
 
 export { gridLayout } from './grid-layout';

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Maranello Header Shell Demo</title>
+  <link rel="icon" href="../src/assets/favicon.svg">
+  <link rel="stylesheet" href="../src/fonts/local-fonts.css">
+  <link rel="stylesheet" href="../dist/css/maranello.css">
+  <style>
+    body { --shell-bg:#0a0a0a; --shell-nav:#141414; --shell-card:#171717; --shell-card-2:#1d1d1d; --shell-border:#262626; --shell-text:#eee; --shell-muted:#9a9a9a; --shell-ghost:#666; --shell-accent:#FFC72C; --shell-accent-text:#111; margin:0; background:var(--shell-bg); color:var(--shell-text); font-family:var(--font-body, sans-serif); }
+    body.mn-avorio { --shell-bg:#f5efe4; --shell-nav:#f8f1e6; --shell-card:#fffaf4; --shell-card-2:#fffdf8; --shell-border:#d9cbb7; --shell-text:#241f19; --shell-muted:#7b6d5a; --shell-ghost:#8e7f6b; --shell-accent:#b7410e; --shell-accent-text:#fff8ef; }
+    body.mn-colorblind { --shell-accent:#0072B2; --shell-accent-text:#fff; }
+    body.mn-sugar { --shell-bg:#f4f4f6; --shell-nav:#fff; --shell-card:#fff; --shell-card-2:#ffffff; --shell-border:#d8d8de; --shell-text:#111; --shell-muted:#666; --shell-ghost:#888; --shell-accent:#111; --shell-accent-text:#fff; }
+    #shell-stage { width: 100%; background: var(--shell-bg); }
+    #navbar { position: sticky; top: 0; z-index: 20; backdrop-filter: blur(12px); }
+    body.mn-avorio #navbar, body.mn-sugar #navbar { background: color-mix(in srgb, var(--shell-nav) 96%, transparent); }
+    #navbar .mn-header-shell { gap: 12px; background: var(--shell-nav); border-bottom-color: var(--shell-border); }
+    #navbar .mn-header-shell__brand { color: var(--shell-text); font-size: 1rem; }
+    #navbar .mn-header-shell__brand-logo { width: 28px; height: 28px; filter: drop-shadow(0 0 8px color-mix(in srgb, var(--shell-accent) 35%, transparent)); }
+    #navbar .mn-header-shell__actions--segmented,
+    #navbar .mn-header-shell__actions--cluster { border-color: var(--shell-border); border-radius: 14px; background: var(--shell-card); box-shadow: inset 0 1px 0 color-mix(in srgb, #fff 4%, transparent); }
+    #navbar .mn-header-shell__action { min-width: 48px; min-height: 48px; border-radius: 10px; color: var(--shell-muted); }
+    #navbar .mn-header-shell__action:hover { background: color-mix(in srgb, var(--shell-card-2) 92%, var(--shell-accent) 8%); color: var(--shell-text); }
+    #navbar .mn-header-shell__action--active { background: color-mix(in srgb, var(--shell-accent) 20%, transparent); color: var(--shell-accent); }
+    #navbar .mn-header-shell__action:disabled { opacity: .35; cursor: not-allowed; }
+    #navbar .mn-header-shell__icon svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+    #navbar .mn-header-shell__search { width: 100%; min-width: 0; min-height: 52px; padding: 8px 12px; gap: 12px; border-color: var(--shell-border); border-radius: 14px; background: var(--shell-card); }
+    #navbar .mn-header-shell__search-input { flex: 1 1 14rem; min-width: 10rem; color: var(--shell-text); font-size: 1.0625rem; }
+    #navbar .mn-header-shell__search-input::placeholder { color: color-mix(in srgb, var(--shell-muted) 78%, transparent); }
+    #navbar .mn-header-shell__shortcut { border-color: #444; background: #262626; color: #999; font-size: 0.875rem; }
+    #navbar .mn-header-shell__filters { display: none; }
+    .shell-filter-trigger { border: none; background: transparent; color: var(--shell-text); display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.875rem; }
+    .shell-filter-trigger svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+    .shell-filter-sep { color: var(--shell-ghost); font-size: 1.75rem; line-height: 1; }
+    #navbar .mn-header-shell__filter-group legend { color: var(--shell-ghost); font-size: .78rem; letter-spacing: .08em; text-transform: uppercase; }
+    #navbar .mn-header-shell__filter-option { min-height: 36px; border-color: var(--shell-border); background: transparent; color: var(--shell-text); }
+    #navbar .mn-header-shell__filter-option.is-selected { color: var(--shell-accent); border-color: color-mix(in srgb, var(--shell-accent) 55%, var(--shell-border)); background: color-mix(in srgb, var(--shell-accent) 12%, transparent); }
+    #navbar .mn-header-shell__theme { padding-left: 14px; border-left-color: var(--shell-border); }
+    #navbar .mn-profile-trigger { width: 42px; height: 42px; border-radius: 50%; background: color-mix(in srgb, var(--shell-accent) 18%, transparent); color: var(--shell-accent); font-weight: 700; display: inline-flex; align-items: center; justify-content: center; border: 1px solid color-mix(in srgb, var(--shell-accent) 30%, var(--shell-border)); }
+    #legacy-filter-board[hidden] { display: none; }
+    #legacy-filter-board { position: fixed; z-index: 30; width: min(980px, calc(100vw - 48px)); border: 1px solid var(--shell-border); border-radius: 18px; background: color-mix(in srgb, var(--shell-card) 94%, transparent); box-shadow: 0 28px 60px rgba(0,0,0,.42); overflow: hidden; backdrop-filter: blur(18px); }
+    .filter-board__columns { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+    .filter-board__col { min-height: 420px; padding: 22px 18px 14px; border-right: 1px solid var(--shell-border); }
+    .filter-board__col:last-child { border-right: none; }
+    .filter-board__title { margin: 0 0 18px; color: var(--shell-ghost); font-size: .78rem; letter-spacing: .08em; text-transform: uppercase; }
+    .filter-board__item { width: 100%; min-height: 42px; padding: 0; border: none; background: transparent; color: var(--shell-text); display: flex; align-items: center; gap: 10px; cursor: pointer; text-align: left; font-size: 1rem; }
+    .filter-board__item:hover { color: var(--shell-accent); }
+    .filter-board__item--dim { opacity: .45; }
+    .filter-board__dot { width: 12px; height: 12px; border-radius: 50%; background: var(--shell-muted); flex: none; }
+    .filter-board__dot[data-tone="gold"] { background: #d9aa31; }
+    .filter-board__dot[data-tone="blue"] { background: #3f95c9; }
+    .filter-board__dot[data-tone="purple"] { background: #6a41d8; }
+    .filter-board__count { color: var(--shell-ghost); font-size: .95rem; }
+    .filter-board__check { margin-left: auto; color: var(--shell-accent); font-weight: 700; opacity: 0; }
+    .filter-board__item--selected .filter-board__check { opacity: 1; }
+    .filter-board__footer { display: grid; grid-template-columns: 1fr auto; gap: 10px; padding: 18px; border-top: 1px solid var(--shell-border); background: color-mix(in srgb, var(--shell-card-2) 92%, transparent); }
+    .filter-board__save, .filter-board__clear { min-height: 56px; border-radius: 10px; font-size: 0.82rem; letter-spacing: .12em; text-transform: uppercase; cursor: pointer; }
+    .filter-board__save { border: 1px solid var(--shell-border); background: #f5f5f5; color: #111; font-weight: 700; }
+    .filter-board__clear { min-width: 150px; border: 1px solid color-mix(in srgb, var(--shell-border) 82%, #fff 10%); background: transparent; color: var(--shell-text); }
+    @media (max-width: 1200px) {
+      #navbar .mn-header-shell__search { min-height: 48px; }
+      #navbar .mn-header-shell__action { min-width: 42px; min-height: 42px; }
+      #navbar .mn-header-shell__theme { padding-left: 10px; }
+      .filter-board__columns { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 640px) {
+      #navbar .mn-header-shell__shortcut { display: none; }
+      #navbar .mn-header-shell__actions--segmented,
+      #navbar .mn-header-shell__actions--cluster { width: 100%; justify-content: space-between; }
+      #navbar .mn-header-shell__search { max-width: none; }
+      #navbar .mn-header-shell__theme { width: 100%; justify-content: flex-end; border-left: none; padding-left: 0; }
+      .filter-board__columns { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body class="mn-nero">
+  <div id="shell-stage">
+    <header id="navbar"></header>
+  </div>
+  <script src="../dist/iife/maranello.min.js"></script>
+  <script src="./header-responsive-filter-board.js"></script>
+  <script type="module" src="../src/wc/mn-header-shell.js"></script>
+  <script type="module" src="./header-responsive-shell.js"></script>
+</body>
+</html>
