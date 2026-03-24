@@ -21,7 +21,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
   mod
 ));
-const import_meta = {};
+const import_meta = { url: require("url").pathToFileURL(__filename).href };
 const _base = new URL(".", import_meta.url).href;
 function cssLink(path) {
   const link = document.createElement("link");

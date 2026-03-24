@@ -21,7 +21,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
   mod
 ));
-var import_mn_theme_toggle = require("./mn-theme-toggle.js");
+var import_mn_theme_toggle = require("./mn-theme-toggle.cjs");
 let _headerShellFactory = null;
 function getGlobalHeaderShell() {
   try {

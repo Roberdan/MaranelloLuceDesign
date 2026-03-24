@@ -1,5 +1,5 @@
 "use strict";
-const import_meta = {};
+const import_meta = { url: require("url").pathToFileURL(__filename).href };
 const _base = new URL(".", import_meta.url).href;
 async function resolveAsyncSelect() {
   if (globalThis.Maranello?.AsyncSelect) return globalThis.Maranello.AsyncSelect;

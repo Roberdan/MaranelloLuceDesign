@@ -4,10 +4,63 @@
  */
 import { describe, it, expect } from 'vitest';
 import { existsSync, statSync, readFileSync } from 'node:fs';
+import { createRequire } from 'node:module';
 import { join } from 'node:path';
+import { Window } from 'happy-dom';
 
 const DIST = join(import.meta.dirname, '../../dist');
 const ROOT = join(import.meta.dirname, '../..');
+const cjsRequire = createRequire(import.meta.url);
+
+type DomGlobals = {
+  window?: Window;
+  document?: Document;
+  customElements?: CustomElementRegistry;
+  HTMLElement?: typeof HTMLElement;
+  CustomEvent?: typeof CustomEvent;
+  Node?: typeof Node;
+  MutationObserver?: typeof MutationObserver;
+  requestAnimationFrame?: typeof requestAnimationFrame;
+  cancelAnimationFrame?: typeof cancelAnimationFrame;
+};
+
+function withHappyDom(run: () => void) {
+  const globalScope = globalThis as typeof globalThis & DomGlobals;
+  const previous: DomGlobals = {
+    window: globalScope.window,
+    document: globalScope.document,
+    customElements: globalScope.customElements,
+    HTMLElement: globalScope.HTMLElement,
+    CustomEvent: globalScope.CustomEvent,
+    Node: globalScope.Node,
+    MutationObserver: globalScope.MutationObserver,
+    requestAnimationFrame: globalScope.requestAnimationFrame,
+    cancelAnimationFrame: globalScope.cancelAnimationFrame,
+  };
+  const window = new Window();
+  globalScope.window = window;
+  globalScope.document = window.document;
+  globalScope.customElements = window.customElements;
+  globalScope.HTMLElement = window.HTMLElement;
+  globalScope.CustomEvent = window.CustomEvent;
+  globalScope.Node = window.Node;
+  globalScope.MutationObserver = window.MutationObserver;
+  globalScope.requestAnimationFrame = window.requestAnimationFrame.bind(window);
+  globalScope.cancelAnimationFrame = window.cancelAnimationFrame.bind(window);
+  try {
+    run();
+  } finally {
+    globalScope.window = previous.window;
+    globalScope.document = previous.document;
+    globalScope.customElements = previous.customElements;
+    globalScope.HTMLElement = previous.HTMLElement;
+    globalScope.CustomEvent = previous.CustomEvent;
+    globalScope.Node = previous.Node;
+    globalScope.MutationObserver = previous.MutationObserver;
+    globalScope.requestAnimationFrame = previous.requestAnimationFrame;
+    globalScope.cancelAnimationFrame = previous.cancelAnimationFrame;
+  }
+}
 
 // Domain-specific strings that must NOT appear in published dist
 const FORBIDDEN_TOKENS = [
@@ -111,6 +164,29 @@ describe('dist/wc/ web components', () => {
   it('wc type declarations exist for barrel and per-component import paths', () => {
     expect(existsSync(join(DIST, 'types/wc/index.d.ts'))).toBe(true);
     expect(existsSync(join(DIST, 'types/wc/mn-header-shell.d.ts'))).toBe(true);
+  });
+
+  it('rewrites local CJS WC requires to emitted .cjs files', () => {
+    const headerShell = readFileSync(join(DIST, 'cjs/wc/mn-header-shell.cjs'), 'utf8');
+    const a11y = readFileSync(join(DIST, 'cjs/wc/mn-a11y.cjs'), 'utf8');
+    expect(headerShell).toContain('require("./mn-theme-toggle.cjs")');
+    expect(headerShell).not.toContain('require("./mn-theme-toggle.js")');
+    expect(a11y).toContain('require("./mn-a11y-fallback.cjs")');
+    expect(a11y).not.toContain('require("./mn-a11y-fallback.js")');
+  });
+
+  it('polyfills import.meta.url in emitted CJS WC modules', () => {
+    const toast = readFileSync(join(DIST, 'cjs/wc/mn-toast.cjs'), 'utf8');
+    expect(toast).toContain('pathToFileURL(__filename).href');
+    expect(toast).not.toContain('const import_meta = {};');
+  });
+
+  it('loads emitted CJS WC modules under a DOM runtime', () => {
+    withHappyDom(() => {
+      expect(() => cjsRequire(join(DIST, 'cjs/wc/mn-header-shell.cjs'))).not.toThrow();
+      expect(() => cjsRequire(join(DIST, 'cjs/wc/mn-toast.cjs'))).not.toThrow();
+      expect(() => cjsRequire(join(DIST, 'cjs/wc/mn-a11y.cjs'))).not.toThrow();
+    });
   });
 });
 

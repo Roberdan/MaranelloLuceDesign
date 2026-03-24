@@ -1,5 +1,5 @@
 "use strict";
-const import_meta = {};
+const import_meta = { url: require("url").pathToFileURL(__filename).href };
 let _engine = null;
 async function resolveEngine() {
   if (_engine) return _engine;

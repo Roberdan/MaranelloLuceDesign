@@ -21,7 +21,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
   mod
 ));
-const import_meta = {};
+const import_meta = { url: require("url").pathToFileURL(__filename).href };
 async function resolveCharts() {
   if (window.Maranello?.charts) return window.Maranello.charts;
   try {

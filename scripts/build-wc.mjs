@@ -1,5 +1,5 @@
 import { build } from 'esbuild';
-import { mkdirSync, readdirSync, existsSync, copyFileSync, writeFileSync } from 'fs';
+import { mkdirSync, readdirSync, existsSync, copyFileSync, writeFileSync, readFileSync } from 'fs';
 import { join } from 'path';
 
 const srcDir = 'src/wc';
@@ -30,6 +30,24 @@ const packageEntries = indexFile ? [join(srcDir, indexFile), ...wcEntries] : wcE
 if (wcComponents.length === 0) {
   console.log('WC: no component files found');
   process.exit(0);
+}
+
+function patchCjsModule(file) {
+  const path = join(cjsWcDir, file);
+  const content = readFileSync(path, 'utf8');
+  const next = content
+    .replace(/require\("(\.\/[^"]+)\.js"\)/g, 'require("$1.cjs")')
+    .replace(
+      /const import_meta = \{\};/g,
+      'const import_meta = { url: require("url").pathToFileURL(__filename).href };'
+    );
+  if (next !== content) writeFileSync(path, next);
+}
+
+function patchCjsModules() {
+  readdirSync(cjsWcDir)
+    .filter((file) => file.endsWith('.cjs'))
+    .forEach((file) => patchCjsModule(file));
 }
 
 async function buildWCs() {
@@ -69,6 +87,7 @@ async function buildWCs() {
         }),
       ]
     );
+    patchCjsModules();
 
     console.log(`WC: transpiled ${wcComponents.length} browser component(s) to ${browserWcDir}`);
     console.log(`WC: built ${wcComponents.length} ESM component(s) to ${esmWcDir}`);

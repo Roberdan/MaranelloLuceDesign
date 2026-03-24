@@ -1,5 +1,5 @@
 "use strict";
-const import_meta = {};
+const import_meta = { url: require("url").pathToFileURL(__filename).href };
 const _base = new URL(".", import_meta.url).href;
 async function resolveEngine() {
   if (window.Maranello?.FerrariGauge) return window.Maranello.FerrariGauge;

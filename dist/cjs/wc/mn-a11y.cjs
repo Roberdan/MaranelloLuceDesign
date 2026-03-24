@@ -1,6 +1,6 @@
 "use strict";
-var import_mn_a11y_fallback = require("./mn-a11y-fallback.js");
-const import_meta = {};
+var import_mn_a11y_fallback = require("./mn-a11y-fallback.cjs");
+const import_meta = { url: require("url").pathToFileURL(__filename).href };
 let _engine = null;
 function getEngine() {
   if (_engine) return _engine;
