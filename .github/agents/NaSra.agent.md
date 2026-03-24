@@ -108,6 +108,25 @@ All viz components expose click callbacks + CustomEvents:
 ### Filter Panel (v5.10.0+)
 `filterPanel(anchor, { columns, onFilterChange, onSaveDefault, onClear })` — multi-column dropdown, single/multi-select, color dots, counts. File: `src/ts/filter-panel.ts`.
 
+### Header Shell (v5.13.1)
+Official reusable Maranello app-header surface:
+- WC: `<mn-header-shell>` from `src/wc/mn-header-shell.js`
+- Imperative: `headerShell(container, options)` from `src/ts/header-shell.ts`
+- Demo/source of truth: `demo/header-responsive.html` + `demo/header-responsive-shell.js`
+- Config sections: `brand` | `actions` | `search` | `theme` | `profile` | `divider` | `spacer`
+- Search is live (`header-shell-search` while typing)
+- Theme subsets use `theme.modes`
+- External filter boards coordinate via `whenReady()`, `getState()`, `setQuery()`, `setFilter()`
+- `filterButtonLabel` is consumer metadata for external menus, not built-in shell chrome
+- DO NOT assume `window.Maranello.headerShell` exists; the imperative API is ESM/CJS only to preserve the IIFE size gate
+
+### Documentation Duties
+When changing shared APIs or contracts, update the matching docs in the same change:
+- `README.md` — public consumer docs
+- `AGENT.md` — agent-facing integration map
+- `.github/agents/NaSra.agent.md` — NaSra-specific guardrails and current DS surface
+- matching demos/tests for the changed surface (`demo/header-responsive.*`, unit tests, etc.)
+
 ## Quick Reference
 
 | Need | Use | NOT |

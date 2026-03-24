@@ -1,6 +1,6 @@
 # Maranello Luce Design — Agent Reference
 
-> Ferrari Luce-inspired design system. Zero deps. 5 themes. 150+ APIs. v5.13.1
+> Ferrari Luce-inspired design system. Zero deps. 5 themes. 100+ APIs. 35 WC tags. v5.13.1
 > Repo: github.com/Roberdan/MaranelloLuceDesign
 > Demo: roberdan.github.io/MaranelloLuceDesign/
 > AI Expert: @NaSra (see `.github/agents/NaSra.agent.md`)
@@ -8,7 +8,7 @@
 ## Install
 
 ```bash
-npm i github:Roberdan/MaranelloLuceDesign#v5.0.0
+npm install maranello-luce-design-business
 ```
 
 ## Import Paths
@@ -22,15 +22,53 @@ npm i github:Roberdan/MaranelloLuceDesign#v5.0.0
 | `maranello-luce-design-business/controls` | manettino, cruiseLever, toggleLever, steppedRotary, initRotary, initSlider, openDrawer, openDetailPanel |
 | `maranello-luce-design-business/forms` | initForms, validateField, validateForm, initTagInput, initFileUpload, initFormSteps |
 | `maranello-luce-design-business/gantt` | Gantt timeline renderer |
-| `maranello-luce-design-business/wc` | All 32 Web Components |
+| `maranello-luce-design-business/wc` | All 35 Web Component tags |
 | `maranello-luce-design-business/wc/mn-*` | Individual Web Components |
 
 CDN (no build):
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v5.0.0/dist/css/index.css">
-<script src="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v5.0.0/dist/iife/maranello.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v5.13.1/dist/css/index.css">
+<script src="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v5.13.1/dist/iife/maranello.min.js"></script>
 ```
-IIFE attaches everything to `window.Maranello`.
+IIFE attaches the public browser namespace to `window.Maranello`.
+
+## Header Shell API
+
+Official rich app-header surface for Maranello.
+
+- Web Component: `import 'maranello-luce-design-business/wc/mn-header-shell'`
+- Imperative: `import { headerShell } from 'maranello-luce-design-business'`
+- IIFE note: `window.Maranello.headerShell` is intentionally **not** exposed; use the WC module or ESM/CJS import instead.
+- Demo/reference: `demo/header-responsive.html`
+
+### Sections
+
+`config.sections` accepts:
+
+- `brand` → `{ label?, logo?, logoSrc?, logoAlt?, href? }`
+- `actions` → `{ role: 'pre'|'post', presentation?: 'segmented'|'cluster', items[] }`
+- `search` → `{ placeholder?, shortcut?, filterButtonLabel?, filters? }`
+- `theme` → `{ modes?: ThemeMode[] }`
+- `profile` → `{ name, avatarUrl?, sections? }`
+- `divider`
+- `spacer`
+
+### Host/controller methods
+
+- `controller` → current `HeaderShellController` instance after mount
+- `whenReady()` → wait until the internal controller is mounted
+- `getState()` → `{ query, filters, activeActionId, themeMode }`
+- `setQuery(query)` → update live search state
+- `setFilter(groupId, values)` → normalize and apply a filter group
+- `destroy()` → available on the imperative controller returned by `headerShell(...)`
+- `mn-header-shell-ready` → fires with `{ controller }`
+
+### Composition rules
+
+- Search is live: `header-shell-search` fires while typing
+- Filters are consumer-owned; external filter menus should coordinate through `getState()`, `setQuery()`, and `setFilter()`
+- `filterButtonLabel` is metadata for external filter-board UIs, not a built-in rendered button
+- Keep `README.md`, `AGENT.md`, `.github/agents/NaSra.agent.md`, and `demo/header-responsive.*` aligned when changing the shell contract
 
 ## Themes
 
