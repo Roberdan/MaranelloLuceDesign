@@ -1,4 +1,4 @@
-/* Maranello Luce Design v5.14.0 | MPL-2.0 | github.com/Roberdan/MaranelloLuceDesign */
+/* Maranello Luce Design v5.14.1 | MPL-2.0 | github.com/Roberdan/MaranelloLuceDesign */
 "use strict";
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -20528,5 +20528,5 @@ M.charts = { sparkline, donut, barChart, areaChart, radar, halfGauge, bubble, li
 registerExtras(M);
 
 // src/ts/index.ts
-var VERSION = "5.14.0";
+var VERSION = "5.14.1";
 //# sourceMappingURL=index.cjs.map

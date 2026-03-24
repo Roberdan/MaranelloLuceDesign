@@ -1,4 +1,4 @@
-/* Maranello Luce Design v5.14.0 | MPL-2.0 | github.com/Roberdan/MaranelloLuceDesign */
+/* Maranello Luce Design v5.14.1 | MPL-2.0 | github.com/Roberdan/MaranelloLuceDesign */
 import {
   SERIES,
   applyChartA11y,
@@ -19,7 +19,7 @@ import {
   radar,
   sparkline,
   sparklineInteract
-} from "./chunks/chunk-FYC3ENSR.js";
+} from "./chunks/chunk-2YYGEBDT.js";
 import {
   FerrariGauge,
   SPEEDO_FONT,
@@ -31,10 +31,10 @@ import {
   speedoPalette,
   speedometer,
   valueToAngle
-} from "./chunks/chunk-DWJXJGCT.js";
+} from "./chunks/chunk-BG54C4N5.js";
 import {
   gantt
-} from "./chunks/chunk-ZFJ2MBUA.js";
+} from "./chunks/chunk-TEGQIHOA.js";
 import {
   closeDetailPanel,
   closeDrawer,
@@ -47,7 +47,7 @@ import {
   steppedRotary,
   toggleLever,
   toggleNotifications
-} from "./chunks/chunk-QWRL3L6W.js";
+} from "./chunks/chunk-BEA7OTKQ.js";
 import {
   ALLOWED_BIND_PROPERTIES,
   clamp,
@@ -69,7 +69,7 @@ import {
   sanitizeSvg,
   setTheme,
   throttle
-} from "./chunks/chunk-2LVJNN22.js";
+} from "./chunks/chunk-2WF4PFPA.js";
 import {
   addValidator,
   defaultMessages,
@@ -88,11 +88,11 @@ import {
   validateField,
   validateForm,
   validators
-} from "./chunks/chunk-7CMGEQSP.js";
+} from "./chunks/chunk-GR2ROJME.js";
 import {
   EventBus,
   eventBus
-} from "./chunks/chunk-JIVE4X5Z.js";
+} from "./chunks/chunk-KZRV2KZS.js";
 
 // src/ts/navigation-model.ts
 var NavigationModel = class {
@@ -15322,7 +15322,7 @@ M.charts = { sparkline, donut, barChart, areaChart, radar, halfGauge, bubble, li
 registerExtras(M);
 
 // src/ts/index.ts
-var VERSION = "5.14.0";
+var VERSION = "5.14.1";
 export {
   AppShellController,
   AsyncSelect,

@@ -2,7 +2,7 @@
 
 Ferrari Luce-inspired design system for AI agent dashboards. Zero runtime dependencies. 5 adaptive themes. WCAG 2.2 AA. Framework-agnostic.
 
-**v5.14.0** | [Live Demo](https://roberdan.github.io/MaranelloLuceDesign/) | [CHANGELOG](CHANGELOG.md)
+**v5.14.1** | [Live Demo](https://roberdan.github.io/MaranelloLuceDesign/) | [CHANGELOG](CHANGELOG.md)
 
 ## Install
 
@@ -50,8 +50,8 @@ import { barChart, donut } from 'maranello-luce-design-business/charts';
 ### 4. IIFE (CDN, no bundler)
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v5.14.0/dist/css/index.css">
-<script src="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v5.14.0/dist/iife/maranello.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v5.14.1/dist/css/index.css">
+<script src="https://cdn.jsdelivr.net/gh/Roberdan/MaranelloLuceDesign@v5.14.1/dist/iife/maranello.min.js"></script>
 <script>
   Maranello.sparkline(document.getElementById('chart'), [10, 20, 15, 30]);
   new Maranello.FerrariGauge(document.getElementById('gauge'));
@@ -237,7 +237,7 @@ Web Components self-register, handle resize, and fire standard DOM events. No ad
 - Colors remain Maranello-native via semantic tokens and can be themed by body theme classes or scoped CSS variables on the consumer side.
 - Data is consumer-owned by design: the shell emits state, and the app decides what to filter, count, persist, and render.
 - See `demo/header-responsive.html` for the header-only demo using the same `mn-header-shell` plus an external grouped filter menu.
-- The imperative `headerShell(container, options)` API is exported for non-Web Component integrations via ESM/CJS imports.
+- The imperative `headerShell(container, options)` API is available via ESM/CJS imports and as `window.Maranello.headerShell` in the IIFE bundle.
 
 ##### `mn-header-shell` host API
 
