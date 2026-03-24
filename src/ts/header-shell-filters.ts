@@ -27,3 +27,16 @@ export function setFilterValues(
   filters[group.id] = !allowed.length ? [] : (group.multi ? allowed : [allowed[0]]);
   return filters[group.id].slice();
 }
+
+export function syncFilterButtons(root: ParentNode, filters: Record<string, string[]>): void {
+  root.querySelectorAll<HTMLElement>('[data-filter-group-id]').forEach((group) => {
+    const groupId = group.dataset.filterGroupId;
+    const selected = groupId ? (filters[groupId] || []) : [];
+    group.querySelectorAll<HTMLButtonElement>('.mn-header-shell__filter-option').forEach((button) => {
+      const isSelected = !!button.dataset.filterOptionId && selected.indexOf(button.dataset.filterOptionId) !== -1;
+      if (isSelected) button.classList.add('is-selected');
+      else button.classList.remove('is-selected');
+      button.setAttribute('aria-pressed', String(isSelected));
+    });
+  });
+}

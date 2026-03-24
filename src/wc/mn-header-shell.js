@@ -5,7 +5,7 @@ import './mn-theme-toggle.js';
  * @typedef {import('../ts/header-shell').HeaderShellController} HeaderShellController
  */
 
-let _headerShellFactoryPromise = null;
+let _headerShellFactory = null;
 
 function getGlobalHeaderShell() {
   try {
@@ -28,14 +28,15 @@ async function importHeaderShellModule() {
   return distModule.headerShell;
 }
 
-function resolveHeaderShell() {
-  if (_headerShellFactoryPromise) return _headerShellFactoryPromise;
-  _headerShellFactoryPromise = (async () => {
-    const globalHeaderShell = getGlobalHeaderShell();
-    if (typeof globalHeaderShell === 'function') return globalHeaderShell;
-    return importHeaderShellModule();
-  })();
-  return _headerShellFactoryPromise;
+async function resolveHeaderShell() {
+  if (_headerShellFactory) return _headerShellFactory;
+  const globalHeaderShell = getGlobalHeaderShell();
+  if (typeof globalHeaderShell === 'function') {
+    _headerShellFactory = globalHeaderShell;
+    return _headerShellFactory;
+  }
+  _headerShellFactory = await importHeaderShellModule();
+  return _headerShellFactory;
 }
 
 /**

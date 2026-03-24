@@ -19,9 +19,9 @@ describe('metadata alignment — v5.13.1', () => {
     expect(content).toMatch(/5 themes/i);
   });
 
-  it('AGENT.md references 32 WC tags', () => {
+  it('AGENT.md references 35 WC tags', () => {
     const content = readFile('AGENT.md');
-    expect(content).toContain('32');
+    expect(content).toContain('35');
   });
 
   it('NaSra.agent.md references v5.13.1', () => {

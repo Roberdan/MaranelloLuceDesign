@@ -1,13 +1,14 @@
 import { build } from 'esbuild';
-import { mkdirSync, readdirSync, existsSync, copyFileSync } from 'fs';
+import { mkdirSync, readdirSync, existsSync, copyFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 
 const srcDir = 'src/wc';
-const wcDistDir = 'dist/wc';
+const browserWcDir = 'dist/wc';
 const esmWcDir = 'dist/esm/wc';
+const cjsWcDir = 'dist/cjs/wc';
+const typesWcDir = 'dist/types/wc';
 
-mkdirSync(wcDistDir, { recursive: true });
-mkdirSync(esmWcDir, { recursive: true });
+[browserWcDir, esmWcDir, cjsWcDir, typesWcDir].forEach((dir) => mkdirSync(dir, { recursive: true }));
 
 if (!existsSync(srcDir)) {
   console.log('WC: no source directory found');
@@ -21,8 +22,10 @@ const files = readdirSync(srcDir).filter(
 // Filter WC component files (mn-*.js)
 const wcComponents = files.filter((f) => f.match(/^mn-[\w-]+\.js$/));
 
-// Filter type definitions and index
-const typeAndIndex = files.filter((f) => f.endsWith('.d.ts') || f.endsWith('index.ts'));
+const typeFiles = files.filter((f) => f.endsWith('.d.ts'));
+const indexFile = files.find((f) => f === 'index.ts');
+const wcEntries = wcComponents.map((file) => join(srcDir, file));
+const packageEntries = indexFile ? [join(srcDir, indexFile), ...wcEntries] : wcEntries;
 
 if (wcComponents.length === 0) {
   console.log('WC: no component files found');
@@ -31,47 +34,57 @@ if (wcComponents.length === 0) {
 
 async function buildWCs() {
   try {
-    // Build each WC component with esbuild
     await Promise.all(
-      wcComponents.map((file) =>
+      [
         build({
-          entryPoints: [join(srcDir, file)],
-          outfile: join(wcDistDir, file),
+          entryPoints: wcEntries,
+          outdir: browserWcDir,
           format: 'esm',
           bundle: false,
           target: 'es2020',
+          outbase: srcDir,
           sourcemap: true,
           logLevel: 'silent',
-        })
-      )
+        }),
+        build({
+          entryPoints: packageEntries,
+          outdir: esmWcDir,
+          format: 'esm',
+          bundle: false,
+          target: 'es2020',
+          outbase: srcDir,
+          sourcemap: true,
+          logLevel: 'silent',
+        }),
+        build({
+          entryPoints: packageEntries,
+          outdir: cjsWcDir,
+          format: 'cjs',
+          bundle: false,
+          target: 'es2020',
+          outbase: srcDir,
+          outExtension: { '.js': '.cjs' },
+          sourcemap: true,
+          logLevel: 'silent',
+        }),
+      ]
     );
 
-    console.log(`WC: transpiled ${wcComponents.length} component(s) to ${wcDistDir}`);
+    console.log(`WC: transpiled ${wcComponents.length} browser component(s) to ${browserWcDir}`);
+    console.log(`WC: built ${wcComponents.length} ESM component(s) to ${esmWcDir}`);
+    console.log(`WC: built ${wcComponents.length} CJS component(s) to ${cjsWcDir}`);
 
-    // Copy type definitions
-    typeAndIndex.forEach((file) => {
-      if (file.endsWith('.d.ts')) {
-        copyFileSync(join(srcDir, file), join(wcDistDir, file));
-      }
+    typeFiles.forEach((file) => {
+      const source = join(srcDir, file);
+      copyFileSync(source, join(browserWcDir, file));
+      copyFileSync(source, join(typesWcDir, file));
     });
 
-    // Build WC barrel (index.ts) if it exists
-    const indexFile = typeAndIndex.find((f) => f === 'index.ts');
-    if (indexFile) {
-      await build({
-        entryPoints: [join(srcDir, indexFile)],
-        outfile: join(esmWcDir, 'index.js'),
-        format: 'esm',
-        bundle: false,
-        target: 'es2020',
-        sourcemap: true,
-        logLevel: 'silent',
-      });
+    wcComponents.forEach((file) => {
+      writeFileSync(join(typesWcDir, file.replace(/\.js$/, '.d.ts')), 'export {};\n');
+    });
 
-      console.log(`WC: built barrel export to ${esmWcDir}/index.js`);
-    }
-
-    console.log(`WC: build complete (${wcComponents.length} WCs + barrel)`);
+    console.log(`WC: build complete (${wcComponents.length} WCs + package entrypoints)`);
   } catch (err) {
     console.error('WC: build failed', err);
     process.exit(1);

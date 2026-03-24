@@ -7,6 +7,7 @@ import { existsSync, statSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 const DIST = join(import.meta.dirname, '../../dist');
+const ROOT = join(import.meta.dirname, '../..');
 
 // Domain-specific strings that must NOT appear in published dist
 const FORBIDDEN_TOKENS = [
@@ -95,6 +96,35 @@ describe('dist/wc/ web components', () => {
     const { readdirSync } = require('node:fs');
     const files = readdirSync(wcDir);
     expect(files.length).toBeGreaterThanOrEqual(22);
+  });
+
+  it('esm wc barrel and per-component module exist', () => {
+    expect(existsSync(join(DIST, 'esm/wc/index.js'))).toBe(true);
+    expect(existsSync(join(DIST, 'esm/wc/mn-header-shell.js'))).toBe(true);
+  });
+
+  it('cjs wc barrel and per-component module exist', () => {
+    expect(existsSync(join(DIST, 'cjs/wc/index.cjs'))).toBe(true);
+    expect(existsSync(join(DIST, 'cjs/wc/mn-header-shell.cjs'))).toBe(true);
+  });
+
+  it('wc type declarations exist for barrel and per-component import paths', () => {
+    expect(existsSync(join(DIST, 'types/wc/index.d.ts'))).toBe(true);
+    expect(existsSync(join(DIST, 'types/wc/mn-header-shell.d.ts'))).toBe(true);
+  });
+});
+
+describe('header shell responsive packaging', () => {
+  it('keeps component CSS free of inline responsive media blocks', () => {
+    const content = readFileSync(join(ROOT, 'src/css/components-header-shell.css'), 'utf8');
+    expect(content).not.toContain('@media');
+  });
+
+  it('imports responsive-header-shell.css from both CSS entrypoints', () => {
+    const indexCss = readFileSync(join(ROOT, 'src/css/index.css'), 'utf8');
+    const maranelloCss = readFileSync(join(ROOT, 'src/css/maranello.css'), 'utf8');
+    expect(indexCss).toContain("responsive-header-shell.css");
+    expect(maranelloCss).toContain("responsive-header-shell.css");
   });
 });
 

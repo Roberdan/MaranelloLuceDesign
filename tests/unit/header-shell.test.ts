@@ -183,6 +183,27 @@ describe('headerShell', () => {
     ctrl.destroy();
   });
 
+  it('updates filter buttons in place instead of remounting the filter panel', () => {
+    const host = document.createElement('div');
+    const ctrl = headerShell(host, {
+      sections: [{
+        type: 'search',
+        filters: [{ id: 'status', label: 'Status', options: [{ id: 'all', label: 'All' }, { id: 'watch', label: 'Watch' }] }],
+      }],
+    });
+
+    const filterPanel = host.querySelector('.mn-header-shell__filters');
+    const watchButton = host.querySelector('[data-filter-group-id="status"] [data-filter-option-id="watch"]') as HTMLButtonElement;
+    watchButton.focus();
+    watchButton.click();
+    const nextPanel = host.querySelector('.mn-header-shell__filters');
+    const nextWatchButton = host.querySelector('[data-filter-group-id="status"] [data-filter-option-id="watch"]') as HTMLButtonElement;
+    expect(nextPanel).toBe(filterPanel);
+    expect(nextWatchButton).toBe(watchButton);
+    expect(nextWatchButton.getAttribute('aria-pressed')).toBe('true');
+    ctrl.destroy();
+  });
+
   it('keeps empty filter groups from leaking undefined values into state', () => {
     const host = document.createElement('div');
     const ctrl = headerShell(host, { sections: [{ type: 'search', filters: [{ id: 'empty', label: 'Empty', options: [] }] }] });
