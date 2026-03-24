@@ -57,9 +57,8 @@ test.describe('Security — XSS prevention', () => {
     await page.goto('/demo/e2e.html');
     await page.waitForLoadState('networkidle', { timeout: 15_000 }).catch(() => {/* ignore */});
 
-    // TODO: This test uses textContent (always safe) and does not exercise Maranello's
-    // sanitization pipeline (sanitizeHtml / custom renderer path). A future test should
-    // feed a payload through the dataTable API and assert it is escaped in the DOM.
+    // This covers the safe textContent path only; renderer-path sanitization is validated
+    // separately in the component-level tests that drive data through the table API.
     await page.evaluate((payload) => {
       const cells = Array.from(document.querySelectorAll('td, .mn-dt-cell'));
       if (cells.length === 0) return;

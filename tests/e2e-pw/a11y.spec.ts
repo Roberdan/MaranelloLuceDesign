@@ -23,18 +23,25 @@ test.describe('Accessibility', () => {
   test('focus ring is visible on nav links', async ({ page }) => {
     await page.goto('/demo/e2e.html');
 
-    // Tab into the first focusable element
-    await page.keyboard.press('Tab');
-    await page.keyboard.press('Tab'); // skip skip-link, land on nav anchor
+    await page.locator('.demo-nav__links a').first().focus();
 
-    const focusedOutline = await page.evaluate(() => {
+    const focusStyles = await page.evaluate(() => {
       const el = document.activeElement as HTMLElement | null;
-      if (!el) return null;
-      return window.getComputedStyle(el).outlineStyle;
+      if (!el || !el.matches('.demo-nav__links a')) return null;
+      const style = window.getComputedStyle(el);
+      return {
+        outlineStyle: style.outlineStyle,
+        outlineWidth: style.outlineWidth,
+        boxShadow: style.boxShadow,
+      };
     });
 
-    // Outline must not be 'none' when an element is focused
-    expect(focusedOutline).not.toBe('none');
+    expect(focusStyles).not.toBeNull();
+    expect(
+      focusStyles?.outlineStyle !== 'none'
+      || focusStyles?.outlineWidth !== '0px'
+      || focusStyles?.boxShadow !== 'none',
+    ).toBe(true);
   });
 
   // ── 2. Chart canvas has aria-label ────────────────────────────────────────

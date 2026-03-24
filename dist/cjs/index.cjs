@@ -1,4 +1,4 @@
-/* Maranello Luce Design v5.13.1 | MPL-2.0 | github.com/Roberdan/MaranelloLuceDesign */
+/* Maranello Luce Design v5.14.0 | MPL-2.0 | github.com/Roberdan/MaranelloLuceDesign */
 "use strict";
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -7659,7 +7659,9 @@ function headerShell(container, options) {
     const group = filterGroups.filters.find((item) => item.id === groupId);
     if (!group) return;
     const next = setFilterValues(state.filters, group, values);
+    const activeButton = document.activeElement instanceof HTMLButtonElement ? document.activeElement : null;
     syncFilterButtons(nav, state.filters);
+    if (activeButton?.isConnected) activeButton.focus();
     const detail = { groupId, values: next };
     options.callbacks?.onFilter?.(detail);
     emitShellEvent(nav, "header-shell-filter", detail);
@@ -20525,5 +20527,5 @@ M.charts = { sparkline, donut, barChart, areaChart, radar, halfGauge, bubble, li
 registerExtras(M);
 
 // src/ts/index.ts
-var VERSION = "5.13.0";
+var VERSION = "5.14.0";
 //# sourceMappingURL=index.cjs.map

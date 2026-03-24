@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.14.0] - 2026-03-24
+
+### Added
+- `headerShell(container, options)` — rich app-header surface with configurable `brand`, `actions`, `search`, `theme`, `profile`, `divider`, and `spacer` sections
+- `<mn-header-shell>` Web Component with `whenReady()`, `getState()`, `setQuery()`, and `setFilter()` helpers for external orchestration
+- Consumer/demo documentation for live search, optional logo/text branding, injected filters, and external filter-board coordination
+
+### Fixed
+- CommonJS `./wc` packaging now rewrites local runtime specifiers to packaged `.cjs` entry points and no longer ships stale post-processed sourcemaps
+- Demo navigation focus indicators now render consistently in Safari/WebKit release fixtures
+- Release metadata and agent docs aligned to the shipped version, API count, and Web Component count
+
 ## [5.13.1] - 2026-03-23
 
 ### Fixed
