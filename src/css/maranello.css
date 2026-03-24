@@ -28,4 +28,5 @@
 @import url('responsive-data.css');
 @import url('responsive-forms.css');
 @import url('responsive-charts.css');
+@import url('responsive-header-shell.css');
 @import './integration.css';

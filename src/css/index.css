@@ -159,6 +159,7 @@
 @import './responsive-data.css';
 @import './responsive-forms.css';
 @import './responsive-charts.css';
+@import './responsive-header-shell.css';
 
 /* ── Integration ── */
 @import './integration.css';

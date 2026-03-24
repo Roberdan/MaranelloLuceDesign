@@ -3805,33 +3805,6 @@
     width: 1px;
   }
 
-  @media (max-width: 1200px) {
-    .mn-header-shell {
-      flex-wrap: wrap;
-    }
-
-    .mn-header-shell__search {
-      flex-basis: 100%;
-      order: 2;
-    }
-  }
-
-  @media (max-width: 640px) {
-    .mn-header-shell {
-      gap: .5rem;
-      padding-inline: .75rem;
-    }
-
-    .mn-header-shell__brand span:last-child, .mn-header-shell__shortcut {
-      display: none;
-    }
-
-    .mn-header-shell__filters {
-      width: 100%;
-      margin-left: 0;
-    }
-  }
-
   .mn-tags-field {
     border: 1px solid var(--mn-border);
     border-radius: var(--radius-md);
@@ -3940,6 +3913,33 @@
   .mn-person-field__email {
     color: var(--mn-text-muted);
     font-size: .75rem;
+  }
+
+  @media (max-width: 1024px) {
+    .mn-header-shell {
+      flex-wrap: wrap;
+    }
+
+    .mn-header-shell__search {
+      flex-basis: 100%;
+      order: 2;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .mn-header-shell {
+      gap: .5rem;
+      padding-inline: .75rem;
+    }
+
+    .mn-header-shell__brand span:last-child, .mn-header-shell__shortcut {
+      display: none;
+    }
+
+    .mn-header-shell__filters {
+      width: 100%;
+      margin-left: 0;
+    }
   }
 }
 

@@ -7532,6 +7532,18 @@ function setFilterValues(filters, group, nextValues) {
   filters[group.id] = !allowed.length ? [] : group.multi ? allowed : [allowed[0]];
   return filters[group.id].slice();
 }
+function syncFilterButtons(root, filters) {
+  root.querySelectorAll("[data-filter-group-id]").forEach((group) => {
+    const groupId = group.dataset.filterGroupId;
+    const selected = groupId ? filters[groupId] || [] : [];
+    group.querySelectorAll(".mn-header-shell__filter-option").forEach((button) => {
+      const isSelected = !!button.dataset.filterOptionId && selected.indexOf(button.dataset.filterOptionId) !== -1;
+      if (isSelected) button.classList.add("is-selected");
+      else button.classList.remove("is-selected");
+      button.setAttribute("aria-pressed", String(isSelected));
+    });
+  });
+}
 
 // src/ts/header-shell-config.ts
 function normalizeSections(sections) {
@@ -7593,6 +7605,7 @@ function buildFilters(host, groups, state, onFilter) {
       const selected = !!(state.filters[group.id] && state.filters[group.id].indexOf(option.id) !== -1);
       btn.type = "button";
       btn.className = "mn-header-shell__filter-option";
+      btn.dataset.filterOptionId = option.id;
       btn.textContent = option.label;
       if (selected) btn.classList.add("is-selected");
       btn.setAttribute("aria-pressed", String(selected));
@@ -7646,9 +7659,7 @@ function headerShell(container, options) {
     const group = filterGroups.filters.find((item) => item.id === groupId);
     if (!group) return;
     const next = setFilterValues(state.filters, group, values);
-    nav.querySelectorAll(".mn-header-shell__filters").forEach((panel) => panel.remove());
-    const searchHost = nav.querySelector(".mn-header-shell__search");
-    if (searchHost instanceof HTMLElement) buildFilters(searchHost, filterGroups.filters, state, onFilter);
+    syncFilterButtons(nav, state.filters);
     const detail = { groupId, values: next };
     options.callbacks?.onFilter?.(detail);
     emitShellEvent(nav, "header-shell-filter", detail);
