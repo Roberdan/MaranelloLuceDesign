@@ -151,4 +151,34 @@
   display: flex; flex-direction: column; align-items: center;
   justify-content: center; gap: 4px; text-align: center;
 }
+/* ── Embedded mode — fills parent, no FAB/chrome ── */
+.mn-chat-panel--embedded {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  border-radius: 0;
+  box-shadow: none;
+  border: none;
+  z-index: auto;
+  display: flex;
+  flex-direction: column;
+  bottom: auto;
+  left: auto;
+}
+.mn-chat-panel--embedded .mn-chat-fab,
+.mn-chat-panel--embedded .mn-chat-panel__close,
+.mn-chat-panel--embedded .mn-chat-panel__resize { display: none; }
+.mn-chat-panel--embedded .mn-chat-panel__accent { display: none; }
+/* Streaming cursor animation */
+.mn-chat-msg--streaming .mn-chat-msg__content::after {
+  content: '\25AE';
+  animation: mn-blink 0.8s step-end infinite;
+  color: var(--mn-accent);
+  margin-left: 2px;
+}
+@keyframes mn-blink {
+  50% { opacity: 0; }
+}
 } /* end @layer layouts */

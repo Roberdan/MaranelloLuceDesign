@@ -30,7 +30,7 @@ function cssLink(path) {
 
 class MnChat extends HTMLElement {
   static get observedAttributes() {
-    return ['title', 'welcome-message', 'avatar', 'quick-actions'];
+    return ['title', 'welcome-message', 'avatar', 'quick-actions', 'mode'];
   }
 
   constructor() {
@@ -82,7 +82,9 @@ class MnChat extends HTMLElement {
     const M = await resolveEngine();
     if (!M?.aiChat) return;
 
+    const mode = this.getAttribute('mode');
     this._ctrl = M.aiChat(this._container, {
+      mode: mode === 'embedded' ? 'embedded' : 'fab',
       title: this.getAttribute('title') || 'Chat',
       welcomeMessage: this.getAttribute('welcome-message') || undefined,
       avatar: this.getAttribute('avatar') || undefined,

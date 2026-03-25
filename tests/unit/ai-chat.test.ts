@@ -228,11 +228,113 @@ describe('ICON_SPARK — agent icon SVG safety', () => {
   });
 
   it('sanitizeSvg strips <script> inside SVG', () => {
-    // Arrange
     const evil = '<svg><script>alert(1)</script><circle/></svg>';
-    // Act
     const result = sanitizeSvg(evil);
-    // Assert
     expect(result).not.toContain('script');
+  });
+});
+
+// --- Embedded mode ---
+
+describe('buildUI — embedded mode', () => {
+  let container: HTMLElement;
+  const EMBEDDED_OPTS: Required<AIChatOptions> = {
+    ...DEFAULT_OPTS,
+    mode: 'embedded' as const,
+  };
+
+  beforeEach(() => {
+    container = document.createElement('div');
+    document.body.appendChild(container);
+  });
+
+  it('does not append FAB in embedded mode', () => {
+    buildUI(container, EMBEDDED_OPTS);
+    expect(container.querySelector('.mn-chat-fab')).toBeNull();
+  });
+
+  it('panel has mn-chat-panel--embedded class', () => {
+    buildUI(container, EMBEDDED_OPTS);
+    const panel = container.querySelector('.mn-chat-panel');
+    expect(panel?.classList.contains('mn-chat-panel--embedded')).toBe(true);
+  });
+
+  it('panel has role="region" instead of dialog', () => {
+    buildUI(container, EMBEDDED_OPTS);
+    const panel = container.querySelector('.mn-chat-panel');
+    expect(panel?.getAttribute('role')).toBe('region');
+  });
+
+  it('does not render close or resize buttons in header', () => {
+    buildUI(container, EMBEDDED_OPTS);
+    const close = container.querySelector('.mn-chat-panel__close');
+    const resize = container.querySelector('.mn-chat-panel__header-actions button');
+    expect(close?.innerHTML ?? '').toBe('');
+    expect(resize).toBeNull();
+  });
+
+  it('panel does not have accent bar', () => {
+    buildUI(container, EMBEDDED_OPTS);
+    expect(container.querySelector('.mn-chat-panel__accent')).toBeNull();
+  });
+
+  it('state.isOpen is true by default', () => {
+    const ui = buildUI(container, EMBEDDED_OPTS);
+    expect(ui.state.isOpen).toBe(true);
+  });
+});
+
+// --- Streaming support ---
+
+describe('aiChat — streaming addMessage', () => {
+  let container: HTMLElement;
+
+  beforeEach(() => {
+    container = document.createElement('div');
+    document.body.appendChild(container);
+  });
+
+  it('returns StreamingHandle with append and finish', async () => {
+    const { aiChat } = await import('../../src/ts/ai-chat-iife');
+    const ctrl = aiChat(container, { mode: 'embedded' });
+    const handle = ctrl.addMessage('ai', '', { streaming: true });
+    expect(handle).toHaveProperty('append');
+    expect(handle).toHaveProperty('finish');
+    expect(handle).toHaveProperty('message');
+    ctrl.destroy();
+  });
+
+  it('append adds tokens to the message content', async () => {
+    const { aiChat } = await import('../../src/ts/ai-chat-iife');
+    const ctrl = aiChat(container, { mode: 'embedded' });
+    const handle = ctrl.addMessage('ai', '', { streaming: true }) as import('../../src/ts/ai-chat-dom').StreamingHandle;
+    handle.append('Hello');
+    handle.append(' world');
+    expect(handle.message.content).toBe('Hello world');
+    ctrl.destroy();
+  });
+
+  it('finish renders final markdown and adds timestamp', async () => {
+    const { aiChat } = await import('../../src/ts/ai-chat-iife');
+    const ctrl = aiChat(container, { mode: 'embedded' });
+    const handle = ctrl.addMessage('ai', '', { streaming: true }) as import('../../src/ts/ai-chat-dom').StreamingHandle;
+    handle.append('**bold**');
+    handle.finish();
+    const msg = container.querySelector('.mn-chat-msg--ai');
+    expect(msg?.classList.contains('mn-chat-msg--streaming')).toBe(false);
+    expect(msg?.querySelector('strong')).not.toBeNull();
+    const time = msg?.querySelector('.mn-chat-msg__time');
+    expect(time?.textContent).not.toBe('');
+    ctrl.destroy();
+  });
+
+  it('non-streaming addMessage still returns AIChatMessage', async () => {
+    const { aiChat } = await import('../../src/ts/ai-chat-iife');
+    const ctrl = aiChat(container, { mode: 'embedded' });
+    const result = ctrl.addMessage('ai', 'Normal message');
+    expect(result).toHaveProperty('role');
+    expect(result).toHaveProperty('content');
+    expect(result).not.toHaveProperty('append');
+    ctrl.destroy();
   });
 });
