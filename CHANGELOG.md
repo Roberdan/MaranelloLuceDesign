@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.15.0] - 2026-03-25
+
+### Added
+- `aiChat()` embedded mode: `mode: 'embedded'` renders the chat panel inline (position: relative, 100% width/height), no FAB, no close/resize buttons — ideal for layout slot integration
+- Streaming support on `addMessage`: `chat.addMessage('ai', '', { streaming: true })` returns a `StreamingHandle` with `append(token)` and `finish()` methods
+- `StreamingHandle.finish()` renders final markdown and adds timestamp
+- `<mn-chat mode="embedded">` Web Component attribute support
+- `.mn-chat-msg--streaming` CSS class with blinking cursor animation
+
 ## [5.14.2] - 2026-03-25
 
 ### Fixed

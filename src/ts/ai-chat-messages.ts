@@ -4,19 +4,12 @@
  */
 
 import {
-  ICON_SPARK,
-  getIcon,
-  el,
-  formatTime,
-  renderContent,
+  ICON_SPARK, getIcon, el, formatTime, renderContent,
 } from './ai-chat-dom';
 import { sanitizeSvg } from './core/sanitize';
 import type {
-  AIChatAgent,
-  AIChatMessage,
-  AIChatOptions,
-  ChatUIElements,
-  ChatUIState,
+  AIChatAgent, AIChatMessage, AIChatOptions, AddMessageOptions,
+  ChatUIElements, ChatUIState, StreamingHandle,
 } from './ai-chat-dom';
 
 type HandlerResult = string | { content?: string } | Promise<string | { content?: string }> | null | undefined;
@@ -26,42 +19,63 @@ export function initMessages(state: ChatUIState, els: ChatUIElements, opts: Requ
   const { messagesEl, typingEl, inputEl, sendBtn, voiceBtn, quickBar } = els;
   const { agentSelector, agentSelectorLabel, agentGrid } = els;
 
-  function addMessage(role: string, content: string): AIChatMessage {
+  function addMessage(role: string, content: string, msgOpts?: AddMessageOptions): AIChatMessage | StreamingHandle {
     const msg: AIChatMessage = { role: role as 'user' | 'ai', content, time: new Date() };
     messages.push(msg);
-    renderMessage(msg);
+    const { wrap, contentEl } = renderMessage(msg, msgOpts?.streaming);
     scrollToBottom();
+    if (msgOpts?.streaming) {
+      wrap.classList.add('mn-chat-msg--streaming');
+      return {
+        message: msg,
+        append(token: string) {
+          msg.content += token;
+          contentEl.textContent += token;
+          scrollToBottom();
+        },
+        finish() {
+          wrap.classList.remove('mn-chat-msg--streaming');
+          contentEl.innerHTML = '';
+          contentEl.appendChild(renderContent(msg.content));
+          msg.time = new Date();
+          const timeEl = wrap.querySelector('.mn-chat-msg__time');
+          if (timeEl) timeEl.textContent = formatTime(msg.time);
+          scrollToBottom();
+        },
+      };
+    }
     return msg;
   }
 
-  function renderMessage(msg: AIChatMessage): HTMLElement {
+  function renderMessage(msg: AIChatMessage, streaming?: boolean): { wrap: HTMLElement; contentEl: HTMLElement } {
     const wrap = el('div', `mn-chat-msg mn-chat-msg--${msg.role}`);
+    let contentEl: HTMLElement;
     if (msg.role === 'ai') {
       const iconWrap = el('span', 'mn-chat-msg__icon');
       iconWrap.innerHTML = ICON_SPARK;
       const body = el('div', 'mn-chat-msg__body');
       body.appendChild(iconWrap);
-      const contentEl = el('span', 'mn-chat-msg__content');
-      contentEl.appendChild(renderContent(msg.content));
+      contentEl = el('span', 'mn-chat-msg__content');
+      if (streaming) contentEl.textContent = msg.content;
+      else contentEl.appendChild(renderContent(msg.content));
       body.appendChild(contentEl);
       wrap.appendChild(body);
     } else {
+      contentEl = el('span', 'mn-chat-msg__content');
+      contentEl.appendChild(renderContent(msg.content));
       if (opts.avatar) {
         const body = el('div', 'mn-chat-msg__body');
-        const contentEl = el('span', 'mn-chat-msg__content');
-        contentEl.appendChild(renderContent(msg.content));
         body.appendChild(contentEl);
         body.appendChild(el('img', 'mn-chat-msg__avatar', { src: opts.avatar ?? '', alt: 'You' }));
         wrap.appendChild(body);
       } else {
-        const contentEl = el('span', 'mn-chat-msg__content');
-        contentEl.appendChild(renderContent(msg.content));
         wrap.appendChild(contentEl);
       }
     }
-    wrap.appendChild(el('div', 'mn-chat-msg__time', { text: formatTime(msg.time) }));
+    const timeEl = el('div', 'mn-chat-msg__time', { text: streaming ? '' : formatTime(msg.time) });
+    wrap.appendChild(timeEl);
     messagesEl.insertBefore(wrap, typingEl);
-    return wrap;
+    return { wrap, contentEl };
   }
 
   function scrollToBottom(): void {

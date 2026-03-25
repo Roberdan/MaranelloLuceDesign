@@ -1,28 +1,20 @@
-/**
- * Maranello Luce Design - AI Chat DOM builder
- * Constructs the chat panel UI: FAB, header, messages area, input, agent selector.
- */
-
+/** AI Chat DOM builder — FAB, header, messages area, input, agent selector. */
 import { icons } from './icons';
 import { escapeHtml, sanitizeAttr } from './core/sanitize';
 
 export type ChatRole = 'user' | 'ai';
+export interface AIChatMessage { role: ChatRole; content: string; time: Date; }
+export interface AIChatAgent { id: string; label: string; icon?: string; }
+export interface AIChatResponse { content?: string; }
+export interface StreamingHandle { append: (token: string) => void; finish: () => void; message: AIChatMessage; }
+export interface AddMessageOptions { streaming?: boolean; }
 
-export interface AIChatMessage {
-  role: ChatRole;
-  content: string;
-  time: Date;
-}
-
-export interface AIChatAgent {
-  id: string;
-  label: string;
-  icon?: string;
-}
+type HandlerReturn = string | AIChatResponse | Promise<string | AIChatResponse> | null | undefined;
 
 export interface AIChatOptions {
-  onSend?: (msg: string) => string | AIChatResponse | Promise<string | AIChatResponse> | null | undefined;
-  onQuickAction?: (action: string, ctx: string | null) => string | AIChatResponse | Promise<string | AIChatResponse> | null | undefined;
+  mode?: 'fab' | 'embedded';
+  onSend?: (msg: string) => HandlerReturn;
+  onQuickAction?: (action: string, ctx: string | null) => HandlerReturn;
   quickActions?: string[];
   placeholder?: string;
   title?: string;
@@ -34,16 +26,12 @@ export interface AIChatOptions {
   onVoice?: (isListening: boolean) => void;
 }
 
-export interface AIChatResponse {
-  content?: string;
-}
-
 export interface AIChatController {
   open: () => void;
   close: () => void;
   toggle: () => void;
   isOpen: () => boolean;
-  addMessage: (role: ChatRole, content: string) => AIChatMessage;
+  addMessage: (role: ChatRole, content: string, opts?: AddMessageOptions) => AIChatMessage | StreamingHandle;
   setTyping: (show: boolean) => void;
   clear: () => void;
   showPulse: () => void;
@@ -152,7 +140,7 @@ export interface ChatUIState {
   panelWidthMode: string;
   isAgentGridOpen: boolean;
   activeAgentId: string | null;
-  addMessage?: (role: string, content: string) => AIChatMessage;
+  addMessage?: (role: string, content: string, opts?: AddMessageOptions) => AIChatMessage | StreamingHandle;
   setTyping?: (show: boolean) => void;
   clear?: () => void;
   toggleAgentGrid?: (forceState?: boolean) => void;
@@ -160,31 +148,35 @@ export interface ChatUIState {
 }
 
 export function buildUI(container: HTMLElement, opts: Required<AIChatOptions>): ChatUIElements {
+  const embedded = opts.mode === 'embedded';
   const state: ChatUIState = {
-    isOpen: false, isTyping: false, messages: [],
+    isOpen: embedded, isTyping: false, messages: [],
     panelHeight: 520, isListening: false, panelWidthMode: 'normal',
     isAgentGridOpen: false,
     activeAgentId: opts.activeAgent ?? (opts.agents?.[0]?.id ?? null),
   };
 
   const fab = el('button', 'mn-chat-fab', { 'aria-label': 'Open AI assistant', title: 'AI Assistant' });
-  if (opts.avatar) {
-    const fabImg = document.createElement('img');
-    fabImg.src = opts.avatar;
-    fabImg.className = 'mn-chat-fab__avatar';
-    fabImg.alt = 'AI';
-    fab.appendChild(fabImg);
-  } else {
-    fab.innerHTML = ICON_SPARK;
-  }
   const pulse = el('span', 'mn-chat-fab__pulse');
-  fab.appendChild(pulse);
-  container.appendChild(fab);
+  if (!embedded) {
+    if (opts.avatar) {
+      const fabImg = document.createElement('img');
+      fabImg.src = opts.avatar;
+      fabImg.className = 'mn-chat-fab__avatar';
+      fabImg.alt = 'AI';
+      fab.appendChild(fabImg);
+    } else {
+      fab.innerHTML = ICON_SPARK;
+    }
+    fab.appendChild(pulse);
+    container.appendChild(fab);
+  }
 
-  const panel = el('div', 'mn-chat-panel', { role: 'dialog', 'aria-label': 'AI assistant chat' });
-  panel.appendChild(el('div', 'mn-chat-panel__accent'));
+  const panelCls = embedded ? 'mn-chat-panel mn-chat-panel--embedded' : 'mn-chat-panel';
+  const panel = el('div', panelCls, { role: embedded ? 'region' : 'dialog', 'aria-label': 'AI assistant chat' });
+  if (!embedded) panel.appendChild(el('div', 'mn-chat-panel__accent'));
   const resizeHandle = el('div', 'mn-chat-panel__resize');
-  panel.appendChild(resizeHandle);
+  if (!embedded) panel.appendChild(resizeHandle);
 
   const header = el('div', 'mn-chat-panel__header');
   const headerLeft = el('div', 'mn-chat-panel__header-left');
@@ -201,11 +193,13 @@ export function buildUI(container: HTMLElement, opts: Required<AIChatOptions>): 
   agentSelector.appendChild(el('span', 'mn-chat-agent-selector__chevron', { html: getIcon('chevronDown') }));
   const headerActions = el('div', 'mn-chat-panel__header-actions');
   const closeBtn = el('button', 'mn-chat-panel__close', { 'aria-label': 'Close chat' });
-  closeBtn.innerHTML = getIcon('close');
   const widthBtn = el('button', 'mn-chat-panel__resize', { 'aria-label': 'Toggle panel width' });
-  widthBtn.innerHTML = getIcon('expandHorizontal');
-  headerActions.appendChild(widthBtn);
-  headerActions.appendChild(closeBtn);
+  if (!embedded) {
+    closeBtn.innerHTML = getIcon('close');
+    widthBtn.innerHTML = getIcon('expandHorizontal');
+    headerActions.appendChild(widthBtn);
+    headerActions.appendChild(closeBtn);
+  }
   headerLeft.appendChild(titleEl);
   if (opts.agents?.length) headerLeft.appendChild(agentSelector);
   header.appendChild(headerLeft);
