@@ -58,6 +58,7 @@ export interface ModalElement extends HTMLElement {
 export interface CommandPaletteController {
   open: () => void;
   close: () => void;
+  destroy: () => void;
 }
 
 // --- Ferrari Cruise Lever ---

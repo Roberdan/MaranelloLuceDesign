@@ -44,9 +44,11 @@ function activateItem(
  * Registers Ctrl/Cmd+K global shortcut.
  * Emits 'command-select' event when an item is chosen.
  */
+let globalShortcutHandler: ((e: KeyboardEvent) => void) | null = null;
+
 export function commandPalette(id: string): CommandPaletteController {
   const palette = document.getElementById(id);
-  if (!palette) return { open: () => {}, close: () => {} };
+  if (!palette) return { open: () => {}, close: () => {}, destroy: () => {} };
 
   const input = palette.querySelector<HTMLInputElement>('.mn-command-palette__input');
   const listEl = palette.querySelector<HTMLElement>('.mn-command-palette__list');
@@ -142,16 +144,26 @@ export function commandPalette(id: string): CommandPaletteController {
     });
   }
 
-  document.addEventListener('keydown', (e: KeyboardEvent) => {
+  if (globalShortcutHandler) document.removeEventListener('keydown', globalShortcutHandler);
+  globalShortcutHandler = (e: KeyboardEvent) => {
     if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
       e.preventDefault();
       palette!.classList.contains('mn-command-palette--open') ? close() : open();
     }
-  });
+  };
+  document.addEventListener('keydown', globalShortcutHandler);
 
   items.forEach((item) => {
     item.addEventListener('click', () => selectItem(item));
   });
 
-  return { open, close };
+  function destroy(): void {
+    if (globalShortcutHandler) {
+      document.removeEventListener('keydown', globalShortcutHandler);
+      globalShortcutHandler = null;
+    }
+    close();
+  }
+
+  return { open, close, destroy };
 }
