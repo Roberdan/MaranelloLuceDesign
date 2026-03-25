@@ -24,6 +24,18 @@
 | Colorblind palette not applied | Missing `body.mn-colorblind` class | Add `mn-colorblind` class to body element via theme toggle |
 | Chart canvas not keyboard accessible | Missing tabindex | Add `tabindex="0"` and handle Enter/Space for tooltip activation |
 
+## v5.14.2 Issues
+
+| Problem | Cause | Fix |
+|---|---|---|
+| `dist/wc/mn-*.js` imports fail at runtime | Browser WC builds used `bundle: false`, leaving unresolvable `../ts/*.js` imports | Fixed in v5.14.2 — browser WC output now uses `bundle: true` |
+| `swap()` no-ops for adjacent same-slot panels | Stale anchor when `first.nextSibling === second` | Fixed in v5.14.2 — uses placeholder node strategy |
+| Memory leak after `mapView().destroy()` | Canvas listeners (mousemove, click, touch*) registered as anonymous handlers | Fixed in v5.14.2 — all handlers named and removed in cleanup() |
+| Memory leak after `initRotary().destroy()` | Housing click, mousedown, and el keydown not removed | Fixed in v5.14.2 — destroy() now removes all listeners |
+| `initSlider()` has no `destroy()` | Document-level listeners leaked permanently | Fixed in v5.14.2 — `SliderController.destroy()` added |
+| Command palette duplicates Cmd+K handler on re-init | Anonymous document keydown registered on every call | Fixed in v5.14.2 — singleton-guarded with destroy() |
+| AsyncSelect renders after destroy() | In-flight `provider.search()` resolves post-destroy | Fixed in v5.14.2 — destroyed flag guards fetchResults |
+
 ## TS Resolution Fix
 
 ```json

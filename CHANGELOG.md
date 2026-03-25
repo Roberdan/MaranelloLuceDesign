@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.14.2] - 2026-03-25
+
+### Fixed
+- Browser WC builds (`dist/wc/mn-*.js`) now bundle dependencies instead of emitting broken `../ts/*.js` imports
+- `PanelOrchestrator.swap()` correctly reorders adjacent same-slot siblings via placeholder node strategy
+- `map-view-events` cleanup() removes all canvas listeners (mousemove, mouseleave, click, mousedown, touch*)
+- `initRotary()` destroy() removes housing click/mousedown and element keydown listeners
+- `initSlider()` now exposes `destroy()` on `SliderController` to clean up all document and element listeners
+- `commandPalette()` uses singleton-guarded global shortcut and exposes `destroy()` on controller
+- `AsyncSelect` guards `fetchResults()` with destroyed flag to prevent post-destroy rendering
+
 ## [5.14.1] - 2026-03-24
 
 ### Fixed
