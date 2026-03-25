@@ -1,5 +1,4 @@
 /** Maranello Luce Design - Drag interaction controls (rotary knob + slider) */
-
 import type { RotaryOptions, RotaryController, SliderOptions, SliderController } from './core/types';
 import { eventBus } from './core/events';
 import { clamp } from './core/utils';
@@ -30,7 +29,6 @@ export function initRotary(el: HTMLElement, options?: RotaryOptions): RotaryCont
     if (valueEl) valueEl.textContent = opts.steps![idx];
     opts.onChange?.(opts.steps![idx], idx);
   }
-
   setStep(current);
   let dragging = false, centerX = 0, centerY = 0;
 
@@ -39,7 +37,6 @@ export function initRotary(el: HTMLElement, options?: RotaryOptions): RotaryCont
     centerX = rect.left + rect.width / 2;
     centerY = rect.top + rect.height / 2;
   }
-
   function getClientPoint(e: MouseEvent | TouchEvent): { x: number; y: number } {
     if ('touches' in e) {
       const touch = e.touches[0] ?? e.changedTouches[0];
@@ -55,10 +52,8 @@ export function initRotary(el: HTMLElement, options?: RotaryOptions): RotaryCont
 
   function stepFromAngle(deg: number): number {
     const norm = ((deg - startAngle) % 360 + 360) % 360;
-    const idx = Math.round((norm / angleRange) * (totalSteps - 1));
-    return clamp(idx, 0, totalSteps - 1);
+    return clamp(Math.round((norm / angleRange) * (totalSteps - 1)), 0, totalSteps - 1);
   }
-
   function onStart(e: MouseEvent | TouchEvent): void {
     e.preventDefault();
     dragging = true;
@@ -72,11 +67,7 @@ export function initRotary(el: HTMLElement, options?: RotaryOptions): RotaryCont
     if (opts.snap) setStep(stepFromAngle(deg));
     else pointer!.style.transform = `rotate(${deg - 90}deg)`;
   }
-
-  function onEnd(): void {
-    dragging = false;
-    housing!.style.cursor = 'pointer';
-  }
+  function onEnd(): void { dragging = false; housing!.style.cursor = 'pointer'; }
 
   housing.addEventListener('mousedown', onStart);
   housing.addEventListener('touchstart', onStart, { passive: false });
@@ -85,7 +76,9 @@ export function initRotary(el: HTMLElement, options?: RotaryOptions): RotaryCont
   document.addEventListener('mouseup', onEnd);
   document.addEventListener('touchend', onEnd);
 
-  housing.addEventListener('click', () => { if (!dragging) setStep((current + 1) % totalSteps); });
+  function onHousingClick(): void { if (!dragging) setStep((current + 1) % totalSteps); }
+  housing.addEventListener('click', onHousingClick);
+
   el.setAttribute('tabindex', '0');
   el.setAttribute('role', 'slider');
   el.setAttribute('aria-valuemin', '0');
@@ -93,7 +86,7 @@ export function initRotary(el: HTMLElement, options?: RotaryOptions): RotaryCont
   el.setAttribute('aria-valuenow', String(current));
   el.setAttribute('aria-valuetext', opts.steps![current]);
 
-  el.addEventListener('keydown', (e) => {
+  function onKeyDown(e: KeyboardEvent): void {
     if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
       e.preventDefault();
       setStep(current + 1);
@@ -103,12 +96,17 @@ export function initRotary(el: HTMLElement, options?: RotaryOptions): RotaryCont
     }
     el.setAttribute('aria-valuenow', String(current));
     el.setAttribute('aria-valuetext', opts.steps![current]);
-  });
+  }
+  el.addEventListener('keydown', onKeyDown);
 
   return {
     setStep,
     getValue: () => opts.steps![current],
     destroy: () => {
+      housing.removeEventListener('mousedown', onStart);
+      housing.removeEventListener('touchstart', onStart);
+      housing.removeEventListener('click', onHousingClick);
+      el.removeEventListener('keydown', onKeyDown);
       document.removeEventListener('mousemove', onMove);
       document.removeEventListener('touchmove', onMove);
       document.removeEventListener('mouseup', onEnd);
@@ -214,7 +212,7 @@ export function initSlider(el: HTMLElement, options?: SliderOptions): SliderCont
   document.addEventListener('mouseup', onEnd);
   document.addEventListener('touchend', onEnd);
 
-  el.addEventListener('keydown', (e) => {
+  function onSliderKeyDown(e: KeyboardEvent): void {
     if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
       e.preventDefault();
       current = Math.min(opts.max, current + opts.step);
@@ -226,7 +224,8 @@ export function initSlider(el: HTMLElement, options?: SliderOptions): SliderCont
       render();
       opts.onChange?.(current);
     }
-  });
+  }
+  el.addEventListener('keydown', onSliderKeyDown);
 
   render();
 
@@ -235,6 +234,15 @@ export function initSlider(el: HTMLElement, options?: SliderOptions): SliderCont
     setValue: (v: number) => {
       current = clamp(v, opts.min, opts.max);
       render();
+    },
+    destroy: () => {
+      track.removeEventListener('mousedown', onStart);
+      track.removeEventListener('touchstart', onStart);
+      el.removeEventListener('keydown', onSliderKeyDown);
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('touchmove', onMove);
+      document.removeEventListener('mouseup', onEnd);
+      document.removeEventListener('touchend', onEnd);
     },
   };
 }

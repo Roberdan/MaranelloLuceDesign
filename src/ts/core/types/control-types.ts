@@ -34,6 +34,7 @@ export interface SliderOptions {
 export interface SliderController {
   getValue: () => number;
   setValue: (v: number) => void;
+  destroy: () => void;
 }
 
 // --- Toast ---
