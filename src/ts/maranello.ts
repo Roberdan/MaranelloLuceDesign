@@ -1,9 +1,4 @@
-/**
- * Maranello Luce Design - IIFE namespace bootstrap
- * Provides backward compatibility with window.Maranello for legacy consumers.
- * W3/W4 module registrations are in maranello-exports.ts.
- */
-
+/** IIFE namespace bootstrap — backward compat with window.Maranello. Extras in maranello-exports.ts. */
 import { VERSION, eventBus, cssVar, palette, getTheme, setTheme, cycleTheme } from './index';
 import { getAccent, clamp, lerp, hiDpiCanvas, createElement, escapeHtml } from './core/utils';
 import { formatNumber, formatDate, debounce, throttle } from './core/utils';

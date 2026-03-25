@@ -110,7 +110,7 @@ export function attachEvents(
     canvas.style.cursor = state.enablePan ? 'grab' : 'default';
   }
 
-  canvas.addEventListener('mousemove', (e: MouseEvent) => {
+  function onCanvasMouseMove(e: MouseEvent): void {
     if (state.isDragging) return;
     const m = hitTest(e.clientX, e.clientY, canvas, state.renderedMarkers);
     if (m) {
@@ -122,24 +122,32 @@ export function attachEvents(
       canvas.style.cursor = state.enablePan ? 'grab' : 'default';
       hideTip(tipEls.tip);
     }
-  });
+  }
 
-  canvas.addEventListener('mouseleave', () => {
+  function onCanvasMouseLeave(): void {
     state.hovered = null;
     if (!state.isDragging) {
       canvas.style.cursor = state.enablePan ? 'grab' : 'default';
     }
     hideTip(tipEls.tip);
-  });
+  }
 
-  canvas.addEventListener('click', (e: MouseEvent) => {
+  function onCanvasClick(e: MouseEvent): void {
     if (state.isDragging) return;
     const m = hitTest(e.clientX, e.clientY, canvas, state.renderedMarkers);
     if (m && state.onClick) state.onClick(m);
-  });
+  }
+
+  canvas.addEventListener('mousemove', onCanvasMouseMove);
+  canvas.addEventListener('mouseleave', onCanvasMouseLeave);
+  canvas.addEventListener('click', onCanvasClick);
 
   let onWindowMouseMove: ((e: MouseEvent) => void) | null = null;
   let onWindowMouseUp: (() => void) | null = null;
+  let onCanvasMouseDown: ((e: MouseEvent) => void) | null = null;
+  let onCanvasTouchStart: ((e: TouchEvent) => void) | null = null;
+  let onCanvasTouchMove: ((e: TouchEvent) => void) | null = null;
+  let onCanvasTouchEnd: (() => void) | null = null;
 
   if (state.enableZoom) {
     canvas.addEventListener('wheel', handleWheel, { passive: false });
@@ -149,17 +157,18 @@ export function attachEvents(
   if (state.enablePan) {
     canvas.style.cursor = 'grab';
 
-    canvas.addEventListener('mousedown', (e: MouseEvent) => {
+    onCanvasMouseDown = (e: MouseEvent) => {
       if (e.button !== 0) return;
       startDrag(e.clientX, e.clientY);
-    });
+    };
+    canvas.addEventListener('mousedown', onCanvasMouseDown);
 
     onWindowMouseMove = (e: MouseEvent) => moveDrag(e.clientX, e.clientY);
     onWindowMouseUp = () => { if (state.isDragging) endDrag(); };
     window.addEventListener('mousemove', onWindowMouseMove);
     window.addEventListener('mouseup', onWindowMouseUp);
 
-    canvas.addEventListener('touchstart', (e: TouchEvent) => {
+    onCanvasTouchStart = (e: TouchEvent) => {
       if (e.touches.length === 2 && state.enableZoom) {
         const t1 = e.touches[0], t2 = e.touches[1];
         const dx = t2.clientX - t1.clientX;
@@ -169,9 +178,10 @@ export function attachEvents(
         return;
       }
       if (e.touches.length === 1) startDrag(e.touches[0].clientX, e.touches[0].clientY);
-    }, { passive: true });
+    };
+    canvas.addEventListener('touchstart', onCanvasTouchStart, { passive: true });
 
-    canvas.addEventListener('touchmove', (e: TouchEvent) => {
+    onCanvasTouchMove = (e: TouchEvent) => {
       if (e.touches.length === 2 && state.enableZoom && state.touchPinchStartDist > 0) {
         e.preventDefault();
         const p1 = e.touches[0], p2 = e.touches[1];
@@ -184,19 +194,28 @@ export function attachEvents(
         return;
       }
       if (e.touches.length === 1) moveDrag(e.touches[0].clientX, e.touches[0].clientY);
-    }, { passive: false });
+    };
+    canvas.addEventListener('touchmove', onCanvasTouchMove, { passive: false });
 
-    canvas.addEventListener('touchend', () => {
+    onCanvasTouchEnd = () => {
       state.touchPinchStartDist = 0;
       if (state.isDragging) endDrag();
-    }, { passive: true });
+    };
+    canvas.addEventListener('touchend', onCanvasTouchEnd, { passive: true });
   }
 
   return {
     cleanup(): void {
+      canvas.removeEventListener('mousemove', onCanvasMouseMove);
+      canvas.removeEventListener('mouseleave', onCanvasMouseLeave);
+      canvas.removeEventListener('click', onCanvasClick);
       if (state.enableZoom) canvas.removeEventListener('wheel', handleWheel);
+      if (onCanvasMouseDown) canvas.removeEventListener('mousedown', onCanvasMouseDown);
       if (onWindowMouseMove) window.removeEventListener('mousemove', onWindowMouseMove);
       if (onWindowMouseUp) window.removeEventListener('mouseup', onWindowMouseUp);
+      if (onCanvasTouchStart) canvas.removeEventListener('touchstart', onCanvasTouchStart);
+      if (onCanvasTouchMove) canvas.removeEventListener('touchmove', onCanvasTouchMove);
+      if (onCanvasTouchEnd) canvas.removeEventListener('touchend', onCanvasTouchEnd);
     },
   };
 }

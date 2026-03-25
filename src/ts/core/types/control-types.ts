@@ -34,6 +34,7 @@ export interface SliderOptions {
 export interface SliderController {
   getValue: () => number;
   setValue: (v: number) => void;
+  destroy: () => void;
 }
 
 // --- Toast ---
@@ -57,6 +58,7 @@ export interface ModalElement extends HTMLElement {
 export interface CommandPaletteController {
   open: () => void;
   close: () => void;
+  destroy: () => void;
 }
 
 // --- Ferrari Cruise Lever ---

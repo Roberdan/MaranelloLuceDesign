@@ -196,10 +196,43 @@ describe('PanelOrchestrator', () => {
 
     orch.swap('same-a', 'same-b');
 
-    // After swap, both panels still exist in the slot
-    const ids = [...slot.children].map(c => c.getAttribute('data-view-id'));
-    expect(ids).toContain('same-a');
-    expect(ids).toContain('same-b');
+    expect(slot.children[0]).toBe(hB.container);
+    expect(slot.children[1]).toBe(hA.container);
+  });
+
+  it('swap adjacent siblings where first is immediately before second', () => {
+    const vA = makeView('adj-a', 'page');
+    const vB = makeView('adj-b', 'page');
+    registry.register(vA);
+    registry.register(vB);
+
+    const hA = orch.open('adj-a');
+    const hB = orch.open('adj-b');
+    const slot = hA.container.parentElement!;
+
+    orch.swap('adj-a', 'adj-b');
+
+    expect(slot.children[0]).toBe(hB.container);
+    expect(slot.children[1]).toBe(hA.container);
+  });
+
+  it('swap non-adjacent siblings in same slot', () => {
+    const vA = makeView('non-a', 'page');
+    const vB = makeView('non-b', 'page');
+    const vC = makeView('non-c', 'page');
+    registry.register(vA);
+    registry.register(vB);
+    registry.register(vC);
+
+    const hA = orch.open('non-a');
+    orch.open('non-b');
+    const hC = orch.open('non-c');
+    const slot = hA.container.parentElement!;
+
+    orch.swap('non-a', 'non-c');
+
+    expect(slot.children[0]).toBe(hC.container);
+    expect(slot.children[2]).toBe(hA.container);
   });
 
   it('closeAll closes every open panel', () => {

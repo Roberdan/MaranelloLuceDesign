@@ -61,7 +61,7 @@ async function buildWCs() {
           entryPoints: wcEntries,
           outdir: browserWcDir,
           format: 'esm',
-          bundle: false,
+          bundle: true,
           target: 'es2020',
           outbase: srcDir,
           sourcemap: true,

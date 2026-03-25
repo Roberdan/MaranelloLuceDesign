@@ -119,9 +119,11 @@ export class PanelOrchestrator {
     if (first.placement === second.placement) {
       const parent = first.handle.container.parentElement;
       if (parent && parent === second.handle.container.parentElement) {
-        const anchor = first.handle.container.nextSibling;
+        const marker = document.createComment('mn-swap');
+        parent.insertBefore(marker, first.handle.container);
         parent.insertBefore(first.handle.container, second.handle.container);
-        parent.insertBefore(second.handle.container, anchor);
+        parent.insertBefore(second.handle.container, marker);
+        parent.removeChild(marker);
       }
       return;
     }

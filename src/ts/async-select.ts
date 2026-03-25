@@ -32,6 +32,7 @@ export class AsyncSelect<T = unknown> {
   private timer?: number;
   private openState = false;
   private requestId = 0;
+  private destroyed = false;
 
   constructor(private readonly container: HTMLElement, options: AsyncSelectOptions<T>) {
     this.provider = options.provider;
@@ -95,6 +96,7 @@ export class AsyncSelect<T = unknown> {
   }
 
   destroy(): void {
+    this.destroyed = true;
     if (this.timer) window.clearTimeout(this.timer);
     document.removeEventListener('click', this.onDocClick);
     this.input.removeEventListener('input', this.onInput);
@@ -121,11 +123,11 @@ export class AsyncSelect<T = unknown> {
     this.showLoading();
     try {
       const results = await this.provider.search(query);
-      if (req !== this.requestId) return;
+      if (this.destroyed || req !== this.requestId) return;
       this.items = results;
       this.renderItems();
     } catch {
-      if (req === this.requestId) this.close();
+      if (!this.destroyed && req === this.requestId) this.close();
     }
   }
 

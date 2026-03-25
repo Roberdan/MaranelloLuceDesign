@@ -223,6 +223,30 @@ describe('AsyncSelect', () => {
     expect(container.classList.contains('mn-async-select')).toBe(false);
   });
 
+  it('destroy() prevents in-flight search from rendering', async () => {
+    let resolveSearch!: (items: FakeItem[]) => void;
+    const provider: AsyncDataProvider<FakeItem> = {
+      search: vi.fn(() => new Promise<FakeItem[]>((r) => { resolveSearch = r; })),
+      getLabel: (item) => item.name,
+      getId: (item) => item.id,
+      renderItem: (item) => item.name,
+    };
+    const { AsyncSelect } = await import('../../src/ts/async-select');
+    const sel = new AsyncSelect<FakeItem>(container, { provider, debounceMs: 50, minChars: 1 });
+    const input = container.querySelector('input')!;
+
+    input.value = 'A';
+    input.dispatchEvent(new Event('input'));
+    await vi.advanceTimersByTimeAsync(50);
+    expect(provider.search).toHaveBeenCalledWith('A');
+
+    sel.destroy();
+    resolveSearch([{ id: '1', name: 'Alpha Corp' }]);
+    await vi.advanceTimersByTimeAsync(0);
+
+    expect(container.querySelectorAll('[role="option"]').length).toBe(0);
+  });
+
   it('placeholder option sets input placeholder', async () => {
     await create([], { placeholder: 'Find a company...' });
     const input = container.querySelector('input')!;
