@@ -47,8 +47,8 @@
   line-height: 1;
 }
 .mn-filter-chip__remove:hover {
-  background: var(--rosso, #e74c3c);
-  color: var(--mn-text);
+  background: var(--mn-error, #e74c3c);
+  color: var(--mn-text-inverse, #fff);
 }
 
 /* ── Reset button inside search bar ─────────────────────── */
@@ -74,28 +74,18 @@
   pointer-events: auto;
 }
 .mn-search-bar__reset:hover {
-  background: var(--rosso, #e74c3c);
-  color: var(--mn-text);
+  background: var(--mn-error, #e74c3c);
+  color: var(--mn-text-inverse, #fff);
 }
 
-/* ── Avorio theme overrides ─────────────────────────────── */
+/* ── Theme overrides — use semantic tokens only ────────── */
 body.mn-avorio .mn-filter-chip {
-  background: var(--avorio-medio, #f0e6d0);
+  background: var(--mn-surface);
   border-color: var(--mn-border-strong);
-  color: var(--mn-text);
-}
-body.mn-avorio .mn-filter-chip__label {
-  color: var(--mn-text-muted);
-}
-body.mn-avorio .mn-filter-chip__remove {
-  color: var(--mn-text-muted);
-}
-body.mn-avorio .mn-search-bar__reset {
-  color: var(--mn-text-muted);
 }
 body.mn-avorio .mn-search-bar__reset:hover,
 body.mn-avorio .mn-filter-chip__remove:hover {
-  background: var(--rosso, #e74c3c);
-  color: var(--mn-text);
+  background: var(--mn-error, #e74c3c);
+  color: var(--mn-text-inverse, #fff);
 }
 } /* end @layer layouts */

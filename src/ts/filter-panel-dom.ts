@@ -16,10 +16,9 @@ export interface FilterPanelDom {
 
 /** Build a single item row inside a column. */
 function buildItem(item: FilterPanelItem, selected: boolean): HTMLDivElement {
-  const row = createElement('div', 'mn-filter-panel__item', {
-    role: 'option',
-    tabindex: '-1',
-  });
+  const attrs: Record<string, string> = { role: 'option', tabindex: '-1' };
+  if (item.value) attrs['data-value'] = item.value;
+  const row = createElement('div', 'mn-filter-panel__item', attrs);
   if (selected) {
     row.setAttribute('aria-selected', 'true');
     row.classList.add('mn-filter-panel__item--selected');
@@ -30,7 +29,7 @@ function buildItem(item: FilterPanelItem, selected: boolean): HTMLDivElement {
   if (item.color) {
     const dot = createElement('span', 'mn-filter-panel__dot');
     if (isValidColor(item.color)) {
-      dot.style.backgroundColor = item.color;
+      dot.style.setProperty('--mn-dot-color', item.color);
     }
     row.appendChild(dot);
   }
