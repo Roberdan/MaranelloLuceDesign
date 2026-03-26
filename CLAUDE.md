@@ -1,4 +1,4 @@
-<!-- v5.15.0 | 2026-03-25 -->
+<!-- v5.15.1 | 2026-03-26 -->
 # MaranelloLuceDesign
 
 Ferrari Luce-inspired DS for dashboards. 5 themes. 115+ IIFE exports. 35 WC. WCAG 2.2 AA.

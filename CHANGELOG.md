@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.15.1] - 2026-03-26
+
+### Fixed
+- Async-select dropdown hover text unreadable in nero theme — `color: var(--mn-surface-raised)` replaced with `var(--mn-text-inverse)`
+- Filter chip remove button and search reset used primitive `--rosso` token — replaced with semantic `--mn-error`
+- Avorio filter chip override used primitive `--avorio-medio` — replaced with `--mn-surface`
+- Stage dot colors now set via `--mn-dot-color` CSS custom property instead of inline `backgroundColor`, enabling per-theme overrides via `data-value` attribute targeting
+- Bump `picomatch` 4.0.3 → 4.0.4 (CVE-2026-33671)
+
 ## [5.15.0] - 2026-03-25
 
 ### Added
