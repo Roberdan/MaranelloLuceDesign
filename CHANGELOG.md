@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.15.2] - 2026-03-26
+
+### Fixed
+- `layouts-filter-panel.css` and `layouts-search-bar.css` missing from `layouts.css` aggregator — zero filter panel/search bar styles in `maranello.css` bundle since v5.15.0
+
 ## [5.15.1] - 2026-03-26
 
 ### Fixed

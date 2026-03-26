@@ -193,4 +193,13 @@ describe('CSS entrypoint parity', () => {
 
     expect(missing).toEqual([]);
   });
+
+  it('layouts.css imports every layouts-*.css file in src/css/', () => {
+    const { readdirSync } = require('node:fs');
+    const layoutFiles = readdirSync(CSS_SRC)
+      .filter((f: string) => f.startsWith('layouts-') && f.endsWith('.css'));
+    const layoutsContent = readFileSync(join(CSS_SRC, 'layouts.css'), 'utf8');
+    const missing = layoutFiles.filter((f: string) => !layoutsContent.includes(f));
+    expect(missing).toEqual([]);
+  });
 });

@@ -21,6 +21,8 @@
 @import "./layouts-detail-panel-extras.css";
 @import "./layouts-entity-workbench.css";
 @import "./layouts-filter-chips.css";
+@import "./layouts-filter-panel.css";
+@import "./layouts-search-bar.css";
 @import "./layouts-facet-workbench.css";
 @import "./layouts-funnel.css";
 @import "./layouts-heatmap.css";

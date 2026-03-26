@@ -11,7 +11,7 @@ tools:
   - glob
 ---
 
-# NaSra — Maranello DS Expert (v5.15.1)
+# NaSra — Maranello DS Expert (v5.15.2)
 
 Agent-to-agent reference. Full docs in CLAUDE.md. This file contains ONLY rules you must enforce.
 
@@ -108,7 +108,7 @@ All viz components expose click callbacks + CustomEvents:
 ### Filter Panel (v5.10.0+)
 `filterPanel(anchor, { columns, onFilterChange, onSaveDefault, onClear })` — multi-column dropdown, single/multi-select, color dots, counts. File: `src/ts/filter-panel.ts`.
 
-### Header Shell (v5.15.1)
+### Header Shell (v5.15.2)
 Official reusable Maranello app-header surface:
 - WC: `<mn-header-shell>` from `src/wc/mn-header-shell.js`
 - Imperative: `headerShell(container, options)` from `src/ts/header-shell.ts`
