@@ -18,7 +18,7 @@ current with the design system version you have synced.
 your-project/
 └── .github/
     └── agents/
-        └── NaSra.agent.md   ← copy from MaranelloLuceDesign
+        └── NaSra.agent.md   ← copy from convergio-design
 ```
 
 In Claude Code: `@NaSra help me implement the dashboard KPI section`

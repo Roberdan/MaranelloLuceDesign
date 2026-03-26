@@ -1130,7 +1130,7 @@ var init_header_shell = __esm({
   }
 });
 
-// dist/esm/chunks/chunk-6RWPSBTI.js
+// dist/esm/chunks/chunk-YAUF2LXW.js
 function escapeHtml2(str) {
   return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 }
@@ -1347,8 +1347,8 @@ function hiDpiCanvas(canvas, width, height) {
   return dpr2;
 }
 var HEX_RE, RGB_RE, HSL_RE, CSS_VAR_RE, CSS_KEYWORDS, NAMED_COLORS, SAFE_SVG_TAGS2, DANGEROUS_SVG_TAGS2, ALLOWED_BIND_PROPERTIES, BODY_CLASSES2, THEME_ORDER;
-var init_chunk_6RWPSBTI = __esm({
-  "dist/esm/chunks/chunk-6RWPSBTI.js"() {
+var init_chunk_YAUF2LXW = __esm({
+  "dist/esm/chunks/chunk-YAUF2LXW.js"() {
     "use strict";
     HEX_RE = /^#(?:[0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})$/i;
     RGB_RE = /^rgba?\(\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}\s*(?:,\s*(?:0|1|0?\.\d+))?\s*\)$/;
@@ -1561,7 +1561,7 @@ var init_chunk_6RWPSBTI = __esm({
   }
 });
 
-// dist/esm/chunks/chunk-EIKDW6MW.js
+// dist/esm/chunks/chunk-5XSITCAG.js
 function buildSeries() {
   return [
     cssVar("--mn-accent", "var(--mn-accent)"),
@@ -2769,10 +2769,10 @@ function sparklineInteract(canvas, data, opts) {
   });
 }
 var dpr, SERIES, DPR, activeTooltip;
-var init_chunk_EIKDW6MW = __esm({
-  "dist/esm/chunks/chunk-EIKDW6MW.js"() {
+var init_chunk_5XSITCAG = __esm({
+  "dist/esm/chunks/chunk-5XSITCAG.js"() {
     "use strict";
-    init_chunk_6RWPSBTI();
+    init_chunk_YAUF2LXW();
     dpr = window.devicePixelRatio || 1;
     SERIES = buildSeries();
     DPR = window.devicePixelRatio || 1;
@@ -2780,7 +2780,7 @@ var init_chunk_EIKDW6MW = __esm({
   }
 });
 
-// dist/esm/chunks/chunk-LKVCAQRI.js
+// dist/esm/chunks/chunk-ZS24QDLG.js
 function buildGaugePalette(accent) {
   const D3 = {
     numbers: "#c8c8c8",
@@ -3881,10 +3881,10 @@ function speedometer(canvas, opts) {
   };
 }
 var SIZES, FerrariGauge, SPEEDO_FONT, SPEEDO_SIZES, SWEEP, START, FONT;
-var init_chunk_LKVCAQRI = __esm({
-  "dist/esm/chunks/chunk-LKVCAQRI.js"() {
+var init_chunk_ZS24QDLG = __esm({
+  "dist/esm/chunks/chunk-ZS24QDLG.js"() {
     "use strict";
-    init_chunk_6RWPSBTI();
+    init_chunk_YAUF2LXW();
     SIZES = { sm: 120, md: 220, lg: 320 };
     FerrariGauge = class {
       constructor(canvas) {
@@ -4044,7 +4044,7 @@ var init_chunk_LKVCAQRI = __esm({
   }
 });
 
-// dist/esm/chunks/chunk-PO7MHQOY.js
+// dist/esm/chunks/chunk-MFK4GBOA.js
 function hexLuminance(hex) {
   const r = parseInt(hex.slice(1, 3), 16) / 255;
   const g = parseInt(hex.slice(3, 5), 16) / 255;
@@ -5063,10 +5063,10 @@ function gantt(container, tasks, userOpts) {
   };
 }
 var DPR2, MS_DAY, DEFAULTS, MONTH_FULL, MONTH_ABBR;
-var init_chunk_PO7MHQOY = __esm({
-  "dist/esm/chunks/chunk-PO7MHQOY.js"() {
+var init_chunk_MFK4GBOA = __esm({
+  "dist/esm/chunks/chunk-MFK4GBOA.js"() {
     "use strict";
-    init_chunk_6RWPSBTI();
+    init_chunk_YAUF2LXW();
     DPR2 = window.devicePixelRatio || 1;
     MS_DAY = 864e5;
     DEFAULTS = {
@@ -5123,10 +5123,10 @@ var init_chunk_PO7MHQOY = __esm({
   }
 });
 
-// dist/esm/chunks/chunk-PJI45UZI.js
+// dist/esm/chunks/chunk-B4HGXRSB.js
 var PREFIX, EventBus, eventBus;
-var init_chunk_PJI45UZI = __esm({
-  "dist/esm/chunks/chunk-PJI45UZI.js"() {
+var init_chunk_B4HGXRSB = __esm({
+  "dist/esm/chunks/chunk-B4HGXRSB.js"() {
     "use strict";
     PREFIX = "mn:";
     EventBus = class {
@@ -5172,7 +5172,7 @@ var init_chunk_PJI45UZI = __esm({
   }
 });
 
-// dist/esm/chunks/chunk-AWW7NHIW.js
+// dist/esm/chunks/chunk-ALEUEVRZ.js
 function openDetailPanel(id) {
   const panel = document.getElementById(id);
   if (!panel) return;
@@ -5700,17 +5700,17 @@ function steppedRotary(container, opts) {
   };
 }
 var MANETTINO_STYLE_ID, STEPPED_STYLE_ID;
-var init_chunk_AWW7NHIW = __esm({
-  "dist/esm/chunks/chunk-AWW7NHIW.js"() {
+var init_chunk_ALEUEVRZ = __esm({
+  "dist/esm/chunks/chunk-ALEUEVRZ.js"() {
     "use strict";
-    init_chunk_6RWPSBTI();
-    init_chunk_PJI45UZI();
+    init_chunk_YAUF2LXW();
+    init_chunk_B4HGXRSB();
     MANETTINO_STYLE_ID = "mn-ctrl-manettino-css";
     STEPPED_STYLE_ID = "mn-ctrl-stepped-css";
   }
 });
 
-// dist/esm/chunks/chunk-UBY7L2ZW.js
+// dist/esm/chunks/chunk-6XORG5HN.js
 function getFieldInput(field) {
   return field.querySelector(
     ".mn-form-input, .mn-form-select, .mn-form-textarea"
@@ -6098,10 +6098,10 @@ function initForms(root = document) {
   );
 }
 var validators, defaultMessages, forms;
-var init_chunk_UBY7L2ZW = __esm({
-  "dist/esm/chunks/chunk-UBY7L2ZW.js"() {
+var init_chunk_6XORG5HN = __esm({
+  "dist/esm/chunks/chunk-6XORG5HN.js"() {
     "use strict";
-    init_chunk_PJI45UZI();
+    init_chunk_B4HGXRSB();
     validators = {
       required: (v) => v !== null && v !== void 0 && String(v).trim() !== "",
       email: (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v)),
@@ -19147,13 +19147,13 @@ var NavigationModel, ViewRegistry, SLOT_NAMES, LAYOUTS, PLACEMENT_TO_SLOT, AppSh
 var init_esm = __esm({
   "dist/esm/index.js"() {
     "use strict";
-    init_chunk_EIKDW6MW();
-    init_chunk_LKVCAQRI();
-    init_chunk_PO7MHQOY();
-    init_chunk_AWW7NHIW();
-    init_chunk_6RWPSBTI();
-    init_chunk_UBY7L2ZW();
-    init_chunk_PJI45UZI();
+    init_chunk_5XSITCAG();
+    init_chunk_ZS24QDLG();
+    init_chunk_MFK4GBOA();
+    init_chunk_ALEUEVRZ();
+    init_chunk_YAUF2LXW();
+    init_chunk_6XORG5HN();
+    init_chunk_B4HGXRSB();
     NavigationModel = class {
       constructor() {
         this.stack = [];

@@ -18,7 +18,7 @@ Key rules:
 ## Setup
 
 ```bash
-git clone https://github.com/Roberdan/MaranelloLuceDesign.git && cd MaranelloLuceDesign
+git clone https://github.com/Roberdan/convergio-design.git && cd convergio-design
 npm install
 npm run build
 npm run dev

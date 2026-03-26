@@ -48,5 +48,5 @@ IIFE bundle size: 48 KB → 250 KB (new modules).
 ## npm Update
 
 ```bash
-npm install github:Roberdan/MaranelloLuceDesign#v3.0.0
+npm install github:Roberdan/convergio-design#v3.0.0
 ```

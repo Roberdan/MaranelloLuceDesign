@@ -1,8 +1,8 @@
 # Maranello Luce Design — Agent Reference
 
 > Ferrari Luce-inspired design system. Zero deps. 5 themes. 150+ APIs. 35 WC tags. v5.15.2
-> Repo: github.com/Roberdan/maranello-design
-> Demo: roberdan.github.io/maranello-design/
+> Repo: github.com/Roberdan/convergio-design
+> Demo: roberdan.github.io/convergio-design/
 > AI Expert: @NaSra (see `.github/agents/NaSra.agent.md`)
 
 ## Install
@@ -27,8 +27,8 @@ npm install maranello-luce-design-business
 
 CDN (no build):
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Roberdan/maranello-design@v5.15.2/dist/css/index.css">
-<script src="https://cdn.jsdelivr.net/gh/Roberdan/maranello-design@v5.15.2/dist/iife/maranello.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Roberdan/convergio-design@v5.15.2/dist/css/index.css">
+<script src="https://cdn.jsdelivr.net/gh/Roberdan/convergio-design@v5.15.2/dist/iife/maranello.min.js"></script>
 ```
 IIFE attaches the public browser namespace to `window.Maranello`.
 

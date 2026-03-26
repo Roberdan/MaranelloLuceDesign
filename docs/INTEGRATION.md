@@ -1,7 +1,7 @@
 <!-- v3.1.0 | 2025-07-21 -->
 # Framework Integration
 
-All frameworks: `npm install github:Roberdan/MaranelloLuceDesign#v3.0.0`
+All frameworks: `npm install github:Roberdan/convergio-design#v3.0.0`
 
 ## Vanilla
 

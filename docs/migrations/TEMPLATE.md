@@ -74,5 +74,5 @@ npm run build && npm run test:unit
 
 If you cannot migrate yet, pin to the previous version:
 ```bash
-npm install github:Roberdan/MaranelloLuceDesign#vX.Y.Z-1
+npm install github:Roberdan/convergio-design#vX.Y.Z-1
 ```
