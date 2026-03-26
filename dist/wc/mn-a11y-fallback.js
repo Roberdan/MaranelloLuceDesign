@@ -1,7 +1,8 @@
-const STORAGE = "mn-a11y";
-const DEFAULTS = { fontSize: "md", reducedMotion: false, highContrast: false, focusVisible: true, dyslexiaFont: false };
-const SIZES = { sm: 0.875, md: 1, lg: 1.125, xl: 1.25 };
-let _dyslexicLoaded = false;
+// src/wc/mn-a11y-fallback.js
+var STORAGE = "mn-a11y";
+var DEFAULTS = { fontSize: "md", reducedMotion: false, highContrast: false, focusVisible: true, dyslexiaFont: false };
+var SIZES = { sm: 0.875, md: 1, lg: 1.125, xl: 1.25 };
+var _dyslexicLoaded = false;
 function loadSettings() {
   try {
     return { ...DEFAULTS, ...JSON.parse(localStorage.getItem(STORAGE)) };

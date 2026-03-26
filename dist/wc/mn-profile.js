@@ -1,4 +1,5 @@
-let _engine = null;
+// src/wc/mn-profile.js
+var _engine = null;
 async function resolveEngine() {
   if (_engine) return _engine;
   if (globalThis.Maranello) {
@@ -8,14 +9,14 @@ async function resolveEngine() {
   console.warn("[mn-profile] No engine found");
   return null;
 }
-const _base = new URL(".", import.meta.url).href;
+var _base = new URL(".", import.meta.url).href;
 function cssLink(path) {
   const link = document.createElement("link");
   link.rel = "stylesheet";
   link.href = new URL(path, _base).href;
   return link;
 }
-class MnProfile extends HTMLElement {
+var MnProfile = class extends HTMLElement {
   static get observedAttributes() {
     return ["name", "email", "avatar-url", "sections"];
   }
@@ -113,6 +114,6 @@ class MnProfile extends HTMLElement {
     this._dropdown.innerHTML = "";
     await this._init();
   }
-}
+};
 customElements.define("mn-profile", MnProfile);
 //# sourceMappingURL=mn-profile.js.map

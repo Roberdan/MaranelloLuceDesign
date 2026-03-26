@@ -6444,7 +6444,7 @@
 
   .mn-async-select__item:hover, .mn-async-select__item--active {
     background: var(--mn-accent);
-    color: var(--mn-surface-raised);
+    color: var(--mn-text-inverse, #000);
   }
 
   .mn-async-select__loading {
@@ -9024,6 +9024,39 @@
     align-items: center;
     gap: 4px;
     display: flex;
+  }
+
+  .mn-chat-panel--embedded {
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    max-height: none;
+    box-shadow: none;
+    z-index: auto;
+    border: none;
+    border-radius: 0;
+    flex-direction: column;
+    display: flex;
+    position: relative;
+    bottom: auto;
+    left: auto;
+  }
+
+  .mn-chat-panel--embedded .mn-chat-fab, .mn-chat-panel--embedded .mn-chat-panel__close, .mn-chat-panel--embedded .mn-chat-panel__resize, .mn-chat-panel--embedded .mn-chat-panel__accent {
+    display: none;
+  }
+
+  .mn-chat-msg--streaming .mn-chat-msg__content:after {
+    content: "▮";
+    color: var(--mn-accent);
+    margin-left: 2px;
+    animation: .8s step-end infinite mn-blink;
+  }
+
+  @keyframes mn-blink {
+    50% {
+      opacity: 0;
+    }
   }
 
   .mn-layout {
@@ -11773,8 +11806,8 @@
   }
 
   .mn-filter-chip__remove:hover {
-    background: var(--rosso, #e74c3c);
-    color: var(--mn-text);
+    background: var(--mn-error, #e74c3c);
+    color: var(--mn-text-inverse, #fff);
   }
 
   .mn-search-bar__reset {
@@ -11801,23 +11834,18 @@
   }
 
   .mn-search-bar__reset:hover {
-    background: var(--rosso, #e74c3c);
-    color: var(--mn-text);
+    background: var(--mn-error, #e74c3c);
+    color: var(--mn-text-inverse, #fff);
   }
 
   body.mn-avorio .mn-filter-chip {
-    background: var(--avorio-medio, #f0e6d0);
+    background: var(--mn-surface);
     border-color: var(--mn-border-strong);
-    color: var(--mn-text);
-  }
-
-  body.mn-avorio .mn-filter-chip__label, body.mn-avorio .mn-filter-chip__remove, body.mn-avorio .mn-search-bar__reset {
-    color: var(--mn-text-muted);
   }
 
   body.mn-avorio .mn-search-bar__reset:hover, body.mn-avorio .mn-filter-chip__remove:hover {
-    background: var(--rosso, #e74c3c);
-    color: var(--mn-text);
+    background: var(--mn-error, #e74c3c);
+    color: var(--mn-text-inverse, #fff);
   }
 
   .mn-filter-panel {
@@ -11881,6 +11909,7 @@
   }
 
   .mn-filter-panel__dot {
+    background-color: var(--mn-dot-color);
     border-radius: 50%;
     flex-shrink: 0;
     width: 8px;

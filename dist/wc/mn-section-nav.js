@@ -1,7 +1,9 @@
 var __defProp = Object.defineProperty;
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-const LABELS = {
+
+// src/wc/mn-section-nav.js
+var LABELS = {
   "hero": "Home",
   "tokens": "Tokens",
   "cards": "Cards",
@@ -36,7 +38,7 @@ const LABELS = {
   "overlays": "Overlays",
   "org-tree": "Org Tree"
 };
-const CSS = `
+var CSS = `
 :host { display: block; width: 100%; box-sizing: border-box; }
 
 .nav {
@@ -142,7 +144,7 @@ function syncTheme(el) {
   else if (cls.includes("mn-colorblind")) el.setAttribute("data-theme", "colorblind");
   else el.removeAttribute("data-theme");
 }
-class MnSectionNav extends HTMLElement {
+var MnSectionNav = class extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: "open" });
@@ -193,7 +195,7 @@ class MnSectionNav extends HTMLElement {
     if (prev) this.shadowRoot.querySelector(".btn--prev").addEventListener("click", () => this._go(prev));
     if (next) this.shadowRoot.querySelector(".btn--next").addEventListener("click", () => this._go(next));
   }
-}
+};
 __publicField(MnSectionNav, "observedAttributes", ["sections", "current", "data-theme", "data-pos"]);
 customElements.define("mn-section-nav", MnSectionNav);
 //# sourceMappingURL=mn-section-nav.js.map

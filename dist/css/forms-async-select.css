@@ -44,7 +44,7 @@
   .mn-async-select__item:hover,
   .mn-async-select__item--active {
     background: var(--mn-accent);
-    color: var(--mn-surface-raised);
+    color: var(--mn-text-inverse, #000);
   }
 
   .mn-async-select__loading {

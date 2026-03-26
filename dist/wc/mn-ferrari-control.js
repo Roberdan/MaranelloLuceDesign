@@ -1,4 +1,5 @@
-let _engine = null;
+// src/wc/mn-ferrari-control.js
+var _engine = null;
 async function resolveEngine() {
   if (_engine) return _engine;
   if (globalThis.Maranello) {
@@ -8,14 +9,14 @@ async function resolveEngine() {
   console.warn("[mn-ferrari-control] No engine found");
   return null;
 }
-const _base = new URL(".", import.meta.url).href;
+var _base = new URL(".", import.meta.url).href;
 function cssLink(path) {
   const link = document.createElement("link");
   link.rel = "stylesheet";
   link.href = new URL(path, _base).href;
   return link;
 }
-class MnFerrariControl extends HTMLElement {
+var MnFerrariControl = class extends HTMLElement {
   static get observedAttributes() {
     return ["type", "options"];
   }
@@ -209,6 +210,6 @@ class MnFerrariControl extends HTMLElement {
     };
     return map[type] || null;
   }
-}
+};
 customElements.define("mn-ferrari-control", MnFerrariControl);
 //# sourceMappingURL=mn-ferrari-control.js.map

@@ -1,4 +1,4 @@
-/* Maranello Luce Design v5.14.1 | MPL-2.0 | github.com/Roberdan/MaranelloLuceDesign */
+/* Maranello Luce Design v5.15.2 | MPL-2.0 | github.com/Roberdan/MaranelloLuceDesign */
 "use strict";
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -659,9 +659,11 @@ var PanelOrchestrator = class {
     if (first.placement === second.placement) {
       const parent = first.handle.container.parentElement;
       if (parent && parent === second.handle.container.parentElement) {
-        const anchor = first.handle.container.nextSibling;
+        const marker = document.createComment("mn-swap");
+        parent.insertBefore(marker, first.handle.container);
         parent.insertBefore(first.handle.container, second.handle.container);
-        parent.insertBefore(second.handle.container, anchor);
+        parent.insertBefore(second.handle.container, marker);
+        parent.removeChild(marker);
       }
       return;
     }
@@ -3989,6 +3991,7 @@ var AsyncSelect = class {
     this.activeIndex = -1;
     this.openState = false;
     this.requestId = 0;
+    this.destroyed = false;
     this.provider = options.provider;
     this.onSelect = options.onSelect;
     this.debounceMs = options.debounceMs ?? 300;
@@ -4046,6 +4049,7 @@ var AsyncSelect = class {
     this.clear();
   }
   destroy() {
+    this.destroyed = true;
     if (this.timer) window.clearTimeout(this.timer);
     document.removeEventListener("click", this.onDocClick);
     this.input.removeEventListener("input", this.onInput);
@@ -4072,11 +4076,11 @@ var AsyncSelect = class {
     this.showLoading();
     try {
       const results = await this.provider.search(query);
-      if (req !== this.requestId) return;
+      if (this.destroyed || req !== this.requestId) return;
       this.items = results;
       this.renderItems();
     } catch {
-      if (req === this.requestId) this.close();
+      if (!this.destroyed && req === this.requestId) this.close();
     }
   }
   showLoading() {
@@ -6247,11 +6251,18 @@ function activateItem(input, items, index) {
     target.scrollIntoView({ block: "nearest" });
   }
 }
+var INIT_ATTR = "data-mn-cp-init";
 function commandPalette(id) {
   const palette2 = document.getElementById(id);
   if (!palette2) return { open: () => {
   }, close: () => {
+  }, destroy: () => {
   } };
+  if (palette2.getAttribute(INIT_ATTR)) {
+    const prev = palette2._mnCpDestroy;
+    if (typeof prev === "function") prev();
+  }
+  palette2.setAttribute(INIT_ATTR, "1");
   const input = palette2.querySelector(".mn-command-palette__input");
   const listEl = palette2.querySelector(".mn-command-palette__list");
   const items = palette2.querySelectorAll(".mn-command-palette__item");
@@ -6293,57 +6304,73 @@ function commandPalette(id) {
     activeIndex = -1;
   }
   function selectItem(item) {
-    const text = item.querySelector(".mn-command-palette__item-text");
-    eventBus.emit("command-select", { text: text?.textContent ?? "" });
+    eventBus.emit("command-select", { text: item.querySelector(".mn-command-palette__item-text")?.textContent ?? "" });
     close();
   }
   function filterItems(query) {
     const q = query.toLowerCase();
     items.forEach((item) => {
       const text = item.querySelector(".mn-command-palette__item-text");
-      const match = !q || (text?.textContent?.toLowerCase().includes(q) ?? false);
-      item.style.display = match ? "" : "none";
+      item.style.display = !q || (text?.textContent?.toLowerCase().includes(q) ?? false) ? "" : "none";
     });
     activeIndex = -1;
     clearActive(palette2);
   }
-  if (input) {
-    input.addEventListener("input", () => filterItems(input.value));
-    input.addEventListener("keydown", (e) => {
-      const visible = getVisibleItems(palette2);
-      switch (e.key) {
-        case "ArrowDown":
-          e.preventDefault();
-          activeIndex = activeIndex < visible.length - 1 ? activeIndex + 1 : 0;
-          activateItem(input, visible, activeIndex);
-          break;
-        case "ArrowUp":
-          e.preventDefault();
-          activeIndex = activeIndex > 0 ? activeIndex - 1 : visible.length - 1;
-          activateItem(input, visible, activeIndex);
-          break;
-        case "Enter":
-          e.preventDefault();
-          if (activeIndex >= 0 && activeIndex < visible.length) {
-            selectItem(visible[activeIndex]);
-          }
-          break;
-        case "Escape":
-          close();
-          break;
-      }
-    });
+  function onInputChange() {
+    filterItems(input.value);
   }
-  document.addEventListener("keydown", (e) => {
+  function onInputKeyDown(e) {
+    const visible = getVisibleItems(palette2);
+    switch (e.key) {
+      case "ArrowDown":
+        e.preventDefault();
+        activeIndex = activeIndex < visible.length - 1 ? activeIndex + 1 : 0;
+        activateItem(input, visible, activeIndex);
+        break;
+      case "ArrowUp":
+        e.preventDefault();
+        activeIndex = activeIndex > 0 ? activeIndex - 1 : visible.length - 1;
+        activateItem(input, visible, activeIndex);
+        break;
+      case "Enter":
+        e.preventDefault();
+        if (activeIndex >= 0 && activeIndex < visible.length) selectItem(visible[activeIndex]);
+        break;
+      case "Escape":
+        close();
+        break;
+    }
+  }
+  if (input) {
+    input.addEventListener("input", onInputChange);
+    input.addEventListener("keydown", onInputKeyDown);
+  }
+  function onGlobalKeyDown(e) {
     if ((e.metaKey || e.ctrlKey) && e.key === "k") {
       e.preventDefault();
       palette2.classList.contains("mn-command-palette--open") ? close() : open();
     }
-  });
+  }
+  document.addEventListener("keydown", onGlobalKeyDown);
+  const itemClickHandlers = [];
   items.forEach((item) => {
-    item.addEventListener("click", () => selectItem(item));
+    const handler = () => selectItem(item);
+    itemClickHandlers.push(handler);
+    item.addEventListener("click", handler);
   });
-  return { open, close };
+  function destroy() {
+    document.removeEventListener("keydown", onGlobalKeyDown);
+    if (input) {
+      input.removeEventListener("input", onInputChange);
+      input.removeEventListener("keydown", onInputKeyDown);
+    }
+    items.forEach((item, i) => item.removeEventListener("click", itemClickHandlers[i]));
+    palette2.removeAttribute(INIT_ATTR);
+    delete palette2._mnCpDestroy;
+    close();
+  }
+  palette2._mnCpDestroy = destroy;
+  return { open, close, destroy };
 }
 
 // src/ts/login-dom.ts
@@ -6586,8 +6613,9 @@ function renderContent(text) {
   return container;
 }
 function buildUI(container, opts) {
+  const embedded = opts.mode === "embedded";
   const state = {
-    isOpen: false,
+    isOpen: embedded,
     isTyping: false,
     messages: [],
     panelHeight: 520,
@@ -6597,22 +6625,25 @@ function buildUI(container, opts) {
     activeAgentId: opts.activeAgent ?? (opts.agents?.[0]?.id ?? null)
   };
   const fab = el2("button", "mn-chat-fab", { "aria-label": "Open AI assistant", title: "AI Assistant" });
-  if (opts.avatar) {
-    const fabImg = document.createElement("img");
-    fabImg.src = opts.avatar;
-    fabImg.className = "mn-chat-fab__avatar";
-    fabImg.alt = "AI";
-    fab.appendChild(fabImg);
-  } else {
-    fab.innerHTML = ICON_SPARK;
-  }
   const pulse = el2("span", "mn-chat-fab__pulse");
-  fab.appendChild(pulse);
-  container.appendChild(fab);
-  const panel = el2("div", "mn-chat-panel", { role: "dialog", "aria-label": "AI assistant chat" });
-  panel.appendChild(el2("div", "mn-chat-panel__accent"));
+  if (!embedded) {
+    if (opts.avatar) {
+      const fabImg = document.createElement("img");
+      fabImg.src = opts.avatar;
+      fabImg.className = "mn-chat-fab__avatar";
+      fabImg.alt = "AI";
+      fab.appendChild(fabImg);
+    } else {
+      fab.innerHTML = ICON_SPARK;
+    }
+    fab.appendChild(pulse);
+    container.appendChild(fab);
+  }
+  const panelCls = embedded ? "mn-chat-panel mn-chat-panel--embedded" : "mn-chat-panel";
+  const panel = el2("div", panelCls, { role: embedded ? "region" : "dialog", "aria-label": "AI assistant chat" });
+  if (!embedded) panel.appendChild(el2("div", "mn-chat-panel__accent"));
   const resizeHandle = el2("div", "mn-chat-panel__resize");
-  panel.appendChild(resizeHandle);
+  if (!embedded) panel.appendChild(resizeHandle);
   const header2 = el2("div", "mn-chat-panel__header");
   const headerLeft = el2("div", "mn-chat-panel__header-left");
   if (opts.avatar) {
@@ -6628,11 +6659,13 @@ function buildUI(container, opts) {
   agentSelector.appendChild(el2("span", "mn-chat-agent-selector__chevron", { html: getIcon("chevronDown") }));
   const headerActions = el2("div", "mn-chat-panel__header-actions");
   const closeBtn = el2("button", "mn-chat-panel__close", { "aria-label": "Close chat" });
-  closeBtn.innerHTML = getIcon("close");
   const widthBtn = el2("button", "mn-chat-panel__resize", { "aria-label": "Toggle panel width" });
-  widthBtn.innerHTML = getIcon("expandHorizontal");
-  headerActions.appendChild(widthBtn);
-  headerActions.appendChild(closeBtn);
+  if (!embedded) {
+    closeBtn.innerHTML = getIcon("close");
+    widthBtn.innerHTML = getIcon("expandHorizontal");
+    headerActions.appendChild(widthBtn);
+    headerActions.appendChild(closeBtn);
+  }
   headerLeft.appendChild(titleEl);
   if (opts.agents?.length) headerLeft.appendChild(agentSelector);
   header2.appendChild(headerLeft);
@@ -6684,41 +6717,62 @@ function initMessages(state, els, opts) {
   const { messages } = state;
   const { messagesEl, typingEl, inputEl, sendBtn, voiceBtn, quickBar } = els;
   const { agentSelector, agentSelectorLabel, agentGrid } = els;
-  function addMessage(role, content) {
+  function addMessage(role, content, msgOpts) {
     const msg = { role, content, time: /* @__PURE__ */ new Date() };
     messages.push(msg);
-    renderMessage(msg);
+    const { wrap, contentEl } = renderMessage(msg, msgOpts?.streaming);
     scrollToBottom();
+    if (msgOpts?.streaming) {
+      wrap.classList.add("mn-chat-msg--streaming");
+      return {
+        message: msg,
+        append(token) {
+          msg.content += token;
+          contentEl.textContent += token;
+          scrollToBottom();
+        },
+        finish() {
+          wrap.classList.remove("mn-chat-msg--streaming");
+          contentEl.innerHTML = "";
+          contentEl.appendChild(renderContent(msg.content));
+          msg.time = /* @__PURE__ */ new Date();
+          const timeEl = wrap.querySelector(".mn-chat-msg__time");
+          if (timeEl) timeEl.textContent = formatTime(msg.time);
+          scrollToBottom();
+        }
+      };
+    }
     return msg;
   }
-  function renderMessage(msg) {
+  function renderMessage(msg, streaming) {
     const wrap = el2("div", `mn-chat-msg mn-chat-msg--${msg.role}`);
+    let contentEl;
     if (msg.role === "ai") {
       const iconWrap = el2("span", "mn-chat-msg__icon");
       iconWrap.innerHTML = ICON_SPARK;
       const body = el2("div", "mn-chat-msg__body");
       body.appendChild(iconWrap);
-      const contentEl = el2("span", "mn-chat-msg__content");
-      contentEl.appendChild(renderContent(msg.content));
+      contentEl = el2("span", "mn-chat-msg__content");
+      if (streaming) contentEl.textContent = msg.content;
+      else contentEl.appendChild(renderContent(msg.content));
       body.appendChild(contentEl);
       wrap.appendChild(body);
     } else {
+      contentEl = el2("span", "mn-chat-msg__content");
+      contentEl.appendChild(renderContent(msg.content));
       if (opts.avatar) {
         const body = el2("div", "mn-chat-msg__body");
-        const contentEl = el2("span", "mn-chat-msg__content");
-        contentEl.appendChild(renderContent(msg.content));
         body.appendChild(contentEl);
         body.appendChild(el2("img", "mn-chat-msg__avatar", { src: opts.avatar ?? "", alt: "You" }));
         wrap.appendChild(body);
       } else {
-        const contentEl = el2("span", "mn-chat-msg__content");
-        contentEl.appendChild(renderContent(msg.content));
         wrap.appendChild(contentEl);
       }
     }
-    wrap.appendChild(el2("div", "mn-chat-msg__time", { text: formatTime(msg.time) }));
+    const timeEl = el2("div", "mn-chat-msg__time", { text: streaming ? "" : formatTime(msg.time) });
+    wrap.appendChild(timeEl);
     messagesEl.insertBefore(wrap, typingEl);
-    return wrap;
+    return { wrap, contentEl };
   }
   function scrollToBottom() {
     requestAnimationFrame(() => {
@@ -7800,10 +7854,9 @@ function headerShell(container, options) {
 
 // src/ts/filter-panel-dom.ts
 function buildItem(item, selected) {
-  const row = createElement("div", "mn-filter-panel__item", {
-    role: "option",
-    tabindex: "-1"
-  });
+  const attrs = { role: "option", tabindex: "-1" };
+  if (item.value) attrs["data-value"] = item.value;
+  const row = createElement("div", "mn-filter-panel__item", attrs);
   if (selected) {
     row.setAttribute("aria-selected", "true");
     row.classList.add("mn-filter-panel__item--selected");
@@ -7813,7 +7866,7 @@ function buildItem(item, selected) {
   if (item.color) {
     const dot = createElement("span", "mn-filter-panel__dot");
     if (isValidColor(item.color)) {
-      dot.style.backgroundColor = item.color;
+      dot.style.setProperty("--mn-dot-color", item.color);
     }
     row.appendChild(dot);
   }
@@ -14531,8 +14584,7 @@ function initRotary(el5, options) {
   }
   function stepFromAngle(deg) {
     const norm = ((deg - startAngle) % 360 + 360) % 360;
-    const idx = Math.round(norm / angleRange * (totalSteps - 1));
-    return clamp(idx, 0, totalSteps - 1);
+    return clamp(Math.round(norm / angleRange * (totalSteps - 1)), 0, totalSteps - 1);
   }
   function onStart(e) {
     e.preventDefault();
@@ -14556,16 +14608,17 @@ function initRotary(el5, options) {
   document.addEventListener("touchmove", onMove, { passive: true });
   document.addEventListener("mouseup", onEnd);
   document.addEventListener("touchend", onEnd);
-  housing.addEventListener("click", () => {
+  function onHousingClick() {
     if (!dragging) setStep((current2 + 1) % totalSteps);
-  });
+  }
+  housing.addEventListener("click", onHousingClick);
   el5.setAttribute("tabindex", "0");
   el5.setAttribute("role", "slider");
   el5.setAttribute("aria-valuemin", "0");
   el5.setAttribute("aria-valuemax", String(totalSteps - 1));
   el5.setAttribute("aria-valuenow", String(current2));
   el5.setAttribute("aria-valuetext", opts.steps[current2]);
-  el5.addEventListener("keydown", (e) => {
+  function onKeyDown(e) {
     if (e.key === "ArrowRight" || e.key === "ArrowUp") {
       e.preventDefault();
       setStep(current2 + 1);
@@ -14575,11 +14628,16 @@ function initRotary(el5, options) {
     }
     el5.setAttribute("aria-valuenow", String(current2));
     el5.setAttribute("aria-valuetext", opts.steps[current2]);
-  });
+  }
+  el5.addEventListener("keydown", onKeyDown);
   return {
     setStep,
     getValue: () => opts.steps[current2],
     destroy: () => {
+      housing.removeEventListener("mousedown", onStart);
+      housing.removeEventListener("touchstart", onStart);
+      housing.removeEventListener("click", onHousingClick);
+      el5.removeEventListener("keydown", onKeyDown);
       document.removeEventListener("mousemove", onMove);
       document.removeEventListener("touchmove", onMove);
       document.removeEventListener("mouseup", onEnd);
@@ -14673,7 +14731,7 @@ function initSlider(el5, options) {
   document.addEventListener("touchmove", onMove, { passive: true });
   document.addEventListener("mouseup", onEnd);
   document.addEventListener("touchend", onEnd);
-  el5.addEventListener("keydown", (e) => {
+  function onSliderKeyDown(e) {
     if (e.key === "ArrowRight" || e.key === "ArrowUp") {
       e.preventDefault();
       current2 = Math.min(opts.max, current2 + opts.step);
@@ -14685,13 +14743,23 @@ function initSlider(el5, options) {
       render5();
       opts.onChange?.(current2);
     }
-  });
+  }
+  el5.addEventListener("keydown", onSliderKeyDown);
   render5();
   return {
     getValue: () => current2,
     setValue: (v) => {
       current2 = clamp(v, opts.min, opts.max);
       render5();
+    },
+    destroy: () => {
+      track.removeEventListener("mousedown", onStart);
+      track.removeEventListener("touchstart", onStart);
+      el5.removeEventListener("keydown", onSliderKeyDown);
+      document.removeEventListener("mousemove", onMove);
+      document.removeEventListener("touchmove", onMove);
+      document.removeEventListener("mouseup", onEnd);
+      document.removeEventListener("touchend", onEnd);
     }
   };
 }
@@ -14747,7 +14815,7 @@ function attachEvents(canvas, tipEls, state, callbacks) {
     state.isDragging = false;
     canvas.style.cursor = state.enablePan ? "grab" : "default";
   }
-  canvas.addEventListener("mousemove", (e) => {
+  function onCanvasMouseMove(e) {
     if (state.isDragging) return;
     const m = hitTest2(e.clientX, e.clientY, canvas, state.renderedMarkers);
     if (m) {
@@ -14759,38 +14827,46 @@ function attachEvents(canvas, tipEls, state, callbacks) {
       canvas.style.cursor = state.enablePan ? "grab" : "default";
       hideTip3(tipEls.tip);
     }
-  });
-  canvas.addEventListener("mouseleave", () => {
+  }
+  function onCanvasMouseLeave() {
     state.hovered = null;
     if (!state.isDragging) {
       canvas.style.cursor = state.enablePan ? "grab" : "default";
     }
     hideTip3(tipEls.tip);
-  });
-  canvas.addEventListener("click", (e) => {
+  }
+  function onCanvasClick(e) {
     if (state.isDragging) return;
     const m = hitTest2(e.clientX, e.clientY, canvas, state.renderedMarkers);
     if (m && state.onClick) state.onClick(m);
-  });
+  }
+  canvas.addEventListener("mousemove", onCanvasMouseMove);
+  canvas.addEventListener("mouseleave", onCanvasMouseLeave);
+  canvas.addEventListener("click", onCanvasClick);
   let onWindowMouseMove = null;
   let onWindowMouseUp = null;
+  let onCanvasMouseDown = null;
+  let onCanvasTouchStart = null;
+  let onCanvasTouchMove = null;
+  let onCanvasTouchEnd = null;
   if (state.enableZoom) {
     canvas.addEventListener("wheel", handleWheel, { passive: false });
     canvas.style.touchAction = "none";
   }
   if (state.enablePan) {
     canvas.style.cursor = "grab";
-    canvas.addEventListener("mousedown", (e) => {
+    onCanvasMouseDown = (e) => {
       if (e.button !== 0) return;
       startDrag(e.clientX, e.clientY);
-    });
+    };
+    canvas.addEventListener("mousedown", onCanvasMouseDown);
     onWindowMouseMove = (e) => moveDrag(e.clientX, e.clientY);
     onWindowMouseUp = () => {
       if (state.isDragging) endDrag();
     };
     window.addEventListener("mousemove", onWindowMouseMove);
     window.addEventListener("mouseup", onWindowMouseUp);
-    canvas.addEventListener("touchstart", (e) => {
+    onCanvasTouchStart = (e) => {
       if (e.touches.length === 2 && state.enableZoom) {
         const t1 = e.touches[0], t2 = e.touches[1];
         const dx = t2.clientX - t1.clientX;
@@ -14800,8 +14876,9 @@ function attachEvents(canvas, tipEls, state, callbacks) {
         return;
       }
       if (e.touches.length === 1) startDrag(e.touches[0].clientX, e.touches[0].clientY);
-    }, { passive: true });
-    canvas.addEventListener("touchmove", (e) => {
+    };
+    canvas.addEventListener("touchstart", onCanvasTouchStart, { passive: true });
+    onCanvasTouchMove = (e) => {
       if (e.touches.length === 2 && state.enableZoom && state.touchPinchStartDist > 0) {
         e.preventDefault();
         const p1 = e.touches[0], p2 = e.touches[1];
@@ -14814,17 +14891,26 @@ function attachEvents(canvas, tipEls, state, callbacks) {
         return;
       }
       if (e.touches.length === 1) moveDrag(e.touches[0].clientX, e.touches[0].clientY);
-    }, { passive: false });
-    canvas.addEventListener("touchend", () => {
+    };
+    canvas.addEventListener("touchmove", onCanvasTouchMove, { passive: false });
+    onCanvasTouchEnd = () => {
       state.touchPinchStartDist = 0;
       if (state.isDragging) endDrag();
-    }, { passive: true });
+    };
+    canvas.addEventListener("touchend", onCanvasTouchEnd, { passive: true });
   }
   return {
     cleanup() {
+      canvas.removeEventListener("mousemove", onCanvasMouseMove);
+      canvas.removeEventListener("mouseleave", onCanvasMouseLeave);
+      canvas.removeEventListener("click", onCanvasClick);
       if (state.enableZoom) canvas.removeEventListener("wheel", handleWheel);
+      if (onCanvasMouseDown) canvas.removeEventListener("mousedown", onCanvasMouseDown);
       if (onWindowMouseMove) window.removeEventListener("mousemove", onWindowMouseMove);
       if (onWindowMouseUp) window.removeEventListener("mouseup", onWindowMouseUp);
+      if (onCanvasTouchStart) canvas.removeEventListener("touchstart", onCanvasTouchStart);
+      if (onCanvasTouchMove) canvas.removeEventListener("touchmove", onCanvasTouchMove);
+      if (onCanvasTouchEnd) canvas.removeEventListener("touchend", onCanvasTouchEnd);
     }
   };
 }
@@ -20237,6 +20323,7 @@ function heatmap(container, options) {
 // src/ts/ai-chat-iife.ts
 function aiChat(container, opts) {
   const full = {
+    mode: opts?.mode ?? "fab",
     onSend: opts?.onSend ?? null,
     onQuickAction: opts?.onQuickAction ?? null,
     quickActions: opts?.quickActions ?? [],
@@ -20251,15 +20338,18 @@ function aiChat(container, opts) {
     onVoice: opts?.onVoice ?? (() => {
     })
   };
+  const embedded = full.mode === "embedded";
   const els = buildUI(container, full);
   initMessages(els.state, els, full);
   const { state, fab, panel, closeBtn } = els;
   function open() {
+    if (embedded) return;
     panel.classList.add("mn-chat-panel--open");
     panel.style.display = "flex";
     state.isOpen = true;
   }
   function close() {
+    if (embedded) return;
     panel.classList.remove("mn-chat-panel--open");
     panel.style.display = "none";
     state.isOpen = false;
@@ -20267,14 +20357,16 @@ function aiChat(container, opts) {
   function toggle() {
     state.isOpen ? close() : open();
   }
-  fab.addEventListener("click", toggle);
-  closeBtn.addEventListener("click", close);
+  if (!embedded) {
+    fab.addEventListener("click", toggle);
+    closeBtn.addEventListener("click", close);
+  }
   return {
     open,
     close,
     toggle,
     isOpen: () => state.isOpen,
-    addMessage: (role, content) => state.addMessage(role, content),
+    addMessage: (role, content, msgOpts) => state.addMessage(role, content, msgOpts),
     setTyping: (show) => state.setTyping(show),
     clear: () => state.clear(),
     showPulse: () => {
@@ -20528,5 +20620,5 @@ M.charts = { sparkline, donut, barChart, areaChart, radar, halfGauge, bubble, li
 registerExtras(M);
 
 // src/ts/index.ts
-var VERSION = "5.14.1";
+var VERSION = "5.15.2";
 //# sourceMappingURL=index.cjs.map

@@ -1,5 +1,5 @@
 /** Maranello Luce Design - Main ES module entry point. Public API surface. */
-export declare const VERSION = "5.14.1";
+export declare const VERSION = "5.15.2";
 export * from './core/types';
 export { EventBus, eventBus } from './core/events';
 export type { EventCallback } from './core/events';

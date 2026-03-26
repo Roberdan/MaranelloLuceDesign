@@ -4,9 +4,5 @@
  * ARIA combobox pattern with listbox results.
  */
 import type { CommandPaletteController } from './core/types';
-/**
- * Initialize a command palette on an existing DOM element.
- * Registers Ctrl/Cmd+K global shortcut.
- * Emits 'command-select' event when an item is chosen.
- */
+/** Initialize a command palette. Ctrl/Cmd+K shortcut. Emits 'command-select'. Safe to re-init. */
 export declare function commandPalette(id: string): CommandPaletteController;

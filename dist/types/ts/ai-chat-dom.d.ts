@@ -1,7 +1,3 @@
-/**
- * Maranello Luce Design - AI Chat DOM builder
- * Constructs the chat panel UI: FAB, header, messages area, input, agent selector.
- */
 export type ChatRole = 'user' | 'ai';
 export interface AIChatMessage {
     role: ChatRole;
@@ -13,9 +9,22 @@ export interface AIChatAgent {
     label: string;
     icon?: string;
 }
+export interface AIChatResponse {
+    content?: string;
+}
+export interface StreamingHandle {
+    append: (token: string) => void;
+    finish: () => void;
+    message: AIChatMessage;
+}
+export interface AddMessageOptions {
+    streaming?: boolean;
+}
+type HandlerReturn = string | AIChatResponse | Promise<string | AIChatResponse> | null | undefined;
 export interface AIChatOptions {
-    onSend?: (msg: string) => string | AIChatResponse | Promise<string | AIChatResponse> | null | undefined;
-    onQuickAction?: (action: string, ctx: string | null) => string | AIChatResponse | Promise<string | AIChatResponse> | null | undefined;
+    mode?: 'fab' | 'embedded';
+    onSend?: (msg: string) => HandlerReturn;
+    onQuickAction?: (action: string, ctx: string | null) => HandlerReturn;
     quickActions?: string[];
     placeholder?: string;
     title?: string;
@@ -26,15 +35,12 @@ export interface AIChatOptions {
     onAgentChange?: (agentId: string, agent: AIChatAgent) => void;
     onVoice?: (isListening: boolean) => void;
 }
-export interface AIChatResponse {
-    content?: string;
-}
 export interface AIChatController {
     open: () => void;
     close: () => void;
     toggle: () => void;
     isOpen: () => boolean;
-    addMessage: (role: ChatRole, content: string) => AIChatMessage;
+    addMessage: (role: ChatRole, content: string, opts?: AddMessageOptions) => AIChatMessage | StreamingHandle;
     setTyping: (show: boolean) => void;
     clear: () => void;
     showPulse: () => void;
@@ -72,10 +78,11 @@ export interface ChatUIState {
     panelWidthMode: string;
     isAgentGridOpen: boolean;
     activeAgentId: string | null;
-    addMessage?: (role: string, content: string) => AIChatMessage;
+    addMessage?: (role: string, content: string, opts?: AddMessageOptions) => AIChatMessage | StreamingHandle;
     setTyping?: (show: boolean) => void;
     clear?: () => void;
     toggleAgentGrid?: (forceState?: boolean) => void;
     onDocumentClick?: (e: MouseEvent) => void;
 }
 export declare function buildUI(container: HTMLElement, opts: Required<AIChatOptions>): ChatUIElements;
+export {};

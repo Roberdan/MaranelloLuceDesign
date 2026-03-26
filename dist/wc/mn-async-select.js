@@ -1,4 +1,5 @@
-const _base = new URL(".", import.meta.url).href;
+// src/wc/mn-async-select.js
+var _base = new URL(".", import.meta.url).href;
 async function resolveAsyncSelect() {
   if (globalThis.Maranello?.AsyncSelect) return globalThis.Maranello.AsyncSelect;
   try {
@@ -8,8 +9,8 @@ async function resolveAsyncSelect() {
   }
   return null;
 }
-const DEFAULT_PROVIDER = { search: async () => [] };
-class MnAsyncSelect extends HTMLElement {
+var DEFAULT_PROVIDER = { search: async () => [] };
+var MnAsyncSelect = class extends HTMLElement {
   static get observedAttributes() {
     return ["placeholder", "min-chars", "debounce"];
   }
@@ -57,6 +58,6 @@ class MnAsyncSelect extends HTMLElement {
       }
     });
   }
-}
+};
 customElements.define("mn-async-select", MnAsyncSelect);
 //# sourceMappingURL=mn-async-select.js.map

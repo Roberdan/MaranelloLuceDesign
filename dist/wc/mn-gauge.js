@@ -1,4 +1,5 @@
-const _base = new URL(".", import.meta.url).href;
+// src/wc/mn-gauge.js
+var _base = new URL(".", import.meta.url).href;
 async function resolveEngine() {
   if (window.Maranello?.FerrariGauge) return window.Maranello.FerrariGauge;
   try {
@@ -14,8 +15,8 @@ function cssLink(path) {
   link.href = new URL(path, _base).href;
   return link;
 }
-const SIZE_MAP = { sm: 120, md: 220, lg: 320 };
-class MnGauge extends HTMLElement {
+var SIZE_MAP = { sm: 120, md: 220, lg: 320 };
+var MnGauge = class extends HTMLElement {
   static get observedAttributes() {
     return ["value", "max", "unit", "label", "size", "config"];
   }
@@ -173,6 +174,6 @@ class MnGauge extends HTMLElement {
     });
     this._resizeObs.observe(this);
   }
-}
+};
 customElements.define("mn-gauge", MnGauge);
 //# sourceMappingURL=mn-gauge.js.map

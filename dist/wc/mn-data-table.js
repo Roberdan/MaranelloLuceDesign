@@ -1,4 +1,5 @@
-let _engine = null;
+// src/wc/mn-data-table.js
+var _engine = null;
 function getEngine() {
   if (_engine) return _engine;
   if (globalThis.Maranello) {
@@ -7,14 +8,14 @@ function getEngine() {
   }
   return null;
 }
-const _base = new URL(".", import.meta.url).href;
+var _base = new URL(".", import.meta.url).href;
 function cssLink(path) {
   const link = document.createElement("link");
   link.rel = "stylesheet";
   link.href = new URL(path, _base).href;
   return link;
 }
-class MnDataTable extends HTMLElement {
+var MnDataTable = class extends HTMLElement {
   static get observedAttributes() {
     return ["columns", "data", "page-size", "group-by", "selectable", "compact"];
   }
@@ -167,6 +168,6 @@ class MnDataTable extends HTMLElement {
     this._mo?.disconnect();
     this._mo = null;
   }
-}
+};
 customElements.define("mn-data-table", MnDataTable);
 //# sourceMappingURL=mn-data-table.js.map

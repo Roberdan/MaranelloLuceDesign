@@ -1,4 +1,5 @@
-let _engine = null;
+// src/wc/mn-mapbox.js
+var _engine = null;
 function getEngine() {
   if (_engine) return _engine;
   if (globalThis.Maranello) {
@@ -7,7 +8,7 @@ function getEngine() {
   }
   return null;
 }
-class MnMapbox extends HTMLElement {
+var MnMapbox = class extends HTMLElement {
   static get observedAttributes() {
     return ["access-token", "center", "zoom", "markers", "stages", "projection"];
   }
@@ -84,6 +85,6 @@ class MnMapbox extends HTMLElement {
     this._container.innerHTML = "";
     this._init();
   }
-}
+};
 customElements.define("mn-mapbox", MnMapbox);
 //# sourceMappingURL=mn-mapbox.js.map

@@ -1,11 +1,12 @@
-const resolve = (path, fallback = null) => {
+// src/wc/mn-theme-rotary.js
+var resolve = (path, fallback = null) => {
   try {
     return globalThis.Maranello?.[path] ?? fallback;
   } catch {
     return fallback;
   }
 };
-class MnThemeRotary extends HTMLElement {
+var MnThemeRotary = class extends HTMLElement {
   static get observedAttributes() {
     return ["size"];
   }
@@ -193,6 +194,6 @@ class MnThemeRotary extends HTMLElement {
       el.setAttribute("tabindex", active ? "0" : "-1");
     }
   }
-}
+};
 customElements.define("mn-theme-rotary", MnThemeRotary);
 //# sourceMappingURL=mn-theme-rotary.js.map

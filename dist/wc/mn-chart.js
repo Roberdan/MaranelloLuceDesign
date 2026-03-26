@@ -1,3 +1,4 @@
+// src/wc/mn-chart.js
 async function resolveCharts() {
   if (window.Maranello?.charts) return window.Maranello.charts;
   try {
@@ -7,14 +8,14 @@ async function resolveCharts() {
   }
   return null;
 }
-const _base = new URL(".", import.meta.url).href;
+var _base = new URL(".", import.meta.url).href;
 function cssLink(path) {
   const link = document.createElement("link");
   link.rel = "stylesheet";
   link.href = new URL(path, _base).href;
   return link;
 }
-class MnChart extends HTMLElement {
+var MnChart = class extends HTMLElement {
   static get observedAttributes() {
     return ["type", "data", "options", "width", "height"];
   }
@@ -165,6 +166,6 @@ class MnChart extends HTMLElement {
     this._charts = null;
     this._init();
   }
-}
+};
 customElements.define("mn-chart", MnChart);
 //# sourceMappingURL=mn-chart.js.map

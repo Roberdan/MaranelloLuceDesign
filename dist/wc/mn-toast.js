@@ -1,11 +1,12 @@
-const _base = new URL(".", import.meta.url).href;
+// src/wc/mn-toast.js
+var _base = new URL(".", import.meta.url).href;
 function cssLink(path) {
   const link = document.createElement("link");
   link.rel = "stylesheet";
   link.href = new URL(path, _base).href;
   return link;
 }
-class MnToast extends HTMLElement {
+var MnToast = class extends HTMLElement {
   static get observedAttributes() {
     return ["title", "message", "type", "duration"];
   }
@@ -95,6 +96,6 @@ class MnToast extends HTMLElement {
     this._toast.classList.add("mn-toast--removing");
     setTimeout(() => this.remove(), 300);
   }
-}
+};
 customElements.define("mn-toast", MnToast);
 //# sourceMappingURL=mn-toast.js.map

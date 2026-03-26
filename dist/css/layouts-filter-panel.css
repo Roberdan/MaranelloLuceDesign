@@ -65,6 +65,7 @@
     height: 8px;
     border-radius: 50%;
     flex-shrink: 0;
+    background-color: var(--mn-dot-color);
   }
 
   .mn-filter-panel__label {

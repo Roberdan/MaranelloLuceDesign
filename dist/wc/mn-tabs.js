@@ -1,20 +1,21 @@
-const _base = new URL(".", import.meta.url).href;
+// src/wc/mn-tabs.js
+var _base = new URL(".", import.meta.url).href;
 function cssLink(path) {
   const link = document.createElement("link");
   link.rel = "stylesheet";
   link.href = new URL(path, _base).href;
   return link;
 }
-class MnTab extends HTMLElement {
+var MnTab = class extends HTMLElement {
   static get observedAttributes() {
     return ["label"];
   }
   constructor() {
     super();
   }
-}
+};
 customElements.define("mn-tab", MnTab);
-class MnTabs extends HTMLElement {
+var MnTabs = class extends HTMLElement {
   static get observedAttributes() {
     return ["active"];
   }
@@ -127,6 +128,6 @@ class MnTabs extends HTMLElement {
     this._select(next);
     this._bar.querySelectorAll(".mn-tabs__tab")[next]?.focus();
   }
-}
+};
 customElements.define("mn-tabs", MnTabs);
 //# sourceMappingURL=mn-tabs.js.map

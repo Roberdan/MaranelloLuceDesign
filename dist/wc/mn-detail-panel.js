@@ -1,4 +1,5 @@
-let _engine = null;
+// src/wc/mn-detail-panel.js
+var _engine = null;
 function getEngine() {
   if (_engine) return _engine;
   if (globalThis.Maranello) {
@@ -7,14 +8,14 @@ function getEngine() {
   }
   return null;
 }
-const _base = new URL(".", import.meta.url).href;
+var _base = new URL(".", import.meta.url).href;
 function cssLink(path) {
   const link = document.createElement("link");
   link.rel = "stylesheet";
   link.href = new URL(path, _base).href;
   return link;
 }
-class MnDetailPanel extends HTMLElement {
+var MnDetailPanel = class extends HTMLElement {
   static get observedAttributes() {
     return ["title", "sections", "open"];
   }
@@ -157,6 +158,6 @@ class MnDetailPanel extends HTMLElement {
     this._mo?.disconnect();
     this._mo = null;
   }
-}
+};
 customElements.define("mn-detail-panel", MnDetailPanel);
 //# sourceMappingURL=mn-detail-panel.js.map

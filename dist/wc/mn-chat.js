@@ -1,4 +1,5 @@
-let _engine = null;
+// src/wc/mn-chat.js
+var _engine = null;
 async function resolveEngine() {
   if (_engine) return _engine;
   if (globalThis.Maranello) {
@@ -8,16 +9,16 @@ async function resolveEngine() {
   console.warn("[mn-chat] No engine found");
   return null;
 }
-const _base = new URL(".", import.meta.url).href;
+var _base = new URL(".", import.meta.url).href;
 function cssLink(path) {
   const link = document.createElement("link");
   link.rel = "stylesheet";
   link.href = new URL(path, _base).href;
   return link;
 }
-class MnChat extends HTMLElement {
+var MnChat = class extends HTMLElement {
   static get observedAttributes() {
-    return ["title", "welcome-message", "avatar", "quick-actions"];
+    return ["title", "welcome-message", "avatar", "quick-actions", "mode"];
   }
   constructor() {
     super();
@@ -65,7 +66,9 @@ class MnChat extends HTMLElement {
   async _init() {
     const M = await resolveEngine();
     if (!M?.aiChat) return;
+    const mode = this.getAttribute("mode");
     this._ctrl = M.aiChat(this._container, {
+      mode: mode === "embedded" ? "embedded" : "fab",
       title: this.getAttribute("title") || "Chat",
       welcomeMessage: this.getAttribute("welcome-message") || void 0,
       avatar: this.getAttribute("avatar") || void 0,
@@ -93,6 +96,6 @@ class MnChat extends HTMLElement {
     this._container.innerHTML = "";
     await this._init();
   }
-}
+};
 customElements.define("mn-chat", MnChat);
 //# sourceMappingURL=mn-chat.js.map

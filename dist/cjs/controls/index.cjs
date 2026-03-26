@@ -1,4 +1,4 @@
-/* Maranello Luce Design v5.14.1 | MPL-2.0 | github.com/Roberdan/MaranelloLuceDesign */
+/* Maranello Luce Design v5.15.2 | MPL-2.0 | github.com/Roberdan/MaranelloLuceDesign */
 "use strict";
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;

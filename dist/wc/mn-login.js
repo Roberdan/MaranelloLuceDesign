@@ -1,4 +1,5 @@
-let _engine = null;
+// src/wc/mn-login.js
+var _engine = null;
 async function resolveEngine() {
   if (_engine) return _engine;
   if (globalThis.Maranello) {
@@ -8,14 +9,14 @@ async function resolveEngine() {
   console.warn("[mn-login] No engine found");
   return null;
 }
-const _base = new URL(".", import.meta.url).href;
+var _base = new URL(".", import.meta.url).href;
 function cssLink(path) {
   const link = document.createElement("link");
   link.rel = "stylesheet";
   link.href = new URL(path, _base).href;
   return link;
 }
-class MnLogin extends HTMLElement {
+var MnLogin = class extends HTMLElement {
   static get observedAttributes() {
     return ["health-url", "title", "subtitle"];
   }
@@ -78,6 +79,6 @@ class MnLogin extends HTMLElement {
     this._container.innerHTML = "";
     await this._init();
   }
-}
+};
 customElements.define("mn-login", MnLogin);
 //# sourceMappingURL=mn-login.js.map

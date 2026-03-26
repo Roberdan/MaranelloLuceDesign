@@ -26,6 +26,7 @@ export interface SliderOptions {
 export interface SliderController {
     getValue: () => number;
     setValue: (v: number) => void;
+    destroy: () => void;
 }
 export interface ToastOptions {
     title?: string;
@@ -40,6 +41,7 @@ export interface ModalElement extends HTMLElement {
 export interface CommandPaletteController {
     open: () => void;
     close: () => void;
+    destroy: () => void;
 }
 export interface CruiseLeverOptions {
     positions?: string[];

@@ -1,11 +1,12 @@
-const _base = new URL(".", import.meta.url).href;
+// src/wc/mn-command-palette.js
+var _base = new URL(".", import.meta.url).href;
 function cssLink(path) {
   const link = document.createElement("link");
   link.rel = "stylesheet";
   link.href = new URL(path, _base).href;
   return link;
 }
-class MnCommandPalette extends HTMLElement {
+var MnCommandPalette = class extends HTMLElement {
   static get observedAttributes() {
     return ["items", "placeholder"];
   }
@@ -190,6 +191,6 @@ class MnCommandPalette extends HTMLElement {
     rows.forEach((r, i) => r.classList.toggle("mn-cp__item--focused", i === this._focusIdx));
     rows[this._focusIdx]?.scrollIntoView({ block: "nearest" });
   }
-}
+};
 customElements.define("mn-command-palette", MnCommandPalette);
 //# sourceMappingURL=mn-command-palette.js.map

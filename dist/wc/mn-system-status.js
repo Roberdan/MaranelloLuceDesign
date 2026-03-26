@@ -1,11 +1,12 @@
-const _base = new URL(".", import.meta.url).href;
+// src/wc/mn-system-status.js
+var _base = new URL(".", import.meta.url).href;
 function cssLink(path) {
   const link = document.createElement("link");
   link.rel = "stylesheet";
   link.href = new URL(path, _base).href;
   return link;
 }
-class MnSystemStatus extends HTMLElement {
+var MnSystemStatus = class extends HTMLElement {
   static get observedAttributes() {
     return ["services", "poll-interval", "version", "environment"];
   }
@@ -199,6 +200,6 @@ class MnSystemStatus extends HTMLElement {
       this._pollTimer = null;
     }
   }
-}
+};
 customElements.define("mn-system-status", MnSystemStatus);
 //# sourceMappingURL=mn-system-status.js.map

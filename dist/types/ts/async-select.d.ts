@@ -29,6 +29,7 @@ export declare class AsyncSelect<T = unknown> {
     private timer?;
     private openState;
     private requestId;
+    private destroyed;
     constructor(container: HTMLElement, options: AsyncSelectOptions<T>);
     open(): void;
     close(): void;

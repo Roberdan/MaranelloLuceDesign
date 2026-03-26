@@ -1,11 +1,12 @@
-const _base = new URL(".", import.meta.url).href;
+// src/wc/mn-modal.js
+var _base = new URL(".", import.meta.url).href;
 function cssLink(path) {
   const link = document.createElement("link");
   link.rel = "stylesheet";
   link.href = new URL(path, _base).href;
   return link;
 }
-class MnModal extends HTMLElement {
+var MnModal = class extends HTMLElement {
   static get observedAttributes() {
     return ["open", "title"];
   }
@@ -133,6 +134,6 @@ class MnModal extends HTMLElement {
       this._trapHandler = null;
     }
   }
-}
+};
 customElements.define("mn-modal", MnModal);
 //# sourceMappingURL=mn-modal.js.map

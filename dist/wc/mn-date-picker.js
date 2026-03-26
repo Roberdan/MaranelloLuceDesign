@@ -1,4 +1,5 @@
-let _engine = null;
+// src/wc/mn-date-picker.js
+var _engine = null;
 function getEngine() {
   if (_engine) return _engine;
   if (globalThis.Maranello) {
@@ -7,14 +8,14 @@ function getEngine() {
   }
   return null;
 }
-const _base = new URL(".", import.meta.url).href;
+var _base = new URL(".", import.meta.url).href;
 function cssLink(path) {
   const link = document.createElement("link");
   link.rel = "stylesheet";
   link.href = new URL(path, _base).href;
   return link;
 }
-class MnDatePicker extends HTMLElement {
+var MnDatePicker = class extends HTMLElement {
   static get observedAttributes() {
     return ["value", "min", "max", "disabled-dates"];
   }
@@ -137,6 +138,6 @@ class MnDatePicker extends HTMLElement {
     this._mo?.disconnect();
     this._mo = null;
   }
-}
+};
 customElements.define("mn-date-picker", MnDatePicker);
 //# sourceMappingURL=mn-date-picker.js.map
