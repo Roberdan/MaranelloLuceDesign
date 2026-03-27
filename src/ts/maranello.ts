@@ -247,5 +247,4 @@ M.charts = { sparkline, donut, barChart, areaChart, radar, halfGauge, bubble, li
 
 // W3/W4 draw primitives and map internals
 registerExtras(M);
-
 export { M as Maranello };
