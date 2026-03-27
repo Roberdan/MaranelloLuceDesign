@@ -22,6 +22,9 @@
   "peerDependencies": {
     "@maranello/tokens": "^6.0.0"
   },
+  "devDependencies": {
+    "@maranello/tokens": "workspace:*"
+  },
   "files": ["dist", "src"],
   "scripts": {
     "build": "node esbuild.config.mjs && tsc --emitDeclarationOnly",
