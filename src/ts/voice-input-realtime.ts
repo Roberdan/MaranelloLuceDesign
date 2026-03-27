@@ -55,6 +55,7 @@ export function createRealtimeAdapter(opts: RealtimeAdapterOptions): VoiceAdapte
   var apiKey = opts.apiKey || '';
   var model = opts.model || DEFAULT_MODEL;
   var wsUrl = opts.wsUrl || DEFAULT_WS_URL;
+  var intentionalClose = false;
 
   function sendJson(data: Record<string, unknown>): void {
     if (ws && ws.readyState === 1) {
@@ -91,6 +92,7 @@ export function createRealtimeAdapter(opts: RealtimeAdapterOptions): VoiceAdapte
 
   function closeWebSocket(): void {
     if (ws) {
+      intentionalClose = true;
       ws.onopen = null;
       ws.onmessage = null;
       ws.onerror = null;
@@ -107,6 +109,7 @@ export function createRealtimeAdapter(opts: RealtimeAdapterOptions): VoiceAdapte
 
     start: function start(config: VoiceStartConfig): void {
       closeWebSocket();
+      intentionalClose = false;
 
       var url = buildWsUrl(wsUrl, model);
       var protocols = apiKey
@@ -143,6 +146,7 @@ export function createRealtimeAdapter(opts: RealtimeAdapterOptions): VoiceAdapte
       };
 
       ws.onclose = function (): void {
+        if (intentionalClose) return;
         if (events && typeof events.onStateChange === 'function') {
           events.onStateChange('error');
         }

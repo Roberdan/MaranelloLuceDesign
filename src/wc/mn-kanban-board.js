@@ -44,7 +44,7 @@ class MnKanbanBoard extends HTMLElement {
     this._mo = null;
 
     const link1 = cssLink('../css/tokens.css');
-    const link2 = cssLink('../css/layouts-kanban-board.css');
+    const link2 = cssLink('../css/components-kanban.css');
 
     this._container = document.createElement('div');
     this._container.className = 'mn-wc-root';
@@ -85,7 +85,7 @@ class MnKanbanBoard extends HTMLElement {
   }
 
   getState() {
-    return this._ctrl?.getState?.() ?? { columns: [] };
+    return this._ctrl?.getState?.() ?? { columns: [], cards: [] };
   }
 
   /* -- Internals --------------------------------------------------- */

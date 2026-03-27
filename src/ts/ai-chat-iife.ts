@@ -46,6 +46,6 @@ export function aiChat(container: HTMLElement, opts?: Partial<AIChatOptions>): A
     setTyping: (show) => state.setTyping!(show),
     clear: () => state.clear!(),
     showPulse: () => { els.pulse.classList.add('mn-chat-fab__pulse--active'); },
-    destroy: () => { container.innerHTML = ''; },
+    destroy: () => { if (state.destroyMessages) state.destroyMessages(); container.innerHTML = ''; },
   };
 }

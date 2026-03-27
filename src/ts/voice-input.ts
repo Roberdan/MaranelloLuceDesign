@@ -130,8 +130,14 @@ export function voiceManager(opts: VoiceManagerOptions): VoiceManagerController 
     if (state === 'idle') return;
 
     clearRecoveryTimer();
+    var wasListening = state === 'listening';
     adapter.stop();
-    setState('idle');
+    if (wasListening) {
+      setState('processing');
+      setState('idle');
+    } else {
+      setState('idle');
+    }
   }
 
   function toggle(): void {
@@ -151,6 +157,7 @@ export function voiceManager(opts: VoiceManagerOptions): VoiceManagerController 
       adapter.stop();
       setState('idle');
     }
+    adapter.destroy();
     adapter = next;
   }
 
@@ -159,6 +166,7 @@ export function voiceManager(opts: VoiceManagerOptions): VoiceManagerController 
       adapter.stop();
     }
     clearRecoveryTimer();
+    adapter.destroy();
     state = 'idle';
   }
 

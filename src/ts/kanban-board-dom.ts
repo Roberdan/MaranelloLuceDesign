@@ -1,8 +1,5 @@
 /** Maranello Luce Design - Kanban board DOM rendering */
-import { escapeHtml } from './core/utils';
 import type { KanbanColumn, KanbanCard } from './kanban-board';
-
-function esc(s: string): string { return escapeHtml(s); }
 
 /** Render the full kanban board into a container element. */
 export function renderBoard(
@@ -17,7 +14,7 @@ export function renderBoard(
     const header = document.createElement('div');
     header.className = 'mn-kanban__column-header';
     const titleSpan = document.createElement('span');
-    titleSpan.textContent = esc(col.title);
+    titleSpan.textContent = (col.title);
     const colCards = cards.filter(c => c.columnId === col.id);
     const countBadge = document.createElement('span');
     countBadge.className = 'mn-kanban__column-count';
@@ -51,12 +48,12 @@ export function renderCard(card: KanbanCard): HTMLElement {
   }
   const title = document.createElement('div');
   title.className = 'mn-kanban__card-title';
-  title.textContent = esc(card.title);
+  title.textContent = (card.title);
   el.appendChild(title);
   if (card.subtitle) {
     const sub = document.createElement('div');
     sub.className = 'mn-kanban__card-subtitle';
-    sub.textContent = esc(card.subtitle);
+    sub.textContent = (card.subtitle);
     el.appendChild(sub);
   }
   if (card.tags && card.tags.length > 0) {
@@ -65,7 +62,7 @@ export function renderCard(card: KanbanCard): HTMLElement {
     for (const tag of card.tags) {
       const t = document.createElement('span');
       t.className = 'mn-kanban__card-tag';
-      t.textContent = esc(tag);
+      t.textContent = (tag);
       wrap.appendChild(t);
     }
     el.appendChild(wrap);
@@ -81,7 +78,7 @@ export function updateCardDom(
   if (!cardEl) { console.warn('kanban: card not found in DOM: ' + cardId); return; }
   if (updates.title !== undefined) {
     const titleEl = cardEl.querySelector('.mn-kanban__card-title');
-    if (titleEl) titleEl.textContent = esc(updates.title);
+    if (titleEl) titleEl.textContent = (updates.title);
   }
   if (updates.subtitle !== undefined) {
     let subEl = cardEl.querySelector('.mn-kanban__card-subtitle');
@@ -93,7 +90,7 @@ export function updateCardDom(
         if (titleEl && titleEl.nextSibling) cardEl.insertBefore(subEl, titleEl.nextSibling);
         else cardEl.appendChild(subEl);
       }
-      subEl.textContent = esc(updates.subtitle);
+      subEl.textContent = (updates.subtitle);
     } else if (subEl) { subEl.remove(); }
   }
   if (updates.priority !== undefined) {
@@ -111,7 +108,7 @@ export function updateCardDom(
       for (const tag of updates.tags) {
         const t = document.createElement('span');
         t.className = 'mn-kanban__card-tag';
-        t.textContent = esc(tag);
+        t.textContent = (tag);
         wrap.appendChild(t);
       }
     } else if (wrap) { wrap.remove(); }

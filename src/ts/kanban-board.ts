@@ -85,6 +85,23 @@ export function kanbanBoard(
     console.warn('kanban: cards array is empty — board has no cards');
   }
 
+  /** Reorder internal cards array to match DOM position after a move. */
+  function reorderCard(cardId: string, toCol: string, position: number): void {
+    const idx = cards.findIndex(c => c.id === cardId);
+    if (idx === -1) return;
+    const [moved] = cards.splice(idx, 1);
+    /* Find insertion index among cards in the target column */
+    const colCards = cards.filter(c => c.columnId === toCol);
+    const insertAfter = position >= 0 && position < colCards.length
+      ? colCards[position] : null;
+    if (insertAfter) {
+      const targetIdx = cards.indexOf(insertAfter);
+      cards.splice(targetIdx, 0, moved);
+    } else {
+      cards.push(moved);
+    }
+  }
+
   /* Render initial DOM */
   renderBoard(el, columns, cards);
 
@@ -95,6 +112,7 @@ export function kanbanBoard(
       const card = cards.find(c => c.id === cardId);
       if (card) {
         card.columnId = toCol;
+        reorderCard(cardId, toCol, position);
       }
       /* Update DOM */
       moveCardDom(el, cardId, toCol, position);
@@ -155,6 +173,7 @@ export function kanbanBoard(
       }
       const fromCol = card.columnId;
       card.columnId = toCol;
+      reorderCard(cardId, toCol, position ?? -1);
       moveCardDom(el, cardId, toCol, position);
       if (opts.onMove) opts.onMove(cardId, fromCol, toCol, position ?? -1);
     },
@@ -165,12 +184,27 @@ export function kanbanBoard(
         console.warn('kanban: card not found for update: ' + cardId);
         return;
       }
+      /* If columnId changed, delegate to moveCard for DOM + state consistency */
+      if (updates.columnId !== undefined && updates.columnId !== card.columnId) {
+        const toCol = updates.columnId;
+        /* Apply non-columnId updates first */
+        if (updates.title !== undefined) card.title = updates.title;
+        if (updates.subtitle !== undefined) card.subtitle = updates.subtitle;
+        if (updates.tags !== undefined) card.tags = updates.tags ? [...updates.tags] : undefined;
+        if (updates.priority !== undefined) card.priority = updates.priority;
+        updateCardDom(el, cardId, updates);
+        const fromCol = card.columnId;
+        card.columnId = toCol;
+        reorderCard(cardId, toCol, -1);
+        moveCardDom(el, cardId, toCol);
+        if (opts.onMove) opts.onMove(cardId, fromCol, toCol, -1);
+        return;
+      }
       /* Apply updates to internal state */
       if (updates.title !== undefined) card.title = updates.title;
       if (updates.subtitle !== undefined) card.subtitle = updates.subtitle;
       if (updates.tags !== undefined) card.tags = updates.tags ? [...updates.tags] : undefined;
       if (updates.priority !== undefined) card.priority = updates.priority;
-      if (updates.columnId !== undefined) card.columnId = updates.columnId;
       /* Update DOM */
       updateCardDom(el, cardId, updates);
     },

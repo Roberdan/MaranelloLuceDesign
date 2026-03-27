@@ -82,13 +82,8 @@ export function initMessages(state: ChatUIState, els: ChatUIElements, opts: Requ
   }
 
   function resetInputHeight(): void { inputEl.style.height = 'auto'; inputEl.rows = 1; }
-  function autoResize(): void {
-    inputEl.style.height = 'auto';
-    inputEl.style.height = Math.min(inputEl.scrollHeight, 80) + 'px';
-  }
-  function updateSendVisibility(): void {
-    sendBtn.classList.toggle('mn-chat-panel__send--visible', inputEl.value.trim().length > 0);
-  }
+  function autoResize(): void { inputEl.style.height = 'auto'; inputEl.style.height = Math.min(inputEl.scrollHeight, 80) + 'px'; }
+  function updateSendVisibility(): void { sendBtn.classList.toggle('mn-chat-panel__send--visible', inputEl.value.trim().length > 0); }
 
   function handleResult(result: HandlerResult): void {
     if (!result) return;
@@ -196,15 +191,21 @@ export function initMessages(state: ChatUIState, els: ChatUIElements, opts: Requ
             wrap.classList.remove('mn-voice--listening', 'mn-voice--processing', 'mn-voice--error');
             if (vs !== 'idle') wrap.classList.add('mn-voice--' + vs);
             state.isListening = vs === 'listening';
+            if (typeof opts.onVoice === 'function') opts.onVoice(state.isListening);
           },
         },
       })
     : null;
 
   function toggleVoice(): void {
-    if (voiceMgr) { voiceMgr.toggle(); }
-    else { state.isListening = !state.isListening; voiceBtn.classList.toggle('mn-chat-voice--active', state.isListening); }
-    if (typeof opts.onVoice === 'function') opts.onVoice(state.isListening);
+    if (voiceMgr) {
+      voiceMgr.toggle();
+      /* onVoice is called from the onStateChange handler above */
+    } else {
+      state.isListening = !state.isListening;
+      voiceBtn.classList.toggle('mn-chat-voice--active', state.isListening);
+      if (typeof opts.onVoice === 'function') opts.onVoice(state.isListening);
+    }
   }
 
   function clear(): void {
@@ -237,6 +238,9 @@ export function initMessages(state: ChatUIState, els: ChatUIElements, opts: Requ
   state.setTyping = setTyping;
   state.clear = clear;
   state.toggleAgentGrid = toggleAgentGrid;
+  state.destroyMessages = function () {
+    if (voiceMgr) { voiceMgr.destroy(); voiceMgr = null; }
+  };
   state.onDocumentClick = (e: MouseEvent) => {
     if (!state.isAgentGridOpen) return;
     if (!(e.target instanceof Node) || !els.panel.contains(e.target)) return;
