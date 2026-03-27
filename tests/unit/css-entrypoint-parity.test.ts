@@ -1,13 +1,13 @@
 /**
- * Verify that index.css and maranello.css resolve to the same set of CSS files.
- * index.css uses direct imports; maranello.css uses barrel aggregators.
- * Both must include every leaf CSS file in src/css/.
+ * Verify that packages/elements/src/css/index.css includes all expected CSS files.
+ * index.css is the single entrypoint for @maranello/elements component styles.
+ * Token imports reference @maranello/tokens/css (external package, not a local file).
  */
 import { describe, it, expect } from 'vitest';
 import { readFileSync, existsSync } from 'node:fs';
 import { join, resolve, relative } from 'node:path';
 
-const CSS_SRC = join(import.meta.dirname, '../../src/css');
+const CSS_SRC = join(import.meta.dirname, '../../packages/elements/src/css');
 
 /** Extract @import file references from a CSS file (non-recursive). */
 function extractImports(filePath: string): string[] {

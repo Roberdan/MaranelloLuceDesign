@@ -2,44 +2,46 @@
 
 Ferrari Luce-inspired design system for AI agent dashboards. Zero runtime dependencies. 5 adaptive themes. WCAG 2.2 AA. Framework-agnostic.
 
-**v5.15.2** | [Live Demo](https://roberdan.github.io/convergio-design/) | [CHANGELOG](CHANGELOG.md)
+**v6.0.0** | [Live Demo](https://roberdan.github.io/convergio-design/) | [CHANGELOG](CHANGELOG.md)
 
 ## Install
 
 ```bash
-npm install maranello-luce-design-business
+npm install @maranello/tokens @maranello/elements
 ```
 
 ## Quick Start
 
-### 1. CSS (one import, full system)
+### 1. CSS (tokens + elements)
 
 ```css
-/* All tokens, themes, components, responsive, layouts — 506KB */
-@import 'maranello-luce-design-business/css';
-```
+/* Design tokens + 5 themes */
+@import '@maranello/tokens/css';
 
-Or cherry-pick individual files:
+/* Component styles */
+@import '@maranello/elements/css';
 
-```css
-@import 'maranello-luce-design-business/css/tokens.css';
-@import 'maranello-luce-design-business/css/components-buttons-stats.css';
+/* Optional: shadcn/ui bridge */
+@import '@maranello/tokens/bridge-shadcn';
 ```
 
 ### 2. JS (ESM, tree-shakeable)
 
 ```ts
-import { sparkline, palette, FerrariGauge, toast } from 'maranello-luce-design-business';
-import { AppShellController, StateScaffold } from 'maranello-luce-design-business';
-import { gantt } from 'maranello-luce-design-business/gantt';
-import { barChart, donut } from 'maranello-luce-design-business/charts';
+// Tokens package — theme API
+import { setTheme, cycleTheme, palette } from '@maranello/tokens';
+
+// Elements package — components
+import { sparkline, FerrariGauge, toast } from '@maranello/elements';
+import { gantt } from '@maranello/elements/gantt';
+import { barChart, donut } from '@maranello/elements/charts';
 ```
 
 ### 3. Web Components (zero boilerplate)
 
 ```html
 <script type="module">
-  import 'maranello-luce-design-business/wc';
+  import '@maranello/elements/register-all';
 </script>
 
 <mn-gauge value="72" unit="%"></mn-gauge>
@@ -47,11 +49,19 @@ import { barChart, donut } from 'maranello-luce-design-business/charts';
 <mn-data-table columns='[{"key":"name","label":"Name"}]' data='[{"name":"Alpha"}]'></mn-data-table>
 ```
 
+Per-element tree-shaking:
+
+```ts
+import '@maranello/elements/wc/mn-gauge';
+import '@maranello/elements/wc/mn-gantt';
+```
+
 ### 4. IIFE (CDN, no bundler)
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Roberdan/convergio-design@v5.15.2/dist/css/index.css">
-<script src="https://cdn.jsdelivr.net/gh/Roberdan/convergio-design@v5.15.2/dist/iife/maranello.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@maranello/tokens@6.0.0/dist/css/index.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@maranello/elements@6.0.0/dist/css/index.css">
+<script src="https://cdn.jsdelivr.net/npm/@maranello/elements@6.0.0/dist/iife/maranello.min.js"></script>
 <script>
   Maranello.sparkline(document.getElementById('chart'), [10, 20, 15, 30]);
   new Maranello.FerrariGauge(document.getElementById('gauge'));
@@ -60,23 +70,29 @@ import { barChart, donut } from 'maranello-luce-design-business/charts';
 
 ## Architecture
 
-Three independent layers. Use together or separately.
+Two packages in a pnpm monorepo. Use together or separately.
 
-| Layer | Import | What you get |
+| Package | Import | What you get |
 |---|---|---|
-| CSS-only | `maranello-luce-design-business/css` | Tokens, 5 themes, 120+ component stylesheets, responsive breakpoints |
-| Headless JS | `maranello-luce-design-business` | 150+ exports: charts, gauges, controls, forms, data binding, runtime |
-| Web Components | `maranello-luce-design-business/wc` | 35 `mn-*` tags that self-register, auto-resize, and emit DOM events |
+| `@maranello/tokens` | `@maranello/tokens` | CSS variables, 5 themes, setTheme/cycleTheme/palette, shadcn/ui bridge |
+| `@maranello/elements` | `@maranello/elements` | 100+ exports: charts, gauges, controls, forms, data binding + 31 `mn-*` WC tags |
 
-### Package Exports
+### @maranello/tokens Exports
 
 | Path | Content |
 |---|---|
-| `.` | Main ESM/CJS entry (150+ exports) with TypeScript types |
-| `./css` | Full CSS system (tokens + themes + components + responsive + integration) |
-| `./css/*` | Individual CSS files for selective imports |
-| `./wc` | All 35 Web Component tags with auto-registration |
-| `./wc/*` | Individual Web Components |
+| `.` | Theme API (setTheme, cycleTheme, palette) with TypeScript types |
+| `./css` | Full token + theme CSS system |
+| `./bridge-shadcn` | shadcn/ui automatic color integration |
+
+### @maranello/elements Exports
+
+| Path | Content |
+|---|---|
+| `.` | Main ESM/CJS entry (100+ exports) with TypeScript types |
+| `./css` | Component CSS (responsive + layouts) |
+| `./register-all` | All 31 Web Component tags with auto-registration |
+| `./wc/*` | Individual Web Components (per-element tree-shaking) |
 | `./charts` | Chart sub-package (sparkline, donut, bar, area, radar, bubble, etc.) |
 | `./gantt` | Gantt chart |
 | `./gauge` | FerrariGauge engine |
@@ -120,7 +136,7 @@ All JS APIs are **imperative DOM-first**: acquire a DOM ref, init on mount, dest
 
 ```tsx
 import { useRef, useEffect } from 'react';
-import { gantt } from 'maranello-luce-design-business/gantt';
+import { gantt } from '@maranello/elements/gantt';
 
 function GanttView({ tasks }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -137,7 +153,7 @@ function GanttView({ tasks }) {
 ```svelte
 <script>
   import { onMount, onDestroy } from 'svelte';
-  import { gantt } from 'maranello-luce-design-business/gantt';
+  import { gantt } from '@maranello/elements/gantt';
 
   let el; let w;
   onMount(() => { w = gantt(el, tasks); });
@@ -151,7 +167,7 @@ function GanttView({ tasks }) {
 ```vue
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
-import { gantt } from 'maranello-luce-design-business/gantt';
+import { gantt } from '@maranello/elements/gantt';
 
 const el = ref();
 let w;
@@ -176,7 +192,7 @@ const GanttView = dynamic(() => import('./GanttView'), { ssr: false });
 <!-- Works in React, Vue, Svelte, Angular, Astro, plain HTML -->
 <mn-gantt tasks='[{"id":1,"label":"Deploy","start":"2026-01-01","end":"2026-01-15"}]'></mn-gantt>
 <mn-gauge value="72" unit="%" size="fluid"></mn-gauge>
-<mn-state-scaffold state="loading" message="Fetching data..."></mn-state-scaffold>
+<mn-data-table columns='[{"key":"name","label":"Name"}]' data='[{"name":"Alpha"}]'></mn-data-table>
 ```
 
 Web Components self-register, handle resize, and fire standard DOM events. No adapter needed.
@@ -186,7 +202,7 @@ Web Components self-register, handle resize, and fire standard DOM events. No ad
 ```html
 <mn-header-shell id="ops-header"></mn-header-shell>
 <script type="module">
-  import 'maranello-luce-design-business/wc/mn-header-shell';
+  import '@maranello/elements/wc/mn-header-shell';
 
   const shell = document.getElementById('ops-header');
   shell.config = {
@@ -275,7 +291,7 @@ Web Components self-register, handle resize, and fire standard DOM events. No ad
 ##### Imperative API
 
 ```ts
-import { headerShell } from 'maranello-luce-design-business';
+import { headerShell } from '@maranello/elements';
 
 const controller = headerShell(document.getElementById('header-root')!, {
   sections: [
@@ -301,76 +317,9 @@ Maranello is a **client-side** design system. All JS APIs require a DOM (`docume
 - JS/WC must be client-only (`'use client'`, `onMount`, dynamic import with `ssr: false`)
 - Web Components hydrate on the client after page load
 
-## Presentation Runtime
+## App Layout (4-Slot Dashboard Framework)
 
-Schema-driven layout system for dashboards and entity editors.
-
-```
-Consumer App                    Maranello Runtime
-+-------------+                +-----------------+
-| Data fetch  |--schema------->| AppShell        |
-| Biz rules   |--data--------->| ViewRegistry    |
-| Permissions |--actions------->| PanelOrchestrator|
-| Navigation  |--callbacks---->| DashboardRenderer|
-+-------------+                | FacetWorkbench  |
-                               | EntityWorkbench |
-                               | StateScaffold   |
-                               +-----------------+
-```
-
-```js
-// 1. Create shell
-const shell = new Maranello.AppShellController(document.getElementById('app'), {
-  layout: 'side-detail',
-});
-
-// 2. Register views
-const registry = Maranello.ViewRegistry.getInstance();
-registry.register({
-  id: 'dashboard',
-  title: 'Dashboard',
-  defaultPlacement: 'page',
-  factory: (el, data) => new Maranello.DashboardRenderer(el, { schema, data }),
-});
-
-// 3. Orchestrate (pass shell for integrated slot rendering)
-const nav = new Maranello.NavigationModel();
-const orch = new Maranello.PanelOrchestrator(registry, nav, shell);
-orch.open('dashboard', 'page', await fetchData());
-
-// 4. State management
-const scaffold = new Maranello.StateScaffold(container, { state: 'loading' });
-// On data loaded:
-scaffold.setState('ready');
-// On degraded (some data missing):
-scaffold.setState('partial', 'Historical data unavailable');
-```
-
-### StateScaffold States
-
-| State | When | Consumer action |
-|---|---|---|
-| `loading` | Initial fetch in progress | Show immediately |
-| `ready` | Data loaded successfully | Content renders, status hidden |
-| `empty` | Fetch succeeded, zero records | Add CTA via `onAction` |
-| `error` | Fetch failed | Provide `onRetry` callback |
-| `partial` | Degraded — some data unavailable | Content renders with warning banner |
-| `no-results` | Filters applied, zero matches | Offer "Clear filters" via `onAction` |
-
-### Layout Modes
-
-| Mode | Use case |
-|---|---|
-| `full` | Single page, landing, login |
-| `split` | Master-detail, compare views |
-| `stacked` | Mobile-first flows, wizards |
-| `docked-bottom` | Data + timeline, chat + canvas |
-| `dual-panel` | Side-by-side editors, diff views |
-| `side-detail` | Full apps with nav + drill-in |
-
-## App Layout (Simple Dashboard Framework)
-
-Lightweight alternative to AppShellController — 4-slot CSS grid with `:has()` auto-collapse + state machine.
+4-slot CSS grid with `:has()` auto-collapse + state machine.
 
 ```html
 <!-- Option A: auto-init layout on DOMContentLoaded (add data-mn-auto-layout) -->
@@ -468,7 +417,7 @@ Maranello ships with **NaSra**, an AI agent that knows every token, theme, WCAG 
 **Use NaSra in your project** (add to your `CLAUDE.md`):
 
 ```
-@node_modules/maranello-luce-design-business/.github/agents/NaSra.agent.md
+@node_modules/@maranello/elements/.github/agents/NaSra.agent.md
 ```
 
 NaSra covers: adaptive token rules, all 5 themes, WCAG 2.2 AA, color blindness prevention, responsive checklist, CI constitution, v5.0.0 breaking changes.
@@ -496,11 +445,11 @@ Read tokens at runtime: `Maranello.palette()` returns all semantic tokens live.
 ## Development
 
 ```bash
-npm run build          # Full build: ESM + CJS + IIFE + CSS + WC + fonts + types
-npm run test:unit      # Vitest unit tests (1047 tests)
-npm run test:e2e       # Playwright E2E
-npm run dev            # Demo server at localhost:3000
-npx tsc --noEmit       # Type-check
+pnpm build             # Full build: ESM + CJS + IIFE + CSS + WC + fonts + types
+pnpm test:unit         # Vitest unit tests
+pnpm test:e2e          # Playwright E2E
+pnpm dev               # Demo server at localhost:3000
+pnpm typecheck         # Type-check all packages
 ```
 
 ## License

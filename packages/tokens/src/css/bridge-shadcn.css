@@ -1,0 +1,35 @@
+/* Maranello → shadcn/ui token bridge
+ * Import after @maranello/tokens/css to map Ferrari Luce tokens to shadcn variables.
+ * This allows shadcn/ui components to use Maranello theme colors automatically.
+ */
+:root,
+[data-theme] {
+  --background: var(--mn-surface);
+  --foreground: var(--mn-text);
+  --card: var(--mn-surface);
+  --card-foreground: var(--mn-text);
+  --popover: var(--mn-surface-raised);
+  --popover-foreground: var(--mn-text);
+  --primary: var(--mn-accent);
+  --primary-foreground: var(--mn-accent-text);
+  --secondary: var(--mn-surface-raised);
+  --secondary-foreground: var(--mn-text-tertiary);
+  --muted: var(--mn-surface-raised);
+  --muted-foreground: var(--mn-text-muted);
+  --accent: var(--mn-accent);
+  --accent-foreground: var(--mn-accent-text);
+  --destructive: var(--mn-error);
+  --destructive-foreground: var(--mn-text-inverse);
+  --border: var(--mn-border);
+  --input: var(--mn-surface-input);
+  --ring: var(--mn-focus-ring);
+  --radius: var(--radius-md);
+  --sidebar-background: var(--mn-surface);
+  --sidebar-foreground: var(--mn-text);
+  --sidebar-primary: var(--mn-accent);
+  --sidebar-primary-foreground: var(--mn-accent-text);
+  --sidebar-accent: var(--mn-accent);
+  --sidebar-accent-foreground: var(--mn-accent-text);
+  --sidebar-border: var(--mn-border);
+  --sidebar-ring: var(--mn-focus-ring);
+}

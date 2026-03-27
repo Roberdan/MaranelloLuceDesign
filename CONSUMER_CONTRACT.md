@@ -1,7 +1,7 @@
-<!-- v4.15.0 | 2026-03-17 -->
-# Consumer Contract — Maranello Presentation Runtime
+<!-- v6.0.0 | 2026-03-27 -->
+# Consumer Contract — Maranello Design System
 
-Defines what consumer apps own vs what Maranello Runtime owns. Violation = domain leak.
+Defines what consumer apps own vs what `@maranello/tokens` and `@maranello/elements` own. Violation = domain leak.
 
 ---
 
@@ -21,24 +21,28 @@ Consumer code calls Maranello with pre-resolved data + pre-bound callbacks. It n
 
 ---
 
-## What Maranello Owns
+## What @maranello/tokens Owns
+
+| Concern | APIs |
+|---|---|
+| **Design tokens** | CSS custom properties (`--mn-text`, `--mn-surface`, `--mn-accent`, etc.) |
+| **Themes** | 5 themes (Editorial, Nero, Avorio, Colorblind, Sugar), `setTheme()`, `cycleTheme()`, `palette()` |
+| **shadcn/ui bridge** | `@maranello/tokens/bridge-shadcn` — automatic mapping of Maranello tokens to shadcn CSS custom properties |
+
+## What @maranello/elements Owns
 
 | Concern | APIs |
 |---|---|
 | **Rendering** | `DashboardRenderer`, `FacetWorkbench`, `EntityWorkbench`, `DataTable` |
-| **Layout composition** | `AppShellController` — slots: nav, toolbar, filter-bar, main, secondary, detail, bottom, overlay |
-| **Shell / workspace behaviour** | Layout mode switching, sidebar collapse, bottom dock |
-| **Panel orchestration** | `PanelOrchestrator` — open, close, move, swap, stack |
+| **Layout** | `createLayout()` — 4-slot CSS grid with `:has()` auto-collapse + state machine |
 | **Interaction patterns** | Keyboard navigation, drag handles, focus management |
-| **Loading / empty / error states** | `StateScaffold` — 5 states with ARIA live regions |
 | **Responsive adaptation** | CSS breakpoints, `autoResize()`, fluid canvas |
 | **Accessibility** | WCAG 2.2 AA, `<mn-a11y>` FAB, focus trapping in modals |
-| **Themes** | Token system, `setTheme()`, `cycleTheme()` |
 | **Kanban rendering** | `kanbanBoard()` — column/card layout, drag-drop UX, keyboard navigation, WCAG compliance. Consumer owns: card data, action callbacks (`onMove`, `onCardClick`) |
 | **Voice state machine** | `voiceManager()` — voice input lifecycle, adapter framework, aiChat integration. Consumer owns: speech recognition API keys, adapter implementations |
 | **Realtime adapter** | `createRealtimeAdapter()` — GPT Realtime API reference adapter. Consumer owns: `apiKey`, custom `wsUrl`, event handlers |
 
-Consumer code never writes CSS that overrides `mn-app-shell`, `mn-panel-view`, `mn-scaffold`, or `mn-dashboard-*` internals.
+Consumer code never writes CSS that overrides `mn-dashboard-*` internals.
 
 ### Theme Cycling Order
 
@@ -50,50 +54,41 @@ The default theme is Editorial. Consumers testing theme cycling must account for
 
 ---
 
-## How to Use the Runtime
+## How to Use the Packages
 
-### Step 1 — Register Views
+### Step 1 — Import Tokens and Theme API
 
 ```ts
-import { ViewRegistry, DashboardRenderer } from 'maranello-luce-design-business';
+import { setTheme, cycleTheme, palette } from '@maranello/tokens';
+import '@maranello/tokens/css';
+import '@maranello/tokens/bridge-shadcn'; // optional: shadcn/ui integration
 
-const registry = ViewRegistry.getInstance();
-registry.register({
-  id: 'overview',
-  title: 'Overview',
-  defaultPlacement: 'page',
-  factory: (el, data) => new DashboardRenderer(el, { schema, data }),
-});
+setTheme('nero');
+const tokens = palette(); // read live semantic token values
 ```
 
-### Step 2 — Configure the Shell
+### Step 2 — Use Elements
 
 ```ts
-import { AppShellController } from 'maranello-luce-design-business';
+import { DashboardRenderer, kanbanBoard, gantt } from '@maranello/elements';
+import '@maranello/elements/css';
 
-const shell = new AppShellController(document.getElementById('app'), {
-  layout: 'split',
-  sidebarCollapsed: false,
-});
-// Populate slots with nav / toolbar markup as needed
-shell.getSlot('nav').appendChild(myNavEl);
+// Render a dashboard
+const renderer = new DashboardRenderer(container, { schema, data });
+
+// Or use individual components
+const board = kanbanBoard(el, { columns, cards, onMove });
 ```
 
-### Step 3 — Bind Data and Actions via Orchestrator
+### Step 3 — Register Web Components
 
 ```ts
-import { PanelOrchestrator, NavigationModel } from 'maranello-luce-design-business';
+// All 31 WC tags
+import '@maranello/elements/register-all';
 
-const nav = new NavigationModel();
-const orchestrator = new PanelOrchestrator(registry, nav);
-
-// Open a registered view (data passed to factory)
-orchestrator.open('overview', 'page', await fetchOverviewData());
-
-// React to navigation changes
-nav.onNavigate((entry, action) => {
-  console.log('active view:', entry.viewId, action);
-});
+// Or individual components for tree-shaking
+import '@maranello/elements/wc/mn-gauge';
+import '@maranello/elements/wc/mn-gantt';
 ```
 
 ---
@@ -102,53 +97,14 @@ nav.onNavigate((entry, action) => {
 
 | Anti-Pattern | Why it's Wrong | Correct Alternative |
 |---|---|---|
-| `createElement`-heavy rendering inside views | Bypasses Maranello render pipeline; no state scaffold | Use `DashboardRenderer`, `EntityWorkbench`, or `DataTable` |
-| Custom layout CSS targeting `mn-app-shell__*` slots | Breaks layout mode switching and responsive overrides | Configure layout via `AppShellController.setLayout()` |
-| Inline styles on `mn-panel-view` containers | Conflicts with placement logic in `PanelOrchestrator` | Use `sizeHint` in `ViewConfig` |
-| Feature-specific presentation shells (per-app wrappers) | Duplicates shell behaviour; creates inconsistent UX | Extend via `AppShellConfig`; use slots |
-| Calling `openDetailPanel()` directly inside a registered view | Bypasses orchestrator; breaks panel stack | Fire a domain action callback; let orchestrator decide placement |
+| `createElement`-heavy rendering inside views | Bypasses Maranello render pipeline | Use `DashboardRenderer`, `EntityWorkbench`, or `DataTable` |
+| Importing tokens and elements from the same package | Packages are split for tree-shaking | `@maranello/tokens` for theme API, `@maranello/elements` for components |
+| Using primitive CSS tokens in components | Breaks cross-theme compatibility | Use semantic tokens (`--mn-text`, `--mn-surface`, `--mn-accent`) |
 | Hard-coding domain labels in `FacetConfig.type` | `FacetConfig` is generic — type is a UI concept | Keep labels in consumer-owned config objects |
+| Using AppShellController, ViewRegistry, NavigationModel, PanelOrchestrator, StateScaffold | Removed in v6.0.0 | Use framework-native equivalents (Next.js layouts, SvelteKit, etc.) |
 
 ---
 
 ## Migration Guide
 
-### Old Pattern: Manual DOM
-
-```ts
-// ❌ Before — consumer builds DOM
-const panel = document.createElement('div');
-panel.className = 'my-custom-layout';
-document.getElementById('app').appendChild(panel);
-renderMyTable(panel, data);
-```
-
-Problems: no state scaffold, no theme tokens, no responsive handling, no accessibility.
-
-### New Pattern: Schema-Driven Runtime
-
-```ts
-// ✅ After — consumer provides config + data
-registry.register({
-  id: 'my-view',
-  title: 'My View',
-  defaultPlacement: 'page',
-  factory: (el, data) => {
-    return new Maranello.DashboardRenderer(el, { schema: MY_SCHEMA, data });
-  },
-});
-orchestrator.open('my-view', 'page', await fetchData());
-```
-
-Benefits: automatic loading/empty/error states via `StateScaffold`, theme tokens, keyboard navigation, responsive layout, WCAG 2.2 AA.
-
-### Migration Checklist
-
-| Step | Action |
-|---|---|
-| 1 | Move DOM-building code into a `factory` function in `ViewConfig` |
-| 2 | Replace custom layout divs with `AppShellController` + slot assignment |
-| 3 | Replace manual loading spinners with `StateScaffold` |
-| 4 | Replace `openDetailPanel()` calls with `orchestrator.open('detail-view', 'side-panel')` |
-| 5 | Replace filter UI with `FacetWorkbench` + `onFilterChange` callback |
-| 6 | Replace entity forms with `EntityWorkbench` + `onSave` / `onAction` callbacks |
+See [docs/migrations/v6.0.0.md](docs/migrations/v6.0.0.md) for the full v6.0.0 migration guide.

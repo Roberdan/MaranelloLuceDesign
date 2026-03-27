@@ -101,12 +101,12 @@ describe('getAvailableTags', () => {
     expect(tags.length).toBeGreaterThan(0);
   });
 
-  it('includes all 24 expected WC tags', () => {
+  it('includes all 23 expected WC tags', () => {
     // Arrange
     const expected = [
       'mn-a11y', 'mn-chart', 'mn-chat', 'mn-command-palette', 'mn-data-table',
       'mn-date-picker', 'mn-detail-panel', 'mn-ferrari-control', 'mn-funnel',
-      'mn-gantt', 'mn-gauge', 'mn-hbar', 'mn-login', 'mn-map', 'mn-mapbox',
+      'mn-gantt', 'mn-gauge', 'mn-hbar', 'mn-map', 'mn-mapbox',
       'mn-modal', 'mn-okr', 'mn-profile', 'mn-speedometer', 'mn-system-status',
       'mn-tab', 'mn-tabs', 'mn-theme-toggle', 'mn-toast',
     ];

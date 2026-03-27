@@ -5,7 +5,7 @@
 import { mkdirSync, readdirSync, copyFileSync, writeFileSync, existsSync } from 'fs';
 import { join, resolve } from 'path';
 
-const srcDir = 'src/css';
+const srcDir = 'packages/elements/src/css';
 const outDir = 'dist/css';
 
 // Graceful check for lightningcss

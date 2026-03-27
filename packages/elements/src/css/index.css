@@ -1,0 +1,168 @@
+/**
+ * @maranello/elements — CSS aggregator
+ * Import this single file to get all component/layout styles.
+ * Tokens are sourced from the @maranello/tokens peer dependency.
+ * Layer order controls cascade precedence.
+ */
+
+@layer tokens, base, components, controls, forms, charts, layouts, extended, patterns, themes, utilities;
+
+/* ── Layer: tokens (from @maranello/tokens peer) ── */
+@import '@maranello/tokens/css';
+
+/* ── Layer: base ── */
+@import './base.css';
+@import './accessibility.css';
+
+/* ── Layer: components ── */
+@import './components-buttons-stats.css';
+@import './components-dividers-tags-cards.css';
+@import './components-footer-inputs.css';
+@import './components-tables-status.css';
+@import './components-source-card.css';
+@import './components-swot-matrix.css';
+@import './components-token-meter.css';
+@import './components-streaming-text.css';
+@import './components-kpi-scorecard.css';
+@import './components-cohort-grid.css';
+@import './components-agent-cost.css';
+@import './components-business-model-canvas.css';
+@import './components-user-table.css';
+@import './components-section-card.css';
+@import './components-theme-picker.css';
+@import './components-header.css';
+@import './components-header-shell.css';
+@import './components-kanban.css';
+@import './components-voice.css';
+
+/* ── Layer: controls ── */
+@import './controls-advanced-controls.css';
+@import './controls-buttons-switches.css';
+@import './controls-climate-overrides.css';
+@import './controls-cluster-picker.css';
+@import './controls-rotary-slider.css';
+@import './controls-segmented-led.css';
+
+/* ── Layer: forms ── */
+@import './forms-action-buttons.css';
+@import './forms-base.css';
+@import './forms-checkboxes-radios.css';
+@import './forms-file-date-range.css';
+@import './forms-inputs.css';
+@import './forms-special-inputs.css';
+@import './forms-themes-avorio.css';
+@import './forms-themes-misc.css';
+@import './forms-fields-advanced.css';
+@import './forms-date-range.css';
+@import './forms-async-select.css';
+
+/* ── Layer: charts ── */
+@import './charts-base.css';
+@import './charts-gantt-timeline.css';
+@import './charts-gauge-temp-progress.css';
+@import './charts-heatmap-funnel-flip.css';
+@import './charts-live-donut-bar.css';
+@import './charts-themes.css';
+@import './charts-treemap-radar-gantt.css';
+
+/* ── Layer: gauge ── */
+@import './gauge.css';
+
+/* ── Layer: layouts ── */
+@import './layouts-animations.css';
+@import './layouts-capacity-heatmap.css';
+@import './layouts-chat-login.css';
+@import './layouts-chat-fab.css';
+@import './layouts-column.css';
+@import './layouts-command-palette.css';
+@import './layouts-data-table-1.css';
+@import './layouts-data-table-2.css';
+@import './layouts-data-table-compact-1.css';
+@import './layouts-data-table-compact-2.css';
+@import './layouts-data-table-compact-3.css';
+@import './layouts-data-table-panel.css';
+@import './layouts-data-table-v2.css';
+@import './layouts-detail-controls-1.css';
+@import './layouts-detail-controls-2.css';
+@import './layouts-detail-panel-base.css';
+@import './layouts-detail-panel-comments.css';
+@import './layouts-detail-panel-gantt.css';
+@import './layouts-detail-panel.css';
+@import './layouts-detail-panel-extras.css';
+@import './layouts-entity-workbench.css';
+@import './layouts-filter-chips.css';
+@import './layouts-filter-panel.css';
+@import './layouts-search-bar.css';
+@import './layouts-facet-workbench.css';
+@import './layouts-funnel.css';
+@import './layouts-heatmap.css';
+@import './layouts-horizontal-bar-1.css';
+@import './layouts-horizontal-bar-2.css';
+@import './layouts-horizontal-bar-3.css';
+@import './layouts-nav-controls.css';
+@import './layouts-network.css';
+@import './layouts-notification.css';
+@import './layouts-org-tree.css';
+@import './layouts-page-header.css';
+@import './layouts-sidebar.css';
+@import './layouts-sim-panel.css';
+@import './layouts-sim-panel-2.css';
+@import './layouts-toolbar-drawer.css';
+@import './layouts-convergio-toolbar.css';
+@import './layouts-mapbox.css';
+@import './layouts-mesh-mission.css';
+@import './layouts-widget.css';
+@import './layouts-grid-templates.css';
+@import './layouts-search-drawer.css';
+@import './layouts-notification-center.css';
+@import './layouts-decision-matrix.css';
+@import './layouts-nine-box-matrix.css';
+@import './layouts-approval-chain.css';
+@import './layouts-agent-trace.css';
+@import './layouts-audit-log.css';
+@import './layouts-state-scaffold.css';
+@import './layouts-dashboard-renderer.css';
+@import './layouts-app-shell.css';
+@import './layouts-customer-journey.css';
+@import './layouts-admin-shell.css';
+@import './layouts-settings-panel.css';
+@import './layouts-mn-layout.css';
+
+/* ── Layer: extended ── */
+@import './extended-avatar-spinner.css';
+@import './extended-tabs-breadcrumb.css';
+@import './extended-toast-dropdown.css';
+@import './extended-tooltip-modal.css';
+
+/* ── Layer: patterns ── */
+@import './patterns-signal-binnacle.css';
+@import './patterns-strip-pod.css';
+@import './patterns-strip-dashboard.css';
+@import './patterns-activity-feed.css';
+
+/* ── Standalone (no layer group) ── */
+@import './icons.css';
+@import './composition.css';
+@import './animations.css';
+
+/* ── Layer: themes ── */
+@import './themes-base.css';
+@import './themes-avorio-components.css';
+@import './themes-colorblind-components.css';
+@import './themes-colorblind-layouts.css';
+@import './themes-sugar-components.css';
+@import './themes-sugar-colorblind.css';
+
+/* ── Layer: utilities ── */
+@import './utilities.css';
+
+/* ── Responsive overrides (after utilities, mobile-first) ── */
+@import './responsive-tokens.css';
+@import './responsive-layouts.css';
+@import './responsive-data.css';
+@import './responsive-forms.css';
+@import './responsive-charts.css';
+@import './responsive-header-shell.css';
+
+/* ── Integration ── */
+@import './integration.css';

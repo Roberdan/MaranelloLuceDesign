@@ -4,13 +4,14 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "declaration": true,
-    "declarationDir": "dist/types",
-    "outDir": "dist",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "sourceMap": true,
-    "rootDir": "src"
+    "sourceMap": true
   },
-  "include": ["src/**/*.ts"]
+  "references": [
+    { "path": "packages/tokens" },
+    { "path": "packages/elements" }
+  ],
+  "include": []
 }

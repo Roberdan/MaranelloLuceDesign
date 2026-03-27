@@ -5,7 +5,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-CSS_DIR="$ROOT/src/css"
+CSS_DIR="$ROOT/packages/elements/src/css"
 TS_DIR="$ROOT/src/ts"
 errors=0
 

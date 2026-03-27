@@ -1,0 +1,23 @@
+{
+  "name": "@maranello/tokens",
+  "version": "6.0.0",
+  "description": "Maranello Luce Design — CSS variables, 5 themes, shadcn/ui bridge",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/esm/index.js"
+    },
+    "./css": "./dist/css/index.css",
+    "./css/*": "./dist/css/*",
+    "./themes": "./dist/css/themes.css",
+    "./bridge-shadcn": "./dist/css/bridge-shadcn.css"
+  },
+  "files": ["dist", "src"],
+  "scripts": {
+    "build": "node esbuild.config.mjs && tsc --emitDeclarationOnly",
+    "build:css": "mkdir -p dist/css && cp src/css/*.css dist/css/",
+    "test": "vitest run"
+  },
+  "license": "MPL-2.0"
+}
