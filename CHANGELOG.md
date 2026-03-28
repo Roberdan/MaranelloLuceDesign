@@ -8,17 +8,17 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ## [6.0.0] - 2026-03-27
 
 ### Breaking Changes
-- Monolite `maranello-luce-design-business` split into `@maranello/tokens` + `@maranello/elements`
+- Monolite `maranello-luce-design-business` split into `@convergio/design-tokens` + `@convergio/design-elements`
 - Removed Presentation Runtime: AppShellController, ViewRegistry, NavigationModel, PanelOrchestrator, StateScaffold
 - Removed: loginScreen, mn-app-shell WC, mn-state-scaffold WC, mn-login WC
 - DashboardRenderer no longer depends on StateScaffold (uses lightweight WidgetScaffold)
-- Root package is private (monorepo); individual packages `@maranello/tokens` and `@maranello/elements` are published to npm
+- Root package is private (monorepo); individual packages `@convergio/design-tokens` and `@convergio/design-elements` are published to npm
 
 ### Added
-- `@maranello/tokens` — CSS variables, 5 themes, setTheme/cycleTheme, shadcn/ui bridge
-- `@maranello/elements` — 31 Web Components, headless viz/domain API
-- Per-element tree-shaking: `import '@maranello/elements/wc/mn-gauge'`
-- `@maranello/tokens/bridge-shadcn` — automatic shadcn/ui color integration
+- `@convergio/design-tokens` — CSS variables, 5 themes, setTheme/cycleTheme, shadcn/ui bridge
+- `@convergio/design-elements` — 31 Web Components, headless viz/domain API
+- Per-element tree-shaking: `import '@convergio/design-elements/wc/mn-gauge'`
+- `@convergio/design-tokens/bridge-shadcn` — automatic shadcn/ui color integration
 - pnpm monorepo with independent package builds
 
 ### Migration

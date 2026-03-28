@@ -1,5 +1,5 @@
 /**
- * @maranello/tokens - Design token name constants
+ * @convergio/design-tokens - Design token name constants
  * Maps to CSS custom properties defined in theme stylesheets.
  */
 

@@ -1,4 +1,4 @@
-# ADR-0008: Monorepo Split — @maranello/tokens + @maranello/elements
+# ADR-0008: Monorepo Split — @convergio/design-tokens + @convergio/design-elements
 
 **Date:** 2026-03-27
 **Status:** Accepted
@@ -11,7 +11,7 @@ Convergio UI needs Maranello as npm packages for Next.js integration. The monoli
 
 ## Decision
 
-Split into `@maranello/tokens` (design tokens + theme system) and `@maranello/elements` (31 WC + headless viz/domain API). Kill Presentation Runtime. Add shadcn/ui token bridge.
+Split into `@convergio/design-tokens` (design tokens + theme system) and `@convergio/design-elements` (31 WC + headless viz/domain API). Kill Presentation Runtime. Add shadcn/ui token bridge.
 
 ## Consequences
 

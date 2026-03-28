@@ -47,7 +47,7 @@ importers:
 
   packages/elements:
     devDependencies:
-      '@maranello/tokens':
+      '@convergio/design-tokens':
         specifier: workspace:*
         version: link:../tokens
 

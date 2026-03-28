@@ -1,5 +1,5 @@
 /**
- * Build Demo — copies IIFE bundle from @maranello/elements to root dist/
+ * Build Demo — copies IIFE bundle from @convergio/design-elements to root dist/
  * so demo/index.html and demo/e2e.html can load it at ../dist/iife/maranello.min.js.
  */
 import { mkdirSync, copyFileSync, existsSync } from 'fs';

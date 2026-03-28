@@ -1,5 +1,5 @@
 /**
- * @maranello/tokens - Barrel re-export
+ * @convergio/design-tokens - Barrel re-export
  * CSS variable names, theme management, event bus, locale, and utilities.
  */
 

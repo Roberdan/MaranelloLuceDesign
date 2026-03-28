@@ -1,9 +1,9 @@
 /**
- * @maranello/tokens - Typed EventBus
+ * @convergio/design-tokens - Typed EventBus
  * Lightweight pub/sub over CustomEvent on a configurable EventTarget.
  *
  * Usage:
- *   import { eventBus } from '@maranello/tokens';
+ *   import { eventBus } from '@convergio/design-tokens';
  *   eventBus.on('slider-change', (detail) => { ... });
  *   eventBus.emit('slider-change', { value: 42 });
  *   eventBus.off('slider-change', handler);

@@ -58,7 +58,7 @@ if (existsSync(maranelloSrc)) {
 }
 
 // 2. Bundle index.css (readable, imports inlined)
-// index.css uses bare-specifier @import '@maranello/tokens/css' for package consumers.
+// index.css uses bare-specifier @import '@convergio/design-tokens/css' for package consumers.
 // LightningCSS cannot resolve bare specifiers, so skip if it fails.
 const indexSrc = join(srcDir, 'index.css');
 if (existsSync(indexSrc)) {

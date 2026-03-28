@@ -1,5 +1,5 @@
 /**
- * @maranello/elements — runtime isolation verification.
+ * @convergio/design-elements — runtime isolation verification.
  * Ensures headless element sources do NOT import app-shell runtime modules.
  */
 import { describe, it, expect } from 'vitest';
@@ -22,7 +22,7 @@ function collectTsFiles(dir: string): string[] {
   return results;
 }
 
-describe('no app-shell runtime imports in @maranello/elements', () => {
+describe('no app-shell runtime imports in @convergio/design-elements', () => {
   const tsFiles = collectTsFiles(TS_DIR);
 
   it('collects at least one .ts file', () => {

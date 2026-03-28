@@ -1,5 +1,5 @@
 /**
- * @maranello/tokens - Style reading utilities
+ * @convergio/design-tokens - Style reading utilities
  * Read live CSS custom property values from the document.
  */
 

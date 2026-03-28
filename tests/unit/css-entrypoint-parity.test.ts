@@ -1,7 +1,7 @@
 /**
  * Verify that packages/elements/src/css/index.css includes all expected CSS files.
- * index.css is the single entrypoint for @maranello/elements component styles.
- * Token imports reference @maranello/tokens/css (external package, not a local file).
+ * index.css is the single entrypoint for @convergio/design-elements component styles.
+ * Token imports reference @convergio/design-tokens/css (external package, not a local file).
  */
 import { describe, it, expect } from 'vitest';
 import { readFileSync, existsSync } from 'node:fs';

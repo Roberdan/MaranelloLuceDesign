@@ -1,5 +1,5 @@
 /**
- * @maranello/tokens - Shared utilities
+ * @convergio/design-tokens - Shared utilities
  * DOM helpers, formatting, math, and canvas setup.
  */
 

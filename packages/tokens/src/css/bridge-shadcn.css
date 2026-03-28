@@ -1,5 +1,5 @@
 /* Maranello → shadcn/ui token bridge
- * Import after @maranello/tokens/css to map Ferrari Luce tokens to shadcn variables.
+ * Import after @convergio/design-tokens/css to map Ferrari Luce tokens to shadcn variables.
  * This allows shadcn/ui components to use Maranello theme colors automatically.
  */
 :root,

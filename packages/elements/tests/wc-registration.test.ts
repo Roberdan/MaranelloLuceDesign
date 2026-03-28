@@ -1,5 +1,5 @@
 /**
- * @maranello/elements — Web Components registry tests.
+ * @convergio/design-elements — Web Components registry tests.
  * Verifies the WC_TAGS array and register-all module.
  */
 import { describe, it, expect } from 'vitest';

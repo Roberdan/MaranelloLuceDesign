@@ -13,7 +13,7 @@ await build({
   sourcemap: true,
   target: 'es2020',
   treeShaking: true,
-  external: ['mapbox-gl', '@maranello/tokens'],
+  external: ['mapbox-gl', '@convergio/design-tokens'],
 });
 
 // IIFE for CDN / demo page (window.Maranello namespace)

@@ -1,7 +1,7 @@
 <!-- v6.0.0 | 2026-03-27 -->
 # convergio-design
 
-Ferrari Luce-inspired DS monorepo: `@maranello/tokens` + `@maranello/elements`. 5 themes. 31 WC. WCAG 2.2 AA.
+Ferrari Luce-inspired DS monorepo: `@convergio/design-tokens` + `@convergio/design-elements`. 5 themes. 31 WC. WCAG 2.2 AA.
 
 ## Commands
 

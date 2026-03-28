@@ -1,5 +1,5 @@
 /**
- * @maranello/tokens - Locale / i18n
+ * @convergio/design-tokens - Locale / i18n
  * Override default English strings for a11y panel, state scaffold,
  * theme picker, and filter panel.
  */

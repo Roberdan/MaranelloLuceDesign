@@ -1,5 +1,5 @@
 {
-  "name": "@maranello/elements",
+  "name": "@convergio/design-elements",
   "version": "6.0.0",
   "description": "Maranello Luce Design — 31 Web Components + headless viz/domain API",
   "type": "module",
@@ -20,10 +20,10 @@
     "./css/*": "./dist/css/*"
   },
   "peerDependencies": {
-    "@maranello/tokens": "^6.0.0"
+    "@convergio/design-tokens": "^6.0.0"
   },
   "devDependencies": {
-    "@maranello/tokens": "workspace:*"
+    "@convergio/design-tokens": "workspace:*"
   },
   "files": ["dist", "src"],
   "scripts": {

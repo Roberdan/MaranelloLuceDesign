@@ -37,22 +37,22 @@ describe('monorepo scaffold', () => {
     expect(pkg.devDependencies.esbuild).toBeDefined();
   });
 
-  it('@maranello/tokens package.json is correct', () => {
+  it('@convergio/design-tokens package.json is correct', () => {
     const pkg = readJson('packages/tokens/package.json') as Record<string, unknown>;
-    expect(pkg.name).toBe('@maranello/tokens');
+    expect(pkg.name).toBe('@convergio/design-tokens');
     expect(pkg.version).toBe('6.0.0');
     expect(pkg.type).toBe('module');
     expect(pkg.license).toBe('MPL-2.0');
   });
 
-  it('@maranello/elements package.json is correct', () => {
+  it('@convergio/design-elements package.json is correct', () => {
     const pkg = readJson('packages/elements/package.json') as Record<string, unknown>;
-    expect(pkg.name).toBe('@maranello/elements');
+    expect(pkg.name).toBe('@convergio/design-elements');
     expect(pkg.version).toBe('6.0.0');
     expect(pkg.type).toBe('module');
     expect(pkg.license).toBe('MPL-2.0');
     const peers = pkg.peerDependencies as Record<string, string>;
-    expect(peers['@maranello/tokens']).toBe('^6.0.0');
+    expect(peers['@convergio/design-tokens']).toBe('^6.0.0');
   });
 
   it('per-package tsconfig.json files extend root', () => {

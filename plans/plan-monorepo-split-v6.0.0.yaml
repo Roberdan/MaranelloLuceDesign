@@ -1,11 +1,11 @@
 plan:
-  name: "Monorepo Split — @maranello/tokens + @maranello/elements v6.0.0"
+  name: "Monorepo Split — @convergio/design-tokens + @convergio/design-elements v6.0.0"
   project: maranello
   version: "6.0.0"
   description: |
     Split monolite maranello-luce-design-business into two npm packages:
-    @maranello/tokens (CSS vars, 5 themes, shadcn bridge) and
-    @maranello/elements (31 WC after kills, headless TS viz/domain components).
+    @convergio/design-tokens (CSS vars, 5 themes, shadcn bridge) and
+    @convergio/design-elements (31 WC after kills, headless TS viz/domain components).
     Kill Presentation Runtime (AppShell, ViewRegistry, NavigationModel, PanelOrchestrator, StateScaffold).
     Keep: DashboardRenderer (refactored), FacetWorkbench, EntityWorkbench, AsyncSelect.
     Source files MOVE (not copy) — src/ becomes legacy, packages/ is the source of truth.
@@ -13,40 +13,40 @@ plan:
 
 requirements:
   - id: F-01
-    title: "@maranello/tokens CSS"
+    title: "@convergio/design-tokens CSS"
     description: "All --mn-* variables in importable files (tokens-color, tokens-spacing-type, responsive-tokens)"
   - id: F-02
-    title: "@maranello/tokens themes"
+    title: "@convergio/design-tokens themes"
     description: "5 themes switchable via [data-theme] + body class (themes-base, avorio/colorblind/sugar components)"
   - id: F-03
-    title: "@maranello/tokens JS"
+    title: "@convergio/design-tokens JS"
     description: "setTheme(), cycleTheme(), getTheme(), palette(), cssVar(), getAccent() + token constants"
   - id: F-04
-    title: "@maranello/tokens bridge-shadcn"
+    title: "@convergio/design-tokens bridge-shadcn"
     description: "CSS file mapping --mn-* → shadcn vars (--background, --foreground, --primary, --border, --ring, --radius)"
   - id: F-05
-    title: "@maranello/tokens exports map"
+    title: "@convergio/design-tokens exports map"
     description: "Package.json exports: ./css, ./themes, ./bridge-shadcn entry points"
   - id: F-06
-    title: "@maranello/tokens tests"
+    title: "@convergio/design-tokens tests"
     description: "Theme switching, token presence, bridge mapping verification"
   - id: F-07
-    title: "@maranello/elements WC"
+    title: "@convergio/design-elements WC"
     description: "31 Web Components (mn-app-shell, mn-state-scaffold, mn-login killed), per-element entry points"
   - id: F-08
-    title: "@maranello/elements headless"
+    title: "@convergio/design-elements headless"
     description: "All viz/domain TS exports including DashboardRenderer (refactored), FacetWorkbench, EntityWorkbench, AsyncSelect"
   - id: F-09
-    title: "@maranello/elements register-all"
+    title: "@convergio/design-elements register-all"
     description: "Opt-in register-all.ts to import all 31 WC at once"
   - id: F-10
-    title: "@maranello/elements zero runtime dep"
+    title: "@convergio/design-elements zero runtime dep"
     description: "No AppShellController, ViewRegistry, NavigationModel, PanelOrchestrator, StateScaffold imports"
   - id: F-11
-    title: "@maranello/elements types"
+    title: "@convergio/design-elements types"
     description: "All headless TS types exported from package"
   - id: F-12
-    title: "@maranello/elements tests"
+    title: "@convergio/design-elements tests"
     description: "WC registration, headless factory, tree-shaking verification"
   - id: F-13
     title: "Monorepo structure"
@@ -62,10 +62,10 @@ requirements:
     description: "Remove StateScaffold dependency, use CSS-based state wrapper"
   - id: F-17
     title: "Integration test tokens"
-    description: "Import @maranello/tokens → Ferrari Luce colors applied"
+    description: "Import @convergio/design-tokens → Ferrari Luce colors applied"
   - id: F-18
     title: "Integration test elements"
-    description: "Import mn-gauge from @maranello/elements → WC renders"
+    description: "Import mn-gauge from @convergio/design-elements → WC renders"
   - id: F-19
     title: "CHANGELOG + ADR + version v6.0.0"
     description: "Breaking change docs, migration guide, ADR for monorepo split"
@@ -75,14 +75,14 @@ requirements:
 
 acceptance_invariants:
   - "test -f packages/tokens/package.json"
-  - "grep -q '@maranello/tokens' packages/tokens/package.json"
+  - "grep -q '@convergio/design-tokens' packages/tokens/package.json"
   - "test -f packages/tokens/src/css/tokens-color.css"
   - "test -f packages/tokens/src/css/themes-base.css"
   - "test -f packages/tokens/src/css/bridge-shadcn.css"
   - "grep -q 'setTheme' packages/tokens/src/ts/index.ts"
   - "grep -q '\\-\\-background' packages/tokens/src/css/bridge-shadcn.css"
   - "test -f packages/elements/package.json"
-  - "grep -q '@maranello/elements' packages/elements/package.json"
+  - "grep -q '@convergio/design-elements' packages/elements/package.json"
   - "test -f packages/elements/src/wc/mn-gauge.js"
   - "! test -f packages/elements/src/wc/mn-app-shell.js"
   - "! grep -rq 'AppShellController' packages/elements/src/"
@@ -103,10 +103,10 @@ waves:
           Set up monorepo structure in /Users/Roberdan/GitHub/convergio-design.
 
           1. Create pnpm-workspace.yaml: packages: ['packages/*']
-          2. Create packages/tokens/package.json (@maranello/tokens v6.0.0)
+          2. Create packages/tokens/package.json (@convergio/design-tokens v6.0.0)
              exports: ./css, ./themes, ./bridge-shadcn, . (ESM+types)
-          3. Create packages/elements/package.json (@maranello/elements v6.0.0)
-             peerDependencies: @maranello/tokens ^6.0.0
+          3. Create packages/elements/package.json (@convergio/design-elements v6.0.0)
+             peerDependencies: @convergio/design-tokens ^6.0.0
              exports: . (ESM+types), ./wc, ./wc/*, ./register-all, ./css, ./css/*
           4. Create per-package tsconfig.json extending root
           5. Update root package.json: private true, workspaces scripts
@@ -122,8 +122,8 @@ waves:
           - "test -f pnpm-workspace.yaml"
           - "test -f packages/tokens/package.json"
           - "test -f packages/elements/package.json"
-          - "grep -q '@maranello/tokens' packages/tokens/package.json"
-          - "grep -q '@maranello/elements' packages/elements/package.json"
+          - "grep -q '@convergio/design-tokens' packages/tokens/package.json"
+          - "grep -q '@convergio/design-elements' packages/elements/package.json"
 
       - id: T1-02
         title: "Kill Presentation Runtime + refactor DashboardRenderer"
@@ -184,7 +184,7 @@ waves:
     parallel: true
     tasks:
       - id: T2-01
-        title: "Extract @maranello/tokens — CSS files + aggregators"
+        title: "Extract @convergio/design-tokens — CSS files + aggregators"
         depends_on: [T1-02]
         description: |
           MOVE token/theme CSS files to packages/tokens/src/css/.
@@ -224,7 +224,7 @@ waves:
           - "! test -f src/css/tokens-color.css"
 
       - id: T2-02
-        title: "Extract @maranello/tokens — TS exports + build"
+        title: "Extract @convergio/design-tokens — TS exports + build"
         depends_on: [T1-02]
         description: |
           MOVE token TS files to packages/tokens/src/ts/ and create build.
@@ -258,7 +258,7 @@ waves:
           - "test -f packages/tokens/esbuild.config.mjs"
 
       - id: T2-03
-        title: "Extract @maranello/elements — WC files + register-all"
+        title: "Extract @convergio/design-elements — WC files + register-all"
         depends_on: [T1-02]
         description: |
           MOVE Web Component files to packages/elements/src/wc/.
@@ -273,7 +273,7 @@ waves:
           CREATE register-all.ts entry point that just calls registerAll().
 
           Update CSS link paths inside WC files — they now reference
-          @maranello/tokens CSS via relative path or package import.
+          @convergio/design-tokens CSS via relative path or package import.
 
           After moving, delete src/wc/ directory.
         requirements: [F-07, F-09]
@@ -289,7 +289,7 @@ waves:
           - "! test -d src/wc"
 
       - id: T2-04
-        title: "Extract @maranello/elements — headless TS + build"
+        title: "Extract @convergio/design-elements — headless TS + build"
         depends_on: [T1-02]
         description: |
           MOVE viz/domain TS files to packages/elements/src/ts/.
@@ -305,7 +305,7 @@ waves:
           all controls, all forms, all icons, data binding, layout helpers.
 
           CREATE packages/elements/src/ts/index.ts barrel exporting all KEEP components.
-          Import @maranello/tokens as peer dep where theme utils are needed.
+          Import @convergio/design-tokens as peer dep where theme utils are needed.
 
           CREATE esbuild.config.mjs for elements (ESM + CJS + IIFE).
 
@@ -325,7 +325,7 @@ waves:
           - "! test -d src/ts"
 
       - id: T2-05
-        title: "Extract @maranello/elements — component CSS"
+        title: "Extract @convergio/design-elements — component CSS"
         depends_on: [T2-01]
         description: |
           MOVE component/layout CSS files to packages/elements/src/css/.
@@ -360,10 +360,10 @@ waves:
     parallel: true
     tasks:
       - id: T3-01
-        title: "@maranello/tokens tests"
+        title: "@convergio/design-tokens tests"
         depends_on: [T2-01, T2-02]
         description: |
-          Create test suite for @maranello/tokens.
+          Create test suite for @convergio/design-tokens.
           Worktree: /Users/Roberdan/GitHub/convergio-design
 
           Create packages/tokens/tests/tokens.test.ts:
@@ -383,10 +383,10 @@ waves:
           - "test -f packages/tokens/vitest.config.ts"
 
       - id: T3-02
-        title: "@maranello/elements tests"
+        title: "@convergio/design-elements tests"
         depends_on: [T2-03, T2-04]
         description: |
-          Create test suite for @maranello/elements.
+          Create test suite for @convergio/design-elements.
           Worktree: /Users/Roberdan/GitHub/convergio-design
 
           Create packages/elements/tests/:

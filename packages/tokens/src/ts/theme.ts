@@ -1,5 +1,5 @@
 /**
- * @maranello/tokens - Theme management
+ * @convergio/design-tokens - Theme management
  * Read, set, and cycle through the five Ferrari Luce themes.
  */
 

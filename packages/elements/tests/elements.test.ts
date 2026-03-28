@@ -1,12 +1,12 @@
 /**
- * @maranello/elements — headless factory export tests.
+ * @convergio/design-elements — headless factory export tests.
  * Verifies that the public API surface is intact.
  */
 import { describe, it, expect } from 'vitest';
 
 import * as elements from '../src/ts/index';
 
-describe('@maranello/elements barrel exports', () => {
+describe('@convergio/design-elements barrel exports', () => {
   it('exports kanbanBoard as a function', () => {
     expect(elements.kanbanBoard).toBeDefined();
     expect(typeof elements.kanbanBoard).toBe('function');

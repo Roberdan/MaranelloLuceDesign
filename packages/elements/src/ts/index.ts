@@ -1,4 +1,4 @@
-/** @maranello/elements - Headless UI components barrel. */
+/** @convergio/design-elements - Headless UI components barrel. */
 
 export const VERSION = '6.0.0';
 

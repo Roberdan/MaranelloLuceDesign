@@ -1,6 +1,6 @@
 # Maranello Luce Design — Agent Reference
 
-> Ferrari Luce-inspired design system monorepo: `@maranello/tokens` + `@maranello/elements`. Zero deps. 5 themes. 31 WC tags. v6.0.0
+> Ferrari Luce-inspired design system monorepo: `@convergio/design-tokens` + `@convergio/design-elements`. Zero deps. 5 themes. 31 WC tags. v6.0.0
 > Repo: github.com/Roberdan/convergio-design
 > Demo: roberdan.github.io/convergio-design/
 > AI Expert: @NaSra (see `.github/agents/NaSra.agent.md`)
@@ -8,38 +8,38 @@
 ## Install
 
 ```bash
-npm install @maranello/tokens @maranello/elements
+npm install @convergio/design-tokens @convergio/design-elements
 ```
 
 ## Import Paths
 
-### @maranello/tokens
+### @convergio/design-tokens
 
 | Path | What |
 |------|------|
-| `@maranello/tokens` | setTheme, cycleTheme, palette |
-| `@maranello/tokens/css` | All CSS tokens + themes |
-| `@maranello/tokens/bridge-shadcn` | shadcn/ui automatic color integration |
+| `@convergio/design-tokens` | setTheme, cycleTheme, palette |
+| `@convergio/design-tokens/css` | All CSS tokens + themes |
+| `@convergio/design-tokens/bridge-shadcn` | shadcn/ui automatic color integration |
 
-### @maranello/elements
+### @convergio/design-elements
 
 | Path | What |
 |------|------|
-| `@maranello/elements` | Full element bundle (charts, gauge, controls, forms, icons, utils) |
-| `@maranello/elements/css` | Component CSS |
-| `@maranello/elements/charts` | sparkline, donut, barChart, areaChart, radar, bubble, halfGauge, liveGraph, hBarChart |
-| `@maranello/elements/gauge` | FerrariGauge, speedometer, createGauge |
-| `@maranello/elements/controls` | manettino, cruiseLever, toggleLever, steppedRotary, initRotary, initSlider, openDrawer, openDetailPanel |
-| `@maranello/elements/forms` | initForms, validateField, validateForm, initTagInput, initFileUpload, initFormSteps |
-| `@maranello/elements/gantt` | Gantt timeline renderer |
-| `@maranello/elements/register-all` | All 31 Web Component tags |
-| `@maranello/elements/wc/mn-*` | Individual Web Components |
+| `@convergio/design-elements` | Full element bundle (charts, gauge, controls, forms, icons, utils) |
+| `@convergio/design-elements/css` | Component CSS |
+| `@convergio/design-elements/charts` | sparkline, donut, barChart, areaChart, radar, bubble, halfGauge, liveGraph, hBarChart |
+| `@convergio/design-elements/gauge` | FerrariGauge, speedometer, createGauge |
+| `@convergio/design-elements/controls` | manettino, cruiseLever, toggleLever, steppedRotary, initRotary, initSlider, openDrawer, openDetailPanel |
+| `@convergio/design-elements/forms` | initForms, validateField, validateForm, initTagInput, initFileUpload, initFormSteps |
+| `@convergio/design-elements/gantt` | Gantt timeline renderer |
+| `@convergio/design-elements/register-all` | All 31 Web Component tags |
+| `@convergio/design-elements/wc/mn-*` | Individual Web Components |
 
 CDN (no build):
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@maranello/tokens@6.0.0/dist/css/index.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@maranello/elements@6.0.0/dist/css/index.css">
-<script src="https://cdn.jsdelivr.net/npm/@maranello/elements@6.0.0/dist/iife/maranello.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@convergio/design-tokens@6.0.0/dist/css/index.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@convergio/design-elements@6.0.0/dist/css/index.css">
+<script src="https://cdn.jsdelivr.net/npm/@convergio/design-elements@6.0.0/dist/iife/maranello.min.js"></script>
 ```
 IIFE attaches the public browser namespace to `window.Maranello`.
 
@@ -47,8 +47,8 @@ IIFE attaches the public browser namespace to `window.Maranello`.
 
 Official rich app-header surface for Maranello.
 
-- Web Component: `import '@maranello/elements/wc/mn-header-shell'`
-- Imperative: `import { headerShell } from '@maranello/elements'`
+- Web Component: `import '@convergio/design-elements/wc/mn-header-shell'`
+- Imperative: `import { headerShell } from '@convergio/design-elements'`
 - IIFE: `window.Maranello.headerShell(container, options)`
 - Demo/reference: `demo/header-responsive.html`
 
@@ -463,8 +463,8 @@ Demo: `demo/sections/agentic.js` (trace, meter, streaming) and `demo/sections/fi
 
 ```html
 <body class="mn-nero">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@maranello/tokens/dist/tokens.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@maranello/elements/dist/elements.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@convergio/design-tokens/dist/tokens.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@convergio/design-elements/dist/elements.css">
 <div class="mn-section-dark"><div class="mn-container">
   <h2 class="mn-title-section">Ops</h2>
   <div class="mn-grid-3">

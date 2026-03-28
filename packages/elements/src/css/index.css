@@ -1,14 +1,14 @@
 /**
- * @maranello/elements — CSS aggregator
+ * @convergio/design-elements — CSS aggregator
  * Import this single file to get all component/layout styles.
- * Tokens are sourced from the @maranello/tokens peer dependency.
+ * Tokens are sourced from the @convergio/design-tokens peer dependency.
  * Layer order controls cascade precedence.
  */
 
 @layer tokens, base, components, controls, forms, charts, layouts, extended, patterns, themes, utilities;
 
-/* ── Layer: tokens (from @maranello/tokens peer) ── */
-@import '@maranello/tokens/css';
+/* ── Layer: tokens (from @convergio/design-tokens peer) ── */
+@import '@convergio/design-tokens/css';
 
 /* ── Layer: base ── */
 @import './base.css';

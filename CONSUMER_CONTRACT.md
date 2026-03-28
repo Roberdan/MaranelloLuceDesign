@@ -1,7 +1,7 @@
 <!-- v6.0.0 | 2026-03-27 -->
 # Consumer Contract — Maranello Design System
 
-Defines what consumer apps own vs what `@maranello/tokens` and `@maranello/elements` own. Violation = domain leak.
+Defines what consumer apps own vs what `@convergio/design-tokens` and `@convergio/design-elements` own. Violation = domain leak.
 
 ---
 
@@ -21,15 +21,15 @@ Consumer code calls Maranello with pre-resolved data + pre-bound callbacks. It n
 
 ---
 
-## What @maranello/tokens Owns
+## What @convergio/design-tokens Owns
 
 | Concern | APIs |
 |---|---|
 | **Design tokens** | CSS custom properties (`--mn-text`, `--mn-surface`, `--mn-accent`, etc.) |
 | **Themes** | 5 themes (Editorial, Nero, Avorio, Colorblind, Sugar), `setTheme()`, `cycleTheme()`, `palette()` |
-| **shadcn/ui bridge** | `@maranello/tokens/bridge-shadcn` — automatic mapping of Maranello tokens to shadcn CSS custom properties |
+| **shadcn/ui bridge** | `@convergio/design-tokens/bridge-shadcn` — automatic mapping of Maranello tokens to shadcn CSS custom properties |
 
-## What @maranello/elements Owns
+## What @convergio/design-elements Owns
 
 | Concern | APIs |
 |---|---|
@@ -59,21 +59,21 @@ The default theme is Editorial. Consumers testing theme cycling must account for
 ### Step 1 — Import Tokens and Theme API
 
 ```ts
-import { setTheme, cycleTheme, palette } from '@maranello/tokens';
-import '@maranello/tokens/css';
-import '@maranello/tokens/bridge-shadcn'; // optional: side-effect CSS import (works in Vite/Next.js bundlers)
+import { setTheme, cycleTheme, palette } from '@convergio/design-tokens';
+import '@convergio/design-tokens/css';
+import '@convergio/design-tokens/bridge-shadcn'; // optional: side-effect CSS import (works in Vite/Next.js bundlers)
 
 setTheme('nero');
 const tokens = palette(); // read live semantic token values
 ```
 
-> `bridge-shadcn` is a CSS file. In plain CSS, use `@import '@maranello/tokens/bridge-shadcn';`. The JS `import` above is a side-effect import that bundlers (Vite, Next.js, Webpack) resolve as CSS injection.
+> `bridge-shadcn` is a CSS file. In plain CSS, use `@import '@convergio/design-tokens/bridge-shadcn';`. The JS `import` above is a side-effect import that bundlers (Vite, Next.js, Webpack) resolve as CSS injection.
 
 ### Step 2 — Use Elements
 
 ```ts
-import { DashboardRenderer, kanbanBoard, gantt } from '@maranello/elements';
-import '@maranello/elements/css';
+import { DashboardRenderer, kanbanBoard, gantt } from '@convergio/design-elements';
+import '@convergio/design-elements/css';
 
 // Render a dashboard
 const renderer = new DashboardRenderer(container, { schema, data });
@@ -86,11 +86,11 @@ const board = kanbanBoard(el, { columns, cards, onMove });
 
 ```ts
 // All 31 WC tags
-import '@maranello/elements/register-all';
+import '@convergio/design-elements/register-all';
 
 // Or individual components for tree-shaking
-import '@maranello/elements/wc/mn-gauge';
-import '@maranello/elements/wc/mn-gantt';
+import '@convergio/design-elements/wc/mn-gauge';
+import '@convergio/design-elements/wc/mn-gantt';
 ```
 
 ---
@@ -100,7 +100,7 @@ import '@maranello/elements/wc/mn-gantt';
 | Anti-Pattern | Why it's Wrong | Correct Alternative |
 |---|---|---|
 | `createElement`-heavy rendering inside views | Bypasses Maranello render pipeline | Use `DashboardRenderer`, `EntityWorkbench`, or `DataTable` |
-| Importing tokens and elements from the same package | Packages are split for tree-shaking | `@maranello/tokens` for theme API, `@maranello/elements` for components |
+| Importing tokens and elements from the same package | Packages are split for tree-shaking | `@convergio/design-tokens` for theme API, `@convergio/design-elements` for components |
 | Using primitive CSS tokens in components | Breaks cross-theme compatibility | Use semantic tokens (`--mn-text`, `--mn-surface`, `--mn-accent`) |
 | Hard-coding domain labels in `FacetConfig.type` | `FacetConfig` is generic — type is a UI concept | Keep labels in consumer-owned config objects |
 | Using AppShellController, ViewRegistry, NavigationModel, PanelOrchestrator, StateScaffold | Removed in v6.0.0 | Use framework-native equivalents (Next.js layouts, SvelteKit, etc.) |

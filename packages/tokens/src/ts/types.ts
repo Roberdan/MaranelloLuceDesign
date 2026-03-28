@@ -1,5 +1,5 @@
 /**
- * @maranello/tokens - Theme mode type
+ * @convergio/design-tokens - Theme mode type
  * The five Ferrari Luce-inspired themes.
  */
 

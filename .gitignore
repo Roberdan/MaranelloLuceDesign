@@ -8,3 +8,4 @@ coverage/
 .claude/
 .copilot-tracking/
 docs/virtualbpm-integration-response.md
+packages/*/.npmrc

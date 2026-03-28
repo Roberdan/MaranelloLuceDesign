@@ -1,4 +1,4 @@
-# Maranello Luce Design System
+# Convergio Design System
 
 Ferrari Luce-inspired design system for AI agent dashboards. Zero runtime dependencies. 5 adaptive themes. WCAG 2.2 AA. Framework-agnostic.
 
@@ -7,7 +7,7 @@ Ferrari Luce-inspired design system for AI agent dashboards. Zero runtime depend
 ## Install
 
 ```bash
-npm install @maranello/tokens @maranello/elements
+npm install @convergio/design-tokens @convergio/design-elements
 ```
 
 ## Quick Start
@@ -16,32 +16,32 @@ npm install @maranello/tokens @maranello/elements
 
 ```css
 /* Design tokens + 5 themes */
-@import '@maranello/tokens/css';
+@import '@convergio/design-tokens/css';
 
 /* Component styles */
-@import '@maranello/elements/css';
+@import '@convergio/design-elements/css';
 
 /* Optional: shadcn/ui bridge */
-@import '@maranello/tokens/bridge-shadcn';
+@import '@convergio/design-tokens/bridge-shadcn';
 ```
 
 ### 2. JS (ESM, tree-shakeable)
 
 ```ts
 // Tokens package — theme API
-import { setTheme, cycleTheme, palette } from '@maranello/tokens';
+import { setTheme, cycleTheme, palette } from '@convergio/design-tokens';
 
 // Elements package — components
-import { sparkline, FerrariGauge, toast } from '@maranello/elements';
-import { gantt } from '@maranello/elements/gantt';
-import { barChart, donut } from '@maranello/elements/charts';
+import { sparkline, FerrariGauge, toast } from '@convergio/design-elements';
+import { gantt } from '@convergio/design-elements/gantt';
+import { barChart, donut } from '@convergio/design-elements/charts';
 ```
 
 ### 3. Web Components (zero boilerplate)
 
 ```html
 <script type="module">
-  import '@maranello/elements/register-all';
+  import '@convergio/design-elements/register-all';
 </script>
 
 <mn-gauge value="72" unit="%"></mn-gauge>
@@ -52,16 +52,16 @@ import { barChart, donut } from '@maranello/elements/charts';
 Per-element tree-shaking:
 
 ```ts
-import '@maranello/elements/wc/mn-gauge';
-import '@maranello/elements/wc/mn-gantt';
+import '@convergio/design-elements/wc/mn-gauge';
+import '@convergio/design-elements/wc/mn-gantt';
 ```
 
 ### 4. IIFE (CDN, no bundler)
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@maranello/tokens@6.0.0/dist/css/index.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@maranello/elements@6.0.0/dist/css/index.css">
-<script src="https://cdn.jsdelivr.net/npm/@maranello/elements@6.0.0/dist/iife/maranello.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@convergio/design-tokens@6.0.0/dist/css/index.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@convergio/design-elements@6.0.0/dist/css/index.css">
+<script src="https://cdn.jsdelivr.net/npm/@convergio/design-elements@6.0.0/dist/iife/maranello.min.js"></script>
 <script>
   Maranello.sparkline(document.getElementById('chart'), [10, 20, 15, 30]);
   new Maranello.FerrariGauge(document.getElementById('gauge'));
@@ -74,10 +74,10 @@ Two packages in a pnpm monorepo. Use together or separately.
 
 | Package | Import | What you get |
 |---|---|---|
-| `@maranello/tokens` | `@maranello/tokens` | CSS variables, 5 themes, setTheme/cycleTheme/palette, shadcn/ui bridge |
-| `@maranello/elements` | `@maranello/elements` | 100+ exports: charts, gauges, controls, forms, data binding + 31 `mn-*` WC tags |
+| `@convergio/design-tokens` | `@convergio/design-tokens` | CSS variables, 5 themes, setTheme/cycleTheme/palette, shadcn/ui bridge |
+| `@convergio/design-elements` | `@convergio/design-elements` | 100+ exports: charts, gauges, controls, forms, data binding + 31 `mn-*` WC tags |
 
-### @maranello/tokens Exports
+### @convergio/design-tokens Exports
 
 | Path | Content |
 |---|---|
@@ -85,7 +85,7 @@ Two packages in a pnpm monorepo. Use together or separately.
 | `./css` | Full token + theme CSS system |
 | `./bridge-shadcn` | shadcn/ui automatic color integration |
 
-### @maranello/elements Exports
+### @convergio/design-elements Exports
 
 | Path | Content |
 |---|---|
@@ -136,7 +136,7 @@ All JS APIs are **imperative DOM-first**: acquire a DOM ref, init on mount, dest
 
 ```tsx
 import { useRef, useEffect } from 'react';
-import { gantt } from '@maranello/elements/gantt';
+import { gantt } from '@convergio/design-elements/gantt';
 
 function GanttView({ tasks }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -153,7 +153,7 @@ function GanttView({ tasks }) {
 ```svelte
 <script>
   import { onMount, onDestroy } from 'svelte';
-  import { gantt } from '@maranello/elements/gantt';
+  import { gantt } from '@convergio/design-elements/gantt';
 
   let el; let w;
   onMount(() => { w = gantt(el, tasks); });
@@ -167,7 +167,7 @@ function GanttView({ tasks }) {
 ```vue
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
-import { gantt } from '@maranello/elements/gantt';
+import { gantt } from '@convergio/design-elements/gantt';
 
 const el = ref();
 let w;
@@ -202,7 +202,7 @@ Web Components self-register, handle resize, and fire standard DOM events. No ad
 ```html
 <mn-header-shell id="ops-header"></mn-header-shell>
 <script type="module">
-  import '@maranello/elements/wc/mn-header-shell';
+  import '@convergio/design-elements/wc/mn-header-shell';
 
   const shell = document.getElementById('ops-header');
   shell.config = {
@@ -291,7 +291,7 @@ Web Components self-register, handle resize, and fire standard DOM events. No ad
 ##### Imperative API
 
 ```ts
-import { headerShell } from '@maranello/elements';
+import { headerShell } from '@convergio/design-elements';
 
 const controller = headerShell(document.getElementById('header-root')!, {
   sections: [
@@ -417,7 +417,7 @@ Maranello ships with **NaSra**, an AI agent that knows every token, theme, WCAG 
 **Use NaSra in your project** (add to your `CLAUDE.md`):
 
 ```
-@node_modules/@maranello/elements/.github/agents/NaSra.agent.md
+@node_modules/@convergio/design-elements/.github/agents/NaSra.agent.md
 ```
 
 NaSra covers: adaptive token rules, all 5 themes, WCAG 2.2 AA, color blindness prevention, responsive checklist, CI constitution, v5.0.0 breaking changes.
