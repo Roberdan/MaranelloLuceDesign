@@ -1,6 +1,6 @@
 {
   "name": "@convergio/design-tokens",
-  "version": "6.0.0",
+  "version": "6.1.0",
   "description": "Maranello Luce Design — CSS variables, 6 themes, shadcn/ui bridge",
   "type": "module",
   "exports": {

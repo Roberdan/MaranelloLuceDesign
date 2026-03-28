@@ -1,0 +1,23 @@
+{
+  "name": "maranello-themes",
+  "displayName": "Maranello Luce Themes",
+  "description": "6 Ferrari Luce-inspired color themes for VS Code",
+  "version": "1.0.0",
+  "publisher": "roberdan",
+  "engines": {
+    "vscode": "^1.95.0"
+  },
+  "categories": [
+    "Themes"
+  ],
+  "contributes": {
+    "themes": [
+      { "label": "Maranello Editorial", "uiTheme": "vs-dark", "path": "./editorial.json" },
+      { "label": "Maranello Nero", "uiTheme": "vs-dark", "path": "./nero.json" },
+      { "label": "Maranello Avorio", "uiTheme": "vs", "path": "./avorio.json" },
+      { "label": "Maranello Colorblind", "uiTheme": "vs-dark", "path": "./colorblind.json" },
+      { "label": "Maranello Sugar", "uiTheme": "vs", "path": "./sugar.json" },
+      { "label": "Maranello Navy", "uiTheme": "vs-dark", "path": "./navy.json" }
+    ]
+  }
+}

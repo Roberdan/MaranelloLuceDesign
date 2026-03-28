@@ -1,8 +1,8 @@
 # Convergio Design System
 
-Ferrari Luce-inspired design system for AI agent dashboards. Zero runtime dependencies. 5 adaptive themes. WCAG 2.2 AA. Framework-agnostic.
+Ferrari Luce-inspired design system for AI agent dashboards. Zero runtime dependencies. 6 adaptive themes. WCAG 2.2 AA. Framework-agnostic.
 
-**v6.0.0** | [Live Demo](https://roberdan.github.io/convergio-design/) | [CHANGELOG](CHANGELOG.md)
+**v6.1.0** | [Live Demo](https://roberdan.github.io/convergio-design/) | [CHANGELOG](CHANGELOG.md)
 
 ## Install
 
@@ -15,7 +15,7 @@ npm install @convergio/design-tokens @convergio/design-elements
 ### 1. CSS (tokens + elements)
 
 ```css
-/* Design tokens + 5 themes */
+/* Design tokens + 6 themes */
 @import '@convergio/design-tokens/css';
 
 /* Component styles */
@@ -59,9 +59,9 @@ import '@convergio/design-elements/wc/mn-gantt';
 ### 4. IIFE (CDN, no bundler)
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@convergio/design-tokens@6.0.0/dist/css/index.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@convergio/design-elements@6.0.0/dist/css/index.css">
-<script src="https://cdn.jsdelivr.net/npm/@convergio/design-elements@6.0.0/dist/iife/maranello.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@convergio/design-tokens@6.1.0/dist/css/index.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@convergio/design-elements@6.1.0/dist/css/index.css">
+<script src="https://cdn.jsdelivr.net/npm/@convergio/design-elements@6.1.0/dist/iife/maranello.min.js"></script>
 <script>
   Maranello.sparkline(document.getElementById('chart'), [10, 20, 15, 30]);
   new Maranello.FerrariGauge(document.getElementById('gauge'));
@@ -74,7 +74,7 @@ Two packages in a pnpm monorepo. Use together or separately.
 
 | Package | Import | What you get |
 |---|---|---|
-| `@convergio/design-tokens` | `@convergio/design-tokens` | CSS variables, 5 themes, setTheme/cycleTheme/palette, shadcn/ui bridge |
+| `@convergio/design-tokens` | `@convergio/design-tokens` | CSS variables, 6 themes, setTheme/cycleTheme/palette, shadcn/ui bridge |
 | `@convergio/design-elements` | `@convergio/design-elements` | 100+ exports: charts, gauges, controls, forms, data binding + 31 `mn-*` WC tags |
 
 ### @convergio/design-tokens Exports
@@ -118,15 +118,54 @@ Set theme via body class. All components adapt automatically.
 | Avorio | `mn-avorio` | `#FAF3E6` warm ivory | `#DC0000` red | Light/warm |
 | Colorblind | `mn-colorblind` | `#111111` dark | `#0072B2` blue | Okabe-Ito safe palette |
 | Sugar | `mn-sugar` | `#E4E4E8` cool gray | `#000000` black | Modern light, rounded corners |
+| Navy | `mn-navy` | `#0d2045` deep blue | `#FFC72C` gold | Deep blue dark dashboard |
 
 Cross-theme: `body.mn-sugar.mn-colorblind` combines cool gray + Okabe-Ito signals.
 
 ```js
 // JS theme API
 Maranello.setTheme('sugar');           // apply theme
-Maranello.cycleTheme();                // rotate through all 5
+Maranello.cycleTheme();                // rotate through all 6
 const tokens = Maranello.palette();    // read live semantic tokens
 ```
+
+## IDE & Terminal Themes
+
+Maranello ships matching themes for your editor and terminal.
+
+### VS Code
+
+```
+1. Copy extras/vscode-themes/ to a folder
+2. Open VS Code > Extensions > Install from VSIX (or use the folder)
+3. Or manually: copy theme JSON files to ~/.vscode/extensions/maranello-themes/themes/
+4. Select theme: Cmd+K Cmd+T > search "Maranello"
+```
+
+### Warp
+
+```
+1. Copy the desired .yaml file from extras/warp-themes/ to ~/.warp/themes/
+2. Open Warp > Settings > Appearance > Themes > select "Maranello [theme]"
+```
+
+### Ghostty
+
+```
+1. Copy the desired config from extras/ghostty-themes/
+2. Append to ~/.config/ghostty/config (or use Ghostty's theme directory)
+3. Restart Ghostty
+```
+
+## Theme Contract
+
+Themes are extensible. Community themes must implement the 35-token checklist defined in [ADR-0009](docs/adr/ADR-0009-extensible-theme-contract.md). Any theme passing all 35 tokens + WCAG contrast checks is compatible with every Maranello component.
+
+## NaSra -- AI Design System Expert
+
+For AI-assisted development with Maranello, reference the NaSra agent: `@.github/agents/NaSra.agent.md`
+
+NaSra knows every token, theme, WCAG rule, and responsive pattern in the system.
 
 ## Framework Integration
 
@@ -395,7 +434,7 @@ Maranello.profileMenu(el, {
 });
 ```
 
-5 preview cards with surface/card/accent dots. ARIA radiogroup, keyboard nav (Tab/Enter/Space).
+6 preview cards with surface/card/accent dots. ARIA radiogroup, keyboard nav (Tab/Enter/Space).
 
 ## AI Operations Components
 
@@ -420,7 +459,7 @@ Maranello ships with **NaSra**, an AI agent that knows every token, theme, WCAG 
 @node_modules/@convergio/design-elements/.github/agents/NaSra.agent.md
 ```
 
-NaSra covers: adaptive token rules, all 5 themes, WCAG 2.2 AA, color blindness prevention, responsive checklist, CI constitution, v5.0.0 breaking changes.
+NaSra covers: adaptive token rules, all 6 themes, WCAG 2.2 AA, color blindness prevention, responsive checklist, CI constitution, v5.0.0 breaking changes.
 
 ## Token System
 

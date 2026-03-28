@@ -90,8 +90,8 @@
     (function () {
       try {
         var t = localStorage.getItem('mn-theme');
-        if (t && ['editorial', 'nero', 'avorio', 'colorblind'].includes(t)) {
-          document.body.classList.remove('mn-nero', 'mn-avorio', 'mn-colorblind');
+        if (t && ['editorial', 'nero', 'avorio', 'colorblind', 'sugar', 'navy'].includes(t)) {
+          document.body.classList.remove('mn-nero', 'mn-avorio', 'mn-colorblind', 'mn-sugar', 'mn-navy');
           document.body.classList.add('mn-' + t);
         }
         var a = localStorage.getItem('mn-a11y');
@@ -187,7 +187,7 @@
       <div class="mn-divider-gold--accent mn-divider-gold" style="margin-bottom:var(--space-xl)"></div>
       <p class="mn-label" style="color:var(--mn-accent);margin-bottom:var(--space-sm)">Maranello Luce Design System</p>
       <p class="mn-micro" style="color:var(--mn-text-muted)">Demo built with fictional Maranello Luce operations data. All data is illustrative.</p>
-      <p class="mn-micro" style="color:var(--mn-text-muted);margin-top:var(--space-sm)">v5.16.0 — 5 themes · 150+ APIs · 36 Web Components · WCAG 2.2 AA</p>
+      <p class="mn-micro" style="color:var(--mn-text-muted);margin-top:var(--space-sm)">v6.1.0 — 6 themes · 150+ APIs · 36 Web Components · WCAG 2.2 AA</p>
       <p class="mn-micro" style="color:var(--mn-text-muted);margin-top:var(--space-xs)">&copy; Roberdan 2026</p>
     </div>
   </footer>

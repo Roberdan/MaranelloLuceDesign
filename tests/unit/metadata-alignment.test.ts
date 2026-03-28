@@ -8,31 +8,31 @@ function readFile(rel: string): string {
   return readFileSync(join(ROOT, rel), 'utf8');
 }
 
-describe('metadata alignment — v5.16.0', () => {
-  it('AGENT.md references v5.16.0', () => {
+describe('metadata alignment — v6.1.0', () => {
+  it('AGENT.md references v6.1.0', () => {
     const content = readFile('AGENT.md');
-    expect(content).toContain('v5.16.0');
+    expect(content).toContain('v6.1.0');
   });
 
-  it('AGENT.md references 5 themes', () => {
+  it('AGENT.md references 6 themes', () => {
     const content = readFile('AGENT.md');
-    expect(content).toMatch(/5 themes/i);
+    expect(content).toMatch(/6 themes/i);
   });
 
-  it('AGENT.md references 36 WC tags', () => {
+  it('AGENT.md references 31 WC tags', () => {
     const content = readFile('AGENT.md');
-    expect(content).toContain('36');
+    expect(content).toContain('31');
   });
 
-  it('NaSra.agent.md references v5.16.0', () => {
+  it('NaSra.agent.md references v6.1.0', () => {
     const content = readFile('.github/agents/NaSra.agent.md');
-    expect(content).toContain('v5.16.0');
+    expect(content).toContain('v6.1.0');
   });
 
-  it('CLAUDE.md header references v5.16.0', () => {
+  it('CLAUDE.md header references v6.1.0', () => {
     const content = readFile('CLAUDE.md');
     const firstLine = content.split('\n')[0];
-    expect(firstLine).toContain('v5.16.0');
+    expect(firstLine).toContain('v6.1.0');
   });
 
   it('hero.js does not reference MIT license', () => {
@@ -54,5 +54,21 @@ describe('metadata alignment — v5.16.0', () => {
         expect(line).not.toMatch(/#[0-9a-fA-F]{6}/);
       }
     }
+  });
+
+  it('CONSUMER_CONTRACT.md references 6 themes in cycling order', () => {
+    const content = readFile('CONSUMER_CONTRACT.md');
+    expect(content).toContain('Navy');
+    expect(content).toMatch(/6 themes/i);
+  });
+
+  it('packages/tokens/package.json is v6.1.0', () => {
+    const pkg = JSON.parse(readFile('packages/tokens/package.json'));
+    expect(pkg.version).toBe('6.1.0');
+  });
+
+  it('packages/elements/package.json is v6.1.0', () => {
+    const pkg = JSON.parse(readFile('packages/elements/package.json'));
+    expect(pkg.version).toBe('6.1.0');
   });
 });

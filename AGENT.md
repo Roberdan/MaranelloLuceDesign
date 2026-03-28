@@ -1,6 +1,6 @@
 # Maranello Luce Design — Agent Reference
 
-> Ferrari Luce-inspired design system monorepo: `@convergio/design-tokens` + `@convergio/design-elements`. Zero deps. 5 themes. 31 WC tags. v6.0.0
+> Ferrari Luce-inspired design system monorepo: `@convergio/design-tokens` + `@convergio/design-elements`. Zero deps. 6 themes. 31 WC tags. v6.1.0
 > Repo: github.com/Roberdan/convergio-design
 > Demo: roberdan.github.io/convergio-design/
 > AI Expert: @NaSra (see `.github/agents/NaSra.agent.md`)
@@ -37,9 +37,9 @@ npm install @convergio/design-tokens @convergio/design-elements
 
 CDN (no build):
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@convergio/design-tokens@6.0.0/dist/css/index.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@convergio/design-elements@6.0.0/dist/css/index.css">
-<script src="https://cdn.jsdelivr.net/npm/@convergio/design-elements@6.0.0/dist/iife/maranello.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@convergio/design-tokens@6.1.0/dist/css/index.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@convergio/design-elements@6.1.0/dist/css/index.css">
+<script src="https://cdn.jsdelivr.net/npm/@convergio/design-elements@6.1.0/dist/iife/maranello.min.js"></script>
 ```
 IIFE attaches the public browser namespace to `window.Maranello`.
 
@@ -90,6 +90,7 @@ Official rich app-header surface for Maranello.
 | `mn-avorio` | Warm ivory light (#faf3e6) | Rosso Corsa (#DC0000) |
 | `mn-colorblind` | Dark, Wong palette | Blue (#0072B2) |
 | `mn-sugar` | Light grey, rounded | Black (#000000) |
+| `mn-navy` | Deep blue (#0d2045) | Giallo Ferrari (#FFC72C) |
 
 Apply: `<body class="mn-nero">`. Toggle: `Maranello.cycleTheme()` or `Maranello.setTheme('nero')`.
 Persist: `<mn-theme-toggle>` or `<mn-theme-rotary>` (saves to localStorage).
@@ -525,7 +526,7 @@ Read [CONSTITUTION.md](CONSTITUTION.md) first. All rules are enforced by CI.
 1. Create `src/css/<name>.css` inside appropriate `@layer`
 2. Import in barrel file (`layouts.css`, `components.css`, etc.)
 3. Use `mn-` prefix, BEM naming, token variables only
-4. Verify in all 5 themes
+4. Verify in all 6 themes
 
 ### Add a JS API
 1. Create `src/ts/<name>.ts` with named exports
