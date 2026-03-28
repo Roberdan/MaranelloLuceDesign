@@ -35,7 +35,7 @@ Mozilla Public License Version 2.0
     means any form of the work other than Source Code Form.
 
 1.7. "Larger Work"
-    means a work that combines Covered Software with other material, in
+    means a work that combines Covered Software with other material, in 
     a separate file or files, that is not Covered Software.
 
 1.8. "License"
@@ -225,11 +225,9 @@ statute, judicial order, or regulation then You must: (a) comply with
 the terms of this License to the maximum extent possible; and (b)
 describe the limitations and the code they affect. Such description must
 be placed in a text file included with all distributions of the Covered
-Software under the name "LEGAL", and must be included in all Source Code
-Forms of any Covered Software that You distribute. Except to the extent
-prohibited by statute or regulation, such description must be
-sufficiently detailed for a recipient of ordinary skill to be able to
-understand it.
+Software under this License. Except to the extent prohibited by statute
+or regulation, such description must be sufficiently detailed for a
+recipient of ordinary skill to be able to understand it.
 
 5. Termination
 --------------
@@ -374,4 +372,23 @@ Exhibit B - "Incompatible With Secondary Licenses" Notice
   This Source Code Form is "Incompatible With Secondary Licenses", as
   defined by the Mozilla Public License, v. 2.0.
 
-Copyright (c) 2026 Roberto D'Angelo (Roberdan)
+---
+
+## Why MPL-2.0 for this repo?
+
+`convergio-design` is the Convergio design system. We want it to be
+adopted as widely as possible — by solopreneurs, agencies, companies,
+open source projects, everyone.
+
+MPL-2.0 gives you broad freedom to use, modify, and distribute this code.
+Key obligations include keeping modifications to MPL-licensed files
+available in source form and complying with notice and source-availability
+requirements when you distribute covered files. See the full license text
+above for complete terms.
+
+The rest of the Convergio ecosystem uses the
+[Convergio Community License](https://github.com/Roberdan/convergio/blob/main/LICENSE).
+
+---
+
+Copyright © 2026 Roberto D'Angelo.
