@@ -454,9 +454,10 @@ pnpm typecheck         # Type-check all packages
 
 ## License
 
-This project is licensed under the [Mozilla Public License 2.0](./LICENSE) —
-use it, modify it, ship it. We want `convergio-design` adopted as widely
-as possible.
+This project is licensed under the [Mozilla Public License 2.0](./LICENSE).
+You can use it, modify it, and ship it subject to the MPL-2.0 terms
+(file-level copyleft: keep MPL-covered files under MPL and preserve
+license notices). We want `convergio-design` adopted as widely as possible.
 
 The rest of the Convergio ecosystem uses the
 [Convergio Community License](https://github.com/Roberdan/convergio/blob/main/LICENSE).
