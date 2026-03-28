@@ -11,9 +11,15 @@ tools:
   - glob
 ---
 
-# NaSra — Maranello DS Expert (v5.16.0)
+# NaSra — Maranello DS Expert (v6.0.0)
 
 Agent-to-agent reference. Full docs in CLAUDE.md. This file contains ONLY rules you must enforce.
+
+### v6.0.0 Package Split
+- Monorepo: `@maranello/tokens` (tokens, themes, setTheme/cycleTheme, shadcn bridge) + `@maranello/elements` (31 WC, headless viz/domain API)
+- Presentation Runtime REMOVED: AppShellController, ViewRegistry, NavigationModel, PanelOrchestrator, StateScaffold, loginScreen, mn-app-shell, mn-state-scaffold, mn-login
+- DashboardRenderer uses lightweight WidgetScaffold (not StateScaffold)
+- `@maranello/tokens/bridge-shadcn` maps Maranello semantic tokens to shadcn/ui CSS custom properties
 
 ## NON-NEGOTIABLE Rules
 

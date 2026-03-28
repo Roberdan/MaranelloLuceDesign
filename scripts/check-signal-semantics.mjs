@@ -13,7 +13,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const CSS  = join(ROOT, 'src', 'css');
+const CSS  = join(ROOT, 'packages', 'tokens', 'src', 'css');
 const PKG  = JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8'));
 
 /* ── CSS var parser ── */

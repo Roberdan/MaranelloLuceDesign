@@ -1,6 +1,6 @@
 # Maranello Luce Design — Agent Reference
 
-> Ferrari Luce-inspired design system. Zero deps. 5 themes. 150+ APIs. 36 WC tags. v5.16.0
+> Ferrari Luce-inspired design system monorepo: `@maranello/tokens` + `@maranello/elements`. Zero deps. 5 themes. 31 WC tags. v6.0.0
 > Repo: github.com/Roberdan/convergio-design
 > Demo: roberdan.github.io/convergio-design/
 > AI Expert: @NaSra (see `.github/agents/NaSra.agent.md`)
@@ -8,27 +8,38 @@
 ## Install
 
 ```bash
-npm install maranello-luce-design-business
+npm install @maranello/tokens @maranello/elements
 ```
 
 ## Import Paths
 
+### @maranello/tokens
+
 | Path | What |
 |------|------|
-| `maranello-luce-design-business` | Full bundle (charts, gauge, controls, forms, icons, utils) |
-| `maranello-luce-design-business/css` | All CSS (tokens + themes + components) |
-| `maranello-luce-design-business/charts` | sparkline, donut, barChart, areaChart, radar, bubble, halfGauge, liveGraph, hBarChart |
-| `maranello-luce-design-business/gauge` | FerrariGauge, speedometer, createGauge |
-| `maranello-luce-design-business/controls` | manettino, cruiseLever, toggleLever, steppedRotary, initRotary, initSlider, openDrawer, openDetailPanel |
-| `maranello-luce-design-business/forms` | initForms, validateField, validateForm, initTagInput, initFileUpload, initFormSteps |
-| `maranello-luce-design-business/gantt` | Gantt timeline renderer |
-| `maranello-luce-design-business/wc` | All 35 Web Component tags |
-| `maranello-luce-design-business/wc/mn-*` | Individual Web Components |
+| `@maranello/tokens` | setTheme, cycleTheme, palette |
+| `@maranello/tokens/css` | All CSS tokens + themes |
+| `@maranello/tokens/bridge-shadcn` | shadcn/ui automatic color integration |
+
+### @maranello/elements
+
+| Path | What |
+|------|------|
+| `@maranello/elements` | Full element bundle (charts, gauge, controls, forms, icons, utils) |
+| `@maranello/elements/css` | Component CSS |
+| `@maranello/elements/charts` | sparkline, donut, barChart, areaChart, radar, bubble, halfGauge, liveGraph, hBarChart |
+| `@maranello/elements/gauge` | FerrariGauge, speedometer, createGauge |
+| `@maranello/elements/controls` | manettino, cruiseLever, toggleLever, steppedRotary, initRotary, initSlider, openDrawer, openDetailPanel |
+| `@maranello/elements/forms` | initForms, validateField, validateForm, initTagInput, initFileUpload, initFormSteps |
+| `@maranello/elements/gantt` | Gantt timeline renderer |
+| `@maranello/elements/register-all` | All 31 Web Component tags |
+| `@maranello/elements/wc/mn-*` | Individual Web Components |
 
 CDN (no build):
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Roberdan/convergio-design@v5.16.0/dist/css/index.css">
-<script src="https://cdn.jsdelivr.net/gh/Roberdan/convergio-design@v5.16.0/dist/iife/maranello.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@maranello/tokens@6.0.0/dist/css/index.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@maranello/elements@6.0.0/dist/css/index.css">
+<script src="https://cdn.jsdelivr.net/npm/@maranello/elements@6.0.0/dist/iife/maranello.min.js"></script>
 ```
 IIFE attaches the public browser namespace to `window.Maranello`.
 
@@ -36,8 +47,8 @@ IIFE attaches the public browser namespace to `window.Maranello`.
 
 Official rich app-header surface for Maranello.
 
-- Web Component: `import 'maranello-luce-design-business/wc/mn-header-shell'`
-- Imperative: `import { headerShell } from 'maranello-luce-design-business'`
+- Web Component: `import '@maranello/elements/wc/mn-header-shell'`
+- Imperative: `import { headerShell } from '@maranello/elements'`
 - IIFE: `window.Maranello.headerShell(container, options)`
 - Demo/reference: `demo/header-responsive.html`
 
@@ -168,7 +179,6 @@ Fluid WCs: `<mn-gauge size="fluid">` · `<mn-speedometer size="fluid">` · `<mn-
 | `openModal(id)` | Show modal by id |
 | `closeModal(id)` | Hide modal by id |
 | `commandPalette(opts)` | `{commands: [{label, action, shortcut}]}` |
-| `loginScreen(opts)` | `{title, actionUrl, onSubmit}` |
 | `profileMenu(opts)` | `{user, options: [{label, action}]}` |
 | `systemStatus(container, opts)` | `{services: [{name, status, detail}]}` |
 
@@ -209,7 +219,7 @@ Set `colorMode` in `data-gauge` JSON to auto-generate arcBar colorStops:
 - `'higher-better'` — green at high values (quality, uptime)
 - `'lower-better'` — green at low values (latency, errors)
 
-## Web Components (32 tags, 31 components)
+## Web Components (31 tags)
 
 All use `mn-` prefix. Attributes are kebab-case. Events: `mn-{name}-ready`, `mn-{name}-change`.
 
@@ -227,7 +237,6 @@ All use `mn-` prefix. Attributes are kebab-case. Events: `mn-{name}-ready`, `mn-
 | `<mn-ferrari-control>` | `type, options` | — |
 | `<mn-modal>` | `title, open` | `mn-modal-close` |
 | `<mn-toast>` | `type, message, duration` | `mn-toast-dismiss` |
-| `<mn-login>` | `title, action-url` | `mn-login-submit` |
 | `<mn-command-palette>` | `commands, placeholder` | `mn-command-select` |
 | `<mn-date-picker>` | `value, min, max` | `mn-date-change` |
 | `<mn-profile>` | `user, options` | `mn-profile-action` |
@@ -429,7 +438,6 @@ Demo: `demo/sections/agentic.js` (trace, meter, streaming) and `demo/sections/fi
 | AI agent mesh | `mn-mesh-network` + `mn-mesh-node` cards |
 | Mission tracking | `mn-mission-card` + `mn-mission-status` |
 | Gantt chart | `<mn-gantt data="[...]">` |
-| Login page | `<mn-login title="Sign In">` or `Maranello.loginScreen(opts)` |
 | Icons | `Maranello.renderIcon(el, 'dashboard', {size: 'lg'})` |
 | Dark theme | `<body class="mn-nero">` |
 | Light theme | `<body class="mn-avorio">` |
@@ -455,7 +463,8 @@ Demo: `demo/sections/agentic.js` (trace, meter, streaming) and `demo/sections/fi
 
 ```html
 <body class="mn-nero">
-<link rel="stylesheet" href="maranello-luce-design-business/css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@maranello/tokens/dist/tokens.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@maranello/elements/dist/elements.css">
 <div class="mn-section-dark"><div class="mn-container">
   <h2 class="mn-title-section">Ops</h2>
   <div class="mn-grid-3">

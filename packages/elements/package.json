@@ -1,0 +1,35 @@
+{
+  "name": "@maranello/elements",
+  "version": "6.0.0",
+  "description": "Maranello Luce Design — 31 Web Components + headless viz/domain API",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/esm/index.js"
+    },
+    "./wc": {
+      "types": "./dist/types/wc/index.d.ts",
+      "import": "./dist/esm/wc/index.js"
+    },
+    "./wc/*": {
+      "import": "./dist/esm/wc/*.js"
+    },
+    "./register-all": "./dist/esm/wc/register-all.js",
+    "./css": "./dist/css/index.css",
+    "./css/*": "./dist/css/*"
+  },
+  "peerDependencies": {
+    "@maranello/tokens": "^6.0.0"
+  },
+  "devDependencies": {
+    "@maranello/tokens": "workspace:*"
+  },
+  "files": ["dist", "src"],
+  "scripts": {
+    "build": "node esbuild.config.mjs && tsc --emitDeclarationOnly",
+    "build:css": "mkdir -p dist/css && cp src/css/*.css dist/css/",
+    "test": "vitest run"
+  },
+  "license": "MPL-2.0"
+}

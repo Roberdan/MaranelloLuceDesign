@@ -1,0 +1,158 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - link "Skip to main content" [ref=e2]:
+    - /url: "#demo-root"
+  - navigation "Demo navigation" [ref=e3]:
+    - generic [ref=e4]: Maranello Luce
+    - list [ref=e5]:
+      - listitem [ref=e6]:
+        - link "Home" [ref=e7]:
+          - /url: "#hero"
+      - listitem [ref=e8]:
+        - link "Tokens" [ref=e9]:
+          - /url: "#tokens"
+      - listitem [ref=e10]:
+        - link "Cards" [ref=e11]:
+          - /url: "#cards"
+      - listitem [ref=e12]:
+        - link "Dashboard" [ref=e13]:
+          - /url: "#dashboard"
+      - listitem [ref=e14]:
+        - link "Charts" [ref=e15]:
+          - /url: "#charts"
+      - listitem [ref=e16]:
+        - link "Network" [ref=e17]:
+          - /url: "#network"
+      - listitem [ref=e18]:
+        - link "Controls" [ref=e19]:
+          - /url: "#controls"
+      - listitem [ref=e20]:
+        - link "Forms" [ref=e21]:
+          - /url: "#forms"
+      - listitem [ref=e22]:
+        - link "Tables" [ref=e23]:
+          - /url: "#tables"
+      - listitem [ref=e24]:
+        - link "Gauges" [ref=e25]:
+          - /url: "#gauges"
+      - listitem [ref=e26]:
+        - link "Cockpit" [ref=e27]:
+          - /url: "#cockpit"
+      - listitem [ref=e28]:
+        - link "Telemetry" [ref=e29]:
+          - /url: "#telemetry"
+      - listitem [ref=e30]:
+        - link "Gantt" [ref=e31]:
+          - /url: "#gantt"
+      - listitem [ref=e32]:
+        - link "Icons" [ref=e33]:
+          - /url: "#icons"
+      - listitem [ref=e34]:
+        - link "Anim" [ref=e35]:
+          - /url: "#animations"
+      - listitem [ref=e36]:
+        - link "Heatmap" [ref=e37]:
+          - /url: "#heatmap"
+      - listitem [ref=e38]:
+        - link "Treemap" [ref=e39]:
+          - /url: "#treemap"
+      - listitem [ref=e40]:
+        - link "Layouts" [ref=e41]:
+          - /url: "#layouts"
+      - listitem [ref=e42]:
+        - link "Detail" [ref=e43]:
+          - /url: "#detail-panel"
+      - listitem [ref=e44]:
+        - link "Chat" [ref=e45]:
+          - /url: "#interactive"
+      - listitem [ref=e46]:
+        - link "OKR" [ref=e47]:
+          - /url: "#okr"
+      - listitem [ref=e48]:
+        - link "Map" [ref=e49]:
+          - /url: "#map"
+      - listitem [ref=e50]:
+        - link "Advanced" [ref=e51]:
+          - /url: "#advanced"
+      - listitem [ref=e52]:
+        - link "Mesh" [ref=e53]:
+          - /url: "#mesh-network"
+      - listitem [ref=e54]:
+        - link "Convergio" [ref=e55]:
+          - /url: "#convergio"
+      - listitem [ref=e56]:
+        - link "WC" [ref=e57]:
+          - /url: "#web-components"
+      - listitem [ref=e58]:
+        - link "Launch" [ref=e59]:
+          - /url: "#launch"
+      - listitem [ref=e60]:
+        - link "A11y" [ref=e61]:
+          - /url: "#accessibility"
+      - listitem [ref=e62]:
+        - link "Social" [ref=e63]:
+          - /url: "#social-graph"
+      - listitem [ref=e64]:
+        - link "API" [ref=e65]:
+          - /url: "#api-reference"
+      - listitem [ref=e66]:
+        - link "Binding" [ref=e67]:
+          - /url: "#data-binding"
+      - listitem [ref=e68]:
+        - link "Overlays" [ref=e69]:
+          - /url: "#overlays"
+      - listitem [ref=e70]:
+        - link "Org" [ref=e71]:
+          - /url: "#org-tree"
+    - button "Toggle theme" [ref=e74] [cursor=pointer]: ●
+  - main [ref=e75]:
+    - heading "Hero" [level=2] [ref=e77]
+    - generic [ref=e78]:
+      - heading "Forms" [level=2] [ref=e79]
+      - generic [ref=e80]:
+        - textbox "Name" [ref=e81]
+        - textbox "Email" [ref=e82]
+        - button "Submit" [ref=e83]
+    - generic [ref=e84]:
+      - heading "Charts" [level=2] [ref=e85]
+      - img "Sample chart" [ref=e86]
+    - heading "Gauges" [level=2] [ref=e88]
+    - generic [ref=e89]:
+      - heading "Overlays" [level=2] [ref=e90]
+      - button "Open Modal" [ref=e91]
+      - button "Command Palette" [ref=e92]
+    - heading "Icons" [level=2] [ref=e94]
+    - generic [ref=e95]:
+      - heading "Responsive Fixtures" [level=2] [ref=e96]
+      - complementary [ref=e97]:
+        - generic [ref=e99]: Nav
+        - navigation [ref=e100]:
+          - link "Item 1" [ref=e101] [cursor=pointer]:
+            - /url: "#"
+          - link "Item 2" [ref=e102] [cursor=pointer]:
+            - /url: "#"
+      - table [ref=e105]:
+        - rowgroup [ref=e106]:
+          - row "Name Value" [ref=e107]:
+            - columnheader "Name" [ref=e108]
+            - columnheader "Value" [ref=e109]
+        - rowgroup [ref=e110]:
+          - row "A 1" [ref=e111]:
+            - cell "A" [ref=e112]
+            - cell "1" [ref=e113]
+          - row "B 2" [ref=e114]:
+            - cell "B" [ref=e115]
+            - cell "2" [ref=e116]
+          - row "C 3" [ref=e117]:
+            - cell "C" [ref=e118]
+            - cell "3" [ref=e119]
+      - generic [ref=e120]:
+        - textbox "Field 1" [ref=e122]
+        - textbox "Field 2" [ref=e124]
+      - generic [ref=e126]: Detail
+      - img "Responsive chart test fixture" [ref=e128]
+  - button "Display settings" [ref=e129] [cursor=pointer]:
+    - img [ref=e130]
+```

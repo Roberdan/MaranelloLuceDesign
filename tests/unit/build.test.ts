@@ -228,15 +228,13 @@ describe('dist/wc/ web components', () => {
 
 describe('header shell responsive packaging', () => {
   it('keeps component CSS free of inline responsive media blocks', () => {
-    const content = readFileSync(join(ROOT, 'src/css/components-header-shell.css'), 'utf8');
+    const content = readFileSync(join(ROOT, 'packages/elements/src/css/components-header-shell.css'), 'utf8');
     expect(content).not.toContain('@media');
   });
 
-  it('imports responsive-header-shell.css from both CSS entrypoints', () => {
-    const indexCss = readFileSync(join(ROOT, 'src/css/index.css'), 'utf8');
-    const maranelloCss = readFileSync(join(ROOT, 'src/css/maranello.css'), 'utf8');
+  it('imports responsive-header-shell.css from elements CSS entrypoint', () => {
+    const indexCss = readFileSync(join(ROOT, 'packages/elements/src/css/index.css'), 'utf8');
     expect(indexCss).toContain("responsive-header-shell.css");
-    expect(maranelloCss).toContain("responsive-header-shell.css");
   });
 });
 

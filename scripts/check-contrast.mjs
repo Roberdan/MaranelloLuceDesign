@@ -10,7 +10,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const CSS_DIR = join(ROOT, 'src', 'css');
+const CSS_DIR = join(ROOT, 'packages', 'tokens', 'src', 'css');
 
 /* ── Parse CSS custom properties into { varName: rawValue } ── */
 function parseVars(css, selectorFilter) {

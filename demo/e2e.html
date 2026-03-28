@@ -130,7 +130,7 @@
   <!-- Only mn-theme-toggle WC: other APIs come from the IIFE.
        Avoid loading WCs that import src/css/ barrels in shadow DOM
        (causes CSS @import waterfall blocking the load event). -->
-  <script type="module" src="../src/wc/mn-theme-toggle.js"></script>
+  <script type="module" src="../packages/elements/src/wc/mn-theme-toggle.js"></script>
   <script>
     // Wire overlay buttons to Maranello API (lightweight, no section modules)
     document.addEventListener('DOMContentLoaded', () => {

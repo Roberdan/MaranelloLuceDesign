@@ -1,15 +1,15 @@
-<!-- v5.16.0 | 2026-03-27 -->
+<!-- v6.0.0 | 2026-03-27 -->
 # convergio-design
 
-Ferrari Luce-inspired DS for dashboards. 5 themes. 115+ IIFE exports. 36 WC. WCAG 2.2 AA.
+Ferrari Luce-inspired DS monorepo: `@maranello/tokens` + `@maranello/elements`. 5 themes. 31 WC. WCAG 2.2 AA.
 
 ## Commands
 
-`npm run build` full | `npm run test:unit` vitest | `npm run test:e2e` playwright (Chromium+WebKit) | `npx tsc --noEmit` typecheck | `npm run dev` demo :3000
+`pnpm build` full | `pnpm test:unit` vitest | `pnpm test:e2e` playwright (Chromium+WebKit) | `pnpm typecheck` tsc --noEmit | `pnpm dev` demo :3000
 
 ## Architecture
 
-`src/css/` tokens+themes+components (123 files) | `src/ts/` headless JS+runtime | `src/wc/` 35 `mn-*` WC | `dist/` build output
+`packages/tokens/` design tokens, themes, setTheme/cycleTheme, shadcn bridge | `packages/elements/` headless viz/domain JS + 31 `mn-*` WC + component CSS | `dist/` build output
 
 Key: `layout.ts`+`layout-slot.ts` (state machine) · `header.ts` (navbar) · `tokens.css` · `themes-*.css` · `layouts-mn-layout.css` (grid `:has()`)
 
@@ -60,7 +60,7 @@ All fill parent by default (100% width/height). Override via CSS vars: `--mn-gan
 
 **Code:** Max 250 lines/file. `@layer` CSS. No `innerHTML` with user data. `isValidColor()` for colors.
 
-**CI:** IIFE<500KB, no emoji, mn- prefix, no hardcoded colors, WCAG audit, migration docs gate, Chromium+WebKit.
+**CI:** IIFE<450KB, no emoji, mn- prefix, no hardcoded colors, WCAG audit, migration docs gate, Chromium+WebKit.
 
 ## Releases
 
@@ -68,10 +68,6 @@ PATCH=fix | MINOR=feat or breaking+migration doc | Breaking: CHANGELOG `### Brea
 
 ## State Machine Contracts
 
-- `NavigationModel.current()/history()` return clones. `pop()` returns new current. `remove()/clear()` emit events.
-- `PanelOrchestrator.move()` updates nav. `open(existing, data)` remounts.
-- `ViewRegistry.get()/list()` return clones. `reset()` clears first.
-- `StateScaffold` warns on invalid state. 6 states: loading/ready/empty/error/partial/no-results.
 - WC `registerAll()` retryable on failure.
 
 ## Agent

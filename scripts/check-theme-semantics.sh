@@ -19,7 +19,7 @@ while IFS= read -r match; do
   echo "        $line"
   echo "  Fix : Replace with var(--mn-text)"
   ((errors++)) || true
-done < <(grep -rn "[^-]color[[:space:]]*:[[:space:]]*var(--bianco-caldo" "$ROOT/src/css/" 2>/dev/null || true)
+done < <(grep -rn "[^-]color[[:space:]]*:[[:space:]]*var(--bianco-caldo" "$ROOT/packages/elements/src/css/" 2>/dev/null || true)
 
 echo "Checking demo JS/HTML: inline var(--bianco-caldo) as text color..."
 # Exclude generated bundles (*.bundle.js), test pages, and glass-test
@@ -42,7 +42,7 @@ while IFS= read -r match; do
   echo "        $line"
   echo "  Fix : Replace color: var(--mn-text-inverse) with var(--mn-text) in Avorio overrides"
   ((errors++)) || true
-done < <(grep -rn 'mn-avorio.*color.*var(--mn-text-inverse)' "$ROOT/src/css/" 2>/dev/null || true)
+done < <(grep -rn 'mn-avorio.*color.*var(--mn-text-inverse)' "$ROOT/packages/elements/src/css/" 2>/dev/null || true)
 
 echo ""
 if [[ $errors -gt 0 ]]; then

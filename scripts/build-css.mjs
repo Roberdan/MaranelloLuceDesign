@@ -5,7 +5,7 @@
 import { mkdirSync, readdirSync, copyFileSync, writeFileSync, existsSync } from 'fs';
 import { join, resolve } from 'path';
 
-const srcDir = 'src/css';
+const srcDir = 'packages/elements/src/css';
 const outDir = 'dist/css';
 
 // Graceful check for lightningcss
@@ -58,9 +58,19 @@ if (existsSync(maranelloSrc)) {
 }
 
 // 2. Bundle index.css (readable, imports inlined)
+// index.css uses bare-specifier @import '@maranello/tokens/css' for package consumers.
+// LightningCSS cannot resolve bare specifiers, so skip if it fails.
 const indexSrc = join(srcDir, 'index.css');
 if (existsSync(indexSrc)) {
-  bundleCSS(indexSrc, join(outDir, 'index.css'));
+  try {
+    bundleCSS(indexSrc, join(outDir, 'index.css'));
+  } catch (err) {
+    if (err.data === 'ResolverError') {
+      console.warn('CSS: index.css uses bare-specifier imports — skipping (use maranello.css instead)');
+    } else {
+      throw err;
+    }
+  }
 } else {
   console.warn('CSS: index.css not found — skipping bundle');
 }

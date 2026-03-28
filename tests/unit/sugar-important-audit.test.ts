@@ -8,7 +8,7 @@ import { join } from 'node:path';
 
 const CSS_PATH = join(
   import.meta.dirname,
-  '../../src/css/themes-sugar-components.css',
+  '../../packages/elements/src/css/themes-sugar-components.css',
 );
 const content = readFileSync(CSS_PATH, 'utf8');
 

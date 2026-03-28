@@ -1,0 +1,32 @@
+/* ============================================================
+   MARANELLO DESIGN SYSTEM — Main Aggregator
+   Import this single file to get all design system styles.
+   Version: 1.4.0
+   ============================================================ */
+
+@layer tokens, base, components, controls, forms, charts, layouts, extended, patterns, themes, utilities;
+
+@import url('../../../tokens/src/css/tokens.css');
+@import url('base.css');
+@import url('components.css');
+@import url('components-header.css');
+@import url('gauge.css');
+@import url('patterns.css');
+@import url('controls.css');
+@import url('extended.css');
+@import url('icons.css');
+@import url('composition.css');
+@import url('animations.css');
+@import url('charts.css');
+@import url('forms.css');
+@import url('layouts.css');
+@import url('accessibility.css');
+@import url('../../../tokens/src/css/themes.css');
+@import url('utilities.css');
+@import url('../../../tokens/src/css/responsive-tokens.css');
+@import url('responsive-layouts.css');
+@import url('responsive-data.css');
+@import url('responsive-forms.css');
+@import url('responsive-charts.css');
+@import url('responsive-header-shell.css');
+@import './integration.css';

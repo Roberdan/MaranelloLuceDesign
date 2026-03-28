@@ -1,73 +1,9 @@
 {
   "name": "maranello-luce-design-business",
-  "version": "5.16.0",
+  "private": true,
+  "version": "6.0.0",
   "description": "Ferrari Luce-inspired design system for business dashboards. Part of the Convergio project.",
   "type": "module",
-  "exports": {
-    ".": {
-      "types": "./dist/types/ts/index.d.ts",
-      "import": "./dist/esm/index.js",
-      "require": "./dist/cjs/index.cjs"
-    },
-    "./css": {
-      "import": "./dist/css/index.css"
-    },
-    "./css/*": {
-      "import": "./dist/css/*"
-    },
-    "./wc": {
-      "types": "./dist/types/wc/index.d.ts",
-      "import": "./dist/esm/wc/index.js",
-      "require": "./dist/cjs/wc/index.cjs"
-    },
-    "./wc/*": {
-      "types": "./dist/types/wc/*.d.ts",
-      "import": "./dist/esm/wc/*.js",
-      "require": "./dist/cjs/wc/*.cjs"
-    },
-    "./charts": {
-      "types": "./dist/types/charts/index.d.ts",
-      "import": "./dist/esm/charts/index.js",
-      "require": "./dist/cjs/charts/index.cjs"
-    },
-    "./gantt": {
-      "types": "./dist/types/gantt/index.d.ts",
-      "import": "./dist/esm/gantt/index.js",
-      "require": "./dist/cjs/gantt/index.cjs"
-    },
-    "./gauge": {
-      "types": "./dist/types/gauge/index.d.ts",
-      "import": "./dist/esm/gauge/index.js",
-      "require": "./dist/cjs/gauge/index.cjs"
-    },
-    "./controls": {
-      "types": "./dist/types/controls/index.d.ts",
-      "import": "./dist/esm/controls/index.js",
-      "require": "./dist/cjs/controls/index.cjs"
-    },
-    "./forms": {
-      "types": "./dist/types/forms/index.d.ts",
-      "import": "./dist/esm/forms/index.js",
-      "require": "./dist/cjs/forms/index.cjs"
-    },
-    "./fonts/*": "./dist/fonts/*",
-    "./assets/*": "./dist/assets/*",
-    "./vendor/*": "./dist/vendor/*"
-  },
-  "types": "./dist/types/ts/index.d.ts",
-  "sideEffects": [
-    "dist/iife/*.js",
-    "dist/wc/*.js",
-    "dist/esm/wc/*.js"
-  ],
-  "peerDependencies": {
-    "mapbox-gl": ">=2.0.0"
-  },
-  "peerDependenciesMeta": {
-    "mapbox-gl": {
-      "optional": true
-    }
-  },
   "devDependencies": {
     "@axe-core/playwright": "^4.11.1",
     "@playwright/test": "^1.50.0",
@@ -83,22 +19,15 @@
     "vitest": "^4.1.0"
   },
   "scripts": {
-    "build": "npm run clean && npm run build:js && npm run build:css && npm run build:wc && npm run build:fonts && npm run build:assets && npm run build:types && npm run build:version",
-    "build:version": "node scripts/inject-version.mjs",
-    "build:assets": "node scripts/build-assets.mjs",
-    "build:js": "node esbuild.config.mjs",
-    "build:css": "node scripts/build-css.mjs",
-    "build:wc": "node scripts/build-wc.mjs",
-    "build:fonts": "node scripts/build-fonts.mjs",
-    "build:types": "tsc --emitDeclarationOnly",
-    "dev": "serve . -l 3000",
-    "test": "npm run test:unit && npm run test:e2e",
-    "test:unit": "vitest run",
+    "build": "pnpm -r run build",
+    "build:demo": "pnpm -r run build && node scripts/build-css.mjs && node scripts/build-demo.mjs",
+    "dev": "npm run build:demo && serve . -l 3000",
+    "test": "pnpm -r run test",
+    "test:unit": "pnpm -r run test:unit",
     "test:e2e": "playwright test --ignore-snapshots",
     "test:e2e:visual": "playwright test visual-regression",
     "test:e2e:visual:update": "playwright test visual-regression --update-snapshots",
-    "clean": "rm -rf dist",
-    "prepublishOnly": "npm run clean && npm run build"
+    "clean": "pnpm -r run clean"
   },
   "license": "MPL-2.0",
   "author": "Roberto D'Angelo (Roberdan)",

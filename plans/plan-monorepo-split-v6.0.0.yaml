@@ -1,0 +1,568 @@
+plan:
+  name: "Monorepo Split — @maranello/tokens + @maranello/elements v6.0.0"
+  project: maranello
+  version: "6.0.0"
+  description: |
+    Split monolite maranello-luce-design-business into two npm packages:
+    @maranello/tokens (CSS vars, 5 themes, shadcn bridge) and
+    @maranello/elements (31 WC after kills, headless TS viz/domain components).
+    Kill Presentation Runtime (AppShell, ViewRegistry, NavigationModel, PanelOrchestrator, StateScaffold).
+    Keep: DashboardRenderer (refactored), FacetWorkbench, EntityWorkbench, AsyncSelect.
+    Source files MOVE (not copy) — src/ becomes legacy, packages/ is the source of truth.
+    Reference: ADR-0117 in ConvergioPlatform.
+
+requirements:
+  - id: F-01
+    title: "@maranello/tokens CSS"
+    description: "All --mn-* variables in importable files (tokens-color, tokens-spacing-type, responsive-tokens)"
+  - id: F-02
+    title: "@maranello/tokens themes"
+    description: "5 themes switchable via [data-theme] + body class (themes-base, avorio/colorblind/sugar components)"
+  - id: F-03
+    title: "@maranello/tokens JS"
+    description: "setTheme(), cycleTheme(), getTheme(), palette(), cssVar(), getAccent() + token constants"
+  - id: F-04
+    title: "@maranello/tokens bridge-shadcn"
+    description: "CSS file mapping --mn-* → shadcn vars (--background, --foreground, --primary, --border, --ring, --radius)"
+  - id: F-05
+    title: "@maranello/tokens exports map"
+    description: "Package.json exports: ./css, ./themes, ./bridge-shadcn entry points"
+  - id: F-06
+    title: "@maranello/tokens tests"
+    description: "Theme switching, token presence, bridge mapping verification"
+  - id: F-07
+    title: "@maranello/elements WC"
+    description: "31 Web Components (mn-app-shell, mn-state-scaffold, mn-login killed), per-element entry points"
+  - id: F-08
+    title: "@maranello/elements headless"
+    description: "All viz/domain TS exports including DashboardRenderer (refactored), FacetWorkbench, EntityWorkbench, AsyncSelect"
+  - id: F-09
+    title: "@maranello/elements register-all"
+    description: "Opt-in register-all.ts to import all 31 WC at once"
+  - id: F-10
+    title: "@maranello/elements zero runtime dep"
+    description: "No AppShellController, ViewRegistry, NavigationModel, PanelOrchestrator, StateScaffold imports"
+  - id: F-11
+    title: "@maranello/elements types"
+    description: "All headless TS types exported from package"
+  - id: F-12
+    title: "@maranello/elements tests"
+    description: "WC registration, headless factory, tree-shaking verification"
+  - id: F-13
+    title: "Monorepo structure"
+    description: "pnpm workspaces, shared tsconfig, per-package build, pnpm install in W1"
+  - id: F-14
+    title: "npm publish pipeline"
+    description: "CI workflow for @maranello/* publish to npm registry"
+  - id: F-15
+    title: "Kill Presentation Runtime"
+    description: "Delete 5 TS runtime files + 3 WC files + related tests, clean all references"
+  - id: F-16
+    title: "DashboardRenderer refactor"
+    description: "Remove StateScaffold dependency, use CSS-based state wrapper"
+  - id: F-17
+    title: "Integration test tokens"
+    description: "Import @maranello/tokens → Ferrari Luce colors applied"
+  - id: F-18
+    title: "Integration test elements"
+    description: "Import mn-gauge from @maranello/elements → WC renders"
+  - id: F-19
+    title: "CHANGELOG + ADR + version v6.0.0"
+    description: "Breaking change docs, migration guide, ADR for monorepo split"
+  - id: F-20
+    title: "Source cleanup"
+    description: "Remove original src/ after packages/ is verified — single source of truth"
+
+acceptance_invariants:
+  - "test -f packages/tokens/package.json"
+  - "grep -q '@maranello/tokens' packages/tokens/package.json"
+  - "test -f packages/tokens/src/css/tokens-color.css"
+  - "test -f packages/tokens/src/css/themes-base.css"
+  - "test -f packages/tokens/src/css/bridge-shadcn.css"
+  - "grep -q 'setTheme' packages/tokens/src/ts/index.ts"
+  - "grep -q '\\-\\-background' packages/tokens/src/css/bridge-shadcn.css"
+  - "test -f packages/elements/package.json"
+  - "grep -q '@maranello/elements' packages/elements/package.json"
+  - "test -f packages/elements/src/wc/mn-gauge.js"
+  - "! test -f packages/elements/src/wc/mn-app-shell.js"
+  - "! grep -rq 'AppShellController' packages/elements/src/"
+  - "grep -q 'kanbanBoard' packages/elements/src/ts/index.ts"
+  - "grep -q 'FerrariGauge' packages/elements/src/ts/index.ts"
+  - "test -f pnpm-workspace.yaml"
+  - "! test -d src/ts"
+  - "! test -d src/wc"
+
+waves:
+  - id: W1
+    name: "Foundation — Monorepo + Kill Runtime + pnpm install"
+    parallel: false
+    tasks:
+      - id: T1-01
+        title: "Monorepo scaffold + pnpm install"
+        description: |
+          Set up monorepo structure in /Users/Roberdan/GitHub/convergio-design.
+
+          1. Create pnpm-workspace.yaml: packages: ['packages/*']
+          2. Create packages/tokens/package.json (@maranello/tokens v6.0.0)
+             exports: ./css, ./themes, ./bridge-shadcn, . (ESM+types)
+          3. Create packages/elements/package.json (@maranello/elements v6.0.0)
+             peerDependencies: @maranello/tokens ^6.0.0
+             exports: . (ESM+types), ./wc, ./wc/*, ./register-all, ./css, ./css/*
+          4. Create per-package tsconfig.json extending root
+          5. Update root package.json: private true, workspaces scripts
+          6. Run pnpm install to resolve workspace deps
+
+          Read existing package.json, tsconfig.json BEFORE changes.
+          Create empty src/ dirs in each package (filled by W2).
+        requirements: [F-13]
+        executor: task-executor
+        model: claude-opus-4-6
+        effort: M
+        verify:
+          - "test -f pnpm-workspace.yaml"
+          - "test -f packages/tokens/package.json"
+          - "test -f packages/elements/package.json"
+          - "grep -q '@maranello/tokens' packages/tokens/package.json"
+          - "grep -q '@maranello/elements' packages/elements/package.json"
+
+      - id: T1-02
+        title: "Kill Presentation Runtime + refactor DashboardRenderer"
+        depends_on: [T1-01]
+        description: |
+          Delete runtime components and clean all references.
+          Worktree: /Users/Roberdan/GitHub/convergio-design
+
+          KILL these 5 runtime classes (delete source files):
+          - src/ts/app-shell.ts (AppShellController)
+          - src/ts/view-registry.ts (ViewRegistry)
+          - src/ts/navigation-model.ts (NavigationModel)
+          - src/ts/panel-orchestrator.ts (PanelOrchestrator)
+          - src/ts/state-scaffold.ts (StateScaffold)
+          Also: src/ts/login.ts, src/ts/login-dom.ts
+
+          KILL these 3 WC files:
+          - src/wc/mn-app-shell.js
+          - src/wc/mn-state-scaffold.js
+          - src/wc/mn-login.js
+
+          DELETE related test files (glob for them, may have varied names).
+
+          KEEP in elements (do NOT delete):
+          - DashboardRenderer (refactor to remove StateScaffold dep)
+          - FacetWorkbench (no runtime deps)
+          - EntityWorkbench (no runtime deps)
+          - AsyncSelect (no runtime deps)
+
+          CLEAN references:
+          - src/ts/index-runtime.ts: remove killed exports, KEEP DashboardRenderer/Facet/Entity/AsyncSelect
+          - src/ts/index.ts: clean re-exports
+          - src/ts/maranello.ts: remove killed registrations
+          - src/ts/maranello-exports.ts: remove killed registrations
+          - src/wc/index.ts: remove 3 killed WC from WC_TAGS + registerAll
+
+          REFACTOR DashboardRenderer:
+          - Read src/ts/dashboard-renderer.ts
+          - Remove StateScaffold import
+          - Replace with simple div + CSS class state wrapper
+          - External API unchanged
+
+          VERIFY: npx tsc --noEmit passes, npm run test:unit passes (remaining tests).
+        requirements: [F-10, F-15, F-16]
+        executor: task-executor
+        model: claude-opus-4-6
+        effort: L
+        verify:
+          - "! test -f src/ts/app-shell.ts"
+          - "! test -f src/wc/mn-app-shell.js"
+          - "! grep -rq 'AppShellController' src/ts/index.ts"
+          - "! grep -rq 'StateScaffold' src/ts/index.ts"
+          - "test -f src/ts/dashboard-renderer.ts"
+          - "npx tsc --noEmit"
+
+  - id: W2
+    name: "Package Extraction"
+    parallel: true
+    tasks:
+      - id: T2-01
+        title: "Extract @maranello/tokens — CSS files + aggregators"
+        depends_on: [T1-02]
+        description: |
+          MOVE token/theme CSS files to packages/tokens/src/css/.
+          Worktree: /Users/Roberdan/GitHub/convergio-design
+
+          MOVE (not copy) these files:
+          - src/css/tokens-color.css → packages/tokens/src/css/
+          - src/css/tokens-spacing-type.css → packages/tokens/src/css/
+          - src/css/themes-base.css → packages/tokens/src/css/
+          - src/css/themes-avorio-components.css → packages/tokens/src/css/
+          - src/css/themes-colorblind-components.css → packages/tokens/src/css/
+          - src/css/themes-colorblind-layouts.css → packages/tokens/src/css/
+          - src/css/themes-sugar-components.css → packages/tokens/src/css/
+          - src/css/themes-sugar-colorblind.css → packages/tokens/src/css/
+          - src/css/responsive-tokens.css → packages/tokens/src/css/
+          - src/css/integration-theme-bridge.css → packages/tokens/src/css/
+
+          CREATE aggregators:
+          - packages/tokens/src/css/tokens.css (@import token files)
+          - packages/tokens/src/css/themes.css (@import all theme files)
+          - packages/tokens/src/css/index.css (@import tokens + themes)
+
+          CREATE bridge-shadcn.css mapping --mn-* → shadcn vars.
+
+          After moving, update any @import paths in src/css/ aggregators that
+          referenced the moved files to point to packages/tokens.
+        requirements: [F-01, F-02, F-04]
+        executor: task-executor
+        model: claude-opus-4-6
+        effort: M
+        verify:
+          - "test -f packages/tokens/src/css/tokens-color.css"
+          - "test -f packages/tokens/src/css/themes-base.css"
+          - "test -f packages/tokens/src/css/bridge-shadcn.css"
+          - "test -f packages/tokens/src/css/index.css"
+          - "grep -q '\\-\\-background' packages/tokens/src/css/bridge-shadcn.css"
+          - "! test -f src/css/tokens-color.css"
+
+      - id: T2-02
+        title: "Extract @maranello/tokens — TS exports + build"
+        depends_on: [T1-02]
+        description: |
+          MOVE token TS files to packages/tokens/src/ts/ and create build.
+          Worktree: /Users/Roberdan/GitHub/convergio-design
+
+          MOVE/CREATE TS files:
+          - Extract from src/ts/core/tokens.ts → packages/tokens/src/ts/tokens.ts
+            (COLOR, FONT, TEXT_SIZE, SPACE, DURATION, EASE, RADIUS, SHADOW constants)
+          - Extract theme functions from src/ts/core/utils.ts →
+            packages/tokens/src/ts/theme.ts (setTheme, cycleTheme, getTheme, getAccent)
+            packages/tokens/src/ts/style.ts (palette, cssVar)
+          - Extract from src/ts/core/types → packages/tokens/src/ts/types.ts (ThemeMode)
+          - Extract from src/ts/locale.ts → packages/tokens/src/ts/locale.ts (setLocale, getLocale, resetLocale)
+          - Extract utils: packages/tokens/src/ts/utils.ts (debounce, throttle, formatNumber, formatDate, clamp, lerp, hiDpiCanvas, createElement, escapeHtml)
+          - Extract events: packages/tokens/src/ts/events.ts (EventBus, eventBus, emit, on, off)
+          - Create packages/tokens/src/ts/index.ts barrel re-exporting everything
+
+          CREATE esbuild.config.mjs for tokens package (ESM only).
+          CREATE build scripts in packages/tokens/package.json.
+
+          VERIFY: cd packages/tokens && pnpm run build succeeds.
+        requirements: [F-03, F-05]
+        executor: task-executor
+        model: claude-opus-4-6
+        effort: L
+        verify:
+          - "test -f packages/tokens/src/ts/index.ts"
+          - "grep -q 'setTheme' packages/tokens/src/ts/index.ts"
+          - "grep -q 'cycleTheme' packages/tokens/src/ts/index.ts"
+          - "grep -q 'EventBus\\|eventBus' packages/tokens/src/ts/index.ts"
+          - "test -f packages/tokens/esbuild.config.mjs"
+
+      - id: T2-03
+        title: "Extract @maranello/elements — WC files + register-all"
+        depends_on: [T1-02]
+        description: |
+          MOVE Web Component files to packages/elements/src/wc/.
+          Worktree: /Users/Roberdan/GitHub/convergio-design
+
+          MOVE all 31 remaining WC .js files from src/wc/ to packages/elements/src/wc/.
+          (mn-app-shell.js, mn-state-scaffold.js, mn-login.js already deleted in T1-02)
+
+          CREATE packages/elements/src/wc/index.ts with updated WC_TAGS (31 entries)
+          and registerAll() that imports all 31 WC.
+
+          CREATE register-all.ts entry point that just calls registerAll().
+
+          Update CSS link paths inside WC files — they now reference
+          @maranello/tokens CSS via relative path or package import.
+
+          After moving, delete src/wc/ directory.
+        requirements: [F-07, F-09]
+        executor: task-executor
+        model: claude-opus-4-6
+        effort: M
+        verify:
+          - "test -f packages/elements/src/wc/mn-gauge.js"
+          - "test -f packages/elements/src/wc/mn-kanban-board.js"
+          - "! test -f packages/elements/src/wc/mn-app-shell.js"
+          - "test -f packages/elements/src/wc/index.ts"
+          - "test -f packages/elements/src/wc/register-all.ts"
+          - "! test -d src/wc"
+
+      - id: T2-04
+        title: "Extract @maranello/elements — headless TS + build"
+        depends_on: [T1-02]
+        description: |
+          MOVE viz/domain TS files to packages/elements/src/ts/.
+          Worktree: /Users/Roberdan/GitHub/convergio-design
+
+          MOVE all headless TS files EXCEPT:
+          - Files already moved to tokens (core/tokens.ts, core/utils.ts theme parts, locale.ts)
+          - Killed files (app-shell, view-registry, navigation-model, panel-orchestrator, state-scaffold, login)
+          - index-runtime.ts (rewrite new barrel instead)
+
+          KEEP and MOVE: DashboardRenderer, FacetWorkbench, EntityWorkbench, AsyncSelect,
+          all viz (gauge, chart, gantt, kanban, data-table, ai-chat, voice, map, etc.),
+          all controls, all forms, all icons, data binding, layout helpers.
+
+          CREATE packages/elements/src/ts/index.ts barrel exporting all KEEP components.
+          Import @maranello/tokens as peer dep where theme utils are needed.
+
+          CREATE esbuild.config.mjs for elements (ESM + CJS + IIFE).
+
+          After moving, delete src/ts/ directory.
+        requirements: [F-08, F-10, F-11]
+        executor: task-executor
+        model: claude-opus-4-6
+        effort: L
+        verify:
+          - "test -f packages/elements/src/ts/index.ts"
+          - "grep -q 'kanbanBoard' packages/elements/src/ts/index.ts"
+          - "grep -q 'voiceManager' packages/elements/src/ts/index.ts"
+          - "grep -q 'FerrariGauge' packages/elements/src/ts/index.ts"
+          - "grep -q 'DashboardRenderer' packages/elements/src/ts/index.ts"
+          - "! grep -rq 'AppShellController' packages/elements/src/"
+          - "test -f packages/elements/esbuild.config.mjs"
+          - "! test -d src/ts"
+
+      - id: T2-05
+        title: "Extract @maranello/elements — component CSS"
+        depends_on: [T2-01]
+        description: |
+          MOVE component/layout CSS files to packages/elements/src/css/.
+          Worktree: /Users/Roberdan/GitHub/convergio-design
+
+          MOVE all CSS files that are NOT token/theme files:
+          - components-*.css
+          - layouts-*.css
+          - forms-*.css
+          - controls-*.css
+          - patterns-*.css
+          - extended-*.css
+          - charts-*.css
+          - gauge.css
+          - base.css, composition.css, accessibility.css, animations.css
+          - Any remaining CSS from src/css/
+
+          CREATE packages/elements/src/css/index.css aggregator.
+
+          After moving, delete src/css/ directory (tokens already moved in T2-01).
+        requirements: [F-07]
+        executor: task-executor
+        model: claude-sonnet-4-6
+        effort: M
+        verify:
+          - "test -f packages/elements/src/css/components-kanban.css"
+          - "test -f packages/elements/src/css/gauge.css"
+          - "! test -d src/css"
+
+  - id: W3
+    name: "Build + Test + CI"
+    parallel: true
+    tasks:
+      - id: T3-01
+        title: "@maranello/tokens tests"
+        depends_on: [T2-01, T2-02]
+        description: |
+          Create test suite for @maranello/tokens.
+          Worktree: /Users/Roberdan/GitHub/convergio-design
+
+          Create packages/tokens/tests/tokens.test.ts:
+          - Token CSS files exist with expected --mn-* variables
+          - All 5 themes define overrides
+          - Bridge-shadcn maps all shadcn variables
+          - setTheme/cycleTheme/getTheme work (mock DOM + localStorage)
+          - Token constants have expected keys
+
+          Create vitest.config.ts. Max 250 lines.
+        requirements: [F-06]
+        executor: task-executor
+        model: claude-sonnet-4-6
+        effort: M
+        verify:
+          - "test -f packages/tokens/tests/tokens.test.ts"
+          - "test -f packages/tokens/vitest.config.ts"
+
+      - id: T3-02
+        title: "@maranello/elements tests"
+        depends_on: [T2-03, T2-04]
+        description: |
+          Create test suite for @maranello/elements.
+          Worktree: /Users/Roberdan/GitHub/convergio-design
+
+          Create packages/elements/tests/:
+          - elements.test.ts: headless factories work
+          - wc-registration.test.ts: register-all registers 31 WC
+          - no-runtime.test.ts: grep zero Presentation Runtime imports
+          - Migrate relevant existing tests
+
+          Create vitest.config.ts. Max 250 lines per file.
+        requirements: [F-12]
+        executor: task-executor
+        model: claude-sonnet-4-6
+        effort: M
+        verify:
+          - "test -f packages/elements/tests/elements.test.ts"
+          - "test -f packages/elements/tests/no-runtime.test.ts"
+
+      - id: T3-03
+        title: "CI + npm publish pipeline"
+        depends_on: [T2-01, T2-04]
+        description: |
+          Update CI for monorepo and create publish workflow.
+          Worktree: /Users/Roberdan/GitHub/convergio-design
+
+          1. Update .github/workflows/ci.yml:
+             - pnpm install, pnpm -r run build, pnpm -r run test
+             - Per-package type check + bundle size gates
+          2. Create .github/workflows/publish.yml:
+             - Trigger on v* tags
+             - npm publish both packages --access public
+          3. Create root .npmrc
+
+          Read ci.yml BEFORE editing.
+        requirements: [F-14]
+        executor: task-executor
+        model: claude-sonnet-4-6
+        effort: M
+        verify:
+          - "grep -q 'pnpm' .github/workflows/ci.yml"
+          - "test -f .github/workflows/publish.yml"
+
+      - id: T3-04
+        title: "Integration tests (tokens + elements in consumer)"
+        depends_on: [T2-01, T2-03]
+        description: |
+          Integration tests proving packages work in a consumer.
+          Worktree: /Users/Roberdan/GitHub/convergio-design
+
+          1. packages/tokens/tests/integration/bridge.test.ts:
+             Import tokens CSS + bridge → shadcn vars resolve to Maranello values
+          2. packages/elements/tests/integration/wc.test.ts:
+             Import mn-gauge → custom element registers and has shadowRoot
+             Import register-all → 31 WC registered
+
+          Use vitest + happy-dom.
+        requirements: [F-17, F-18]
+        executor: task-executor
+        model: claude-sonnet-4-6
+        effort: M
+        verify:
+          - "test -f packages/tokens/tests/integration/bridge.test.ts"
+          - "test -f packages/elements/tests/integration/wc.test.ts"
+
+  - id: W4
+    name: "Cleanup + Docs"
+    parallel: true
+    tasks:
+      - id: T4-01
+        title: "Remove original src/ + legacy files"
+        depends_on: [T3-01, T3-02]
+        description: |
+          Clean up after extraction — single source of truth in packages/.
+          Worktree: /Users/Roberdan/GitHub/convergio-design
+
+          1. Verify packages/tokens and packages/elements build and test green
+          2. Delete src/ directory entirely (all content now in packages/)
+          3. Delete dist/ directory (each package has own dist/)
+          4. Delete root esbuild.config.mjs (replaced by per-package configs)
+          5. Delete scripts/ if fully replaced by per-package scripts
+          6. Update root .gitignore for new dist paths
+          7. Delete maranello.ts, maranello-exports.ts (IIFE is in elements package)
+          8. Clean package.json: remove old build scripts, keep workspace scripts
+        requirements: [F-20]
+        executor: task-executor
+        model: claude-sonnet-4-6
+        effort: M
+        verify:
+          - "! test -d src/ts"
+          - "! test -d src/wc"
+          - "! test -d src/css"
+
+      - id: T4-02
+        title: "v6.0.0 docs — CHANGELOG, ADR, migration guide"
+        depends_on: [T3-01, T3-02]
+        description: |
+          Release documentation for v6.0.0.
+          Worktree: /Users/Roberdan/GitHub/convergio-design
+
+          1. CHANGELOG.md: v6.0.0 breaking changes entry
+          2. docs/migrations/v6.0.0.md: full migration guide
+             - Old imports → new imports mapping
+             - Killed components and alternatives
+             - shadcn bridge setup
+          3. docs/adr/0008-monorepo-split.md
+          4. Update CLAUDE.md, AGENT.md, NaSra.agent.md for v6.0.0
+          5. Update CONSUMER_CONTRACT.md for new package structure
+        requirements: [F-19]
+        executor: task-executor
+        model: claude-sonnet-4-6
+        effort: M
+        verify:
+          - "grep -q '6.0.0' CHANGELOG.md"
+          - "test -f docs/migrations/v6.0.0.md"
+          - "test -f docs/adr/0008-monorepo-split.md"
+
+  - id: W5
+    name: "Release Closure"
+    parallel: false
+    tasks:
+      - id: TF-tests
+        title: "Full monorepo build + test"
+        depends_on: [T4-01, T4-02]
+        description: |
+          Full verification of monorepo.
+          1. pnpm install
+          2. pnpm -r run build
+          3. pnpm -r run test
+          4. Verify zero Presentation Runtime refs in packages/
+          5. Verify src/ deleted
+          6. Fix any failures
+        requirements: [F-13]
+        executor: task-executor
+        model: claude-sonnet-4-6
+        effort: M
+        verify:
+          - "pnpm -r run build"
+          - "pnpm -r run test"
+          - "! test -d src/ts"
+
+      - id: TF-doc
+        title: "Version stamp"
+        depends_on: [TF-tests]
+        description: |
+          Version 6.0.0 in all package.json files.
+          Verify CHANGELOG, ADR, migration guide complete.
+        requirements: [F-19]
+        executor: task-executor
+        model: claude-sonnet-4-6
+        effort: S
+        verify:
+          - "grep -q '6.0.0' packages/tokens/package.json"
+          - "grep -q '6.0.0' packages/elements/package.json"
+
+      - id: TF-pr
+        title: "Final verification + PR"
+        depends_on: [TF-doc]
+        description: |
+          Final build, all acceptance invariants, create PR.
+        requirements: [F-13]
+        executor: task-executor
+        model: claude-sonnet-4-6
+        effort: S
+        verify:
+          - "pnpm -r run build"
+          - "pnpm -r run test"
+
+      - id: TF-deploy-verify
+        title: "Package verification (npm pack dry-run)"
+        depends_on: [TF-pr]
+        description: |
+          npm pack --dry-run for both packages.
+          Verify exports, types, sizes.
+        requirements: [F-05, F-14]
+        executor: task-executor
+        model: claude-sonnet-4-6
+        effort: S
+        verify:
+          - "test -f packages/tokens/dist/types/index.d.ts"
+          - "test -f packages/elements/dist/types/index.d.ts"

@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.0.0] - 2026-03-27
+
+### Breaking Changes
+- Monolite `maranello-luce-design-business` split into `@maranello/tokens` + `@maranello/elements`
+- Removed Presentation Runtime: AppShellController, ViewRegistry, NavigationModel, PanelOrchestrator, StateScaffold
+- Removed: loginScreen, mn-app-shell WC, mn-state-scaffold WC, mn-login WC
+- DashboardRenderer no longer depends on StateScaffold (uses lightweight WidgetScaffold)
+- Root package is private (monorepo); individual packages `@maranello/tokens` and `@maranello/elements` are published to npm
+
+### Added
+- `@maranello/tokens` — CSS variables, 5 themes, setTheme/cycleTheme, shadcn/ui bridge
+- `@maranello/elements` — 31 Web Components, headless viz/domain API
+- Per-element tree-shaking: `import '@maranello/elements/wc/mn-gauge'`
+- `@maranello/tokens/bridge-shadcn` — automatic shadcn/ui color integration
+- pnpm monorepo with independent package builds
+
+### Migration
+See docs/migrations/v6.0.0.md
+
 ## [5.16.0] - 2026-03-27
 
 ### Added
