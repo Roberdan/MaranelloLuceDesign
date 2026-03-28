@@ -123,27 +123,23 @@ export { chartInteract, sparklineInteract } from './chart-interact';
 // Auto-resize for responsive charts
 export { autoResize, autoResizeAll } from './auto-resize';
 
-// Gauge engine
+// Gauge engine + speedometer
 export { FerrariGauge } from './gauge-engine';
 export { buildGaugePalette } from './gauge-engine-palette';
+export { createGauge, createGaugesInContainer, redrawAll, reinitAll, GAUGE_SIZES } from './gauge-engine-class';
+export { speedometer } from './speedometer';
+export { drawSpeedometer } from './speedometer-draw';
 export type { GaugeRenderPalette } from './gauge-engine-palette';
 export type { GaugeDrawState } from './gauge-engine-draw';
-export { createGauge, createGaugesInContainer, redrawAll, reinitAll, GAUGE_SIZES } from './gauge-engine-class';
 export type { GaugeFactoryOptions, GaugeEntry } from './gauge-engine-class';
-
-// Speedometer
-export { speedometer } from './speedometer';
 export * from './speedometer-palette';
-export { drawSpeedometer } from './speedometer-draw';
 
-// Gantt chart
+// Gantt + Map + Social
 export { gantt } from './gantt';
-
-// Map view
 export { mapView } from './map-view';
 export { mapboxView } from './map-mapbox';
-export type { MapboxMarker, MapboxViewOptions, MapboxViewController } from './map-mapbox';
 export { socialGraph } from './social-graph';
+export type { MapboxMarker, MapboxViewOptions, MapboxViewController } from './map-mapbox';
 
 // Controls (panels, drawers, org tree)
 export {
@@ -158,21 +154,15 @@ export { initSidebarToggle, initSidebarToggleAuto } from './sidebar-toggle';
 export { cruiseLever, toggleLever } from './controls-ferrari';
 export { manettino, steppedRotary } from './controls-ferrari-dials';
 
-// Data binding (core)
+// Data binding
 export { emit, on, bind, autoBind, onDrillDown } from './data-binding';
 export { autoBindSliders, bindControl, updateGauge, bindChart } from './data-binding-ui';
 export { off } from './data-binding-events';
-export type {
-  DrillDownContext, DrillDownHandler, ElementBindOptions,
-} from './data-binding-events';
+export type { DrillDownContext, DrillDownHandler, ElementBindOptions } from './data-binding-events';
 
-// Data table
+// Data table + date picker + flip counter
 export { dataTable } from './data-table';
-
-// Date picker
 export { datePicker } from './date-picker';
-
-// Flip counter
 export { flipCounter } from './flip-counter';
 
 // Forms
@@ -221,29 +211,20 @@ export type {
   ContrastResult,
 } from './observers';
 
-// Detail panel
+// Detail panel + A11y
 export { createDetailPanel } from './detail-panel';
 export { registerDatePicker, editors } from './detail-panel-editors';
-export {
-  updateStatusSelectColor, renderPersonResults, renderers,
-  getInitials, formatDateSimple,
-} from './detail-panel-renderers';
+export { updateStatusSelectColor, renderPersonResults, renderers, getInitials, formatDateSimple } from './detail-panel-renderers';
 export * from './detail-panel-ui';
-
-// A11y panel
 export { a11yPanel } from './a11y-panel';
 export * from './a11y-panel-dom';
 
-// Controls extras (dialogs + drag)
+// Controls extras (dialogs + drag) + map internals
 export { initDropdown, initTabs } from './controls-dialogs';
 export type { DropdownController, TabsController } from './controls-dialogs';
 export { initRotary, initSlider } from './controls-drag';
-
-// Map view internals
 export { attachEvents } from './map-view-events';
-export type {
-  TipElements, MapEventState, MapEventCallbacks, EventCleanup,
-} from './map-view-events';
+export type { TipElements, MapEventState, MapEventCallbacks, EventCleanup } from './map-view-events';
 export * from './map-view-helpers';
 
 // Grid layout
