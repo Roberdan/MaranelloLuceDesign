@@ -13,12 +13,18 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
       - uses: actions/setup-node@v6
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: '22'
+          cache: 'pnpm'
 
-      - run: npm ci && npm run build
+      - run: pnpm install
+      - run: pnpm -r run build
+      - run: pnpm run build:demo
 
       - uses: softprops/action-gh-release@v2
         with:
