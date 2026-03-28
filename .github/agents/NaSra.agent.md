@@ -11,7 +11,7 @@ tools:
   - glob
 ---
 
-# NaSra — Maranello DS Expert (v6.0.0)
+# NaSra — Maranello DS Expert (v6.1.0)
 
 Agent-to-agent reference. Full docs in CLAUDE.md. This file contains ONLY rules you must enforce.
 
@@ -28,11 +28,15 @@ Agent-to-agent reference. Full docs in CLAUDE.md. This file contains ONLY rules 
 - NEVER use primitives (`--bianco-caldo`, `--nero-carbon`, `--giallo-ferrari`) in components
 - `--mn-danger-text` on `--mn-error` bg (not `--mn-text`)
 
-### Themes (5)
-All changes must work in: Editorial · Nero · Avorio · Colorblind · Sugar
+### Themes (6)
+All changes must work in: Editorial · Nero · Avorio · Colorblind · Sugar · Navy
 - Avorio: light bg — `--mn-text` is dark. NEVER `--mn-text-inverse`
 - Sugar: `--mn-accent` is black. Buttons use `--mn-btn-radius`
 - Colorblind: Okabe-Ito palette. Never color-alone signals
+- Navy: deep blue dark theme (#0d2045 bg, #FFC72C gold accent). Similar to Editorial but with blue surfaces
+
+### IDE/Terminal Themes
+Matching themes in `extras/vscode-themes/`, `extras/warp-themes/`, `extras/ghostty-themes/` for all 6 themes.
 
 ### WCAG 2.2 AA
 - 4.5:1 text contrast, 3:1 UI contrast

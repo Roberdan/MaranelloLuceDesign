@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.1.0] - 2026-03-28
+
+### Added
+- Navy theme — deep blue dark theme with Ferrari gold accent (#0d2045 bg, #FFC72C accent)
+- 6 VS Code color themes in extras/vscode-themes/ (editorial, nero, avorio, colorblind, sugar, navy)
+- 6 Warp terminal themes in extras/warp-themes/
+- 6 Ghostty terminal themes in extras/ghostty-themes/
+- ADR-0009: Extensible Theme Contract — defines 35-token checklist for community themes
+- Theme count increased from 5 to 6
+
+### Changed
+- `cycleTheme()` now cycles through 6 themes (added Navy)
+- CONSTITUTION.md updated from 5 to 6 themes
+
 ## [6.0.0] - 2026-03-27
 
 ### Breaking Changes

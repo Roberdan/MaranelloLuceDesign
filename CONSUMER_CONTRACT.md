@@ -26,7 +26,7 @@ Consumer code calls Maranello with pre-resolved data + pre-bound callbacks. It n
 | Concern | APIs |
 |---|---|
 | **Design tokens** | CSS custom properties (`--mn-text`, `--mn-surface`, `--mn-accent`, etc.) |
-| **Themes** | 5 themes (Editorial, Nero, Avorio, Colorblind, Sugar), `setTheme()`, `cycleTheme()`, `palette()` |
+| **Themes** | 6 themes (Editorial, Nero, Avorio, Colorblind, Sugar, Navy), `setTheme()`, `cycleTheme()`, `palette()` |
 | **shadcn/ui bridge** | `@convergio/design-tokens/bridge-shadcn` — automatic mapping of Maranello tokens to shadcn CSS custom properties |
 
 ## What @convergio/design-elements Owns
@@ -48,9 +48,9 @@ Consumer code never writes CSS that overrides `mn-dashboard-*` internals.
 
 `cycleTheme()` rotates through themes in this fixed order:
 
-Editorial > Nero > Avorio > Colorblind > Sugar > (loop)
+Editorial > Nero > Avorio > Colorblind > Sugar > Navy > (loop)
 
-The default theme is Editorial. Consumers testing theme cycling must account for all 5 themes.
+The default theme is Editorial. Consumers testing theme cycling must account for all 6 themes.
 
 ---
 

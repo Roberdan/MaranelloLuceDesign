@@ -212,55 +212,6 @@ body.mn-sugar {
   --mn-accent-border: color-mix(in srgb, var(--mn-accent) 20%, transparent);
 }
 /* ============================================================
-   NAVY MODE — deep blue dark theme, gold Ferrari accent
-   Based on Navy Dark terminal palette. WCAG AA compliant.
-   ============================================================ */
-body.mn-navy {
-  background: #0d2045; color: #e8eaf6;
-
-  --mn-accent: #FFC72C;
-  --mn-accent-hover: #e6b326;
-  --mn-accent-text: #0d1f43;
-  --mn-accent-bg: color-mix(in srgb, #FFC72C 10%, transparent);
-  --mn-accent-border: color-mix(in srgb, #FFC72C 25%, transparent);
-
-  --mn-surface: #0d2045;
-  --mn-surface-raised: #122a55;
-  --mn-surface-sunken: #091636;
-  --mn-surface-input: #122a55;
-  --mn-surface-overlay: rgba(9, 22, 54, 0.85);
-  --mn-surface-hover: rgba(255, 255, 255, 0.05);
-
-  --mn-text: #e8eaf6;
-  --mn-text-muted: #8ea4c8;
-  --mn-text-tertiary: #a0b4d0;
-  --mn-text-disabled: #5a7099;
-  --mn-text-inverse: #0d1f43;
-
-  --mn-border: #1e3a6a;
-  --mn-border-subtle: rgba(255, 255, 255, 0.06);
-  --mn-border-strong: #2a4a8a;
-  --mn-border-focus: var(--mn-accent);
-  --mn-border-error: var(--mn-error);
-
-  --mn-focus-ring: var(--mn-accent);
-  --mn-focus-ring-offset: var(--mn-surface);
-  --mn-hover-bg: rgba(255, 255, 255, 0.06);
-  --mn-active-bg: rgba(255, 255, 255, 0.12);
-
-  --mn-error: #ff8272;
-  --mn-error-bg: color-mix(in srgb, #ff8272 16%, transparent);
-  --mn-success: #b4fa72;
-  --mn-success-bg: color-mix(in srgb, #b4fa72 12%, transparent);
-  --mn-warning: #f9c96a;
-  --mn-warning-bg: color-mix(in srgb, #f9c96a 14%, transparent);
-  --mn-info: #a5d5fe;
-  --mn-info-bg: color-mix(in srgb, #a5d5fe 14%, transparent);
-
-  --mn-backdrop: rgba(0, 0, 0, 0.5);
-  --mn-scrim: rgba(9, 22, 54, 0.8);
-}
-/* ============================================================
    AUTO DARK MODE — prefers-color-scheme
    Applies Nero theme tokens when no explicit theme class is set.
    ============================================================ */
