@@ -21,7 +21,7 @@ describe('metadata alignment — v6.1.0', () => {
 
   it('AGENT.md references 31 WC tags', () => {
     const content = readFile('AGENT.md');
-    expect(content).toContain('31');
+    expect(content).toMatch(/31 WC/i);
   });
 
   it('NaSra.agent.md references v6.1.0', () => {
@@ -58,8 +58,8 @@ describe('metadata alignment — v6.1.0', () => {
 
   it('CONSUMER_CONTRACT.md references 6 themes in cycling order', () => {
     const content = readFile('CONSUMER_CONTRACT.md');
-    expect(content).toContain('Navy');
     expect(content).toMatch(/6 themes/i);
+    expect(content).toContain('Editorial > Nero > Avorio > Colorblind > Sugar > Navy > (loop)');
   });
 
   it('packages/tokens/package.json is v6.1.0', () => {
@@ -70,5 +70,11 @@ describe('metadata alignment — v6.1.0', () => {
   it('packages/elements/package.json is v6.1.0', () => {
     const pkg = JSON.parse(readFile('packages/elements/package.json'));
     expect(pkg.version).toBe('6.1.0');
+  });
+
+  it('packages/elements/src/ts/index.ts VERSION matches package.json version', () => {
+    const pkg = JSON.parse(readFile('packages/elements/package.json'));
+    const content = readFile('packages/elements/src/ts/index.ts');
+    expect(content).toContain(`VERSION = '${pkg.version}'`);
   });
 });

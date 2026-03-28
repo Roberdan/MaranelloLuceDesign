@@ -136,9 +136,9 @@ Maranello ships matching themes for your editor and terminal.
 ### VS Code
 
 ```
-1. Copy extras/vscode-themes/ to a folder
-2. Open VS Code > Extensions > Install from VSIX (or use the folder)
-3. Or manually: copy theme JSON files to ~/.vscode/extensions/maranello-themes/themes/
+1. Copy the entire extras/vscode-themes/ folder to ~/.vscode/extensions/maranello-themes/
+2. Ensure package.json and the *.json theme files are at the extension root
+3. Reload VS Code (Developer: Reload Window)
 4. Select theme: Cmd+K Cmd+T > search "Maranello"
 ```
 
@@ -159,7 +159,7 @@ Maranello ships matching themes for your editor and terminal.
 
 ## Theme Contract
 
-Themes are extensible. Community themes must implement the 35-token checklist defined in [ADR-0009](docs/adr/ADR-0009-extensible-theme-contract.md). Any theme passing all 35 tokens + WCAG contrast checks is compatible with every Maranello component.
+Themes are extensible. Community themes must implement the 35-token checklist defined in [ADR-0009](docs/adr/0009-extensible-theme-contract.md). Any theme passing all 35 tokens + WCAG contrast checks is compatible with every Maranello component.
 
 ## NaSra -- AI Design System Expert
 

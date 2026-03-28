@@ -20,7 +20,7 @@ describe('Token CSS files', () => {
   ])('%s exists', (f) => { expect(existsSync(resolve(CSS_DIR, f))).toBe(true); });
 });
 
-// 2. theme CSS files contain all 6 non-default theme selectors
+// 2. theme CSS files contain all 5 non-default theme selectors (Editorial is default)
 describe('theme CSS files', () => {
   it('contains all non-default theme selectors', () => {
     const base = readCss('themes-base.css');
