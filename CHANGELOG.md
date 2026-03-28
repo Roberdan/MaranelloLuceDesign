@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.1.1] - 2026-03-28
+
+### Fixed
+- Navy theme: binnacle/strip background now uses navy palette instead of hardcoded black/gray
+- Navy theme: chat header background now uses navy surface instead of hardcoded black
+- Navy theme: login/profile cards (`.mn-section-light`) use navy surface instead of gray
+- Navy theme: area under chat/login sections uses navy surface
+- Navy theme: launch section uses navy gradient instead of hardcoded `--arancio-warm` orange
+- Demo default theme changed to Navy
+
 ## [6.1.0] - 2026-03-28
 
 ### Added

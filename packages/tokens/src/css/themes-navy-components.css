@@ -1,0 +1,111 @@
+@layer themes {
+/* Navy Components — deep blue dark theme overrides.
+   Fixes hardcoded dark backgrounds (black/gray) that clash with
+   Navy's #0d2045 palette, and overrides primitive tokens in
+   sections, strip, chat, and launch areas. */
+
+/* Sections — navy surface instead of primitive tokens */
+body.mn-navy .mn-section-light { background: var(--mn-surface-raised); }
+body.mn-navy .mn-section-ivory { background: var(--mn-surface-raised); color: var(--mn-text); }
+body.mn-navy .mn-section-ivory .mn-watermark { color: var(--mn-border); }
+body.mn-navy .mn-section-ivory .mn-body { color: var(--mn-text-tertiary); }
+body.mn-navy .mn-section-ivory .mn-title-section,
+body.mn-navy .mn-section-ivory .mn-title-sub { color: var(--mn-text); }
+body.mn-navy .mn-section-ivory .mn-section-number { color: var(--mn-text-muted); }
+
+/* Launch / accent sections — navy gradient instead of --arancio-warm */
+body.mn-navy .mn-section-accent {
+  background: linear-gradient(135deg, var(--mn-surface-raised), var(--mn-surface));
+  color: var(--mn-text);
+}
+body.mn-navy .mn-section-accent * { color: var(--mn-text); }
+body.mn-navy .mn-section-accent .mn-btn {
+  background: var(--mn-accent);
+  color: var(--mn-accent-text);
+  border-color: var(--mn-accent);
+}
+body.mn-navy .mn-section-accent .mn-btn--ghost,
+body.mn-navy .mn-section-accent .mn-btn:last-child {
+  background: transparent;
+  color: var(--mn-text);
+  border-color: var(--mn-border-strong);
+}
+body.mn-navy .mn-section-accent .mn-watermark { color: rgba(255,255,255,0.04); }
+
+/* Binnacle — navy gradient instead of hardcoded black/gray */
+body.mn-navy .mn-binnacle {
+  background: linear-gradient(
+    180deg,
+    #1e3a6a 0%, #163058 5%, #122a55 15%,
+    #0d2045 50%,
+    #122a55 85%, #163058 95%, #1e3a6a 100%
+  );
+  border-color: var(--mn-border);
+}
+
+/* Strip — navy surface instead of transparent/sunken black */
+body.mn-navy .mn-strip { background: transparent; }
+body.mn-navy .mn-strip__inner {
+  background: var(--mn-surface-sunken);
+  box-shadow: inset 0 1px 4px rgba(0,0,0,0.4);
+}
+
+/* Chat header — navy surface instead of hardcoded rgba(10,10,10,0.8) */
+body.mn-navy .mn-chat-panel__header {
+  background: var(--mn-surface-raised);
+  border-bottom: 1px solid var(--mn-border);
+}
+body.mn-navy .mn-chat-header,
+body.mn-navy [class*="chat-header"] {
+  background: var(--mn-surface-raised);
+  border-bottom: 1px solid var(--mn-border);
+  color: var(--mn-text);
+}
+body.mn-navy .mn-chat-body,
+body.mn-navy [class*="chat-body"] { background: var(--mn-surface); }
+body.mn-navy .mn-chat-msg--bot {
+  background: var(--mn-surface-raised);
+  color: var(--mn-text);
+}
+
+/* Cards */
+body.mn-navy .mn-card-dark {
+  background: var(--mn-surface-raised);
+  border: 1px solid var(--mn-border);
+  color: var(--mn-text);
+}
+body.mn-navy .mn-card {
+  background: var(--mn-surface-raised);
+  color: var(--mn-text);
+}
+
+/* Signal panel */
+body.mn-navy .mn-signal-panel {
+  border-color: var(--mn-border);
+  background: var(--mn-surface-raised);
+}
+
+/* Section text overrides */
+body.mn-navy .mn-section-dark .mn-body,
+body.mn-navy .mn-section-light .mn-body { color: var(--mn-text-tertiary); }
+body.mn-navy .mn-section-dark .mn-title-section,
+body.mn-navy .mn-section-light .mn-title-section,
+body.mn-navy .mn-section-dark .mn-title-sub,
+body.mn-navy .mn-section-light .mn-title-sub { color: var(--mn-text); }
+
+/* Dividers */
+body.mn-navy .mn-divider-gold { background: var(--mn-accent); }
+body.mn-navy .mn-section-ivory .mn-divider-gold--accent { background: var(--mn-accent); }
+
+/* Chart tooltip + severity vars */
+body.mn-navy {
+  --mn-chart-tooltip-bg: var(--mn-surface-raised);
+  --mn-chart-tooltip-border: var(--mn-border-strong);
+  --mn-chart-tooltip-text: var(--mn-text);
+  --mn-chart-tooltip-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  --severity-critical-fg: #ff8272; --severity-critical-bg: rgba(255,130,114,0.12);
+  --severity-high-fg: #f9c96a; --severity-high-bg: rgba(249,201,106,0.12);
+  --severity-warning-fg: #FFC72C; --severity-warning-bg: rgba(255,199,44,0.12);
+  --severity-resourcing-fg: #a5d5fe; --severity-resourcing-bg: rgba(165,213,254,0.12);
+}
+} /* end @layer themes */
