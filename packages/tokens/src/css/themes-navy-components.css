@@ -15,7 +15,7 @@ body.mn-navy .mn-section-ivory .mn-section-number { color: var(--mn-text-muted);
 
 /* Launch / accent sections — navy gradient instead of --arancio-warm */
 body.mn-navy .mn-section-accent {
-  background: linear-gradient(135deg, #122a55, #0d2045);
+  background: linear-gradient(135deg, var(--mn-surface-raised), var(--mn-surface));
   color: var(--mn-text);
 }
 body.mn-navy .mn-section-accent * { color: var(--mn-text); }
