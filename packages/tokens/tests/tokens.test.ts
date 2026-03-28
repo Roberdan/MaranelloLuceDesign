@@ -20,12 +20,14 @@ describe('Token CSS files', () => {
   ])('%s exists', (f) => { expect(existsSync(resolve(CSS_DIR, f))).toBe(true); });
 });
 
-// 2. themes-base.css contains all 5 non-default theme selectors
-describe('themes-base.css', () => {
+// 2. theme CSS files contain all 6 non-default theme selectors
+describe('theme CSS files', () => {
   it('contains all non-default theme selectors', () => {
-    const css = readCss('themes-base.css');
+    const base = readCss('themes-base.css');
+    const navy = readCss('themes-navy.css');
+    const all = base + navy;
     for (const s of ['body.mn-nero', 'body.mn-avorio', 'body.mn-colorblind', 'body.mn-sugar', 'body.mn-navy'])
-      expect(css).toContain(s);
+      expect(all).toContain(s);
   });
 });
 
