@@ -1,6 +1,6 @@
 {
   "name": "@convergio/design-elements",
-  "version": "6.3.0",
+  "version": "6.3.1",
   "description": "Maranello Luce Design — 31 Web Components + headless viz/domain API",
   "type": "module",
   "exports": {
@@ -31,8 +31,8 @@
   },
   "files": ["dist", "src"],
   "scripts": {
-    "build": "node esbuild.config.mjs && tsc --emitDeclarationOnly && node ../../scripts/generate-ckb.mjs",
-    "build:css": "mkdir -p dist/css && cp src/css/*.css dist/css/",
+    "build": "node esbuild.config.mjs && node ../../scripts/build-wc.mjs && tsc --emitDeclarationOnly && npm run build:css && node ../../scripts/generate-ckb.mjs",
+    "build:css": "node ../../scripts/build-css.mjs && cp -r ../../dist/css dist/css",
     "test": "vitest run"
   },
   "license": "MPL-2.0"

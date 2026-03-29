@@ -1,12 +1,16 @@
 /**
  * CSS Build Script — LightningCSS bundler
  * Bundles maranello.css (full + minified), index.css, and copies individual files.
+ * Can be run from repo root or from packages/elements/.
  */
 import { mkdirSync, readdirSync, copyFileSync, writeFileSync, existsSync } from 'fs';
-import { join, resolve } from 'path';
+import { join, resolve, dirname } from 'path';
+import { fileURLToPath } from 'url';
 
-const srcDir = 'packages/elements/src/css';
-const outDir = 'dist/css';
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const repoRoot = resolve(__dirname, '..');
+const srcDir = join(repoRoot, 'packages/elements/src/css');
+const outDir = join(repoRoot, 'dist/css');
 
 // Graceful check for lightningcss
 let lightningcss;

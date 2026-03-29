@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.3.1] - 2026-03-29
+
+### Fixed
+- **Build pipeline**: CSS now included in npm published packages — both `@convergio/design-tokens` and `@convergio/design-elements` ship `dist/css/` with all bundled stylesheets
+- **Build pipeline**: Web Components now built into `dist/esm/wc/` — individual WC imports (`@convergio/design-elements/wc/mn-gauge`) work on npm
+- **Build script**: `build-css.mjs` uses `import.meta.url` for paths — works from any working directory
+- **Tokens build**: `build:css` step added to main build script (was defined but never called)
+- **Elements build**: `build-wc.mjs` step added to main build script (WC ESM/CJS/browser outputs)
+
 ## [6.3.0] - 2026-03-29
 
 ### Added
