@@ -1,7 +1,7 @@
 {
   "name": "@convergio/design-tokens",
-  "version": "6.3.1",
-  "description": "Maranello Luce Design — CSS variables, 6 themes, shadcn/ui bridge",
+  "version": "6.3.2",
+  "description": "Maranello Luce Design \u2014 CSS variables, 6 themes, shadcn/ui bridge",
   "type": "module",
   "exports": {
     ".": {
@@ -13,7 +13,10 @@
     "./themes": "./dist/css/themes.css",
     "./bridge-shadcn": "./dist/css/bridge-shadcn.css"
   },
-  "files": ["dist", "src"],
+  "files": [
+    "dist",
+    "src"
+  ],
   "scripts": {
     "build": "node esbuild.config.mjs && tsc --emitDeclarationOnly && npm run build:css",
     "build:css": "mkdir -p dist/css && cp src/css/*.css dist/css/",
