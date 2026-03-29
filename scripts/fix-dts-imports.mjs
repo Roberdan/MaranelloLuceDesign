@@ -32,9 +32,19 @@ function resolveSpecifier(file, specifier) {
 }
 
 function rewriteSpecifiers(file, content) {
-  return content.replace(
-    /((?:from|import)\s*\(?\s*['"])(\.\.?\/[^'")]+)(['"]\s*\)?)/g,
-    (_, prefix, specifier, suffix) => `${prefix}${resolveSpecifier(file, specifier)}${suffix}`,
+  const importPattern = /((?:import|from)\s*\(?\s*['"])(\.\.?\/[^'")]+)(['"]\s*\)?)/g;
+  const exportFromPattern = /(export\s+(?:type\s+)?(?:\*|\{[^}]*\})\s+from\s+['"])(\.\.?\/[^'")]+)(['"])/g;
+
+  const next = content.replace(
+    importPattern,
+    (_, prefix, specifier, suffix) =>
+      `${prefix}${resolveSpecifier(file, specifier)}${suffix}`,
+  );
+
+  return next.replace(
+    exportFromPattern,
+    (_, prefix, specifier, suffix) =>
+      `${prefix}${resolveSpecifier(file, specifier)}${suffix}`,
   );
 }
 

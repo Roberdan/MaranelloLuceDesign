@@ -240,3 +240,6 @@ export type { LayoutController, LayoutViewConfig, LayoutState } from './layout';
 
 // v4.5-v4.9 components
 export * from './index-extras';
+
+// Maranello facade (auto-init compatibility)
+export { Maranello } from './maranello';

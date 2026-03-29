@@ -1,6 +1,9 @@
 node_modules/
 dist/
 packages/*/dist/
+.next/
+.turbo/
+out/
 .DS_Store
 .env
 *.tgz

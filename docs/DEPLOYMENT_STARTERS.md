@@ -4,7 +4,7 @@ The starter platform is designed for:
 - Vercel deployments for App Router workflows
 - Azure container deployments for teams standardizing on containers
 
-Shared deployment assets live in `starters/shared-shell/`.
+Deployment configuration belongs in each deployable starter app. `starters/shared-shell/` is a shared library package, so app-specific assets like `vercel.json` or container images should live alongside the consuming starter.
 
 Canonical environment surface:
 - `NODE_ENV`

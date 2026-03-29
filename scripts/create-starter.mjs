@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { cpSync, existsSync, mkdirSync, readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { relative, resolve } from 'node:path';
 
 const root = resolve(process.cwd());
 const manifestPath = resolve(root, 'starters/template-manifest.json');
@@ -20,6 +20,17 @@ function readArg(name) {
 const templateId = readArg('--template');
 const target = readArg('--target');
 const entry = manifest.templates.find((item) => item.id === templateId);
+const generatedSegments = new Set([
+  '.next',
+  '.turbo',
+  'coverage',
+  'dist',
+  'node_modules',
+  'out',
+]);
+const generatedFiles = new Set([
+  '.DS_Store',
+]);
 
 if (!entry) {
   console.error(`Unknown template: ${templateId}`);
@@ -28,10 +39,20 @@ if (!entry) {
 
 const sourceDir = resolve(root, entry.path);
 const targetDir = resolve(root, target);
+
+function shouldCopy(sourcePath) {
+  const pathFromTemplateRoot = relative(sourceDir, sourcePath);
+  if (!pathFromTemplateRoot) return true;
+
+  return !pathFromTemplateRoot
+    .split(/[\\/]+/)
+    .some((segment) => generatedSegments.has(segment) || generatedFiles.has(segment));
+}
+
 if (existsSync(targetDir)) {
   console.error(`Target already exists: ${targetDir}`);
   process.exit(1);
 }
 mkdirSync(targetDir, { recursive: true });
-cpSync(sourceDir, targetDir, { recursive: true });
+cpSync(sourceDir, targetDir, { recursive: true, filter: shouldCopy });
 console.log(`Created ${templateId} starter at ${targetDir}`);
