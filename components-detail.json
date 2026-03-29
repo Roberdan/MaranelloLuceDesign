@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "name": "maranello-luce-design-business — Full API Catalog",
-  "version": "4.11.0",
+  "name": "@convergio/design-elements — Full API Catalog",
+  "version": "6.3.2",
   "description": "Complete API surface for AI agent discoverability. See components.json for summary.",
   "tsModuleDetails": {
     "observers": {

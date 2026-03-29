@@ -4,7 +4,7 @@
 import { cssVar } from './core/utils';
 import { escapeHtml } from './core/sanitize';
 
-const dpr = window.devicePixelRatio || 1;
+const dpr = typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1;
 
 /** Build the default chart color series from CSS custom properties. */
 export function buildSeries(): string[] {

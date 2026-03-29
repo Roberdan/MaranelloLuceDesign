@@ -1,0 +1,26 @@
+{
+  "name": "@convergio/template-program-management",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "test": "vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "@convergio/design-elements": "workspace:*",
+    "@convergio/design-tokens": "workspace:*",
+    "@convergio/starter-shared-shell": "workspace:*",
+    "next": "^15.5.6",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0",
+    "vitest": "^4.1.0",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
+    "vite": "^7.1.12"
+  }
+}

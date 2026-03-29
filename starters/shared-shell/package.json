@@ -1,0 +1,25 @@
+{
+  "name": "@convergio/starter-shared-shell",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./server/ai/route": "./src/server/ai/route.ts"
+  },
+  "scripts": {
+    "build": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "@convergio/design-elements": "workspace:*",
+    "@convergio/design-tokens": "workspace:*",
+    "react": "^19.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.2",
+    "typescript": "^5.7.0",
+    "vitest": "^4.1.0",
+    "vite": "^7.1.12"
+  }
+}

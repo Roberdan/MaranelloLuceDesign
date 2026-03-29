@@ -1,6 +1,6 @@
 /** @convergio/design-elements - Headless UI components barrel. */
 
-export const VERSION = '6.1.0';
+export const VERSION = '6.3.2';
 
 // Core types (all shared interfaces)
 export * from './core/types';
@@ -240,6 +240,3 @@ export type { LayoutController, LayoutViewConfig, LayoutState } from './layout';
 
 // v4.5-v4.9 components
 export * from './index-extras';
-
-// Maranello facade (auto-init)
-export { Maranello } from './maranello';

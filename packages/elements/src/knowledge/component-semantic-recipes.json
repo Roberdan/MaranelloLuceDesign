@@ -1,0 +1,34 @@
+{
+  "components": [
+    {
+      "id": "mn-gantt",
+      "whenToUse": "Program and delivery timelines, dependencies, and milestone-heavy planning.",
+      "avoidWhen": "Small datasets where a simple list or board is enough.",
+      "fits": ["program-management", "ops-dashboard"]
+    },
+    {
+      "id": "mn-data-table",
+      "whenToUse": "Dense operational, financial, or account-driven records that need scanning and sorting.",
+      "avoidWhen": "Narrative dashboards or very small summary datasets.",
+      "fits": ["workspace-app", "ops-dashboard", "program-management"]
+    },
+    {
+      "id": "dashboardStrip",
+      "whenToUse": "Executive KPI strips at the top of a shell for gauges, trends, boards, and pipelines.",
+      "avoidWhen": "Pages without enough top-level signal to justify a metrics nacelle.",
+      "fits": ["ops-dashboard", "executive-cockpit", "program-management"]
+    },
+    {
+      "id": "mn-detail-panel",
+      "whenToUse": "Persistent contextual detail while preserving the main workspace.",
+      "avoidWhen": "Simple pages where the full page can transition without losing context.",
+      "fits": ["workspace-app", "program-management"]
+    },
+    {
+      "id": "mn-header-shell",
+      "whenToUse": "Global command rail with search, actions, filters, theme, and profile.",
+      "avoidWhen": "Single-purpose pages with no navigation or command surface.",
+      "fits": ["workspace-app", "ops-dashboard", "executive-cockpit", "program-management"]
+    }
+  ]
+}

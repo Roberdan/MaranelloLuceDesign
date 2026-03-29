@@ -13,6 +13,7 @@ const WC_DIR = join(ELEMENTS, 'src/wc');
 const TS_DIR = join(ELEMENTS, 'src/ts');
 const OUT_DIR = join(ELEMENTS, 'dist/knowledge');
 const PKG_JSON = join(ELEMENTS, 'package.json');
+const KNOWLEDGE_SRC = join(ELEMENTS, 'src/knowledge');
 
 /* ------------------------------------------------------------------ */
 /*  Helpers                                                            */
@@ -502,6 +503,16 @@ function main() {
   if (!existsSync(OUT_DIR)) mkdirSync(OUT_DIR, { recursive: true });
   const outPath = join(OUT_DIR, 'ckb.json');
   writeFileSync(outPath, JSON.stringify(ckb, null, 2));
+  const semanticFiles = [
+    'component-semantic-recipes.json',
+    'template-semantic-recipes.json',
+  ];
+  semanticFiles.forEach((file) => {
+    const source = join(KNOWLEDGE_SRC, file);
+    if (existsSync(source)) {
+      writeFileSync(join(OUT_DIR, file), read(source));
+    }
+  });
 
   console.log(`CKB generated: ${outPath}`);
   console.log(`  Web Components: ${wcs.length}`);

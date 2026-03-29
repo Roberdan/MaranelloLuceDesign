@@ -18,11 +18,15 @@ interface ListenerEntry {
 
 const PREFIX = 'mn:';
 
+function getDefaultEventTarget(): EventTarget {
+  return typeof document !== 'undefined' ? document : new EventTarget();
+}
+
 export class EventBus<EventMap extends Record<string, unknown> = Record<string, unknown>> {
   private readonly target: EventTarget;
   private readonly listeners = new Map<string, ListenerEntry[]>();
 
-  constructor(target: EventTarget = document) {
+  constructor(target: EventTarget = getDefaultEventTarget()) {
     this.target = target;
   }
 

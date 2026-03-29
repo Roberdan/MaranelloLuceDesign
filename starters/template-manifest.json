@@ -1,0 +1,32 @@
+{
+  "templates": [
+    {
+      "id": "workspace-app",
+      "package": "@convergio/template-workspace-app",
+      "path": "starters/template-workspace-app",
+      "mode": "workspace",
+      "description": "General-purpose SaaS workspace shell"
+    },
+    {
+      "id": "ops-dashboard",
+      "package": "@convergio/template-ops-dashboard",
+      "path": "starters/template-ops-dashboard",
+      "mode": "dashboard",
+      "description": "Telemetry and incident-oriented dashboard shell"
+    },
+    {
+      "id": "executive-cockpit",
+      "package": "@convergio/template-executive-cockpit",
+      "path": "starters/template-executive-cockpit",
+      "mode": "cockpit",
+      "description": "Decision-oriented leadership cockpit shell"
+    },
+    {
+      "id": "program-management",
+      "package": "@convergio/template-program-management",
+      "path": "starters/template-program-management",
+      "mode": "program-management",
+      "description": "Virtual BPM-inspired delivery and program shell"
+    }
+  ]
+}

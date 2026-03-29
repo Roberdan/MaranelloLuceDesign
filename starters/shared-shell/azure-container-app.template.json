@@ -1,0 +1,18 @@
+{
+  "type": "Microsoft.App/containerApps",
+  "name": "convergio-shared-shell",
+  "properties": {
+    "template": {
+      "containers": [
+        {
+          "name": "app",
+          "image": "convergio/shared-shell:latest",
+          "env": [
+            { "name": "NODE_ENV", "value": "production" },
+            { "name": "AI_PROVIDER", "value": "vercel-ai-sdk" }
+          ]
+        }
+      ]
+    }
+  }
+}

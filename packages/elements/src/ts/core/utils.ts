@@ -20,6 +20,7 @@ const THEME_ORDER: ThemeMode[] = ['editorial', 'nero', 'avorio', 'colorblind', '
  *  Reads from document.body so theme overrides (body.mn-sugar, body.mn-avorio)
  *  are resolved — :root tokens still inherit via cascade. */
 export function cssVar(name: string, fallback: string = ''): string {
+  if (typeof document === 'undefined' || typeof getComputedStyle === 'undefined') return fallback;
   const el = document.body ?? document.documentElement;
   return getComputedStyle(el).getPropertyValue(name).trim() || fallback;
 }
@@ -211,7 +212,7 @@ export function hiDpiCanvas(
   width: number,
   height: number,
 ): number {
-  const dpr = window.devicePixelRatio || 1;
+  const dpr = typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1;
   canvas.width = width * dpr;
   canvas.height = height * dpr;
   canvas.style.width = width + 'px';

@@ -1,0 +1,24 @@
+{
+  "templates": [
+    {
+      "id": "workspace-app",
+      "intent": "General business workflow shell with navigation, content, detail panel, and agent workspace.",
+      "bestFor": ["SaaS control planes", "internal tools", "multi-role business apps"]
+    },
+    {
+      "id": "ops-dashboard",
+      "intent": "Metrics-first command surface for telemetry, incidents, and service operations.",
+      "bestFor": ["observability", "service operations", "production governance"]
+    },
+    {
+      "id": "executive-cockpit",
+      "intent": "Compact leadership shell optimized for strategic review and drill-down.",
+      "bestFor": ["leadership review", "portfolio oversight", "board snapshots"]
+    },
+    {
+      "id": "program-management",
+      "intent": "High-density program shell inspired by Virtual BPM with KPI strip, list, timeline, and persistent context.",
+      "bestFor": ["portfolio delivery", "engagement tracking", "transformation programs"]
+    }
+  ]
+}

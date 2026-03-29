@@ -1,85 +1,111 @@
-<!-- v3.1.0 | 2025-07-21 -->
+<!-- v6.3.2 | 2026-03-29 -->
 # Framework Integration
 
-All frameworks: `npm install github:Roberdan/convergio-design#v3.0.0`
+Install from npm:
 
-## Vanilla
+```bash
+npm install @convergio/design-tokens @convergio/design-elements
+```
 
-```html
-<link rel="stylesheet" href="dist/css/index.css">
-<script src="dist/iife/maranello.min.js"></script>
-<body class="mn-nero">
-  <mn-gauge value="72" label="CPU"></mn-gauge>
-  <canvas id="chart"></canvas>
-  <script>Maranello.sparkline(document.getElementById('chart'), [10,20,15,30]);</script>
-</body>
+## Canonical Next.js App Router setup
+
+This is the recommended integration path.
+
+### 1. Root layout CSS
+
+```tsx
+import '@convergio/design-elements/css';
+import '@convergio/design-tokens/bridge-shadcn'; // optional
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <body>{children}</body>
+    </html>
+  );
+}
+```
+
+`@convergio/design-elements/css` already includes tokens and themes. Import `@convergio/design-tokens/css` only if you need token CSS without component CSS.
+
+### 2. Client boundary for DOM APIs
+
+```tsx
+'use client';
+
+import { useEffect, useRef } from 'react';
+import { gantt } from '@convergio/design-elements/gantt';
+
+export function GanttView({ tasks }: { tasks: unknown[] }) {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!ref.current) return;
+    const widget = gantt(ref.current, tasks);
+    return () => widget.destroy();
+  }, [tasks]);
+
+  return <div ref={ref} />;
+}
+```
+
+The package root and documented subpaths are safe to import during SSR. Actual DOM work still belongs in client components.
+
+### 4. Starter platform for full applications
+
+If you need more than isolated widgets, use the starter platform in `starters/`:
+
+- `template-workspace-app`
+- `template-ops-dashboard`
+- `template-executive-cockpit`
+- `template-program-management`
+
+Each starter is wired to the shared shell package, imports `@convergio/design-elements/css`, and exposes `app/api/agent/route.ts` as the canonical server seam for AI interactions.
+
+### 3. Web Components and TSX typing
+
+Add once in a project-level `.d.ts` file:
+
+```ts
+/// <reference types="@convergio/design-elements/react" />
+```
+
+Then use Web Components from a client file:
+
+```tsx
+'use client';
+
+import '@convergio/design-elements/register-all';
+
+export function GaugeCard() {
+  return <mn-gauge value="72" unit="%" />;
+}
 ```
 
 ## React
 
-```tsx
-import 'maranello-luce-design-business/css';
-import { useRef, useEffect } from 'react';
-import { sparkline } from 'maranello-luce-design-business/charts';
-
-function Spark({ data }: { data: number[] }) {
-  const ref = useRef<HTMLCanvasElement>(null);
-  useEffect(() => { if (ref.current) sparkline(ref.current, data); }, [data]);
-  return <canvas ref={ref} width={200} height={60} />;
-}
-```
-
-WC in React: use `useRef` + `setAttribute` in `useEffect`. SSR: client-only via `useEffect`.
+Use refs + `useEffect`, and always destroy the returned controller on cleanup.
 
 ## Vue
 
-```vue
-<script setup>
-import 'maranello-luce-design-business/css';
-import 'maranello-luce-design-business/wc';
-import { ref } from 'vue';
-const val = ref(72);
-</script>
-<template><mn-gauge :value="val" label="CPU"></mn-gauge></template>
-```
+Use `onMounted` / `onUnmounted` for imperative APIs.
 
-Config: `app.config.compilerOptions.isCustomElement = tag => tag.startsWith('mn-')`.
-Nuxt: wrap in `<ClientOnly>`.
+For Web Components configure:
+
+```ts
+app.config.compilerOptions.isCustomElement = (tag) => tag.startsWith('mn-');
+```
 
 ## Svelte
 
-```svelte
-<script>
-import 'maranello-luce-design-business/css';
-import { onMount } from 'svelte';
-import { sparkline } from 'maranello-luce-design-business/charts';
-let canvas;
-onMount(() => sparkline(canvas, [10,20,15,30]));
-</script>
-<canvas bind:this={canvas} width="200" height="60"></canvas>
-```
+Use `onMount` for imperative APIs and destroy on teardown.
 
-SvelteKit SSR: guard with `onMount` or `browser` check.
-
-## Vite Config
-
-```ts
-// vite.config.ts — Vue projects need custom element config
-import vue from '@vitejs/plugin-vue';
-export default defineConfig({
-  plugins: [vue({ template: { compilerOptions: { isCustomElement: tag => tag.startsWith('mn-') } } })],
-  optimizeDeps: { include: ['maranello-luce-design-business'] }
-});
-```
-
-## Common Rules
+## Common rules
 
 | Rule | Detail |
 |---|---|
-| CSS load order | DS CSS first, then consumer overrides |
-| `@layer` | Consumer styles without `@layer` win automatically |
-| Canvas/WC in SSR | Client-only (`useEffect` / `onMounted` / `onMount`) |
-| React DOM safety | Mount in `useRef` container, call `destroy()` in cleanup |
-| Theme switching | Use `setTheme()`, not direct class manipulation |
-| Selective CSS | Import only needed modules: `…/css/tokens.css`, `…/css/charts.css` etc. |
-| Mapbox (mn-map) | Peer dep: `npm install mapbox-gl`, set `VITE_MAPBOX_TOKEN` |
+| CSS entrypoint | Prefer `@convergio/design-elements/css` for full app styling |
+| SSR | Importing is safe on the server; DOM work stays client-side |
+| Web Components | Register from client boundaries |
+| TypeScript | Use `@convergio/design-elements/react` for JSX IntrinsicElements |
+| shadcn bridge | Optional `@convergio/design-tokens/bridge-shadcn` side-effect CSS import |

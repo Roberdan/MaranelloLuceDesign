@@ -5,7 +5,7 @@
 import { cssVar, escapeHtml } from './core/utils';
 import { isValidColor } from './core/sanitize';
 
-const DPR = window.devicePixelRatio || 1;
+const DPR = typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1;
 let activeTooltip: HTMLDivElement | null = null;
 
 function getTooltip(): HTMLDivElement {

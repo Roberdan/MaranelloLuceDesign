@@ -37,7 +37,7 @@ jobs:
         run: pnpm run build:demo
 
       - name: Unit tests
-        run: pnpm -r run test
+        run: pnpm test:unit
 
       - name: E2E tests
         run: pnpm exec playwright install --with-deps chromium webkit && pnpm run test:e2e

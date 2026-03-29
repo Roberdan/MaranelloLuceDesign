@@ -2,7 +2,7 @@
 
 Ferrari Luce-inspired design system for AI agent dashboards. Zero runtime dependencies. 6 adaptive themes. WCAG 2.2 AA. Framework-agnostic.
 
-**v6.2.0** | [Live Demo](https://roberdan.github.io/convergio-design/) | [CHANGELOG](CHANGELOG.md)
+**v6.3.2** | [Live Demo](https://roberdan.github.io/convergio-design/) | [CHANGELOG](CHANGELOG.md)
 
 ## Install
 
@@ -12,18 +12,17 @@ npm install @convergio/design-tokens @convergio/design-elements
 
 ## Quick Start
 
-### 1. CSS (tokens + elements)
+### 1. CSS (canonical app setup)
 
 ```css
-/* Design tokens + 6 themes */
-@import '@convergio/design-tokens/css';
-
-/* Component styles */
+/* Complete design system CSS: tokens + themes + components */
 @import '@convergio/design-elements/css';
 
 /* Optional: shadcn/ui bridge */
 @import '@convergio/design-tokens/bridge-shadcn';
 ```
+
+If you need theme tokens without component CSS, import `@convergio/design-tokens/css` separately.
 
 ### 2. JS (ESM, tree-shakeable)
 
@@ -59,9 +58,9 @@ import '@convergio/design-elements/wc/mn-gantt';
 ### 4. IIFE (CDN, no bundler)
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@convergio/design-tokens@6.1.0/dist/css/index.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@convergio/design-elements@6.1.0/dist/css/index.css">
-<script src="https://cdn.jsdelivr.net/npm/@convergio/design-elements@6.1.0/dist/iife/maranello.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@convergio/design-tokens@6.3.2/dist/css/index.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@convergio/design-elements@6.3.2/dist/css/index.css">
+<script src="https://cdn.jsdelivr.net/npm/@convergio/design-elements@6.3.2/dist/iife/maranello.min.js"></script>
 <script>
   Maranello.sparkline(document.getElementById('chart'), [10, 20, 15, 30]);
   new Maranello.FerrariGauge(document.getElementById('gauge'));
@@ -99,6 +98,8 @@ Two packages in a pnpm monorepo. Use together or separately.
 | `./controls` | Ferrari controls (manettino, rotary, lever, slider) |
 | `./forms` | Form validation, live validation, tag input, file upload, steps |
 | `./knowledge` | Component Knowledge Base (CKB) — machine-readable catalog |
+| `./knowledge/components` | Semantic component recipes for agent/human component selection |
+| `./knowledge/templates` | Semantic starter-template recipes for shell selection |
 
 ## Component Knowledge Base (CKB)
 
@@ -115,6 +116,15 @@ console.log(ckb.themes.length);               // 6 themes
 ```
 
 The CKB is auto-generated from source at build time via `scripts/generate-ckb.mjs`. See [ADR-0010](docs/adr/0010-component-knowledge-base.md) for the design rationale.
+
+In addition to the main CKB, the package now publishes:
+
+```ts
+import componentRecipes from '@convergio/design-elements/knowledge/components';
+import templateRecipes from '@convergio/design-elements/knowledge/templates';
+```
+
+These semantic recipe files are intended for starter generation, agent selection, and higher-level shell composition.
 
 ### CKB Contents
 
@@ -258,58 +268,72 @@ onUnmounted(() => w?.destroy());
 
 ### Next.js / SSR
 
-Next.js requires special setup because Maranello is client-side. Three things to configure:
+Next.js App Router is now a first-class supported consumer path. The package root and documented subpaths are safe to import in SSR, but any DOM work still belongs in client components.
 
-**1. CSS** — import in your root layout or `globals.css` as a JS side-effect import:
+**1. Root layout CSS** — import the design system once in `app/layout.tsx`:
 
 ```tsx
-// app/layout.tsx
 import '@convergio/design-elements/css';
-import '@convergio/design-tokens/bridge-shadcn';
+import '@convergio/design-tokens/bridge-shadcn'; // optional
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <body>{children}</body>
+    </html>
+  );
+}
 ```
 
-If using `postcss-import` in CSS files, configure the resolver in `postcss.config.mjs`:
+`@convergio/design-elements/css` already inlines tokens and themes. Import `@convergio/design-tokens/css` only if you want token CSS without component CSS.
 
-```js
-import { resolve, dirname } from 'path';
-import { fileURLToPath } from 'url';
-const __dirname = dirname(fileURLToPath(import.meta.url));
-
-export default {
-  plugins: {
-    'postcss-import': {
-      resolve(id) {
-        const map = {
-          '@convergio/design-elements/css': resolve(__dirname, 'node_modules/@convergio/design-elements/dist/css/index.css'),
-          '@convergio/design-tokens/css': resolve(__dirname, 'node_modules/@convergio/design-tokens/dist/css/index.css'),
-          '@convergio/design-tokens/bridge-shadcn': resolve(__dirname, 'node_modules/@convergio/design-tokens/dist/css/bridge-shadcn.css'),
-        };
-        return map[id] || id;
-      },
-    },
-    tailwindcss: {},
-    autoprefixer: {},
-  },
-};
-```
-
-**2. TypeScript** — add Web Component JSX types for full IntelliSense:
-
-```ts
-// In tsconfig.json, add to "include":
-//   "node_modules/@convergio/design-elements/src/react.d.ts"
-// Or create a local .d.ts:
-/// <reference types="@convergio/design-elements/react" />
-```
-
-**3. Components** — use `'use client'` directive. Imperative APIs mount on refs:
+**2. Client components for DOM APIs** — keep imperative widgets inside `'use client'` files:
 
 ```tsx
 'use client';
-import dynamic from 'next/dynamic';
-// Maranello requires DOM — use dynamic import with ssr: false
-const GanttView = dynamic(() => import('./GanttView'), { ssr: false });
+
+import { useEffect, useRef } from 'react';
+import { gantt } from '@convergio/design-elements/gantt';
+
+export function GanttView({ tasks }: { tasks: unknown[] }) {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!ref.current) return;
+    const widget = gantt(ref.current, tasks);
+    return () => widget.destroy();
+  }, [tasks]);
+
+  return <div ref={ref} />;
+}
 ```
+
+**3. Web Components in React/Next** — register them in a client boundary and add JSX typings once:
+
+```ts
+/// <reference types="@convergio/design-elements/react" />
+```
+
+```tsx
+'use client';
+
+import '@convergio/design-elements/register-all';
+
+export function GaugeCard() {
+  return <mn-gauge value="72" unit="%" />;
+}
+```
+
+Only use a `postcss-import` resolver if you insist on importing package CSS from inside your own CSS files. For standard Next.js JS-side-effect imports, no resolver is required.
+
+**4. Starter platform** — the repository now includes a shared starter foundation plus four Next.js starters under `starters/`:
+
+- `template-workspace-app`
+- `template-ops-dashboard`
+- `template-executive-cockpit`
+- `template-program-management`
+
+Each starter imports `@convergio/design-elements/css`, exposes `app/api/agent/route.ts`, and is designed to be Tauri-friendly and deployable on Vercel or Azure containers.
 
 ### Web Components (any framework, zero adapter)
 

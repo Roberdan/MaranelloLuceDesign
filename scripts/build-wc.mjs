@@ -24,8 +24,13 @@ const wcComponents = files.filter((f) => f.match(/^mn-[\w-]+\.js$/));
 
 const typeFiles = files.filter((f) => f.endsWith('.d.ts'));
 const indexFile = files.find((f) => f === 'index.ts');
+const registerAllFile = files.find((f) => f === 'register-all.ts');
 const wcEntries = wcComponents.map((file) => join(srcDir, file));
-const packageEntries = indexFile ? [join(srcDir, indexFile), ...wcEntries] : wcEntries;
+const packageEntries = [
+  indexFile ? join(srcDir, indexFile) : null,
+  registerAllFile ? join(srcDir, registerAllFile) : null,
+  ...wcEntries,
+].filter(Boolean);
 
 if (wcComponents.length === 0) {
   console.log('WC: no component files found');

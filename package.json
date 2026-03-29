@@ -1,5 +1,5 @@
 {
-  "name": "maranello-luce-design-business",
+  "name": "convergio-design",
   "private": true,
   "version": "6.3.2",
   "description": "Ferrari Luce-inspired design system for business dashboards. Part of the Convergio project.",
@@ -19,15 +19,16 @@
     "vitest": "^4.1.0"
   },
   "scripts": {
-    "build": "pnpm -r run build",
-    "build:demo": "pnpm -r run build && node scripts/build-css.mjs && node scripts/build-demo.mjs",
+    "build": "pnpm -r run build && node scripts/build-demo.mjs",
+    "build:demo": "pnpm build",
     "dev": "npm run build:demo && serve . -l 3000",
-    "test": "pnpm -r run test",
-    "test:unit": "pnpm -r run test:unit",
+    "test": "pnpm exec vitest run tests/unit/consumer-smoke.test.ts tests/unit/shared-shell.test.ts && pnpm -r run test",
+    "test:unit": "pnpm test",
     "test:e2e": "playwright test --ignore-snapshots",
     "test:e2e:visual": "playwright test visual-regression",
     "test:e2e:visual:update": "playwright test visual-regression --update-snapshots",
-    "clean": "pnpm -r run clean"
+    "clean": "pnpm -r run clean",
+    "typecheck": "cd packages/tokens && pnpm exec tsc --noEmit && cd ../elements && pnpm exec tsc --noEmit"
   },
   "license": "MPL-2.0",
   "author": "Roberto D'Angelo (Roberdan)",

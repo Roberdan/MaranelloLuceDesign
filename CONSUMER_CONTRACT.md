@@ -56,29 +56,26 @@ The default theme is Editorial. Consumers testing theme cycling must account for
 
 ## How to Use the Packages
 
-### Step 1 — Import Tokens and Theme API
+### Step 1 — Import Theme API and canonical app CSS
 
 ```ts
 import { setTheme, cycleTheme, palette } from '@convergio/design-tokens';
-import '@convergio/design-tokens/css';
-import '@convergio/design-tokens/bridge-shadcn'; // optional: side-effect CSS import (works in Vite/Next.js bundlers)
+import '@convergio/design-elements/css';
+import '@convergio/design-tokens/bridge-shadcn'; // optional side-effect CSS import
 
 setTheme('nero');
-const tokens = palette(); // read live semantic token values
+const tokens = palette();
 ```
 
-> `bridge-shadcn` is a CSS file. In plain CSS, use `@import '@convergio/design-tokens/bridge-shadcn';`. The JS `import` above is a side-effect import that bundlers (Vite, Next.js, Webpack) resolve as CSS injection.
+> `@convergio/design-elements/css` already includes tokens + themes + component CSS. Import `@convergio/design-tokens/css` only when you need token CSS without component CSS.
 
 ### Step 2 — Use Elements
 
 ```ts
-import { DashboardRenderer, kanbanBoard, gantt } from '@convergio/design-elements';
-import '@convergio/design-elements/css';
+import { DashboardRenderer, kanbanBoard } from '@convergio/design-elements';
+import { gantt } from '@convergio/design-elements/gantt';
 
-// Render a dashboard
 const renderer = new DashboardRenderer(container, { schema, data });
-
-// Or use individual components
 const board = kanbanBoard(el, { columns, cards, onMove });
 ```
 
@@ -92,6 +89,18 @@ import '@convergio/design-elements/register-all';
 import '@convergio/design-elements/wc/mn-gauge';
 import '@convergio/design-elements/wc/mn-gantt';
 ```
+
+### Step 4 — Use the starter platform when you need a full shell
+
+For full Next.js application shells, prefer the starter platform under `starters/`:
+
+- `shared-shell` owns app-shell composition, AI/auth/RBAC/telemetry/API seams, and deployment assets
+- `template-workspace-app`
+- `template-ops-dashboard`
+- `template-executive-cockpit`
+- `template-program-management`
+
+Application repos still own data, security, roles, business logic, and provider secrets. The starter platform owns the shell structure and design-system wiring.
 
 ---
 

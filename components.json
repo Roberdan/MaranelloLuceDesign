@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "name": "maranello-luce-design-business",
-  "version": "4.11.0",
+  "name": "@convergio/design-elements",
+  "version": "6.3.2",
   "description": "Ferrari Luce-inspired design system for business dashboards",
   "detailCatalog": "./components-detail.json",
   "layers": {
@@ -9,141 +9,1090 @@
     "headless-js": "Vanilla JS/TS functions that render into a container element",
     "web-component": "Custom elements (mn-* tags) wrapping headless-js layer"
   },
-  "themes": ["editorial", "nero", "avorio", "colorblind"],
+  "themes": [
+    "editorial",
+    "nero",
+    "avorio",
+    "colorblind",
+    "sugar",
+    "navy"
+  ],
   "subpackages": {
-    ".": { "types": "./dist/types/ts/index.d.ts", "import": "./dist/esm/index.js" },
-    "./css": { "import": "./dist/css/index.css" },
-    "./wc": { "import": "./dist/esm/wc/index.js" },
-    "./charts": { "import": "./dist/esm/charts/index.js" },
-    "./gantt": { "import": "./dist/esm/gantt/index.js" },
-    "./gauge": { "import": "./dist/esm/gauge/index.js" },
-    "./controls": { "import": "./dist/esm/controls/index.js" },
-    "./forms": { "import": "./dist/esm/forms/index.js" }
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.cjs"
+    },
+    "./css": {
+      "import": "./dist/css/index.css"
+    },
+    "./wc": {
+      "types": "./dist/types/wc/index.d.ts",
+      "import": "./dist/esm/wc/index.js",
+      "require": "./dist/cjs/wc/index.cjs"
+    },
+    "./register-all": {
+      "types": "./dist/types/wc/register-all.d.ts",
+      "import": "./dist/esm/wc/register-all.js",
+      "require": "./dist/cjs/wc/register-all.cjs"
+    },
+    "./charts": {
+      "types": "./dist/types/charts/index.d.ts",
+      "import": "./dist/esm/charts/index.js",
+      "require": "./dist/cjs/charts/index.cjs"
+    },
+    "./gantt": {
+      "types": "./dist/types/gantt/index.d.ts",
+      "import": "./dist/esm/gantt/index.js",
+      "require": "./dist/cjs/gantt/index.cjs"
+    },
+    "./gauge": {
+      "types": "./dist/types/gauge/index.d.ts",
+      "import": "./dist/esm/gauge/index.js",
+      "require": "./dist/cjs/gauge/index.cjs"
+    },
+    "./controls": {
+      "types": "./dist/types/controls/index.d.ts",
+      "import": "./dist/esm/controls/index.js",
+      "require": "./dist/cjs/controls/index.cjs"
+    },
+    "./forms": {
+      "types": "./dist/types/forms/index.d.ts",
+      "import": "./dist/esm/forms/index.js",
+      "require": "./dist/cjs/forms/index.cjs"
+    },
+    "./knowledge": {
+      "import": "./dist/knowledge/ckb.json"
+    }
   },
   "webComponents": [
-    "mn-chart", "mn-hbar", "mn-gauge", "mn-speedometer", "mn-gantt",
-    "mn-funnel", "mn-data-table", "mn-detail-panel", "mn-okr",
-    "mn-ferrari-control", "mn-date-picker", "mn-modal", "mn-toast",
-    "mn-command-palette", "mn-login", "mn-chat", "mn-system-status",
-    "mn-profile", "mn-map", "mn-theme-toggle", "mn-tabs", "mn-tab", "mn-a11y"
+    "mn-a11y",
+    "mn-async-select",
+    "mn-chart",
+    "mn-chat",
+    "mn-command-palette",
+    "mn-dashboard",
+    "mn-data-table",
+    "mn-date-picker",
+    "mn-detail-panel",
+    "mn-entity-workbench",
+    "mn-facet-workbench",
+    "mn-ferrari-control",
+    "mn-funnel",
+    "mn-gantt",
+    "mn-gauge",
+    "mn-header-shell",
+    "mn-kanban-board",
+    "mn-hbar",
+    "mn-map",
+    "mn-mapbox",
+    "mn-modal",
+    "mn-okr",
+    "mn-profile",
+    "mn-section-nav",
+    "mn-speedometer",
+    "mn-system-status",
+    "mn-tab",
+    "mn-tabs",
+    "mn-theme-rotary",
+    "mn-theme-toggle",
+    "mn-toast"
   ],
   "cssModules": [
-    "base.css", "tokens.css", "themes.css", "themes-base.css",
-    "components.css", "controls.css", "forms.css", "layouts.css",
-    "extended.css", "patterns.css", "animations.css", "gauge.css",
-    "icons.css", "utilities.css", "accessibility.css", "composition.css",
-    "charts.css", "charts-base.css", "charts-themes.css",
-    "charts-live-donut-bar.css", "charts-gauge-temp-progress.css",
-    "charts-treemap-radar-gantt.css", "charts-gantt-timeline.css",
+    "base.css",
+    "tokens.css",
+    "themes.css",
+    "themes-base.css",
+    "components.css",
+    "controls.css",
+    "forms.css",
+    "layouts.css",
+    "extended.css",
+    "patterns.css",
+    "animations.css",
+    "gauge.css",
+    "icons.css",
+    "utilities.css",
+    "accessibility.css",
+    "composition.css",
+    "charts.css",
+    "charts-base.css",
+    "charts-themes.css",
+    "charts-live-donut-bar.css",
+    "charts-gauge-temp-progress.css",
+    "charts-treemap-radar-gantt.css",
+    "charts-gantt-timeline.css",
     "charts-heatmap-funnel-flip.css",
-    "layouts-sidebar.css", "layouts-data-table-1.css",
-    "layouts-data-table-2.css", "layouts-detail-panel.css",
-    "layouts-detail-panel-base.css", "layouts-command-palette.css",
-    "layouts-chat-login.css", "layouts-heatmap.css",
-    "layouts-horizontal-bar-1.css", "layouts-org-tree.css",
-    "layouts-toolbar-drawer.css", "layouts-nav-controls.css",
-    "layouts-sim-panel.css", "layouts-network.css",
-    "layouts-capacity-heatmap.css", "layouts-filter-chips.css",
-    "layouts-funnel.css", "layouts-page-header.css", "layouts-column.css",
-    "layouts-animations.css", "layouts-notification.css",
-    "controls-advanced-controls.css", "controls-buttons-switches.css",
-    "controls-rotary-slider.css", "controls-segmented-led.css",
-    "controls-cluster-picker.css", "controls-climate-overrides.css",
-    "forms-base.css", "forms-inputs.css", "forms-checkboxes-radios.css",
-    "forms-file-date-range.css", "forms-special-inputs.css",
+    "layouts-sidebar.css",
+    "layouts-data-table-1.css",
+    "layouts-data-table-2.css",
+    "layouts-detail-panel.css",
+    "layouts-detail-panel-base.css",
+    "layouts-command-palette.css",
+    "layouts-chat-login.css",
+    "layouts-heatmap.css",
+    "layouts-horizontal-bar-1.css",
+    "layouts-org-tree.css",
+    "layouts-toolbar-drawer.css",
+    "layouts-nav-controls.css",
+    "layouts-sim-panel.css",
+    "layouts-network.css",
+    "layouts-capacity-heatmap.css",
+    "layouts-filter-chips.css",
+    "layouts-funnel.css",
+    "layouts-page-header.css",
+    "layouts-column.css",
+    "layouts-animations.css",
+    "layouts-notification.css",
+    "controls-advanced-controls.css",
+    "controls-buttons-switches.css",
+    "controls-rotary-slider.css",
+    "controls-segmented-led.css",
+    "controls-cluster-picker.css",
+    "controls-climate-overrides.css",
+    "forms-base.css",
+    "forms-inputs.css",
+    "forms-checkboxes-radios.css",
+    "forms-file-date-range.css",
+    "forms-special-inputs.css",
     "forms-action-buttons.css",
-    "extended-tabs-breadcrumb.css", "extended-toast-dropdown.css",
-    "extended-tooltip-modal.css", "extended-avatar-spinner.css",
-    "patterns-signal-binnacle.css", "patterns-strip-pod.css"
+    "extended-tabs-breadcrumb.css",
+    "extended-toast-dropdown.css",
+    "extended-tooltip-modal.css",
+    "extended-avatar-spinner.css",
+    "patterns-signal-binnacle.css",
+    "patterns-strip-pod.css"
   ],
   "tsModules": {
     "public": [
-      "index.ts", "charts.ts", "gantt.ts", "gauge.ts", "forms.ts", "controls.ts", "maranello.ts"
+      "index.ts",
+      "charts.ts",
+      "gantt.ts",
+      "gauge.ts",
+      "forms.ts",
+      "controls.ts",
+      "maranello.ts"
     ],
     "internal": [
-      "observers.ts", "gauge-engine-class.ts",
-      "speedometer-palette.ts", "speedometer-draw.ts",
+      "observers.ts",
+      "gauge-engine-class.ts",
+      "speedometer-palette.ts",
+      "speedometer-draw.ts",
       "h-bar-chart-draw.ts",
-      "data-binding-events.ts", "data-binding-ui.ts",
+      "data-binding-events.ts",
+      "data-binding-ui.ts",
       "icons-az.ts",
-      "detail-panel.ts", "detail-panel-ui.ts", "detail-panel-editors.ts", "detail-panel-renderers.ts",
-      "a11y-panel.ts", "a11y-panel-dom.ts",
-      "controls-dialogs.ts", "controls-drag.ts",
-      "map-view.ts", "map-view-events.ts", "map-view-helpers.ts"
+      "detail-panel.ts",
+      "detail-panel-ui.ts",
+      "detail-panel-editors.ts",
+      "detail-panel-renderers.ts",
+      "a11y-panel.ts",
+      "a11y-panel-dom.ts",
+      "controls-dialogs.ts",
+      "controls-drag.ts",
+      "map-view.ts",
+      "map-view-events.ts",
+      "map-view-helpers.ts"
     ]
   },
   "components": [
-    { "name": "Sparkline", "layer": "headless-js", "import": "maranello-luce-design-business/charts", "function": "sparkline", "cssImport": "maranello-luce-design-business/css/charts.css", "wcTag": "mn-chart", "dataContract": "SparklineOptions", "whenToUse": ["inline KPI trends", "sparkline in table cells"] },
-    { "name": "Donut", "layer": "headless-js", "import": "maranello-luce-design-business/charts", "function": "donut", "cssImport": "maranello-luce-design-business/css/charts-live-donut-bar.css", "wcTag": "mn-chart", "dataContract": "DonutSegment[]", "whenToUse": ["proportional breakdown", "completion percentage"] },
-    { "name": "BarChart", "layer": "headless-js", "import": "maranello-luce-design-business/charts", "function": "barChart", "cssImport": "maranello-luce-design-business/css/charts-live-donut-bar.css", "wcTag": "mn-chart", "dataContract": "BarDataItem[]", "whenToUse": ["category comparison", "monthly totals"] },
-    { "name": "AreaChart", "layer": "headless-js", "import": "maranello-luce-design-business/charts", "function": "areaChart", "cssImport": "maranello-luce-design-business/css/charts.css", "wcTag": "mn-chart", "dataContract": "AreaDataset[]", "whenToUse": ["time series overlay", "trend comparison"] },
-    { "name": "Radar", "layer": "headless-js", "import": "maranello-luce-design-business/charts", "function": "radar", "cssImport": "maranello-luce-design-business/css/charts-treemap-radar-gantt.css", "wcTag": "mn-chart", "dataContract": "RadarDataItem[]", "whenToUse": ["multi-dimensional scoring", "competency assessment"] },
-    { "name": "Bubble", "layer": "headless-js", "import": "maranello-luce-design-business/charts", "function": "bubble", "cssImport": "maranello-luce-design-business/css/charts.css", "wcTag": "mn-chart", "dataContract": "BubbleDataItem[]", "whenToUse": ["3D data visualization", "market mapping"] },
-    { "name": "LiveGraph", "layer": "headless-js", "import": "maranello-luce-design-business/charts", "function": "liveGraph", "cssImport": "maranello-luce-design-business/css/charts-live-donut-bar.css", "wcTag": "mn-chart", "dataContract": "LiveGraphOptions", "whenToUse": ["real-time monitoring", "streaming data"] },
-    { "name": "HalfGauge", "layer": "headless-js", "import": "maranello-luce-design-business/charts", "function": "halfGauge", "cssImport": "maranello-luce-design-business/css/charts-gauge-temp-progress.css", "wcTag": "mn-chart", "dataContract": "HalfGaugeOptions", "whenToUse": ["score display", "capacity meter"] },
-    { "name": "HBarChart", "layer": "headless-js", "import": "maranello-luce-design-business", "function": "hBarChart", "cssImport": "maranello-luce-design-business/css/layouts-horizontal-bar-1.css", "wcTag": "mn-hbar", "dataContract": "HBarChartOptions", "whenToUse": ["ranked lists", "horizontal comparison"] },
-    { "name": "FerrariGauge", "layer": "headless-js", "import": "maranello-luce-design-business/gauge", "function": "FerrariGauge", "cssImport": "maranello-luce-design-business/css/gauge.css", "wcTag": "mn-gauge", "dataContract": "GaugeConfig", "whenToUse": ["KPI display", "score visualization"] },
-    { "name": "Speedometer", "layer": "headless-js", "import": "maranello-luce-design-business", "function": "speedometer", "cssImport": "maranello-luce-design-business/css/charts-gauge-temp-progress.css", "wcTag": "mn-speedometer", "dataContract": "SpeedometerOptions", "whenToUse": ["velocity metrics", "performance gauge"] },
-    { "name": "Gantt", "layer": "headless-js", "import": "maranello-luce-design-business/gantt", "function": "gantt", "cssImport": "maranello-luce-design-business/css/charts-gantt-timeline.css", "wcTag": "mn-gantt", "dataContract": "GanttTask[]", "whenToUse": ["project timeline", "resource planning"] },
-    { "name": "Funnel", "layer": "headless-js", "import": "maranello-luce-design-business", "function": "funnel", "cssImport": "maranello-luce-design-business/css/charts-heatmap-funnel-flip.css", "wcTag": "mn-funnel", "dataContract": "SankeyData", "whenToUse": ["pipeline visualization", "conversion funnel"] },
-    { "name": "DataTable", "layer": "headless-js", "import": "maranello-luce-design-business", "function": "dataTable", "cssImport": "maranello-luce-design-business/css/layouts-data-table-1.css", "wcTag": "mn-data-table", "dataContract": "DataTableOptions", "whenToUse": ["tabular data", "CRUD listings"] },
-    { "name": "DetailPanel", "layer": "headless-js", "import": "maranello-luce-design-business/controls", "function": "openDetailPanel", "cssImport": "maranello-luce-design-business/css/layouts-detail-panel.css", "wcTag": "mn-detail-panel", "dataContract": "DetailPanelOptions", "whenToUse": ["record detail view", "edit form overlay"] },
-    { "name": "OkrPanel", "layer": "headless-js", "import": "maranello-luce-design-business", "cssImport": "maranello-luce-design-business/css/layouts-detail-panel.css", "wcTag": "mn-okr", "dataContract": "OkrPanelOptions", "whenToUse": ["OKR tracking", "goal dashboards"] },
-    { "name": "Manettino", "layer": "headless-js", "import": "maranello-luce-design-business", "function": "manettino", "cssImport": "maranello-luce-design-business/css/controls.css", "wcTag": "mn-ferrari-control", "dataContract": "ManettinoOptions", "whenToUse": ["mode selector", "branded control"] },
-    { "name": "SteppedRotary", "layer": "headless-js", "import": "maranello-luce-design-business", "function": "steppedRotary", "cssImport": "maranello-luce-design-business/css/controls.css", "wcTag": "mn-ferrari-control", "dataContract": "SteppedDialOptions", "whenToUse": ["stepped selection", "discrete value dial"] },
-    { "name": "CruiseLever", "layer": "headless-js", "import": "maranello-luce-design-business", "function": "cruiseLever", "cssImport": "maranello-luce-design-business/css/controls.css", "wcTag": "mn-ferrari-control", "dataContract": "CruiseLeverOptions", "whenToUse": ["multi-step control", "vertical mode switch"] },
-    { "name": "ToggleLever", "layer": "headless-js", "import": "maranello-luce-design-business", "function": "toggleLever", "cssImport": "maranello-luce-design-business/css/controls.css", "wcTag": "mn-ferrari-control", "dataContract": "FerrariToggleOptions", "whenToUse": ["boolean toggle", "on/off switch"] },
-    { "name": "Forms", "layer": "headless-js", "import": "maranello-luce-design-business/forms", "function": "initForms", "cssImport": "maranello-luce-design-business/css/forms.css", "dataContract": "FormValidators", "whenToUse": ["data entry forms", "multi-step wizards"] },
-    { "name": "DatePicker", "layer": "headless-js", "import": "maranello-luce-design-business", "function": "datePicker", "cssImport": "maranello-luce-design-business/css/forms-file-date-range.css", "wcTag": "mn-date-picker", "dataContract": "DatePickerOptions", "whenToUse": ["date selection", "date range filtering"] },
-    { "name": "Modal", "layer": "headless-js", "import": "maranello-luce-design-business", "function": "openModal", "cssImport": "maranello-luce-design-business/css/extended-tooltip-modal.css", "wcTag": "mn-modal", "dataContract": "string (backdrop element ID)", "whenToUse": ["confirmation dialogs", "alert modals"] },
-    { "name": "Toast", "layer": "headless-js", "import": "maranello-luce-design-business", "function": "toast", "cssImport": "maranello-luce-design-business/css/extended-toast-dropdown.css", "wcTag": "mn-toast", "dataContract": "ToastOptions", "whenToUse": ["success messages", "error alerts"] },
-    { "name": "CommandPalette", "layer": "headless-js", "import": "maranello-luce-design-business", "function": "commandPalette", "cssImport": "maranello-luce-design-business/css/layouts-command-palette.css", "wcTag": "mn-command-palette", "dataContract": "string (palette element ID)", "whenToUse": ["quick actions", "global search"] },
-    { "name": "LoginScreen", "layer": "headless-js", "import": "maranello-luce-design-business", "function": "loginScreen", "cssImport": "maranello-luce-design-business/css/layouts-chat-login.css", "wcTag": "mn-login", "dataContract": "LoginScreenOptions", "whenToUse": ["application login page", "SSO authentication"] },
-    { "name": "AIChat", "layer": "headless-js", "import": "maranello-luce-design-business", "function": "buildUI", "cssImport": "maranello-luce-design-business/css/layouts-chat-login.css", "wcTag": "mn-chat", "dataContract": "AIChatOptions", "whenToUse": ["AI assistant", "chat widget"] },
-    { "name": "SystemStatus", "layer": "headless-js", "import": "maranello-luce-design-business", "function": "systemStatus", "cssImport": "maranello-luce-design-business/css/layouts-chat-login.css", "wcTag": "mn-system-status", "dataContract": "SystemStatusOptions", "whenToUse": ["service monitoring", "status bar widget"] },
-    { "name": "ProfileMenu", "layer": "headless-js", "import": "maranello-luce-design-business", "function": "profileMenu", "cssImport": "maranello-luce-design-business/css/extended-toast-dropdown.css", "wcTag": "mn-profile", "dataContract": "ProfileMenuOptions", "whenToUse": ["user profile dropdown", "navigation header"] },
-    { "name": "MapView", "layer": "headless-js", "import": "maranello-luce-design-business", "function": "mapView", "cssImport": "maranello-luce-design-business/css/layouts-heatmap.css", "wcTag": "mn-map", "dataContract": "MapViewOptions", "whenToUse": ["geographic data", "office locations"] },
-    { "name": "FlipCounter", "layer": "headless-js", "import": "maranello-luce-design-business", "function": "flipCounter", "cssImport": "maranello-luce-design-business/css/charts-heatmap-funnel-flip.css", "dataContract": "FlipCounterOptions", "whenToUse": ["live counters", "animated numbers"] },
-    { "name": "ProgressRing", "layer": "headless-js", "import": "maranello-luce-design-business", "function": "progressRing", "cssImport": "maranello-luce-design-business/css/charts-gauge-temp-progress.css", "dataContract": "ProgressRingOptions", "whenToUse": ["progress indicator", "completion percentage"] },
-    { "name": "ThemeToggle", "layer": "headless-js", "import": "maranello-luce-design-business", "function": "initThemeToggle", "cssImport": "maranello-luce-design-business/css/themes.css", "wcTag": "mn-theme-toggle", "dataContract": "string (toggle button ID)", "whenToUse": ["theme switching", "dark/light toggle"] },
-    { "name": "OrgTree", "layer": "headless-js", "import": "maranello-luce-design-business/controls", "function": "initOrgTree", "cssImport": "maranello-luce-design-business/css/layouts-org-tree.css", "dataContract": "OrgTreeOptions", "whenToUse": ["org chart", "hierarchical navigation"] },
-    { "name": "Drawer", "layer": "headless-js", "import": "maranello-luce-design-business/controls", "function": "openDrawer", "cssImport": "maranello-luce-design-business/css/layouts-toolbar-drawer.css", "dataContract": "string (drawer element ID)", "whenToUse": ["mobile navigation", "filter panel"] },
-    { "name": "A11yPanel", "layer": "headless-js", "import": "maranello-luce-design-business/controls", "function": "a11yPanel", "cssImport": "maranello-luce-design-business/css/accessibility.css", "wcTag": "mn-a11y", "dataContract": "A11yPanelController", "whenToUse": ["accessibility settings", "font size / contrast controls"] },
-    { "name": "Observers", "layer": "headless-js", "import": "maranello-luce-design-business", "functions": ["initGauges", "initScrollReveal", "initNavTracking", "autoContrast", "relativeLuminance"], "whenToUse": ["lazy gauge init", "scroll reveal", "nav highlighting", "WCAG auto-contrast"] },
-    { "name": "Dropdown", "layer": "headless-js", "import": "maranello-luce-design-business/controls", "function": "initDropdown", "cssImport": "maranello-luce-design-business/css/extended-toast-dropdown.css", "dataContract": "DropdownController", "whenToUse": ["dropdown menus", "select widgets"] },
-    { "name": "TabsInit", "layer": "headless-js", "import": "maranello-luce-design-business/controls", "function": "initTabs", "cssImport": "maranello-luce-design-business/css/extended-tabs-breadcrumb.css", "whenToUse": ["tabbed navigation", "content panels"] },
-    { "name": "RotaryKnob", "layer": "headless-js", "import": "maranello-luce-design-business/controls", "function": "initRotary", "cssImport": "maranello-luce-design-business/css/controls-rotary-slider.css", "dataContract": "RotaryController", "whenToUse": ["drag rotary knob", "stepped dial"] },
-    { "name": "SliderControl", "layer": "headless-js", "import": "maranello-luce-design-business/controls", "function": "initSlider", "cssImport": "maranello-luce-design-business/css/controls-rotary-slider.css", "dataContract": "SliderController", "whenToUse": ["linear slider", "range input"] },
-    { "name": "DataBinding", "layer": "headless-js", "import": "maranello-luce-design-business", "functions": ["emit", "on", "off", "bind", "autoBind", "onDrillDown"], "whenToUse": ["event bus", "data-driven DOM updates", "drill-down interactions"] },
-    { "name": "DataBindingUI", "layer": "headless-js", "import": "maranello-luce-design-business", "functions": ["updateGauge", "bindChart", "autoBindSliders", "bindControl"], "whenToUse": ["gauge live update", "chart data polling", "control REST binding"] },
-    { "name": "Icons", "layer": "headless-js", "import": "maranello-luce-design-business", "exports": ["icons", "actionIcons", "dataIcons", "navIcons", "objectIcons", "statusIcons", "azIcons"], "whenToUse": ["SVG icon injection", "icon buttons", "icon sets"] },
-    { "name": "Sidebar", "layer": "css-only", "cssImport": "maranello-luce-design-business/css/layouts-sidebar.css", "whenToUse": ["main navigation", "app sidebar"] },
-    { "name": "Cards", "layer": "css-only", "cssImport": "maranello-luce-design-business/css/components-dividers-tags-cards.css", "whenToUse": ["content cards", "dashboard tiles"] },
-    { "name": "ScrollReveal", "layer": "css-only", "cssImport": "maranello-luce-design-business/css/animations.css", "whenToUse": ["scroll animations", "content reveal"] },
-    { "name": "NavTracking", "layer": "css-only", "cssImport": "maranello-luce-design-business/css/layouts-nav-controls.css", "whenToUse": ["breadcrumbs", "step indicators"] },
-    { "name": "Heatmap", "layer": "css-only", "cssImport": "maranello-luce-design-business/css/layouts-heatmap.css", "whenToUse": ["data density visualization", "activity grids"] },
-    { "name": "Treemap", "layer": "css-only", "cssImport": "maranello-luce-design-business/css/charts-treemap-radar-gantt.css", "whenToUse": ["hierarchical data", "portfolio allocation"] },
-    { "name": "UserTable", "layer": "headless-js", "import": "maranello-luce-design-business", "function": "userTable", "dataContract": "UserTableOptions", "version": "4.11.0", "whenToUse": ["admin user management", "team member listing"] },
-    { "name": "AuditLog", "layer": "headless-js", "import": "maranello-luce-design-business", "function": "auditLog", "dataContract": "AuditLogOptions", "version": "4.11.0", "whenToUse": ["security audit trail", "activity history"] },
-    { "name": "AgentCostBreakdown", "layer": "headless-js", "import": "maranello-luce-design-business", "function": "agentCostBreakdown", "dataContract": "AgentCostBreakdownOptions", "version": "4.11.0", "whenToUse": ["AI cost tracking", "FinOps dashboard"] },
-    { "name": "CostTimeline", "layer": "headless-js", "import": "maranello-luce-design-business/charts", "function": "costTimeline", "dataContract": "CostTimelineOptions", "version": "4.11.0", "whenToUse": ["cost trend analysis", "stacked area timeline"] },
-    { "name": "BusinessModelCanvas", "layer": "headless-js", "import": "maranello-luce-design-business", "function": "businessModelCanvas", "dataContract": "BusinessModelCanvasOptions", "version": "4.11.0", "whenToUse": ["strategy planning", "Osterwalder 9-block"] },
-    { "name": "AgentTrace", "layer": "headless-js", "import": "maranello-luce-design-business", "function": "agentTrace", "dataContract": "AgentTraceOptions", "version": "4.11.0", "whenToUse": ["AI execution trace", "tool call visualization"] },
-    { "name": "TokenMeter", "layer": "headless-js", "import": "maranello-luce-design-business", "function": "tokenMeter", "dataContract": "TokenMeterOptions", "version": "4.11.0", "whenToUse": ["LLM token usage", "budget metering"] },
-    { "name": "StreamingText", "layer": "headless-js", "import": "maranello-luce-design-business", "function": "streamingText", "dataContract": "StreamingTextOptions", "version": "4.11.0", "whenToUse": ["AI streaming response", "progressive text render"] },
-    { "name": "RiskMatrix", "layer": "headless-js", "import": "maranello-luce-design-business/charts", "function": "riskMatrix", "dataContract": "RiskMatrixOptions", "version": "4.11.0", "whenToUse": ["risk assessment", "probability-impact grid"] },
-    { "name": "KpiScorecard", "layer": "headless-js", "import": "maranello-luce-design-business", "function": "kpiScorecard", "dataContract": "KpiScorecardOptions", "version": "4.11.0", "whenToUse": ["KPI tracking", "target vs actual table"] },
-    { "name": "CohortGrid", "layer": "headless-js", "import": "maranello-luce-design-business", "function": "cohortGrid", "dataContract": "CohortGridOptions", "version": "4.11.0", "whenToUse": ["retention analysis", "cohort heatmap"] },
-    { "name": "ApprovalChain", "layer": "headless-js", "import": "maranello-luce-design-business", "function": "approvalChain", "dataContract": "ApprovalChainOptions", "version": "4.11.0", "whenToUse": ["approval workflow", "review chain"] },
-    { "name": "BCGMatrix", "layer": "headless-js", "import": "maranello-luce-design-business/charts", "function": "bcgMatrix", "dataContract": "BCGMatrixOptions", "version": "4.11.0", "whenToUse": ["portfolio strategy", "growth-share matrix"] },
-    { "name": "NineBoxMatrix", "layer": "headless-js", "import": "maranello-luce-design-business", "function": "nineBoxMatrix", "dataContract": "NineBoxMatrixOptions", "version": "4.11.0", "whenToUse": ["talent assessment", "GE-McKinsey matrix"] },
-    { "name": "SwotMatrix", "layer": "headless-js", "import": "maranello-luce-design-business", "function": "swotMatrix", "dataContract": "SwotMatrixOptions", "version": "4.11.0", "whenToUse": ["strategic analysis", "SWOT assessment"] },
-    { "name": "DecisionMatrix", "layer": "headless-js", "import": "maranello-luce-design-business", "function": "decisionMatrix", "dataContract": "DecisionMatrixOptions", "version": "4.11.0", "whenToUse": ["weighted scoring", "decision analysis"] },
-    { "name": "WaterfallChart", "layer": "headless-js", "import": "maranello-luce-design-business/charts", "function": "waterfallChart", "dataContract": "WaterfallChartOptions", "version": "4.11.0", "whenToUse": ["financial breakdown", "incremental changes"] },
-    { "name": "ConfidenceChart", "layer": "headless-js", "import": "maranello-luce-design-business/charts", "function": "confidenceChart", "dataContract": "ConfidenceChartOptions", "version": "4.11.0", "whenToUse": ["forecast bands", "confidence intervals"] },
-    { "name": "DateRangePicker", "layer": "headless-js", "import": "maranello-luce-design-business", "function": "dateRangePicker", "dataContract": "DateRangePickerOptions", "version": "4.11.0", "whenToUse": ["date range selection", "period filtering"] },
-    { "name": "ActivityFeed", "layer": "headless-js", "import": "maranello-luce-design-business", "function": "activityFeed", "dataContract": "ActivityFeedOptions", "version": "4.11.0", "whenToUse": ["activity timeline", "event feed"] },
-    { "name": "BulletChart", "layer": "headless-js", "import": "maranello-luce-design-business/charts", "function": "bulletChart", "dataContract": "BulletChartOptions", "version": "4.11.0", "whenToUse": ["target vs actual", "KPI bullet gauge"] },
-    { "name": "NotificationCenter", "layer": "headless-js", "import": "maranello-luce-design-business", "function": "notificationCenter", "dataContract": "NotificationCenterOptions", "version": "4.11.0", "whenToUse": ["notification panel", "alert center"] }
+    {
+      "name": "Sparkline",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements/charts",
+      "function": "sparkline",
+      "cssImport": "@convergio/design-elements/css/charts.css",
+      "wcTag": "mn-chart",
+      "dataContract": "SparklineOptions",
+      "whenToUse": [
+        "inline KPI trends",
+        "sparkline in table cells"
+      ]
+    },
+    {
+      "name": "Donut",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements/charts",
+      "function": "donut",
+      "cssImport": "@convergio/design-elements/css/charts-live-donut-bar.css",
+      "wcTag": "mn-chart",
+      "dataContract": "DonutSegment[]",
+      "whenToUse": [
+        "proportional breakdown",
+        "completion percentage"
+      ]
+    },
+    {
+      "name": "BarChart",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements/charts",
+      "function": "barChart",
+      "cssImport": "@convergio/design-elements/css/charts-live-donut-bar.css",
+      "wcTag": "mn-chart",
+      "dataContract": "BarDataItem[]",
+      "whenToUse": [
+        "category comparison",
+        "monthly totals"
+      ]
+    },
+    {
+      "name": "AreaChart",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements/charts",
+      "function": "areaChart",
+      "cssImport": "@convergio/design-elements/css/charts.css",
+      "wcTag": "mn-chart",
+      "dataContract": "AreaDataset[]",
+      "whenToUse": [
+        "time series overlay",
+        "trend comparison"
+      ]
+    },
+    {
+      "name": "Radar",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements/charts",
+      "function": "radar",
+      "cssImport": "@convergio/design-elements/css/charts-treemap-radar-gantt.css",
+      "wcTag": "mn-chart",
+      "dataContract": "RadarDataItem[]",
+      "whenToUse": [
+        "multi-dimensional scoring",
+        "competency assessment"
+      ]
+    },
+    {
+      "name": "Bubble",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements/charts",
+      "function": "bubble",
+      "cssImport": "@convergio/design-elements/css/charts.css",
+      "wcTag": "mn-chart",
+      "dataContract": "BubbleDataItem[]",
+      "whenToUse": [
+        "3D data visualization",
+        "market mapping"
+      ]
+    },
+    {
+      "name": "LiveGraph",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements/charts",
+      "function": "liveGraph",
+      "cssImport": "@convergio/design-elements/css/charts-live-donut-bar.css",
+      "wcTag": "mn-chart",
+      "dataContract": "LiveGraphOptions",
+      "whenToUse": [
+        "real-time monitoring",
+        "streaming data"
+      ]
+    },
+    {
+      "name": "HalfGauge",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements/charts",
+      "function": "halfGauge",
+      "cssImport": "@convergio/design-elements/css/charts-gauge-temp-progress.css",
+      "wcTag": "mn-chart",
+      "dataContract": "HalfGaugeOptions",
+      "whenToUse": [
+        "score display",
+        "capacity meter"
+      ]
+    },
+    {
+      "name": "HBarChart",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements",
+      "function": "hBarChart",
+      "cssImport": "@convergio/design-elements/css/layouts-horizontal-bar-1.css",
+      "wcTag": "mn-hbar",
+      "dataContract": "HBarChartOptions",
+      "whenToUse": [
+        "ranked lists",
+        "horizontal comparison"
+      ]
+    },
+    {
+      "name": "FerrariGauge",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements/gauge",
+      "function": "FerrariGauge",
+      "cssImport": "@convergio/design-elements/css/gauge.css",
+      "wcTag": "mn-gauge",
+      "dataContract": "GaugeConfig",
+      "whenToUse": [
+        "KPI display",
+        "score visualization"
+      ]
+    },
+    {
+      "name": "Speedometer",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements",
+      "function": "speedometer",
+      "cssImport": "@convergio/design-elements/css/charts-gauge-temp-progress.css",
+      "wcTag": "mn-speedometer",
+      "dataContract": "SpeedometerOptions",
+      "whenToUse": [
+        "velocity metrics",
+        "performance gauge"
+      ]
+    },
+    {
+      "name": "Gantt",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements/gantt",
+      "function": "gantt",
+      "cssImport": "@convergio/design-elements/css/charts-gantt-timeline.css",
+      "wcTag": "mn-gantt",
+      "dataContract": "GanttTask[]",
+      "whenToUse": [
+        "project timeline",
+        "resource planning"
+      ]
+    },
+    {
+      "name": "Funnel",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements",
+      "function": "funnel",
+      "cssImport": "@convergio/design-elements/css/charts-heatmap-funnel-flip.css",
+      "wcTag": "mn-funnel",
+      "dataContract": "SankeyData",
+      "whenToUse": [
+        "pipeline visualization",
+        "conversion funnel"
+      ]
+    },
+    {
+      "name": "DataTable",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements",
+      "function": "dataTable",
+      "cssImport": "@convergio/design-elements/css/layouts-data-table-1.css",
+      "wcTag": "mn-data-table",
+      "dataContract": "DataTableOptions",
+      "whenToUse": [
+        "tabular data",
+        "CRUD listings"
+      ]
+    },
+    {
+      "name": "DetailPanel",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements/controls",
+      "function": "openDetailPanel",
+      "cssImport": "@convergio/design-elements/css/layouts-detail-panel.css",
+      "wcTag": "mn-detail-panel",
+      "dataContract": "DetailPanelOptions",
+      "whenToUse": [
+        "record detail view",
+        "edit form overlay"
+      ]
+    },
+    {
+      "name": "OkrPanel",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements",
+      "cssImport": "@convergio/design-elements/css/layouts-detail-panel.css",
+      "wcTag": "mn-okr",
+      "dataContract": "OkrPanelOptions",
+      "whenToUse": [
+        "OKR tracking",
+        "goal dashboards"
+      ]
+    },
+    {
+      "name": "Manettino",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements",
+      "function": "manettino",
+      "cssImport": "@convergio/design-elements/css/controls.css",
+      "wcTag": "mn-ferrari-control",
+      "dataContract": "ManettinoOptions",
+      "whenToUse": [
+        "mode selector",
+        "branded control"
+      ]
+    },
+    {
+      "name": "SteppedRotary",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements",
+      "function": "steppedRotary",
+      "cssImport": "@convergio/design-elements/css/controls.css",
+      "wcTag": "mn-ferrari-control",
+      "dataContract": "SteppedDialOptions",
+      "whenToUse": [
+        "stepped selection",
+        "discrete value dial"
+      ]
+    },
+    {
+      "name": "CruiseLever",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements",
+      "function": "cruiseLever",
+      "cssImport": "@convergio/design-elements/css/controls.css",
+      "wcTag": "mn-ferrari-control",
+      "dataContract": "CruiseLeverOptions",
+      "whenToUse": [
+        "multi-step control",
+        "vertical mode switch"
+      ]
+    },
+    {
+      "name": "ToggleLever",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements",
+      "function": "toggleLever",
+      "cssImport": "@convergio/design-elements/css/controls.css",
+      "wcTag": "mn-ferrari-control",
+      "dataContract": "FerrariToggleOptions",
+      "whenToUse": [
+        "boolean toggle",
+        "on/off switch"
+      ]
+    },
+    {
+      "name": "Forms",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements/forms",
+      "function": "initForms",
+      "cssImport": "@convergio/design-elements/css/forms.css",
+      "dataContract": "FormValidators",
+      "whenToUse": [
+        "data entry forms",
+        "multi-step wizards"
+      ]
+    },
+    {
+      "name": "DatePicker",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements",
+      "function": "datePicker",
+      "cssImport": "@convergio/design-elements/css/forms-file-date-range.css",
+      "wcTag": "mn-date-picker",
+      "dataContract": "DatePickerOptions",
+      "whenToUse": [
+        "date selection",
+        "date range filtering"
+      ]
+    },
+    {
+      "name": "Modal",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements",
+      "function": "openModal",
+      "cssImport": "@convergio/design-elements/css/extended-tooltip-modal.css",
+      "wcTag": "mn-modal",
+      "dataContract": "string (backdrop element ID)",
+      "whenToUse": [
+        "confirmation dialogs",
+        "alert modals"
+      ]
+    },
+    {
+      "name": "Toast",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements",
+      "function": "toast",
+      "cssImport": "@convergio/design-elements/css/extended-toast-dropdown.css",
+      "wcTag": "mn-toast",
+      "dataContract": "ToastOptions",
+      "whenToUse": [
+        "success messages",
+        "error alerts"
+      ]
+    },
+    {
+      "name": "CommandPalette",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements",
+      "function": "commandPalette",
+      "cssImport": "@convergio/design-elements/css/layouts-command-palette.css",
+      "wcTag": "mn-command-palette",
+      "dataContract": "string (palette element ID)",
+      "whenToUse": [
+        "quick actions",
+        "global search"
+      ]
+    },
+    {
+      "name": "LoginScreen",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements",
+      "function": "loginScreen",
+      "cssImport": "@convergio/design-elements/css/layouts-chat-login.css",
+      "wcTag": "mn-login",
+      "dataContract": "LoginScreenOptions",
+      "whenToUse": [
+        "application login page",
+        "SSO authentication"
+      ]
+    },
+    {
+      "name": "AIChat",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements",
+      "function": "buildUI",
+      "cssImport": "@convergio/design-elements/css/layouts-chat-login.css",
+      "wcTag": "mn-chat",
+      "dataContract": "AIChatOptions",
+      "whenToUse": [
+        "AI assistant",
+        "chat widget"
+      ]
+    },
+    {
+      "name": "SystemStatus",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements",
+      "function": "systemStatus",
+      "cssImport": "@convergio/design-elements/css/layouts-chat-login.css",
+      "wcTag": "mn-system-status",
+      "dataContract": "SystemStatusOptions",
+      "whenToUse": [
+        "service monitoring",
+        "status bar widget"
+      ]
+    },
+    {
+      "name": "ProfileMenu",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements",
+      "function": "profileMenu",
+      "cssImport": "@convergio/design-elements/css/extended-toast-dropdown.css",
+      "wcTag": "mn-profile",
+      "dataContract": "ProfileMenuOptions",
+      "whenToUse": [
+        "user profile dropdown",
+        "navigation header"
+      ]
+    },
+    {
+      "name": "MapView",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements",
+      "function": "mapView",
+      "cssImport": "@convergio/design-elements/css/layouts-heatmap.css",
+      "wcTag": "mn-map",
+      "dataContract": "MapViewOptions",
+      "whenToUse": [
+        "geographic data",
+        "office locations"
+      ]
+    },
+    {
+      "name": "FlipCounter",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements",
+      "function": "flipCounter",
+      "cssImport": "@convergio/design-elements/css/charts-heatmap-funnel-flip.css",
+      "dataContract": "FlipCounterOptions",
+      "whenToUse": [
+        "live counters",
+        "animated numbers"
+      ]
+    },
+    {
+      "name": "ProgressRing",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements",
+      "function": "progressRing",
+      "cssImport": "@convergio/design-elements/css/charts-gauge-temp-progress.css",
+      "dataContract": "ProgressRingOptions",
+      "whenToUse": [
+        "progress indicator",
+        "completion percentage"
+      ]
+    },
+    {
+      "name": "ThemeToggle",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements",
+      "function": "initThemeToggle",
+      "cssImport": "@convergio/design-elements/css/themes.css",
+      "wcTag": "mn-theme-toggle",
+      "dataContract": "string (toggle button ID)",
+      "whenToUse": [
+        "theme switching",
+        "dark/light toggle"
+      ]
+    },
+    {
+      "name": "OrgTree",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements/controls",
+      "function": "initOrgTree",
+      "cssImport": "@convergio/design-elements/css/layouts-org-tree.css",
+      "dataContract": "OrgTreeOptions",
+      "whenToUse": [
+        "org chart",
+        "hierarchical navigation"
+      ]
+    },
+    {
+      "name": "Drawer",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements/controls",
+      "function": "openDrawer",
+      "cssImport": "@convergio/design-elements/css/layouts-toolbar-drawer.css",
+      "dataContract": "string (drawer element ID)",
+      "whenToUse": [
+        "mobile navigation",
+        "filter panel"
+      ]
+    },
+    {
+      "name": "A11yPanel",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements/controls",
+      "function": "a11yPanel",
+      "cssImport": "@convergio/design-elements/css/accessibility.css",
+      "wcTag": "mn-a11y",
+      "dataContract": "A11yPanelController",
+      "whenToUse": [
+        "accessibility settings",
+        "font size / contrast controls"
+      ]
+    },
+    {
+      "name": "Observers",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements",
+      "functions": [
+        "initGauges",
+        "initScrollReveal",
+        "initNavTracking",
+        "autoContrast",
+        "relativeLuminance"
+      ],
+      "whenToUse": [
+        "lazy gauge init",
+        "scroll reveal",
+        "nav highlighting",
+        "WCAG auto-contrast"
+      ]
+    },
+    {
+      "name": "Dropdown",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements/controls",
+      "function": "initDropdown",
+      "cssImport": "@convergio/design-elements/css/extended-toast-dropdown.css",
+      "dataContract": "DropdownController",
+      "whenToUse": [
+        "dropdown menus",
+        "select widgets"
+      ]
+    },
+    {
+      "name": "TabsInit",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements/controls",
+      "function": "initTabs",
+      "cssImport": "@convergio/design-elements/css/extended-tabs-breadcrumb.css",
+      "whenToUse": [
+        "tabbed navigation",
+        "content panels"
+      ]
+    },
+    {
+      "name": "RotaryKnob",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements/controls",
+      "function": "initRotary",
+      "cssImport": "@convergio/design-elements/css/controls-rotary-slider.css",
+      "dataContract": "RotaryController",
+      "whenToUse": [
+        "drag rotary knob",
+        "stepped dial"
+      ]
+    },
+    {
+      "name": "SliderControl",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements/controls",
+      "function": "initSlider",
+      "cssImport": "@convergio/design-elements/css/controls-rotary-slider.css",
+      "dataContract": "SliderController",
+      "whenToUse": [
+        "linear slider",
+        "range input"
+      ]
+    },
+    {
+      "name": "DataBinding",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements",
+      "functions": [
+        "emit",
+        "on",
+        "off",
+        "bind",
+        "autoBind",
+        "onDrillDown"
+      ],
+      "whenToUse": [
+        "event bus",
+        "data-driven DOM updates",
+        "drill-down interactions"
+      ]
+    },
+    {
+      "name": "DataBindingUI",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements",
+      "functions": [
+        "updateGauge",
+        "bindChart",
+        "autoBindSliders",
+        "bindControl"
+      ],
+      "whenToUse": [
+        "gauge live update",
+        "chart data polling",
+        "control REST binding"
+      ]
+    },
+    {
+      "name": "Icons",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements",
+      "exports": [
+        "icons",
+        "actionIcons",
+        "dataIcons",
+        "navIcons",
+        "objectIcons",
+        "statusIcons",
+        "azIcons"
+      ],
+      "whenToUse": [
+        "SVG icon injection",
+        "icon buttons",
+        "icon sets"
+      ]
+    },
+    {
+      "name": "Sidebar",
+      "layer": "css-only",
+      "cssImport": "@convergio/design-elements/css/layouts-sidebar.css",
+      "whenToUse": [
+        "main navigation",
+        "app sidebar"
+      ]
+    },
+    {
+      "name": "Cards",
+      "layer": "css-only",
+      "cssImport": "@convergio/design-elements/css/components-dividers-tags-cards.css",
+      "whenToUse": [
+        "content cards",
+        "dashboard tiles"
+      ]
+    },
+    {
+      "name": "ScrollReveal",
+      "layer": "css-only",
+      "cssImport": "@convergio/design-elements/css/animations.css",
+      "whenToUse": [
+        "scroll animations",
+        "content reveal"
+      ]
+    },
+    {
+      "name": "NavTracking",
+      "layer": "css-only",
+      "cssImport": "@convergio/design-elements/css/layouts-nav-controls.css",
+      "whenToUse": [
+        "breadcrumbs",
+        "step indicators"
+      ]
+    },
+    {
+      "name": "Heatmap",
+      "layer": "css-only",
+      "cssImport": "@convergio/design-elements/css/layouts-heatmap.css",
+      "whenToUse": [
+        "data density visualization",
+        "activity grids"
+      ]
+    },
+    {
+      "name": "Treemap",
+      "layer": "css-only",
+      "cssImport": "@convergio/design-elements/css/charts-treemap-radar-gantt.css",
+      "whenToUse": [
+        "hierarchical data",
+        "portfolio allocation"
+      ]
+    },
+    {
+      "name": "UserTable",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements",
+      "function": "userTable",
+      "dataContract": "UserTableOptions",
+      "version": "6.3.2",
+      "whenToUse": [
+        "admin user management",
+        "team member listing"
+      ]
+    },
+    {
+      "name": "AuditLog",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements",
+      "function": "auditLog",
+      "dataContract": "AuditLogOptions",
+      "version": "6.3.2",
+      "whenToUse": [
+        "security audit trail",
+        "activity history"
+      ]
+    },
+    {
+      "name": "AgentCostBreakdown",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements",
+      "function": "agentCostBreakdown",
+      "dataContract": "AgentCostBreakdownOptions",
+      "version": "6.3.2",
+      "whenToUse": [
+        "AI cost tracking",
+        "FinOps dashboard"
+      ]
+    },
+    {
+      "name": "CostTimeline",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements/charts",
+      "function": "costTimeline",
+      "dataContract": "CostTimelineOptions",
+      "version": "6.3.2",
+      "whenToUse": [
+        "cost trend analysis",
+        "stacked area timeline"
+      ]
+    },
+    {
+      "name": "BusinessModelCanvas",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements",
+      "function": "businessModelCanvas",
+      "dataContract": "BusinessModelCanvasOptions",
+      "version": "6.3.2",
+      "whenToUse": [
+        "strategy planning",
+        "Osterwalder 9-block"
+      ]
+    },
+    {
+      "name": "AgentTrace",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements",
+      "function": "agentTrace",
+      "dataContract": "AgentTraceOptions",
+      "version": "6.3.2",
+      "whenToUse": [
+        "AI execution trace",
+        "tool call visualization"
+      ]
+    },
+    {
+      "name": "TokenMeter",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements",
+      "function": "tokenMeter",
+      "dataContract": "TokenMeterOptions",
+      "version": "6.3.2",
+      "whenToUse": [
+        "LLM token usage",
+        "budget metering"
+      ]
+    },
+    {
+      "name": "StreamingText",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements",
+      "function": "streamingText",
+      "dataContract": "StreamingTextOptions",
+      "version": "6.3.2",
+      "whenToUse": [
+        "AI streaming response",
+        "progressive text render"
+      ]
+    },
+    {
+      "name": "RiskMatrix",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements/charts",
+      "function": "riskMatrix",
+      "dataContract": "RiskMatrixOptions",
+      "version": "6.3.2",
+      "whenToUse": [
+        "risk assessment",
+        "probability-impact grid"
+      ]
+    },
+    {
+      "name": "KpiScorecard",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements",
+      "function": "kpiScorecard",
+      "dataContract": "KpiScorecardOptions",
+      "version": "6.3.2",
+      "whenToUse": [
+        "KPI tracking",
+        "target vs actual table"
+      ]
+    },
+    {
+      "name": "CohortGrid",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements",
+      "function": "cohortGrid",
+      "dataContract": "CohortGridOptions",
+      "version": "6.3.2",
+      "whenToUse": [
+        "retention analysis",
+        "cohort heatmap"
+      ]
+    },
+    {
+      "name": "ApprovalChain",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements",
+      "function": "approvalChain",
+      "dataContract": "ApprovalChainOptions",
+      "version": "6.3.2",
+      "whenToUse": [
+        "approval workflow",
+        "review chain"
+      ]
+    },
+    {
+      "name": "BCGMatrix",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements/charts",
+      "function": "bcgMatrix",
+      "dataContract": "BCGMatrixOptions",
+      "version": "6.3.2",
+      "whenToUse": [
+        "portfolio strategy",
+        "growth-share matrix"
+      ]
+    },
+    {
+      "name": "NineBoxMatrix",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements",
+      "function": "nineBoxMatrix",
+      "dataContract": "NineBoxMatrixOptions",
+      "version": "6.3.2",
+      "whenToUse": [
+        "talent assessment",
+        "GE-McKinsey matrix"
+      ]
+    },
+    {
+      "name": "SwotMatrix",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements",
+      "function": "swotMatrix",
+      "dataContract": "SwotMatrixOptions",
+      "version": "6.3.2",
+      "whenToUse": [
+        "strategic analysis",
+        "SWOT assessment"
+      ]
+    },
+    {
+      "name": "DecisionMatrix",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements",
+      "function": "decisionMatrix",
+      "dataContract": "DecisionMatrixOptions",
+      "version": "6.3.2",
+      "whenToUse": [
+        "weighted scoring",
+        "decision analysis"
+      ]
+    },
+    {
+      "name": "WaterfallChart",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements/charts",
+      "function": "waterfallChart",
+      "dataContract": "WaterfallChartOptions",
+      "version": "6.3.2",
+      "whenToUse": [
+        "financial breakdown",
+        "incremental changes"
+      ]
+    },
+    {
+      "name": "ConfidenceChart",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements/charts",
+      "function": "confidenceChart",
+      "dataContract": "ConfidenceChartOptions",
+      "version": "6.3.2",
+      "whenToUse": [
+        "forecast bands",
+        "confidence intervals"
+      ]
+    },
+    {
+      "name": "DateRangePicker",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements",
+      "function": "dateRangePicker",
+      "dataContract": "DateRangePickerOptions",
+      "version": "6.3.2",
+      "whenToUse": [
+        "date range selection",
+        "period filtering"
+      ]
+    },
+    {
+      "name": "ActivityFeed",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements",
+      "function": "activityFeed",
+      "dataContract": "ActivityFeedOptions",
+      "version": "6.3.2",
+      "whenToUse": [
+        "activity timeline",
+        "event feed"
+      ]
+    },
+    {
+      "name": "BulletChart",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements/charts",
+      "function": "bulletChart",
+      "dataContract": "BulletChartOptions",
+      "version": "6.3.2",
+      "whenToUse": [
+        "target vs actual",
+        "KPI bullet gauge"
+      ]
+    },
+    {
+      "name": "NotificationCenter",
+      "layer": "headless-js",
+      "import": "@convergio/design-elements",
+      "function": "notificationCenter",
+      "dataContract": "NotificationCenterOptions",
+      "version": "6.3.2",
+      "whenToUse": [
+        "notification panel",
+        "alert center"
+      ]
+    }
   ]
 }
