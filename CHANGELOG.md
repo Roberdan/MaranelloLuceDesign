@@ -5,14 +5,17 @@ All notable changes to this project will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [6.2.1] - 2026-03-29
+## [6.3.0] - 2026-03-29
+
+### Added
+- **React JSX type declarations** (`src/react.d.ts`) — TypeScript IntrinsicElements for all 31 Web Components with proper attribute types and custom event handlers. Uses React 19 `declare module 'react'` pattern.
+- **`@convergio/design-elements/react`** export path for TypeScript types
+- **Next.js integration guide** in README — CSS setup (JS import + postcss-import resolver), TypeScript config, and component patterns
 
 ### Fixed
-- **CSS build**: `index.css` now bundles correctly — replaced bare npm specifier `@import '@convergio/design-tokens/css'` with resolvable relative path so LightningCSS can inline tokens and themes into the published `dist/css/index.css`
-- **CSS build**: removed 7 references to non-existent theme/responsive CSS files in `index.css` (themes are sourced from `@convergio/design-tokens`, not local files)
-- **CSS build script**: removed `ResolverError` workaround in `build-css.mjs` — `index.css` now builds without errors
-- `dist/css/index.css` is now a complete ~525KB self-contained CSS bundle (was previously skipped/empty)
-- Updated CSS parity test to reflect correct theme sourcing from tokens package
+- **CSS build**: `index.css` now bundles fully self-contained (~525KB) — tokens and themes resolved from sibling package at build time, no bare npm specifiers
+- **CSS build**: removed references to 7 non-existent theme CSS files — themes correctly sourced from `@convergio/design-tokens`
+- **CSS build script**: removed `ResolverError` catch-and-skip hack — clean error-free build
 
 ## [6.2.0] - 2026-03-29
 

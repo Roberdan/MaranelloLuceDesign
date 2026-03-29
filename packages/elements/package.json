@@ -1,12 +1,15 @@
 {
   "name": "@convergio/design-elements",
-  "version": "6.2.1",
+  "version": "6.3.0",
   "description": "Maranello Luce Design — 31 Web Components + headless viz/domain API",
   "type": "module",
   "exports": {
     ".": {
       "types": "./dist/types/index.d.ts",
       "import": "./dist/esm/index.js"
+    },
+    "./react": {
+      "types": "./src/react.d.ts"
     },
     "./wc": {
       "types": "./dist/types/wc/index.d.ts",

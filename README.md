@@ -258,6 +258,52 @@ onUnmounted(() => w?.destroy());
 
 ### Next.js / SSR
 
+Next.js requires special setup because Maranello is client-side. Three things to configure:
+
+**1. CSS** — import in your root layout or `globals.css` as a JS side-effect import:
+
+```tsx
+// app/layout.tsx
+import '@convergio/design-elements/css';
+import '@convergio/design-tokens/bridge-shadcn';
+```
+
+If using `postcss-import` in CSS files, configure the resolver in `postcss.config.mjs`:
+
+```js
+import { resolve, dirname } from 'path';
+import { fileURLToPath } from 'url';
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+export default {
+  plugins: {
+    'postcss-import': {
+      resolve(id) {
+        const map = {
+          '@convergio/design-elements/css': resolve(__dirname, 'node_modules/@convergio/design-elements/dist/css/index.css'),
+          '@convergio/design-tokens/css': resolve(__dirname, 'node_modules/@convergio/design-tokens/dist/css/index.css'),
+          '@convergio/design-tokens/bridge-shadcn': resolve(__dirname, 'node_modules/@convergio/design-tokens/dist/css/bridge-shadcn.css'),
+        };
+        return map[id] || id;
+      },
+    },
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+};
+```
+
+**2. TypeScript** — add Web Component JSX types for full IntelliSense:
+
+```ts
+// In tsconfig.json, add to "include":
+//   "node_modules/@convergio/design-elements/src/react.d.ts"
+// Or create a local .d.ts:
+/// <reference types="@convergio/design-elements/react" />
+```
+
+**3. Components** — use `'use client'` directive. Imperative APIs mount on refs:
+
 ```tsx
 'use client';
 import dynamic from 'next/dynamic';
