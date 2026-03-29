@@ -1,6 +1,6 @@
 /** @convergio/design-elements - Headless UI components barrel. */
 
-export const VERSION = '6.3.2';
+export const VERSION = '6.4.0';
 
 // Core types (all shared interfaces)
 export * from './core/types';

@@ -1,4 +1,4 @@
-<!-- v6.3.2 | 2026-03-29 -->
+<!-- v6.4.0 | 2026-03-29 -->
 # Framework Integration
 
 Install from npm:

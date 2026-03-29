@@ -2,7 +2,7 @@
 
 Ferrari Luce-inspired design system for AI agent dashboards. Zero runtime dependencies. 6 adaptive themes. WCAG 2.2 AA. Framework-agnostic.
 
-**v6.3.2** | [Live Demo](https://roberdan.github.io/convergio-design/) | [CHANGELOG](CHANGELOG.md)
+**v6.4.0** | [Live Demo](https://roberdan.github.io/convergio-design/) | [CHANGELOG](CHANGELOG.md)
 
 ## Install
 
@@ -58,9 +58,9 @@ import '@convergio/design-elements/wc/mn-gantt';
 ### 4. IIFE (CDN, no bundler)
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@convergio/design-tokens@6.3.2/dist/css/index.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@convergio/design-elements@6.3.2/dist/css/index.css">
-<script src="https://cdn.jsdelivr.net/npm/@convergio/design-elements@6.3.2/dist/iife/maranello.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@convergio/design-tokens@6.4.0/dist/css/index.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@convergio/design-elements@6.4.0/dist/css/index.css">
+<script src="https://cdn.jsdelivr.net/npm/@convergio/design-elements@6.4.0/dist/iife/maranello.min.js"></script>
 <script>
   Maranello.sparkline(document.getElementById('chart'), [10, 20, 15, 30]);
   new Maranello.FerrariGauge(document.getElementById('gauge'));

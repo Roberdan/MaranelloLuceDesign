@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.4.0] - 2026-03-29
+
+### Added
+- **Starter app shell platform**: shared `starters/shared-shell` foundation for Next.js application shells with typed layout/navigation contracts and AI/auth/RBAC/features/telemetry/API seams.
+- **Four in-repo Next.js starters**: workspace app, ops dashboard, executive cockpit, and program management templates ready to instantiate inside the monorepo.
+- **Semantic starter/component knowledge exports**: `@convergio/design-elements/knowledge/components` and `@convergio/design-elements/knowledge/templates` for agent-driven component and shell selection.
+- **Starter instantiation CLI**: `scripts/create-starter.mjs` with template manifest support and generated-artifact filtering.
+
+### Changed
+- **Next.js guidance**: README, integration docs, consumer contract, and agent reference now describe the canonical starter + SSR-safe integration path.
+- **Template hygiene**: starter templates now ignore generated artifacts (`.next`, `dist`, `node_modules`, `out`, `.turbo`) and ship starter-local `.gitignore` files.
+
+### Fixed
+- **Demo/build contract**: root `pnpm build` now restores `dist/iife/maranello.min.js`, keeping demo pages, Playwright, and CI aligned with the documented IIFE path.
+- **Consumer package contract**: packed consumer smoke test covers real install/import/typecheck behavior and now has an explicit hook timeout suitable for CI.
+- **SSR safety**: the root `@convergio/design-elements` barrel remains safe to import in Next.js/Node environments without touching `window` at module load.
+- **Type declarations**: `.d.ts` import rewriting now also handles `export ... from` forms for NodeNext-compatible emitted declarations.
+
 ## [6.3.2] - 2026-03-29
 
 ### Fixed

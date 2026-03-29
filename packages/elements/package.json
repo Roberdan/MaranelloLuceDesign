@@ -1,6 +1,6 @@
 {
   "name": "@convergio/design-elements",
-  "version": "6.3.2",
+  "version": "6.4.0",
   "description": "Maranello Luce Design \u2014 31 Web Components + headless viz/domain API",
   "type": "module",
   "exports": {

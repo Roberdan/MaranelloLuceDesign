@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "name": "@convergio/design-elements — Full API Catalog",
-  "version": "6.3.2",
+  "version": "6.4.0",
   "description": "Complete API surface for AI agent discoverability. See components.json for summary.",
   "tsModuleDetails": {
     "observers": {

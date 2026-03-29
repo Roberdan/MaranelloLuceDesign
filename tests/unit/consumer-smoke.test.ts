@@ -34,8 +34,8 @@ function writeConsumerFixture(appDir: string): void {
         private: true,
         type: 'module',
         dependencies: {
-          '@convergio/design-tokens': 'file:../packs/convergio-design-tokens-6.3.2.tgz',
-          '@convergio/design-elements': 'file:../packs/convergio-design-elements-6.3.2.tgz',
+          '@convergio/design-tokens': 'file:../packs/convergio-design-tokens-6.4.0.tgz',
+          '@convergio/design-elements': 'file:../packs/convergio-design-elements-6.4.0.tgz',
         },
       },
       null,
