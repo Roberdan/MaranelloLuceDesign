@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ops Dashboard Starter — Maranello Luce Design</title>
+  <link rel="icon" href="../src/assets/favicon.svg">
+  <link rel="stylesheet" href="../src/fonts/local-fonts.css">
+  <link rel="stylesheet" href="../dist/css/maranello.css">
+  <style>
+    body { margin: 0; padding: 0; background: var(--mn-surface); color: var(--mn-text); }
+    .ops-back {
+      display: inline-block; padding: 10px 20px; font-family: var(--font-mono);
+      font-size: 0.7rem; color: var(--mn-accent); text-decoration: none;
+    }
+    .ops-back:hover { text-decoration: underline; }
+    .ops-wrap { max-width: 1400px; margin: 0 auto; padding: 0 20px 40px; }
+    .ops-section-title {
+      font-family: var(--font-display); font-size: 0.7rem; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--mn-accent); margin: 32px 0 12px;
+    }
+    .ops-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 16px; }
+    .ops-grid--full { grid-column: 1 / -1; }
+    .ops-card {
+      background: var(--mn-surface-raised); border: 1px solid var(--mn-border);
+      border-radius: var(--radius-md); padding: 20px; overflow: hidden;
+    }
+    .ops-card__title {
+      font-family: var(--font-display); font-size: 0.65rem; text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--mn-text-muted); margin: 0 0 16px;
+    }
+    .ops-chart-wrap { position: relative; width: 100%; height: 180px; }
+    .ops-chart-wrap canvas { width: 100%; height: 100%; }
+    .ops-controls { display: flex; gap: 10px; flex-wrap: wrap; margin: 20px 0 8px; }
+    .ops-controls button {
+      font-family: var(--font-mono); font-size: 0.65rem; text-transform: uppercase;
+      letter-spacing: 0.05em; padding: 5px 12px; border: 1px solid var(--mn-border);
+      border-radius: var(--radius-md); background: var(--mn-surface-raised);
+      color: var(--mn-text); cursor: pointer; transition: all 0.15s;
+    }
+    .ops-controls button:hover { border-color: var(--mn-accent); color: var(--mn-accent); }
+    @media (max-width: 768px) { .ops-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <script>
+    try {
+      var t = localStorage.getItem('mn-theme');
+      if (t && t !== 'editorial') document.body.classList.add('mn-' + t);
+    } catch (_) {}
+  </script>
+
+  <a class="ops-back" href="index.html">&larr; Back to Gallery</a>
+
+  <div id="header-mount"></div>
+
+  <div class="ops-wrap">
+    <div class="ops-controls">
+      <button onclick="Maranello.setTheme('editorial')">Editorial</button>
+      <button onclick="Maranello.setTheme('nero')">Nero</button>
+      <button onclick="Maranello.setTheme('avorio')">Avorio</button>
+      <button onclick="Maranello.setTheme('colorblind')">Colorblind</button>
+      <button onclick="Maranello.setTheme('sugar')">Sugar</button>
+      <button onclick="Maranello.setTheme('navy')">Navy</button>
+    </div>
+
+    <div id="strip-mount"></div>
+
+    <h2 class="ops-section-title">Recent Deployments</h2>
+    <div id="table-mount"></div>
+
+    <div class="ops-grid">
+      <div class="ops-card">
+        <p class="ops-card__title">Request Throughput — Last 24h</p>
+        <div class="ops-chart-wrap">
+          <canvas id="chart-sparkline" role="img" aria-label="Sparkline chart showing request throughput over 24 hours"></canvas>
+          <span class="sr-only">Request throughput sparkline: peaks at 4200 req/s, current 3800 req/s</span>
+        </div>
+      </div>
+      <div class="ops-card">
+        <p class="ops-card__title">Error Distribution by Service</p>
+        <div class="ops-chart-wrap">
+          <canvas id="chart-bar" role="img" aria-label="Bar chart showing error counts per service"></canvas>
+          <span class="sr-only">Error counts: api-gateway 47, auth-service 12, user-db 8, redis-cache 3, task-queue 21, blob-storage 5</span>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="ops-section-title">System Status</h2>
+    <div id="status-mount"></div>
+  </div>
+
+  <script src="../dist/iife/maranello.min.js"></script>
+  <script>
+    var M = window.Maranello;
+
+    /* ── Header Shell ─────────────────────────────────────────── */
+    M.headerShell(document.getElementById('header-mount'), {
+      ariaLabel: 'Operations dashboard navigation',
+      sections: [
+        { type: 'brand', label: 'ConvergIO Operations', href: 'index.html' },
+        {
+          type: 'actions', role: 'pre', presentation: 'segmented',
+          items: [
+            { id: 'overview',       label: 'Overview',       active: true },
+            { id: 'alerts',         label: 'Alerts' },
+            { id: 'deployments',    label: 'Deployments' },
+            { id: 'infrastructure', label: 'Infrastructure' }
+          ]
+        },
+        { type: 'spacer' },
+        { type: 'theme' }
+      ],
+      callbacks: {
+        onAction: function (p) { console.log('[ops] nav:', p.id); }
+      }
+    });
+
+    /* ── Dashboard Strip ──────────────────────────────────────── */
+    M.dashboardStrip('strip-mount', {
+      ariaLabel: 'Operations instrument strip',
+      zones: [
+        {
+          type: 'gauge', label: 'SERVER UTIL', size: 'sm',
+          gaugeConfig: {
+            value: 78, max: 100, color: '#FFC72C', colorMode: 'lower-better',
+            ticks: 10, subticks: 5, startAngle: -225, endAngle: 45, showNeedle: true,
+            numbers: [0, 25, 50, 75, 100],
+            complications: {
+              centerValue: '78', centerUnit: '%', centerLabel: 'SERVER UTIL',
+              arcBar: { labelLeft: '0', labelRight: '100' },
+              statusLed: { color: '#FFC72C', label: 'LIVE' }
+            }
+          }
+        },
+        {
+          type: 'pipeline', title: 'CI/CD PIPELINE',
+          rows: [
+            { label: 'BUILD',  value: 94, color: '#00A651', secondary: '2m 18s' },
+            { label: 'TEST',   value: 87, color: '#FFC72C', secondary: '6m 42s' },
+            { label: 'STAGE',  value: 72, color: '#FFC72C', secondary: '3m 05s' },
+            { label: 'DEPLOY', value: 68, color: '#DC0000', secondary: '1m 51s' }
+          ],
+          footer: { label: 'E2E', value: '14m 56s' }
+        },
+        {
+          type: 'trend', title: 'TRAFFIC TREND',
+          items: [
+            { label: 'REQ RATE',  value: 3842, color: '#448AFF', data: [2800, 3100, 3400, 3200, 3600, 3842] },
+            { label: 'ERR RATE',  value: 1.2,  color: '#DC0000', data: [0.8, 1.0, 1.4, 1.1, 0.9, 1.2] }
+          ]
+        },
+        {
+          type: 'board', title: 'OPS BOARD',
+          stats: [
+            { label: 'UPTIME',       value: '99.97%' },
+            { label: 'DEPLOYS TODAY', value: 14 },
+            { label: 'INCIDENTS',     value: 3 },
+            { label: 'AVG RESP',      value: '142ms' }
+          ]
+        }
+      ]
+    });
+
+    /* ── Data Table — Recent Deployments ──────────────────────── */
+    var deployments = [
+      { service: 'api-gateway',   version: 'v3.2.1', status: 'healthy',    time: '12:04 UTC', region: 'us-east-1' },
+      { service: 'auth-service',  version: 'v2.8.0', status: 'deploying',  time: '11:58 UTC', region: 'eu-west-1' },
+      { service: 'user-db',       version: 'v1.14.3',status: 'healthy',    time: '11:32 UTC', region: 'us-east-1' },
+      { service: 'redis-cache',   version: 'v4.1.0', status: 'healthy',    time: '10:47 UTC', region: 'ap-south-1' },
+      { service: 'task-queue',    version: 'v2.3.7', status: 'degraded',   time: '10:15 UTC', region: 'us-east-1' },
+      { service: 'blob-storage',  version: 'v1.9.2', status: 'rolled-back',time: '09:30 UTC', region: 'eu-west-1' },
+      { service: 'api-gateway',   version: 'v3.2.0', status: 'rolled-back',time: '08:22 UTC', region: 'us-east-1' },
+      { service: 'auth-service',  version: 'v2.7.9', status: 'healthy',    time: '07:45 UTC', region: 'ap-south-1' }
+    ];
+
+    M.dataTable('table-mount', {
+      columns: [
+        { key: 'service', label: 'Service',  type: 'text', sortable: true, filterable: true },
+        { key: 'version', label: 'Version',  type: 'text', sortable: true },
+        { key: 'status',  label: 'Status',   type: 'status', sortable: true, filterable: true },
+        { key: 'time',    label: 'Time',      type: 'text', sortable: true },
+        { key: 'region',  label: 'Region',    type: 'text', sortable: true, filterable: true }
+      ],
+      data: deployments,
+      pageSize: 0,
+      ariaLabel: 'Recent deployments table',
+      onRowClick: function (row) { console.log('[ops] deploy:', row.service, row.version); }
+    });
+
+    /* ── Charts ───────────────────────────────────────────────── */
+    var throughputData = [
+      2400, 2600, 2900, 3100, 2800, 3200, 3500, 3300, 3100, 3400,
+      3600, 3900, 4200, 4100, 3800, 3600, 3500, 3700, 3900, 4000,
+      3800, 3600, 3700, 3842
+    ];
+    M.sparkline(document.getElementById('chart-sparkline'), throughputData, {
+      color: 'var(--mn-accent)', fillOpacity: 0.15, lineWidth: 2, smooth: true, showDot: true
+    });
+
+    M.charts.barChart(document.getElementById('chart-bar'), [
+      { label: 'api-gw',   value: 47, color: '#DC0000' },
+      { label: 'auth',     value: 12, color: '#FFC72C' },
+      { label: 'user-db',  value: 8,  color: '#448AFF' },
+      { label: 'cache',    value: 3,  color: '#00A651' },
+      { label: 'queue',    value: 21, color: '#7C4DFF' },
+      { label: 'storage',  value: 5,  color: '#9e9e9e' }
+    ], { showLabels: true, showValues: true, animate: true, responsive: true });
+
+    /* ── System Status ────────────────────────────────────────── */
+    function mockCheck(ok, minMs, maxMs) {
+      return function () {
+        var ms = Math.round(minMs + Math.random() * (maxMs - minMs));
+        return Promise.resolve({ ok: ok, ms: ms });
+      };
+    }
+    M.systemStatus('status-mount', {
+      version: 'v3.2.1',
+      environment: 'Production',
+      pollInterval: 30000,
+      services: [
+        { name: 'API Gateway',   check: mockCheck(true,  12, 45) },
+        { name: 'Auth Service',  check: mockCheck(true,  18, 60) },
+        { name: 'User DB',       check: mockCheck(true,  25, 80) },
+        { name: 'Redis Cache',   check: mockCheck(true,   4, 15) },
+        { name: 'Task Queue',    check: mockCheck(false, 90, 200) },
+        { name: 'Blob Storage',  check: mockCheck(true,  30, 70) }
+      ],
+      onClick: function (svc) { console.log('[ops] status:', svc.name); }
+    });
+  </script>
+</body>
+</html>
