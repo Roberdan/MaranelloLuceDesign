@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Workspace App — Maranello Demo</title>
+  <link rel="icon" href="../src/assets/favicon.svg">
+  <link rel="stylesheet" href="../src/fonts/local-fonts.css">
+  <link rel="stylesheet" href="../dist/css/maranello.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; height: 100%; }
+    body { display: flex; flex-direction: column; background: var(--mn-surface); color: var(--mn-text); font-family: var(--font-body, sans-serif); }
+
+    /* Demo toolbar */
+    .demo-toolbar {
+      display: flex; align-items: center; gap: var(--space-sm, 8px);
+      padding: var(--space-xs, 4px) var(--space-md, 16px);
+      background: var(--mn-surface-raised, var(--mn-surface));
+      border-bottom: 1px solid var(--mn-border, rgba(128,128,128,0.2));
+      flex-shrink: 0; flex-wrap: wrap; min-height: 36px;
+    }
+    .demo-toolbar__back {
+      font-family: var(--font-body, sans-serif); font-size: var(--text-micro, 0.75rem);
+      color: var(--mn-accent); text-decoration: none; margin-right: auto; white-space: nowrap;
+    }
+    .demo-toolbar__back:hover { text-decoration: underline; }
+    .demo-toolbar__back:focus-visible { outline: 2px solid var(--mn-accent); outline-offset: 2px; }
+    .demo-toolbar__label { font-size: var(--text-micro, 0.75rem); color: var(--mn-text-muted, var(--mn-text)); }
+    .theme-btn {
+      font-size: var(--text-micro, 0.75rem); padding: 2px 10px; border-radius: 4px; cursor: pointer;
+      background: transparent; color: var(--mn-text-muted, var(--mn-text));
+      border: 1px solid var(--mn-border, rgba(128,128,128,0.3)); transition: background 0.15s, color 0.15s;
+      min-height: 24px; min-width: 24px;
+    }
+    .theme-btn:hover { background: var(--mn-accent); color: var(--mn-surface); }
+    .theme-btn:focus-visible { outline: 2px solid var(--mn-accent); outline-offset: 2px; }
+
+    /* Header host */
+    #workspace-header { flex-shrink: 0; }
+
+    /* Layout grid fills remaining space */
+    #mn-grid { flex: 1; min-height: 0; overflow: hidden; }
+
+    /* Project sidebar */
+    .ws-sidebar { padding: var(--space-md, 16px); }
+    .ws-sidebar__title {
+      font-family: var(--font-display, var(--font-body, sans-serif));
+      font-size: var(--text-caption, 0.85rem); font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--mn-text-muted, var(--mn-text)); margin: 0 0 var(--space-md, 16px);
+    }
+    .ws-project {
+      display: flex; align-items: center; gap: var(--space-sm, 8px);
+      padding: var(--space-sm, 8px) var(--space-sm, 8px); border-radius: 6px;
+      cursor: pointer; transition: background 0.15s; border: none; background: transparent;
+      width: 100%; text-align: left; color: var(--mn-text); font-size: var(--text-body-sm, 0.875rem);
+      font-family: var(--font-body, sans-serif); min-height: 40px;
+    }
+    .ws-project:hover { background: var(--mn-surface-raised, rgba(128,128,128,0.1)); }
+    .ws-project:focus-visible { outline: 2px solid var(--mn-accent); outline-offset: -2px; }
+    .ws-project.is-active { background: var(--mn-surface-raised, rgba(128,128,128,0.15)); }
+    .ws-project__avatar {
+      width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center;
+      justify-content: center; font-size: var(--text-micro, 0.75rem); font-weight: 700;
+      background: var(--mn-accent); color: var(--mn-surface); flex-shrink: 0;
+    }
+    .ws-project__info { min-width: 0; }
+    .ws-project__name {
+      font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      display: block; font-size: var(--text-body-sm, 0.875rem); color: var(--mn-text);
+    }
+    .ws-project__count {
+      font-size: var(--text-micro, 0.75rem); color: var(--mn-text-muted, var(--mn-text));
+    }
+
+    /* Center content padding */
+    .ws-center { padding: var(--space-lg, 24px); overflow-y: auto; height: 100%; }
+    .ws-center h2 { margin: 0 0 var(--space-md, 16px); }
+
+    /* View toggle */
+    .ws-view-toggle {
+      display: flex; gap: var(--space-xs, 4px); margin-bottom: var(--space-md, 16px);
+    }
+    .ws-view-toggle__btn {
+      padding: var(--space-xs, 4px) var(--space-md, 16px); border-radius: 4px; cursor: pointer;
+      background: transparent; color: var(--mn-text-muted, var(--mn-text));
+      border: 1px solid var(--mn-border, rgba(128,128,128,0.3));
+      font-family: var(--font-body, sans-serif); font-size: var(--text-body-sm, 0.875rem);
+      transition: background 0.15s, color 0.15s; min-height: 32px;
+    }
+    .ws-view-toggle__btn:hover { background: var(--mn-surface-raised, rgba(128,128,128,0.1)); }
+    .ws-view-toggle__btn.is-active {
+      background: var(--mn-accent); color: var(--mn-surface); border-color: var(--mn-accent);
+    }
+    .ws-view-toggle__btn:focus-visible { outline: 2px solid var(--mn-accent); outline-offset: 2px; }
+
+    /* Team cards */
+    .ws-team-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: var(--space-md, 16px); }
+    .ws-team-card { padding: var(--space-lg, 24px); display: flex; align-items: center; gap: var(--space-md, 16px); }
+    .ws-team-avatar {
+      width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center;
+      justify-content: center; font-size: var(--text-body, 1rem); font-weight: 700;
+      background: var(--mn-accent); color: var(--mn-surface); flex-shrink: 0;
+    }
+
+    /* Project cards */
+    .ws-project-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: var(--space-md, 16px); }
+    .ws-project-card { padding: var(--space-lg, 24px); }
+    .ws-project-card__header { display: flex; align-items: center; gap: var(--space-sm, 8px); margin-bottom: var(--space-sm, 8px); }
+    .ws-project-card__avatar {
+      width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center;
+      justify-content: center; font-weight: 700; font-size: var(--text-body-sm, 0.875rem);
+      background: var(--mn-accent); color: var(--mn-surface); flex-shrink: 0;
+    }
+
+    /* Kanban host */
+    #kanban-host { margin-top: var(--space-lg, 24px); }
+
+    /* Reports placeholder */
+    .ws-reports-placeholder {
+      display: flex; align-items: center; justify-content: center;
+      min-height: 300px; border: 2px dashed var(--mn-border, rgba(128,128,128,0.3));
+      border-radius: 8px; color: var(--mn-text-muted, var(--mn-text));
+    }
+
+    /* Right slot detail panel */
+    #mn-slot-right { overflow-y: auto; }
+
+    @media (max-width: 768px) {
+      .demo-toolbar { padding: var(--space-xs, 4px) var(--space-sm, 8px); }
+      .ws-center { padding: var(--space-md, 16px); }
+    }
+  </style>
+</head>
+<body class="mn-nero">
+
+  <!-- Toolbar: Back link + theme switcher -->
+  <div class="demo-toolbar" role="toolbar" aria-label="Demo controls">
+    <a href="index.html" class="demo-toolbar__back">&larr; Back to Gallery</a>
+    <span class="demo-toolbar__label">Theme:</span>
+    <button type="button" class="theme-btn" data-theme="editorial">Editorial</button>
+    <button type="button" class="theme-btn" data-theme="nero">Nero</button>
+    <button type="button" class="theme-btn" data-theme="avorio">Avorio</button>
+    <button type="button" class="theme-btn" data-theme="colorblind">Colorblind</button>
+    <button type="button" class="theme-btn" data-theme="sugar">Sugar</button>
+    <button type="button" class="theme-btn" data-theme="navy">Navy</button>
+  </div>
+
+  <!-- Header -->
+  <div id="workspace-header"></div>
+
+  <!-- Layout grid -->
+  <div id="mn-grid">
+    <div id="mn-slot-strip" hidden></div>
+    <div id="mn-slot-left" hidden></div>
+    <div id="mn-slot-center">
+      <!-- Projects view -->
+      <div data-view="projects" class="ws-center" hidden>
+        <h2 class="mn-title-sm">Projects</h2>
+        <div id="projects-grid" class="ws-project-grid"></div>
+      </div>
+      <!-- Tasks view -->
+      <div data-view="tasks" class="ws-center">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:var(--space-sm,8px);margin-bottom:var(--space-md,16px)">
+          <h2 class="mn-title-sm" style="margin:0">Tasks</h2>
+          <div class="ws-view-toggle" role="tablist" aria-label="Task view mode">
+            <button type="button" class="ws-view-toggle__btn is-active" role="tab" aria-selected="true" id="toggle-table" aria-controls="task-table-host">Table</button>
+            <button type="button" class="ws-view-toggle__btn" role="tab" aria-selected="false" id="toggle-board" aria-controls="kanban-host">Board</button>
+          </div>
+        </div>
+        <div id="task-table-host" role="tabpanel" aria-labelledby="toggle-table"></div>
+        <div id="kanban-host" role="tabpanel" aria-labelledby="toggle-board" hidden></div>
+      </div>
+      <!-- Team view -->
+      <div data-view="team" class="ws-center" hidden>
+        <h2 class="mn-title-sm">Team</h2>
+        <div id="team-grid" class="ws-team-grid"></div>
+      </div>
+      <!-- Reports view -->
+      <div data-view="reports" class="ws-center" hidden>
+        <h2 class="mn-title-sm">Reports</h2>
+        <div class="ws-reports-placeholder">
+          <span class="mn-body">Reports module coming soon</span>
+        </div>
+      </div>
+    </div>
+    <div id="mn-slot-right" hidden></div>
+  </div>
+
+  <script src="../dist/iife/maranello.min.js"></script>
+  <script>
+    (function () {
+      'use strict';
+      var M = window.Maranello;
+      if (!M) {
+        document.getElementById('mn-slot-center').innerHTML =
+          '<p style="padding:2rem">Build required — run <code>pnpm build</code> first.</p>';
+        return;
+      }
+
+      /* ======= DATA ======= */
+      var PROJECTS = [
+        { id: 'apollo',  name: 'Apollo Platform',  initial: 'AP', desc: 'Core platform services',     taskCount: 4 },
+        { id: 'mercury', name: 'Mercury API',       initial: 'MA', desc: 'Public and internal APIs',   taskCount: 3 },
+        { id: 'venus',   name: 'Venus Dashboard',   initial: 'VD', desc: 'Customer-facing dashboard',  taskCount: 4 },
+        { id: 'mars',    name: 'Mars Analytics',     initial: 'MR', desc: 'Analytics and data pipeline', taskCount: 2 },
+        { id: 'jupiter', name: 'Jupiter AI',         initial: 'JA', desc: 'ML models and training',     taskCount: 2 }
+      ];
+
+      var TEAM = [
+        { name: 'Alex Chen',       initials: 'AC', role: 'Backend Lead',      tasksActive: 3 },
+        { name: 'Sarah Kim',       initials: 'SK', role: 'Frontend Engineer', tasksActive: 3 },
+        { name: 'Marcus Johnson',  initials: 'MJ', role: 'Platform Engineer', tasksActive: 3 },
+        { name: 'Priya Patel',     initials: 'PP', role: 'Product Designer',  tasksActive: 2 },
+        { name: "Liam O'Brien",    initials: 'LO', role: 'Security Engineer', tasksActive: 2 },
+        { name: 'Sofia Rodriguez', initials: 'SR', role: 'DevOps Engineer',   tasksActive: 2 }
+      ];
+
+      var TASKS = [
+        { id: 't1',  name: 'Implement JWT refresh flow',          assignee: 'Alex Chen',       priority: 'Critical', status: 'In Progress', due: '2025-02-15', tags: 'security, backend',   project: 'apollo' },
+        { id: 't2',  name: 'Migrate user service to gRPC',        assignee: 'Marcus Johnson',  priority: 'High',     status: 'In Review',   due: '2025-02-20', tags: 'backend, infra',      project: 'mercury' },
+        { id: 't3',  name: 'Add dark mode to dashboard',          assignee: 'Sarah Kim',       priority: 'Medium',   status: 'In Progress', due: '2025-03-01', tags: 'frontend, design',    project: 'venus' },
+        { id: 't4',  name: 'Fix memory leak in websocket handler',assignee: "Liam O'Brien",    priority: 'Critical', status: 'Blocked',     due: '2025-02-10', tags: 'backend, perf',       project: 'apollo' },
+        { id: 't5',  name: 'Design new onboarding flow',          assignee: 'Priya Patel',     priority: 'High',     status: 'Backlog',     due: '2025-03-15', tags: 'design, frontend',    project: 'venus' },
+        { id: 't6',  name: 'Set up CI/CD pipeline for staging',   assignee: 'Sofia Rodriguez', priority: 'High',     status: 'Done',        due: '2025-01-30', tags: 'infra',               project: 'apollo' },
+        { id: 't7',  name: 'Implement rate limiting middleware',   assignee: 'Alex Chen',       priority: 'Medium',   status: 'Backlog',     due: '2025-03-10', tags: 'backend, security',   project: 'mercury' },
+        { id: 't8',  name: 'Create analytics dashboard widgets',  assignee: 'Sarah Kim',       priority: 'Medium',   status: 'In Progress', due: '2025-02-28', tags: 'frontend',            project: 'mars' },
+        { id: 't9',  name: 'Optimize database query performance', assignee: 'Marcus Johnson',  priority: 'High',     status: 'In Review',   due: '2025-02-18', tags: 'backend, perf',       project: 'mars' },
+        { id: 't10', name: 'Build ML model training pipeline',    assignee: 'Priya Patel',     priority: 'Critical', status: 'In Progress', due: '2025-02-25', tags: 'backend, infra',      project: 'jupiter' },
+        { id: 't11', name: 'Add RBAC to admin panel',             assignee: "Liam O'Brien",    priority: 'High',     status: 'Backlog',     due: '2025-03-20', tags: 'security, frontend',  project: 'apollo' },
+        { id: 't12', name: 'Write API integration tests',         assignee: 'Sofia Rodriguez', priority: 'Medium',   status: 'Done',        due: '2025-02-05', tags: 'backend',             project: 'mercury' },
+        { id: 't13', name: 'Implement real-time notifications',   assignee: 'Alex Chen',       priority: 'Medium',   status: 'Backlog',     due: '2025-03-25', tags: 'frontend, backend',   project: 'venus' },
+        { id: 't14', name: 'Design system token audit',           assignee: 'Sarah Kim',       priority: 'Low',      status: 'Backlog',     due: '2025-04-01', tags: 'design',              project: 'venus' },
+        { id: 't15', name: 'Set up monitoring and alerting',      assignee: 'Marcus Johnson',  priority: 'High',     status: 'In Progress', due: '2025-02-22', tags: 'infra, perf',         project: 'jupiter' }
+      ];
+
+      var STATUS_TO_KANBAN = {
+        'Backlog':     'backlog',
+        'Blocked':     'backlog',
+        'In Progress': 'in-progress',
+        'In Review':   'review',
+        'Done':        'done'
+      };
+
+      var PRIORITY_MAP = { 'Critical': 'critical', 'High': 'high', 'Medium': 'medium', 'Low': 'low' };
+
+      /* ======= THEME SWITCHING ======= */
+      var allThemes = ['editorial', 'nero', 'avorio', 'colorblind', 'sugar', 'navy'];
+      document.querySelectorAll('[data-theme]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var theme = btn.getAttribute('data-theme');
+          if (allThemes.indexOf(theme) !== -1 && M.setTheme) M.setTheme(theme);
+        });
+      });
+
+      /* ======= HEADER ======= */
+      var headerCtrl = null;
+      var headerEl = document.getElementById('workspace-header');
+      if (M.header && M.header.init) {
+        headerCtrl = M.header.init(headerEl, {
+          brand: { label: 'ConvergIO Workspace' },
+          left: [
+            { id: 'nav-projects', label: 'Projects', onClick: function () { switchView('projects'); } },
+            { id: 'nav-tasks',    label: 'Tasks',    active: true, onClick: function () { switchView('tasks'); } },
+            { id: 'nav-team',     label: 'Team',     onClick: function () { switchView('team'); } },
+            { id: 'nav-reports',  label: 'Reports',  onClick: function () { switchView('reports'); } }
+          ],
+          center: {
+            type: 'search',
+            placeholder: 'Search tasks, projects\u2026',
+            shortcut: 'Ctrl+K',
+            onSearch: function () { openCommandPalette(); }
+          },
+          right: [
+            { id: 'cmd-btn', title: 'Command Palette (Ctrl+K)', label: 'Ctrl+K', onClick: function () { openCommandPalette(); } },
+            {
+              type: 'profile',
+              name: 'Alex Chen',
+              sections: [
+                { items: [{ label: 'Settings' }, { label: 'Sign out' }] }
+              ]
+            }
+          ]
+        });
+      }
+
+      /* ======= LAYOUT ======= */
+      var gridEl = document.getElementById('mn-grid');
+      var layout = M.createLayout(gridEl);
+
+      layout.register('projects', { label: 'Projects' });
+      layout.register('tasks',    { label: 'Tasks' });
+      layout.register('team',     { label: 'Team' });
+      layout.register('reports',  { label: 'Reports' });
+
+      layout.showView('tasks');
+
+      /* Open project sidebar */
+      layout.toggleLeft({
+        render: function (slot) { renderProjectSidebar(slot); }
+      });
+
+      /* ======= VIEW SWITCHING ======= */
+      function switchView(viewId) {
+        layout.showView(viewId);
+        if (headerCtrl && headerCtrl.setActive) {
+          headerCtrl.setActive('nav-' + viewId);
+        }
+        layout.closeRight();
+        /* Re-open left sidebar (manual toggles persist, but ensure it stays open) */
+        var leftSlot = document.getElementById('mn-slot-left');
+        if (leftSlot && leftSlot.hidden) {
+          layout.toggleLeft({ render: function (s) { renderProjectSidebar(s); } });
+        }
+      }
+
+      /* ======= PROJECT SIDEBAR ======= */
+      var activeProjectId = null;
+
+      function renderProjectSidebar(slot) {
+        slot.innerHTML = '';
+        var wrap = document.createElement('nav');
+        wrap.className = 'ws-sidebar';
+        wrap.setAttribute('aria-label', 'Project list');
+
+        var title = document.createElement('h3');
+        title.className = 'ws-sidebar__title';
+        title.textContent = 'Projects';
+        wrap.appendChild(title);
+
+        PROJECTS.forEach(function (proj) {
+          var btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'ws-project' + (activeProjectId === proj.id ? ' is-active' : '');
+          btn.setAttribute('aria-label', proj.name + ' — ' + proj.taskCount + ' tasks');
+          btn.innerHTML =
+            '<span class="ws-project__avatar">' + proj.initial + '</span>' +
+            '<span class="ws-project__info">' +
+              '<span class="ws-project__name">' + proj.name + '</span>' +
+              '<span class="ws-project__count mn-micro">' + proj.taskCount + ' tasks</span>' +
+            '</span>';
+          btn.addEventListener('click', function () { filterByProject(proj.id); });
+          wrap.appendChild(btn);
+        });
+
+        /* All projects button */
+        var allBtn = document.createElement('button');
+        allBtn.type = 'button';
+        allBtn.className = 'ws-project' + (activeProjectId === null ? ' is-active' : '');
+        allBtn.style.marginTop = 'var(--space-sm, 8px)';
+        allBtn.setAttribute('aria-label', 'Show all projects');
+        allBtn.innerHTML =
+          '<span class="ws-project__avatar" style="background:var(--mn-text-muted,var(--mn-text))">*</span>' +
+          '<span class="ws-project__info">' +
+            '<span class="ws-project__name">All Projects</span>' +
+            '<span class="ws-project__count mn-micro">' + TASKS.length + ' tasks</span>' +
+          '</span>';
+        allBtn.addEventListener('click', function () { filterByProject(null); });
+        wrap.appendChild(allBtn);
+
+        slot.appendChild(wrap);
+      }
+
+      function filterByProject(projectId) {
+        activeProjectId = projectId;
+        var filtered = projectId
+          ? TASKS.filter(function (t) { return t.project === projectId; })
+          : TASKS;
+        if (tableCtrl) tableCtrl.setData(filtered);
+        /* Refresh sidebar active state */
+        var leftSlot = document.getElementById('mn-slot-left');
+        if (leftSlot) renderProjectSidebar(leftSlot);
+        /* Switch to tasks view */
+        switchView('tasks');
+      }
+
+      /* ======= DATA TABLE ======= */
+      var tableHost = document.getElementById('task-table-host');
+      var tableCtrl = null;
+      if (M.dataTable && tableHost) {
+        tableCtrl = M.dataTable(tableHost, {
+          columns: [
+            { key: 'name',     label: 'Task',     sortable: true },
+            { key: 'assignee', label: 'Assignee', sortable: true, width: 150 },
+            { key: 'priority', label: 'Priority', sortable: true, width: 100, type: 'badge' },
+            { key: 'status',   label: 'Status',   sortable: true, width: 120, type: 'status' },
+            { key: 'due',      label: 'Due Date', sortable: true, width: 120, type: 'date' },
+            { key: 'tags',     label: 'Tags',     sortable: false, width: 160 }
+          ],
+          data: TASKS,
+          pageSize: 15,
+          selectable: true,
+          ariaLabel: 'Task list table',
+          onRowClick: function (row) { openTaskDetail(row); }
+        });
+      }
+
+      /* ======= KANBAN BOARD ======= */
+      var kanbanHost = document.getElementById('kanban-host');
+      var kanbanCtrl = null;
+
+      function buildKanbanCards(tasks) {
+        return tasks.map(function (t) {
+          return {
+            id: t.id,
+            columnId: STATUS_TO_KANBAN[t.status] || 'backlog',
+            title: t.name,
+            subtitle: t.assignee,
+            priority: PRIORITY_MAP[t.priority] || 'medium',
+            tags: t.tags ? t.tags.split(', ') : []
+          };
+        });
+      }
+
+      if (M.kanbanBoard && kanbanHost) {
+        kanbanCtrl = M.kanbanBoard(kanbanHost, {
+          columns: [
+            { id: 'backlog',     title: 'Backlog' },
+            { id: 'in-progress', title: 'In Progress' },
+            { id: 'review',      title: 'Review' },
+            { id: 'done',        title: 'Done' }
+          ],
+          cards: buildKanbanCards(TASKS),
+          onCardClick: function (card) {
+            var task = TASKS.filter(function (t) { return t.id === card.id; })[0];
+            if (task) openTaskDetail(task);
+          },
+          onMove: function (cardId, fromCol, toCol) {
+            if (M.toast) M.toast('Moved to ' + toCol, { type: 'info' });
+          }
+        });
+      }
+
+      /* ======= TABLE / BOARD TOGGLE ======= */
+      var toggleTableBtn = document.getElementById('toggle-table');
+      var toggleBoardBtn = document.getElementById('toggle-board');
+      var tablePanel = document.getElementById('task-table-host');
+      var boardPanel = document.getElementById('kanban-host');
+
+      function setTaskMode(mode) {
+        if (mode === 'table') {
+          if (tablePanel) tablePanel.hidden = false;
+          if (boardPanel) boardPanel.hidden = true;
+          if (toggleTableBtn) { toggleTableBtn.classList.add('is-active'); toggleTableBtn.setAttribute('aria-selected', 'true'); }
+          if (toggleBoardBtn) { toggleBoardBtn.classList.remove('is-active'); toggleBoardBtn.setAttribute('aria-selected', 'false'); }
+        } else {
+          if (tablePanel) tablePanel.hidden = true;
+          if (boardPanel) boardPanel.hidden = false;
+          if (toggleTableBtn) { toggleTableBtn.classList.remove('is-active'); toggleTableBtn.setAttribute('aria-selected', 'false'); }
+          if (toggleBoardBtn) { toggleBoardBtn.classList.add('is-active'); toggleBoardBtn.setAttribute('aria-selected', 'true'); }
+        }
+      }
+      if (toggleTableBtn) toggleTableBtn.addEventListener('click', function () { setTaskMode('table'); });
+      if (toggleBoardBtn) toggleBoardBtn.addEventListener('click', function () { setTaskMode('board'); });
+
+      /* ======= DETAIL PANEL ======= */
+      var activeDetailPanel = null;
+
+      function openTaskDetail(task) {
+        layout.openRight({
+          render: function (slot) {
+            slot.innerHTML = '';
+            if (activeDetailPanel && activeDetailPanel.destroy) {
+              try { activeDetailPanel.destroy(); } catch (_e) { /* noop */ }
+            }
+            if (M.createDetailPanel) {
+              activeDetailPanel = M.createDetailPanel(slot, {
+                title: task.name,
+                schema: [
+                  {
+                    section: 'Task Details',
+                    fields: [
+                      { key: 'name',     label: 'Task Name', type: 'text' },
+                      { key: 'assignee', label: 'Assignee',  type: 'text' },
+                      { key: 'priority', label: 'Priority',  type: 'status', options: ['Critical', 'High', 'Medium', 'Low'] },
+                      { key: 'status',   label: 'Status',    type: 'status', options: ['Backlog', 'In Progress', 'In Review', 'Done', 'Blocked'] },
+                      { key: 'due',      label: 'Due Date',  type: 'date' },
+                      { key: 'tags',     label: 'Tags',      type: 'text' }
+                    ]
+                  },
+                  {
+                    section: 'Context',
+                    fields: [
+                      { key: 'project', label: 'Project', type: 'text', editable: false }
+                    ]
+                  }
+                ],
+                data: {
+                  name: task.name,
+                  assignee: task.assignee,
+                  priority: task.priority,
+                  status: task.status,
+                  due: task.due,
+                  tags: task.tags,
+                  project: (PROJECTS.filter(function (p) { return p.id === task.project; })[0] || {}).name || task.project
+                },
+                editable: true,
+                onClose: function () { layout.closeRight(); },
+                onSave: function (changes) {
+                  if (M.toast) M.toast('Task updated', { type: 'success' });
+                }
+              });
+              if (activeDetailPanel && activeDetailPanel.open) activeDetailPanel.open();
+            } else {
+              renderFallbackDetail(slot, task);
+            }
+          }
+        });
+      }
+
+      function renderFallbackDetail(slot, task) {
+        var projectName = (PROJECTS.filter(function (p) { return p.id === task.project; })[0] || {}).name || task.project;
+        slot.innerHTML =
+          '<div style="padding:var(--space-lg,24px)">' +
+            '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-lg,24px)">' +
+              '<h3 class="mn-title-sm" style="margin:0">Task Detail</h3>' +
+              '<button type="button" class="mn-btn mn-btn--ghost" id="detail-close-btn" aria-label="Close detail panel">Close</button>' +
+            '</div>' +
+            '<h4 class="mn-title-sm" style="margin-bottom:var(--space-md,16px)">' + escapeHtml(task.name) + '</h4>' +
+            '<dl style="margin:0">' +
+              detailRow('Assignee', task.assignee) +
+              detailRow('Priority', task.priority) +
+              detailRow('Status', task.status) +
+              detailRow('Due Date', task.due) +
+              detailRow('Tags', task.tags) +
+              detailRow('Project', projectName) +
+            '</dl>' +
+          '</div>';
+        var closeBtn = slot.querySelector('#detail-close-btn');
+        if (closeBtn) closeBtn.addEventListener('click', function () { layout.closeRight(); });
+      }
+
+      function detailRow(label, value) {
+        return '<dt class="mn-micro" style="color:var(--mn-text-muted,var(--mn-text));margin-top:var(--space-sm,8px)">' + escapeHtml(label) + '</dt>' +
+               '<dd class="mn-body-sm" style="margin:0 0 var(--space-xs,4px)">' + escapeHtml(String(value || '')) + '</dd>';
+      }
+
+      function escapeHtml(str) {
+        var div = document.createElement('div');
+        div.appendChild(document.createTextNode(str));
+        return div.innerHTML;
+      }
+
+      /* ======= COMMAND PALETTE ======= */
+      function openCommandPalette() {
+        if (!M.commandPalette) return;
+        M.commandPalette({
+          placeholder: 'Search tasks, projects, commands\u2026',
+          items: [
+            { label: 'Go to Projects',        action: function () { switchView('projects'); } },
+            { label: 'Go to Tasks',            action: function () { switchView('tasks'); } },
+            { label: 'Go to Team',             action: function () { switchView('team'); } },
+            { label: 'Go to Reports',          action: function () { switchView('reports'); } },
+            { label: 'Switch to Board view',   action: function () { switchView('tasks'); setTaskMode('board'); } },
+            { label: 'Switch to Table view',   action: function () { switchView('tasks'); setTaskMode('table'); } },
+            { label: 'Toggle project sidebar', action: function () { layout.toggleLeft(); } },
+            { label: 'Theme: Editorial',       action: function () { M.setTheme('editorial'); } },
+            { label: 'Theme: Nero',            action: function () { M.setTheme('nero'); } },
+            { label: 'Theme: Avorio',          action: function () { M.setTheme('avorio'); } },
+            { label: 'Theme: Navy',            action: function () { M.setTheme('navy'); } }
+          ]
+        });
+      }
+
+      /* Ctrl+K global shortcut */
+      document.addEventListener('keydown', function (e) {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+          e.preventDefault();
+          openCommandPalette();
+        }
+      });
+
+      /* ======= STATIC VIEWS ======= */
+
+      /* Projects grid */
+      var projectsGrid = document.getElementById('projects-grid');
+      if (projectsGrid) {
+        PROJECTS.forEach(function (proj) {
+          var card = document.createElement('article');
+          card.className = 'mn-card ws-project-card mn-hover-lift';
+          card.setAttribute('role', 'button');
+          card.setAttribute('tabindex', '0');
+          card.setAttribute('aria-label', proj.name);
+          card.innerHTML =
+            '<div class="ws-project-card__header">' +
+              '<span class="ws-project-card__avatar">' + proj.initial + '</span>' +
+              '<div>' +
+                '<h3 class="mn-title-sm" style="margin:0">' + escapeHtml(proj.name) + '</h3>' +
+                '<span class="mn-micro" style="color:var(--mn-text-muted,var(--mn-text))">' + proj.taskCount + ' tasks</span>' +
+              '</div>' +
+            '</div>' +
+            '<p class="mn-body-sm" style="margin:0;color:var(--mn-text-muted,var(--mn-text))">' + escapeHtml(proj.desc) + '</p>';
+          card.addEventListener('click', function () { filterByProject(proj.id); });
+          card.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); filterByProject(proj.id); }
+          });
+          projectsGrid.appendChild(card);
+        });
+      }
+
+      /* Team grid */
+      var teamGrid = document.getElementById('team-grid');
+      if (teamGrid) {
+        TEAM.forEach(function (member) {
+          var card = document.createElement('article');
+          card.className = 'mn-card ws-team-card';
+          card.innerHTML =
+            '<span class="ws-team-avatar">' + member.initials + '</span>' +
+            '<div>' +
+              '<h3 class="mn-title-sm" style="margin:0">' + escapeHtml(member.name) + '</h3>' +
+              '<span class="mn-micro" style="color:var(--mn-text-muted,var(--mn-text))">' + escapeHtml(member.role) + '</span><br>' +
+              '<span class="mn-badge" style="margin-top:var(--space-xs,4px);display:inline-block">' + member.tasksActive + ' active tasks</span>' +
+            '</div>';
+          teamGrid.appendChild(card);
+        });
+      }
+
+    })();
+  </script>
+</body>
+</html>
