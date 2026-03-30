@@ -3,390 +3,573 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Executive Cockpit — Maranello Luce Design</title>
+  <title>Executive Cockpit — Maranello Luce</title>
   <link rel="icon" href="../src/assets/favicon.svg">
   <link rel="stylesheet" href="../src/fonts/local-fonts.css">
   <link rel="stylesheet" href="../dist/css/maranello.css">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { height: 100%; }
-    body {
-      background: var(--mn-surface);
-      color: var(--mn-text);
-      font-family: var(--font-body, sans-serif);
-      overflow: hidden;
-    }
+    body { background: var(--mn-surface); color: var(--mn-text); font-family: var(--font-body, sans-serif); overflow: hidden; }
 
-    /* ── Layout ── */
+    /* ═══ App shell ═══ */
     .app {
-      display: grid;
-      grid-template-rows: 52px 1fr;
-      grid-template-columns: 260px 1fr;
-      grid-template-areas: "header header" "sidebar main";
-      height: 100vh;
-      transition: grid-template-columns 0.2s ease;
+      display: grid; grid-template-rows: 48px 1fr;
+      grid-template-columns: 240px 1fr;
+      grid-template-areas: "sidebar header" "sidebar main";
+      height: 100vh; transition: grid-template-columns 0.2s ease;
     }
     .app.is-collapsed { grid-template-columns: 0px 1fr; }
 
-    /* ── Header ── */
-    .header {
-      grid-area: header;
-      display: flex; align-items: center; gap: 12px;
-      padding: 0 16px; height: 52px;
-      background: var(--mn-surface-raised);
-      border-bottom: 1px solid var(--mn-border);
-      z-index: 10;
+    /* ═══ Header — slim, functional ═══ */
+    .topbar {
+      grid-area: header; display: flex; align-items: center; gap: 16px;
+      padding: 0 24px; height: 48px;
+      background: var(--mn-surface); border-bottom: 1px solid var(--mn-border);
     }
-    .header__left { display: flex; align-items: center; gap: 12px; min-width: 0; }
-    .header__center { flex: 1; display: flex; justify-content: center; }
-    .header__right { display: flex; align-items: center; gap: 6px; }
-
-    .icon-btn {
+    .topbar__title {
+      font-family: var(--font-display); font-weight: 600; font-size: 0.95rem;
+      color: var(--mn-text);
+    }
+    .topbar__sep { color: var(--mn-text-muted); opacity: 0.3; }
+    .topbar__sub { font-size: 0.85rem; color: var(--mn-text-muted); }
+    .topbar__spacer { flex: 1; }
+    .topbar__search {
+      display: flex; align-items: center; gap: 6px;
+      padding: 5px 12px; border-radius: var(--radius-md);
+      border: 1px solid var(--mn-border); background: var(--mn-surface-raised);
+      color: var(--mn-text-muted); font-size: 0.8rem; cursor: pointer;
+      transition: border-color 0.15s; min-width: 200px;
+    }
+    .topbar__search:hover { border-color: color-mix(in srgb, var(--mn-accent) 30%, var(--mn-border)); }
+    .topbar__search svg { width: 14px; height: 14px; opacity: 0.4; }
+    .topbar__search-text { flex: 1; }
+    .topbar__search-kbd {
+      font-family: var(--font-mono); font-size: 0.6rem;
+      color: var(--mn-text-muted); opacity: 0.5;
+    }
+    .topbar__actions { display: flex; align-items: center; gap: 4px; }
+    .ibtn {
       display: inline-flex; align-items: center; justify-content: center;
-      width: 36px; height: 36px; border: none; background: none;
+      width: 32px; height: 32px; border: none; background: none;
       color: var(--mn-text-muted); border-radius: var(--radius-md);
-      cursor: pointer; transition: background 0.12s, color 0.12s; flex-shrink: 0;
+      cursor: pointer; transition: color 0.1s; flex-shrink: 0;
     }
-    .icon-btn:hover { background: color-mix(in srgb, var(--mn-accent) 10%, transparent); color: var(--mn-text); }
-    .icon-btn:focus-visible { outline: 2px solid var(--mn-accent); outline-offset: -2px; }
-    .icon-btn svg { width: 18px; height: 18px; }
-
-    .breadcrumb { font-size: 0.85rem; color: var(--mn-text-muted); white-space: nowrap; }
-    .breadcrumb__current { color: var(--mn-text); font-weight: 600; }
-
-    .search-bar {
-      display: flex; align-items: center; gap: 8px;
-      width: 100%; max-width: 480px; padding: 0 14px; height: 36px;
-      background: var(--mn-surface); border: 1px solid var(--mn-border);
-      border-radius: var(--radius-lg); color: var(--mn-text-muted);
-      cursor: text; transition: border-color 0.15s, box-shadow 0.15s;
+    .ibtn:hover { color: var(--mn-text); }
+    .ibtn:focus-visible { outline: 2px solid var(--mn-accent); outline-offset: -2px; }
+    .ibtn svg { width: 16px; height: 16px; }
+    .topbar__avatar {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: color-mix(in srgb, var(--mn-accent) 20%, var(--mn-surface-raised));
+      color: var(--mn-accent); display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-display); font-size: 0.6rem; font-weight: 700;
+      margin-left: 4px; cursor: pointer;
     }
-    .search-bar:hover { border-color: color-mix(in srgb, var(--mn-accent) 40%, var(--mn-border)); }
-    .search-bar:focus-within { border-color: var(--mn-accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--mn-accent) 15%, transparent); }
-    .search-bar svg { width: 16px; height: 16px; flex-shrink: 0; opacity: 0.5; }
-    .search-bar__input {
-      flex: 1; border: none; background: none; color: var(--mn-text);
-      font-size: 0.85rem; font-family: var(--font-body, sans-serif); outline: none;
-    }
-    .search-bar__input::placeholder { color: var(--mn-text-muted); }
-    .search-bar__kbd {
-      font-family: var(--font-mono); font-size: 0.65rem; font-weight: 600;
-      color: var(--mn-text-muted); background: var(--mn-surface-raised);
-      border: 1px solid var(--mn-border); border-radius: 4px; padding: 2px 6px;
-    }
-    .theme-select {
-      font-size: 0.8rem; padding: 4px 8px; height: 32px;
-      border-radius: var(--radius-md); border: 1px solid var(--mn-border);
-      background: var(--mn-surface); color: var(--mn-text); font-family: inherit; cursor: pointer;
-    }
-    .theme-select:focus-visible { outline: 2px solid var(--mn-accent); }
-    .avatar {
-      width: 32px; height: 32px; border-radius: 50%;
-      background: var(--mn-accent); color: var(--mn-surface);
-      display: flex; align-items: center; justify-content: center;
-      font-family: var(--font-display); font-size: 0.7rem; font-weight: 700;
-      flex-shrink: 0; cursor: pointer;
+    .theme-sel {
+      font-size: 0.75rem; padding: 3px 6px; border-radius: var(--radius-sm, 4px);
+      border: 1px solid var(--mn-border); background: var(--mn-surface-raised);
+      color: var(--mn-text-muted); font-family: inherit; cursor: pointer;
     }
 
-    /* ── Sidebar ── */
-    .sidebar {
-      grid-area: sidebar;
-      background: var(--mn-surface-raised);
+    /* ═══ Sidebar — clean, Linear-style ═══ */
+    .side {
+      grid-area: sidebar; background: var(--mn-surface-raised);
       border-right: 1px solid var(--mn-border);
-      display: flex; flex-direction: column;
-      padding: 16px 12px; overflow-y: auto; overflow-x: hidden;
-      min-width: 0; transition: opacity 0.2s ease, padding 0.2s ease;
+      display: flex; flex-direction: column; padding: 12px 8px;
+      overflow-y: auto; overflow-x: hidden; min-width: 0;
+      transition: opacity 0.2s ease;
     }
-    .app.is-collapsed .sidebar { opacity: 0; padding: 0; pointer-events: none; }
-    .sidebar__brand {
-      display: flex; align-items: center; gap: 10px;
-      font-family: var(--font-display); font-weight: 700; font-size: 0.95rem;
-      color: var(--mn-text); padding: 0 8px 12px;
+    .app.is-collapsed .side { opacity: 0; pointer-events: none; }
+    .side__brand {
+      display: flex; align-items: center; gap: 8px; padding: 4px 10px 16px;
+      font-family: var(--font-display); font-weight: 700; font-size: 0.85rem;
+      color: var(--mn-text);
     }
-    .sidebar__version {
-      font-size: 0.65rem; font-weight: 600;
-      background: var(--mn-accent); color: var(--mn-surface);
-      padding: 1px 7px; border-radius: 10px; margin-left: auto;
+    .side__brand img { border-radius: 6px; }
+    .side__ver {
+      font-family: var(--font-mono); font-size: 0.55rem; color: var(--mn-text-muted);
+      margin-left: auto;
     }
-    .sidebar__group-label {
-      font-family: var(--font-display); font-size: 0.6rem;
-      text-transform: uppercase; letter-spacing: 0.12em;
-      color: var(--mn-text-muted); margin: 20px 0 4px; padding-left: 10px;
+    .side__sep {
+      font-family: var(--font-display); font-size: 0.6rem; font-weight: 500;
+      color: var(--mn-text-muted); padding: 16px 10px 4px;
+      letter-spacing: 0.04em;
     }
-    .sidebar__group-label:first-of-type { margin-top: 4px; }
-    .sidebar__nav { display: flex; flex-direction: column; gap: 1px; }
-    .sidebar__link {
-      display: flex; align-items: center; gap: 8px;
-      padding: 7px 10px; border-radius: var(--radius-md);
-      font-size: 0.84rem; color: var(--mn-text);
-      cursor: pointer; border: none; background: none;
-      width: 100%; text-align: left; font-family: inherit;
-      transition: background 0.12s; min-height: 34px;
-    }
-    .sidebar__link:hover { background: color-mix(in srgb, var(--mn-accent) 8%, transparent); }
-    .sidebar__link:focus-visible { outline: 2px solid var(--mn-accent); outline-offset: -2px; }
-    .sidebar__link.is-active {
-      background: color-mix(in srgb, var(--mn-accent) 15%, transparent);
-      color: var(--mn-accent); font-weight: 600;
-    }
-    .sidebar__link svg { width: 16px; height: 16px; flex-shrink: 0; opacity: 0.6; }
-    .sidebar__link.is-active svg { opacity: 1; }
-    .sidebar__link-text { flex: 1; }
-    .sidebar__badge {
-      font-size: 0.65rem; font-weight: 600; min-width: 18px; text-align: center;
-      padding: 1px 6px; border-radius: 10px; background: var(--mn-accent); color: var(--mn-surface);
-    }
-    .sidebar__spacer { flex: 1; }
-    .sidebar__footer {
-      padding-top: 12px; border-top: 1px solid var(--mn-border); margin-top: 8px;
-      display: flex; flex-direction: column; gap: 1px;
-    }
-    .sidebar__footer-link {
+    .side__item {
       display: flex; align-items: center; gap: 8px;
       padding: 6px 10px; border-radius: var(--radius-md);
-      font-size: 0.8rem; color: var(--mn-text-muted);
-      cursor: pointer; border: none; background: none; width: 100%; text-align: left; font-family: inherit;
+      font-size: 0.82rem; color: var(--mn-text-muted);
+      cursor: pointer; border: none; background: none;
+      width: 100%; text-align: left; font-family: inherit;
+      transition: background 0.1s, color 0.1s; min-height: 32px;
     }
-    .sidebar__footer-link svg { width: 15px; height: 15px; flex-shrink: 0; opacity: 0.5; }
-    .sidebar__footer-link:hover { color: var(--mn-text); background: color-mix(in srgb, var(--mn-accent) 6%, transparent); }
+    .side__item:hover { background: var(--mn-surface); color: var(--mn-text); }
+    .side__item:focus-visible { outline: 2px solid var(--mn-accent); outline-offset: -2px; }
+    .side__item.is-active { background: var(--mn-surface); color: var(--mn-text); font-weight: 500; }
+    .side__item svg { width: 15px; height: 15px; flex-shrink: 0; opacity: 0.5; }
+    .side__item.is-active svg { opacity: 0.8; }
+    .side__item-text { flex: 1; }
+    .side__badge {
+      font-family: var(--font-mono); font-size: 0.6rem; color: var(--mn-text-muted);
+      background: var(--mn-surface); padding: 1px 6px; border-radius: 8px;
+    }
+    .side__foot { margin-top: auto; padding-top: 8px; border-top: 1px solid var(--mn-border); }
 
-    /* ── Main ── */
-    .main { grid-area: main; overflow-y: auto; padding: 24px 28px; }
+    /* ═══ Main content ═══ */
+    .main { grid-area: main; overflow-y: auto; padding: 28px 32px 48px; }
 
-    /* ── Grid ── */
-    .mn-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 16px; }
-    .mn-col-3 { grid-column: span 3; } .mn-col-4 { grid-column: span 4; }
-    .mn-col-5 { grid-column: span 5; } .mn-col-6 { grid-column: span 6; }
-    .mn-col-7 { grid-column: span 7; } .mn-col-8 { grid-column: span 8; }
-    .mn-col-12 { grid-column: span 12; }
-    .mn-cell {
+    /* ═══ Page header ═══ */
+    .page-head { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 28px; }
+    .page-head__title { font-family: var(--font-display); font-size: 1.3rem; font-weight: 700; color: var(--mn-text); }
+    .page-head__meta { display: flex; align-items: center; gap: 12px; }
+    .live-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 0.7rem; font-weight: 500; color: var(--mn-success);
+    }
+    .live-badge::before {
+      content: ''; width: 6px; height: 6px; border-radius: 50%;
+      background: var(--mn-success); animation: pulse 2s infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+    .updated { font-size: 0.75rem; color: var(--mn-text-muted); }
+
+    /* ═══ Metric cards row ═══ */
+    .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
+    .metric {
+      padding: 16px 18px; border-radius: var(--radius-md);
       background: var(--mn-surface-raised); border: 1px solid var(--mn-border);
-      border-radius: var(--radius-md); padding: 16px; min-height: 120px;
-      display: flex; flex-direction: column;
+      cursor: pointer; transition: border-color 0.15s; position: relative; overflow: hidden;
     }
-    .mn-cell__label {
-      font-family: var(--font-display); font-size: 0.6rem;
-      text-transform: uppercase; letter-spacing: 0.1em;
-      color: var(--mn-text-muted); margin-bottom: 12px;
-    }
-    .mn-cell__body { flex: 1; position: relative; min-height: 0; }
+    .metric:hover { border-color: color-mix(in srgb, var(--mn-accent) 25%, var(--mn-border)); }
+    .metric__spark { position: absolute; bottom: 0; right: 0; width: 90px; height: 36px; opacity: 0.2; }
+    .metric__label { font-size: 0.75rem; color: var(--mn-text-muted); margin-bottom: 6px; }
+    .metric__value { font-family: var(--font-display); font-size: 1.75rem; font-weight: 700; color: var(--mn-text); line-height: 1; }
+    .metric__deltas { display: flex; gap: 12px; margin-top: 8px; }
+    .metric__d { font-family: var(--font-mono); font-size: 0.65rem; }
+    .metric__d--up { color: var(--mn-success); }
+    .metric__d--down { color: var(--mn-error); }
+    .metric__d--flat { color: var(--mn-text-muted); }
 
-    /* ── Hero KPIs ── */
-    .hero-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; grid-column: span 12; }
-    .hero-kpi {
-      background: var(--mn-surface-raised); border: 1px solid var(--mn-border);
-      border-radius: var(--radius-md); padding: 20px; position: relative; overflow: hidden;
+    /* ═══ Content sections ═══ */
+    .section-label {
+      font-family: var(--font-display); font-size: 0.75rem; font-weight: 600;
+      color: var(--mn-text); margin-bottom: 12px;
     }
-    .hero-kpi__spark {
-      position: absolute; bottom: 0; right: 0; width: 100px; height: 40px; opacity: 0.3;
+    .row { display: grid; gap: 12px; margin-bottom: 24px; }
+    .row--2 { grid-template-columns: 1fr 1fr; }
+    .row--73 { grid-template-columns: 7fr 5fr; }
+    .row--83 { grid-template-columns: 2fr 1fr; }
+    .panel {
+      border-radius: var(--radius-md); background: var(--mn-surface-raised);
+      border: 1px solid var(--mn-border); padding: 16px 18px; min-height: 100px;
     }
-    .hero-kpi__label {
-      font-family: var(--font-display); font-size: 0.6rem;
-      text-transform: uppercase; letter-spacing: 0.1em;
-      color: var(--mn-text-muted); margin-bottom: 8px;
+    .panel__head {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 12px;
     }
-    .hero-kpi__value {
-      font-family: var(--font-display); font-size: 2rem; font-weight: 700;
-      color: var(--mn-text); line-height: 1.1;
-    }
-    .hero-kpi__sub {
-      display: flex; gap: 16px; margin-top: 8px; flex-wrap: wrap;
-    }
-    .hero-kpi__delta {
-      font-family: var(--font-mono); font-size: 0.7rem;
-    }
-    .hero-kpi__delta--up { color: var(--mn-success); }
-    .hero-kpi__delta--down { color: var(--mn-error); }
-    .hero-kpi__delta--flat { color: var(--mn-text-muted); }
+    .panel__title { font-size: 0.75rem; color: var(--mn-text-muted); }
 
-    /* ── Speedometer row ── */
-    .speedo-row {
-      display: flex; gap: 24px; justify-content: space-around; align-items: flex-end;
-      flex-wrap: wrap; grid-column: span 12;
-      background: var(--mn-surface-raised); border: 1px solid var(--mn-border);
-      border-radius: var(--radius-md); padding: 24px 16px;
-    }
-    .speedo-item { text-align: center; }
-    .speedo-item__label {
-      font-family: var(--font-display); font-size: 0.6rem;
-      text-transform: uppercase; letter-spacing: 0.1em;
-      color: var(--mn-text-muted); margin-top: 8px;
+    /* ═══ Controls footer ═══ */
+    .controls {
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 12px; padding: 12px 0; margin-top: 4px;
+      border-top: 1px solid var(--mn-border);
     }
 
-    /* ── Status indicator ── */
-    .live-dot {
-      display: inline-block; width: 6px; height: 6px; border-radius: 50%;
-      background: var(--mn-success); margin-right: 6px;
-      animation: pulse-dot 2s infinite;
-    }
-    @keyframes pulse-dot {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.4; }
-    }
-
-    /* ── Responsive ── */
+    /* ═══ Responsive ═══ */
     @media (max-width: 1100px) {
-      .hero-kpis { grid-template-columns: repeat(2, 1fr); }
-      .mn-col-3, .mn-col-4, .mn-col-5, .mn-col-6, .mn-col-7, .mn-col-8 { grid-column: span 6; }
-      .speedo-row { grid-column: span 12; }
+      .metrics { grid-template-columns: repeat(2, 1fr); }
+      .row--2, .row--73, .row--83 { grid-template-columns: 1fr; }
     }
     @media (max-width: 768px) {
       .app { grid-template-columns: 0px 1fr; }
-      .app .sidebar { opacity: 0; padding: 0; pointer-events: none; }
-      .hero-kpis { grid-template-columns: 1fr; }
-      .mn-col-3,.mn-col-4,.mn-col-5,.mn-col-6,.mn-col-7,.mn-col-8,.mn-col-12 { grid-column: span 12; }
+      .app .side { opacity: 0; pointer-events: none; }
+      .metrics { grid-template-columns: 1fr 1fr; }
       .main { padding: 16px; }
     }
     @media (prefers-reduced-motion: reduce) {
-      .app, .sidebar, .icon-btn, .sidebar__link, .search-bar { transition: none; }
-      @keyframes pulse-dot { 0%, 100% { opacity: 1; } }
+      .app, .side, .ibtn, .side__item, .metric { transition: none; }
+      @keyframes pulse { 0%,100%{opacity:1} }
     }
   </style>
 </head>
 <body>
-  <script>try { var t = localStorage.getItem('mn-theme'); if (t && t !== 'editorial') document.body.classList.add('mn-' + t); } catch(e) {}</script>
+  <script>try{var t=localStorage.getItem('mn-theme');if(t&&t!=='editorial')document.body.classList.add('mn-'+t)}catch(e){}</script>
 
-  <div class="app" id="app-shell">
-    <header class="header" role="banner">
-      <div class="header__left">
-        <button class="icon-btn" id="sidebar-toggle" aria-label="Toggle sidebar" title="Toggle sidebar"></button>
-        <span class="breadcrumb">Executive <span style="opacity:0.4;margin:0 4px">&#8250;</span> <span class="breadcrumb__current">Cockpit</span></span>
+  <div class="app" id="app">
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <button class="ibtn" id="toggle-side" aria-label="Toggle sidebar"></button>
+      <span class="topbar__title">Executive</span>
+      <span class="topbar__sep">/</span>
+      <span class="topbar__sub" id="bc">Cockpit</span>
+      <div class="topbar__spacer"></div>
+      <div class="topbar__search" tabindex="0" role="search" aria-label="Search">
+        <span id="si"></span>
+        <span class="topbar__search-text">Search...</span>
+        <span class="topbar__search-kbd" id="sk"></span>
       </div>
-      <div class="header__center">
-        <label class="search-bar">
-          <span id="search-icon"></span>
-          <input type="text" class="search-bar__input" placeholder="Search..." aria-label="Search">
-          <kbd class="search-bar__kbd"></kbd>
-        </label>
-      </div>
-      <div class="header__right">
-        <select class="theme-select" id="theme-picker" aria-label="Theme">
+      <div class="topbar__actions">
+        <select class="theme-sel" id="tp" aria-label="Theme">
           <option value="editorial">Editorial</option><option value="nero">Nero</option>
           <option value="avorio">Avorio</option><option value="colorblind">Colorblind</option>
           <option value="sugar">Sugar</option><option value="navy">Navy</option>
         </select>
-        <button class="icon-btn" id="btn-bell" aria-label="Notifications" title="Notifications"></button>
-        <button class="icon-btn" id="btn-settings" aria-label="Settings" title="Settings"></button>
-        <div class="avatar" title="Clara Visconti" aria-label="User menu">CV</div>
+        <button class="ibtn" id="ib" aria-label="Notifications"></button>
+        <button class="ibtn" id="is" aria-label="Settings"></button>
       </div>
-    </header>
+      <div class="topbar__avatar" title="Clara Visconti">CV</div>
+    </div>
 
-    <aside class="sidebar" id="sidebar" role="navigation" aria-label="Main navigation">
-      <div class="sidebar__brand">
-        <img src="../src/assets/favicon.svg" alt="" width="22" height="22">
-        <span>Executive Suite</span>
-        <span class="sidebar__version">v6.5</span>
+    <!-- SIDEBAR -->
+    <nav class="side" id="side" aria-label="Navigation">
+      <div class="side__brand">
+        <img src="../src/assets/favicon.svg" alt="" width="20" height="20">
+        Maranello Luce
+        <span class="side__ver">6.5</span>
       </div>
-      <div class="sidebar__group-label">Views</div>
-      <nav class="sidebar__nav">
-        <button class="sidebar__link is-active" data-page="cockpit"><span id="ic-gauge"></span><span class="sidebar__link-text">Cockpit</span></button>
-        <button class="sidebar__link" data-page="portfolio"><span id="ic-layers"></span><span class="sidebar__link-text">Portfolio</span></button>
-        <button class="sidebar__link" data-page="market"><span id="ic-trend"></span><span class="sidebar__link-text">Market</span></button>
-        <button class="sidebar__link" data-page="board"><span id="ic-grid"></span><span class="sidebar__link-text">Board</span></button>
-      </nav>
-      <div class="sidebar__group-label">Insights</div>
-      <nav class="sidebar__nav">
-        <button class="sidebar__link" data-page="funnel"><span id="ic-funnel"></span><span class="sidebar__link-text">Pipeline</span></button>
-        <button class="sidebar__link" data-page="heatmap"><span id="ic-heatmap"></span><span class="sidebar__link-text">Heatmap</span></button>
-        <button class="sidebar__link" data-page="risks"><span id="ic-alert"></span><span class="sidebar__link-text">Risks</span><span class="sidebar__badge">2</span></button>
-      </nav>
-      <div class="sidebar__spacer"></div>
-      <div class="sidebar__footer">
-        <button class="sidebar__footer-link"><span id="ic-settings"></span>Settings</button>
+      <div class="side__sep">Views</div>
+      <button class="side__item is-active" data-p="cockpit"><span id="n1"></span><span class="side__item-text">Cockpit</span></button>
+      <button class="side__item" data-p="portfolio"><span id="n2"></span><span class="side__item-text">Portfolio</span></button>
+      <button class="side__item" data-p="market"><span id="n3"></span><span class="side__item-text">Market</span></button>
+      <button class="side__item" data-p="board"><span id="n4"></span><span class="side__item-text">Board</span></button>
+      <div class="side__sep">Insights</div>
+      <button class="side__item" data-p="pipeline"><span id="n5"></span><span class="side__item-text">Pipeline</span></button>
+      <button class="side__item" data-p="heatmap"><span id="n6"></span><span class="side__item-text">Heatmap</span></button>
+      <button class="side__item" data-p="risks"><span id="n7"></span><span class="side__item-text">Risks</span><span class="side__badge">2</span></button>
+      <div class="side__foot">
+        <button class="side__item" data-p="settings"><span id="n8"></span><span class="side__item-text">Settings</span></button>
       </div>
+    </nav>
+
+    <!-- MAIN CONTENT (from GPT design) -->
+<main class="main">
+  <div class="mn-container" style="padding:24px 24px 120px;display:grid;gap:20px;">
+    <section aria-label="Executive hero">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(420px,1fr));gap:20px;align-items:start;">
+        <article class="mn-card-dark" style="padding:20px;border:1px solid var(--mn-border);background:var(--mn-surface-raised);">
+          <div style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:flex-start;">
+            <div style="max-width:760px;">
+              <div class="mn-label" style="margin-bottom:6px;color:var(--mn-accent);">Executive cockpit</div>
+              <h1 style="margin:0;font-size:clamp(1.9rem,3vw,3rem);line-height:0.95;color:var(--mn-text);font-family:var(--font-display,inherit);letter-spacing:0.02em;">
+                Maranello Luce<br>command center
+              </h1>
+              <p class="mn-micro" style="margin:10px 0 0;color:var(--mn-text-muted);max-width:58ch;">
+                One surface for demand, liquidity, operating tempo, capital allocation, and strategic execution. Built to feel like a business spacecraft, not an admin template.
+              </p>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+              <span class="mn-tag">LIVE BOARD</span>
+              <span class="mn-tag">Q3 CLOSE</span>
+              <span class="mn-status"><span class="mn-status__dot"></span> BOARD SAFE</span>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-top:18px;">
+            <div class="mn-card-dark mn-stat" style="padding:14px;border:1px solid var(--mn-border);">
+              <div class="mn-stat__label" style="color:var(--mn-text-muted);margin-bottom:8px;">Revenue run rate</div>
+              <div id="flip-revenue" class="mn-stat__value" style="font-size:2.1rem;min-height:56px;"></div>
+              <div class="mn-micro" style="color:var(--mn-text-muted);margin-top:6px;">Premium mix +12.1% YoY</div>
+            </div>
+            <div class="mn-card-dark mn-stat" style="padding:14px;border:1px solid var(--mn-border);">
+              <div class="mn-stat__label" style="color:var(--mn-text-muted);margin-bottom:8px;">EBITDA</div>
+              <div id="flip-ebitda" class="mn-stat__value" style="font-size:2.1rem;min-height:56px;"></div>
+              <div class="mn-micro" style="color:var(--mn-text-muted);margin-top:6px;">Margin discipline holding</div>
+            </div>
+            <div class="mn-card-dark mn-stat" style="padding:14px;border:1px solid var(--mn-border);">
+              <div class="mn-stat__label" style="color:var(--mn-text-muted);margin-bottom:8px;">Weighted pipeline</div>
+              <div id="flip-pipeline" class="mn-stat__value" style="font-size:2.1rem;min-height:56px;"></div>
+              <div class="mn-micro" style="color:var(--mn-text-muted);margin-top:6px;">Conversion quality rising</div>
+            </div>
+            <div class="mn-card-dark mn-stat" style="padding:14px;border:1px solid var(--mn-border);">
+              <div class="mn-stat__label" style="color:var(--mn-text-muted);margin-bottom:8px;">Net revenue retention</div>
+              <div id="flip-nrr" class="mn-stat__value" style="font-size:2.1rem;min-height:56px;"></div>
+              <div class="mn-micro" style="color:var(--mn-text-muted);margin-top:6px;">Expansion engine engaged</div>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin-top:16px;">
+            <button
+              type="button"
+              class="mn-card-dark mn-stat"
+              data-kpi-card
+              data-kpi-title="ARR"
+              data-kpi-detail="ARR accelerated on enterprise expansion with stronger multi-product attach."
+              style="padding:14px;border:1px solid var(--mn-border);text-align:left;cursor:pointer;background:var(--mn-surface);"
+            >
+              <div class="mn-stat__label" style="color:var(--mn-text-muted);">ARR</div>
+              <div class="mn-stat__value" style="font-size:1.8rem;">$1.46B</div>
+              <div class="mn-micro" style="color:var(--mn-accent);margin:4px 0 8px;">+11.8%</div>
+              <canvas id="spark-arr" width="240" height="56" role="img" aria-label="ARR trend over eight months" style="width:100%;height:56px;"></canvas>
+              <div class="mn-micro" style="margin-top:8px;color:var(--mn-text-muted);">New logo acceleration in North America</div>
+            </button>
+
+            <button
+              type="button"
+              class="mn-card-dark mn-stat"
+              data-kpi-card
+              data-kpi-title="Free cash flow"
+              data-kpi-detail="Working capital release is ahead of plan and treasury coverage is widening."
+              style="padding:14px;border:1px solid var(--mn-border);text-align:left;cursor:pointer;background:var(--mn-surface);"
+            >
+              <div class="mn-stat__label" style="color:var(--mn-text-muted);">Free cash flow</div>
+              <div class="mn-stat__value" style="font-size:1.8rem;">$522M</div>
+              <div class="mn-micro" style="color:var(--mn-success);margin:4px 0 8px;">+7.4%</div>
+              <canvas id="spark-fcf" width="240" height="56" role="img" aria-label="Free cash flow trend over eight months" style="width:100%;height:56px;"></canvas>
+              <div class="mn-micro" style="margin-top:8px;color:var(--mn-text-muted);">Working capital release ahead of plan</div>
+            </button>
+
+            <button
+              type="button"
+              class="mn-card-dark mn-stat"
+              data-kpi-card
+              data-kpi-title="Executive NPS"
+              data-kpi-detail="Premium service quality is lifting advocacy across the top 200 accounts."
+              style="padding:14px;border:1px solid var(--mn-border);text-align:left;cursor:pointer;background:var(--mn-surface);"
+            >
+              <div class="mn-stat__label" style="color:var(--mn-text-muted);">Executive NPS</div>
+              <div class="mn-stat__value" style="font-size:1.8rem;">71</div>
+              <div class="mn-micro" style="color:var(--mn-info);margin:4px 0 8px;">+6 pts</div>
+              <canvas id="spark-nps" width="240" height="56" role="img" aria-label="Executive NPS trend over eight months" style="width:100%;height:56px;"></canvas>
+              <div class="mn-micro" style="margin-top:8px;color:var(--mn-text-muted);">Premium service model lifting advocacy</div>
+            </button>
+
+            <button
+              type="button"
+              class="mn-card-dark mn-stat"
+              data-kpi-card
+              data-kpi-title="Renewal rate"
+              data-kpi-detail="Enterprise renewals are locked through Q4 with lower churn risk in strategic accounts."
+              style="padding:14px;border:1px solid var(--mn-border);text-align:left;cursor:pointer;background:var(--mn-surface);"
+            >
+              <div class="mn-stat__label" style="color:var(--mn-text-muted);">Renewal rate</div>
+              <div class="mn-stat__value" style="font-size:1.8rem;">94.2%</div>
+              <div class="mn-micro" style="color:var(--mn-warning);margin:4px 0 8px;">+1.9 pts</div>
+              <canvas id="spark-renewal" width="240" height="56" role="img" aria-label="Renewal rate trend over eight months" style="width:100%;height:56px;"></canvas>
+              <div class="mn-micro" style="margin-top:8px;color:var(--mn-text-muted);">Enterprise renewals locked through Q4</div>
+            </button>
+          </div>
+
+          <div style="margin-top:18px;">
+            <div class="mn-label" style="margin-bottom:10px;color:var(--mn-text-muted);">Live instrument strip</div>
+            <div id="cockpit-strip" style="min-height:220px;"></div>
+          </div>
+        </article>
+
+        <div style="display:grid;gap:20px;">
+          <article class="mn-card-dark" style="padding:18px;border:1px solid var(--mn-border);background:var(--mn-surface-raised);">
+            <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center;">
+              <div>
+                <div class="mn-label" style="color:var(--mn-accent);margin-bottom:4px;">Performance binnacle</div>
+                <div class="mn-micro" style="color:var(--mn-text-muted);">Balanced between growth thrust, liquidity, and board readiness.</div>
+              </div>
+              <span class="mn-tag">CEO VIEW</span>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1.2fr 1fr;gap:10px;align-items:end;margin-top:12px;">
+              <div style="text-align:center;">
+                <canvas id="cockpit-speedo-growth" width="220" height="220" role="img" aria-label="Growth velocity speedometer" style="width:100%;max-width:220px;height:auto;"></canvas>
+                <div class="mn-micro" style="color:var(--mn-text-muted);margin-top:4px;">Growth velocity</div>
+              </div>
+
+              <div style="display:flex;align-items:center;justify-content:center;min-height:320px;">
+                <canvas id="cockpit-gauge-core" width="420" height="420" role="img" aria-label="Board readiness gauge with risk and upside complications" style="width:min(100%,360px);height:auto;"></canvas>
+              </div>
+
+              <div style="text-align:center;">
+                <canvas id="cockpit-speedo-cash" width="220" height="220" role="img" aria-label="Liquidity buffer speedometer" style="width:100%;max-width:220px;height:auto;"></canvas>
+                <div class="mn-micro" style="color:var(--mn-text-muted);margin-top:4px;">Liquidity buffer</div>
+              </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:14px;">
+              <div class="mn-card-dark" style="padding:12px;border:1px solid var(--mn-border);text-align:center;">
+                <div id="ring-margin" style="width:72px;height:72px;margin:0 auto 8px;"></div>
+                <div class="mn-stat__value" style="font-size:1.2rem;">28.4%</div>
+                <div class="mn-micro" style="color:var(--mn-text-muted);">EBITDA margin</div>
+              </div>
+              <div class="mn-card-dark" style="padding:12px;border:1px solid var(--mn-border);text-align:center;">
+                <div id="ring-cac" style="width:72px;height:72px;margin:0 auto 8px;"></div>
+                <div class="mn-stat__value" style="font-size:1.2rem;">$1.84K</div>
+                <div class="mn-micro" style="color:var(--mn-text-muted);">CAC</div>
+              </div>
+              <div class="mn-card-dark" style="padding:12px;border:1px solid var(--mn-border);text-align:center;">
+                <div id="ring-churn" style="width:72px;height:72px;margin:0 auto 8px;"></div>
+                <div class="mn-stat__value" style="font-size:1.2rem;">2.1%</div>
+                <div class="mn-micro" style="color:var(--mn-text-muted);">Gross churn</div>
+              </div>
+            </div>
+          </article>
+
+          <article class="mn-card-dark" style="padding:18px;border:1px solid var(--mn-border);background:var(--mn-surface-raised);">
+            <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center;">
+              <div>
+                <div class="mn-label" style="color:var(--mn-accent);margin-bottom:4px;">Capital mix and regional bridge</div>
+                <div class="mn-micro" style="color:var(--mn-text-muted);">Interactive scenario toggles for the board narrative.</div>
+              </div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <button id="scenario-brief" class="mn-btn" type="button">Investor brief</button>
+                <button id="scenario-stress" class="mn-btn" type="button">Stress liquidity</button>
+              </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:14px;">
+              <div class="mn-card-dark" style="padding:12px;border:1px solid var(--mn-border);">
+                <div class="mn-label" style="margin-bottom:10px;color:var(--mn-text-muted);">Regional EBIT contribution</div>
+                <div id="cockpit-bar-wrap" style="height:220px;"></div>
+              </div>
+              <div class="mn-card-dark" style="padding:12px;border:1px solid var(--mn-border);">
+                <div class="mn-label" style="margin-bottom:10px;color:var(--mn-text-muted);">Capital allocation</div>
+                <div id="cockpit-donut-wrap" style="height:220px;display:flex;align-items:center;justify-content:center;"></div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section aria-label="Regional and commercial view">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:20px;align-items:start;">
+        <article class="mn-card-dark" style="padding:18px;border:1px solid var(--mn-border);background:var(--mn-surface-raised);min-height:360px;">
+          <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center;">
+            <div>
+              <div class="mn-label" style="color:var(--mn-accent);margin-bottom:4px;">Regional heat signature</div>
+              <div class="mn-micro" style="color:var(--mn-text-muted);">Quarterly attainment density by market. Click a cell for context.</div>
+            </div>
+            <span class="mn-tag">GLOBAL MIX</span>
+          </div>
+          <div id="cockpit-heatmap" style="min-height:290px;margin-top:14px;"></div>
+        </article>
+
+        <div style="display:grid;gap:20px;">
+          <article class="mn-card-dark" style="padding:18px;border:1px solid var(--mn-border);background:var(--mn-surface-raised);">
+            <div>
+              <div class="mn-label" style="color:var(--mn-accent);margin-bottom:4px;">Commercial gravity well</div>
+              <div class="mn-micro" style="color:var(--mn-text-muted);">Dense pipeline, leakage tracking, and stage-by-stage pressure.</div>
+            </div>
+            <div id="cockpit-funnel" style="min-height:280px;margin-top:14px;"></div>
+          </article>
+
+          <article class="mn-card-dark" style="padding:18px;border:1px solid var(--mn-border);background:var(--mn-surface-raised);">
+            <div>
+              <div class="mn-label" style="color:var(--mn-accent);margin-bottom:4px;">Operating health</div>
+              <div class="mn-micro" style="color:var(--mn-text-muted);">Critical systems behind pricing, treasury, supply, and customer operations.</div>
+            </div>
+            <div id="cockpit-status" style="min-height:250px;margin-top:14px;"></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section aria-label="Strategy execution">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:20px;align-items:start;">
+        <article class="mn-card-dark" style="padding:18px;border:1px solid var(--mn-border);background:var(--mn-surface-raised);min-height:340px;">
+          <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center;">
+            <div>
+              <div class="mn-label" style="color:var(--mn-accent);margin-bottom:4px;">Strategic initiatives</div>
+              <div class="mn-micro" style="color:var(--mn-text-muted);">Board programs in flight. Click a bar to inspect the timeline headline.</div>
+            </div>
+            <span class="mn-tag">90 DAY HORIZON</span>
+          </div>
+          <div id="cockpit-gantt" style="min-height:270px;margin-top:14px;"></div>
+        </article>
+
+        <div style="display:grid;gap:20px;">
+          <article class="mn-card-dark" style="padding:18px;border:1px solid var(--mn-border);background:var(--mn-surface-raised);">
+            <div>
+              <div class="mn-label" style="color:var(--mn-accent);margin-bottom:4px;">Board feed</div>
+              <div class="mn-micro" style="color:var(--mn-text-muted);">Narrative events that matter right now.</div>
+            </div>
+            <div id="cockpit-activity" style="min-height:220px;margin-top:14px;"></div>
+          </article>
+
+          <article class="mn-card-dark" style="padding:18px;border:1px solid var(--mn-border);background:var(--mn-surface-raised);">
+            <div class="mn-label" style="color:var(--mn-accent);margin-bottom:10px;">High-leverage bets</div>
+            <div style="display:grid;gap:10px;">
+              <button
+                type="button"
+                class="mn-card-dark"
+                data-lever-title="Pricing architecture"
+                data-lever-detail="Roll out value-based packaging to top 60 accounts and defend margin without slowing volume."
+                style="padding:14px;border:1px solid var(--mn-border);text-align:left;cursor:pointer;background:var(--mn-surface);"
+              >
+                <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;">
+                  <div>
+                    <div class="mn-label">Pricing architecture</div>
+                    <div class="mn-micro" style="color:var(--mn-text-muted);margin-top:4px;">Lift gross margin without decelerating expansion</div>
+                  </div>
+                  <span class="mn-tag">+180 bps</span>
+                </div>
+              </button>
+
+              <button
+                type="button"
+                class="mn-card-dark"
+                data-lever-title="Dealer D2C motion"
+                data-lever-detail="Collapse the final mile from dealer insight to direct commercial close in two priority regions."
+                style="padding:14px;border:1px solid var(--mn-border);text-align:left;cursor:pointer;background:var(--mn-surface);"
+              >
+                <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;">
+                  <div>
+                    <div class="mn-label">Dealer D2C motion</div>
+                    <div class="mn-micro" style="color:var(--mn-text-muted);margin-top:4px;">Shorten cycle time in Europe and Middle East</div>
+                  </div>
+                  <span class="mn-tag">-14 days</span>
+                </div>
+              </button>
+
+              <button
+                type="button"
+                class="mn-card-dark"
+                data-lever-title="AI procurement layer"
+                data-lever-detail="Unify sourcing and treasury signals to unlock operating leverage in the second half."
+                style="padding:14px;border:1px solid var(--mn-border);text-align:left;cursor:pointer;background:var(--mn-surface);"
+              >
+                <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;">
+                  <div>
+                    <div class="mn-label">AI procurement layer</div>
+                    <div class="mn-micro" style="color:var(--mn-text-muted);margin-top:4px;">Increase operating leverage through automation</div>
+                  </div>
+                  <span class="mn-tag">+$46M</span>
+                </div>
+              </button>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section aria-label="Portfolio table">
+      <article class="mn-card-dark" style="padding:18px;border:1px solid var(--mn-border);background:var(--mn-surface-raised);">
+        <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center;">
+          <div>
+            <div class="mn-label" style="color:var(--mn-accent);margin-bottom:4px;">Portfolio operating table</div>
+            <div class="mn-micro" style="color:var(--mn-text-muted);">Click any row to open an executive drill-down panel.</div>
+          </div>
+          <span class="mn-tag">CROSS-PORTFOLIO</span>
+        </div>
+        <div id="cockpit-table" style="margin-top:14px;"></div>
+      </article>
+    </section>
+
+    <div class="mn-detail-panel__backdrop"></div>
+    <aside
+      id="exec-detail-panel"
+      class="mn-detail-panel"
+      aria-labelledby="exec-detail-title"
+      style="width:min(520px,92vw);"
+    >
+      <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:14px;">
+        <div>
+          <div class="mn-label" style="color:var(--mn-accent);margin-bottom:4px;">Executive drill-down</div>
+          <h2 id="exec-detail-title" style="margin:0;color:var(--mn-text);font-family:var(--font-display,inherit);">Portfolio detail</h2>
+        </div>
+        <button id="exec-detail-close" class="mn-btn" type="button">Close</button>
+      </div>
+      <div id="exec-detail-body"></div>
     </aside>
-
-    <main class="main" id="main-content">
-      <div class="mn-grid">
-        <!-- Row 0: Hero KPIs with embedded sparklines -->
-        <div class="hero-kpis" id="hero-kpis">
-          <div class="hero-kpi">
-            <canvas class="hero-kpi__spark" id="kpi-spark-0" aria-hidden="true"></canvas>
-            <div class="hero-kpi__label">Revenue</div>
-            <div class="hero-kpi__value">$14.2M</div>
-            <div class="hero-kpi__sub">
-              <span class="hero-kpi__delta hero-kpi__delta--up">+8.3% YoY</span>
-              <span class="hero-kpi__delta hero-kpi__delta--up">+2.1% QoQ</span>
-            </div>
-          </div>
-          <div class="hero-kpi">
-            <canvas class="hero-kpi__spark" id="kpi-spark-1" aria-hidden="true"></canvas>
-            <div class="hero-kpi__label">EBITDA Margin</div>
-            <div class="hero-kpi__value">23.7%</div>
-            <div class="hero-kpi__sub">
-              <span class="hero-kpi__delta hero-kpi__delta--up">+1.2pp YoY</span>
-              <span class="hero-kpi__delta hero-kpi__delta--flat">+0.0pp QoQ</span>
-            </div>
-          </div>
-          <div class="hero-kpi">
-            <canvas class="hero-kpi__spark" id="kpi-spark-2" aria-hidden="true"></canvas>
-            <div class="hero-kpi__label">Active Clients</div>
-            <div class="hero-kpi__value">1,247</div>
-            <div class="hero-kpi__sub">
-              <span class="hero-kpi__delta hero-kpi__delta--up">+42 this Q</span>
-              <span class="hero-kpi__delta hero-kpi__delta--up">+156 YoY</span>
-            </div>
-          </div>
-          <div class="hero-kpi">
-            <canvas class="hero-kpi__spark" id="kpi-spark-3" aria-hidden="true"></canvas>
-            <div class="hero-kpi__label">Employee NPS</div>
-            <div class="hero-kpi__value">72</div>
-            <div class="hero-kpi__sub">
-              <span class="hero-kpi__delta hero-kpi__delta--down">-3 vs prior</span>
-              <span class="hero-kpi__delta hero-kpi__delta--up">+8 YoY</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Row 1: Speedometer instruments -->
-        <div class="speedo-row" id="speedo-row">
-          <div class="speedo-item">
-            <canvas id="speedo-margin" width="200" height="200" role="img" aria-label="Gross margin at 67 percent"></canvas>
-            <div class="speedo-item__label">Gross Margin</div>
-          </div>
-          <div class="speedo-item">
-            <canvas id="speedo-score" width="280" height="280" role="img" aria-label="Quality score at 92 points"></canvas>
-            <div class="speedo-item__label">Quality Score</div>
-          </div>
-          <div class="speedo-item">
-            <canvas id="speedo-cash" width="200" height="200" role="img" aria-label="Cash ratio at 1.8x"></canvas>
-            <div class="speedo-item__label">Cash Ratio</div>
-          </div>
-        </div>
-
-        <!-- Row 2: Dashboard strip -->
-        <div class="mn-cell mn-col-12">
-          <div class="mn-cell__label"><span class="live-dot"></span>Live instrument strip</div>
-          <div class="mn-cell__body" id="cell-strip"></div>
-        </div>
-
-        <!-- Row 3: Heatmap + Pipeline -->
-        <div class="mn-cell mn-col-7">
-          <div class="mn-cell__label">Regional performance Q1-Q4</div>
-          <div class="mn-cell__body" id="cell-heatmap"></div>
-        </div>
-        <div class="mn-cell mn-col-5">
-          <div class="mn-cell__label">Sales pipeline</div>
-          <div class="mn-cell__body" id="cell-funnel"></div>
-        </div>
-
-        <!-- Row 4: Gantt + Activity -->
-        <div class="mn-cell mn-col-8">
-          <div class="mn-cell__label">Strategic initiatives</div>
-          <div class="mn-cell__body" id="cell-gantt" style="min-height:240px"></div>
-        </div>
-        <div class="mn-cell mn-col-4">
-          <div class="mn-cell__label">Board updates</div>
-          <div class="mn-cell__body" id="cell-activity"></div>
-        </div>
-
-        <!-- Row 5: Portfolio table -->
-        <div class="mn-cell mn-col-12">
-          <div class="mn-cell__label">Portfolio overview</div>
-          <div class="mn-cell__body" id="cell-table"></div>
-        </div>
-      </div>
-    </main>
+  </div>
+</main>
   </div>
 
   <script src="../dist/iife/maranello.min.js"></script>
@@ -395,254 +578,829 @@
       var M = window.Maranello;
       if (!M) return;
 
-      function setIcon(id, name) { var el = document.getElementById(id); if (el && M.icons[name]) el.innerHTML = M.icons[name](); }
+      // Shell wiring
+      function ic(id, n) { var e = document.getElementById(id); if (e && M.icons[n]) e.innerHTML = M.icons[n](); }
+      ic('toggle-side','menu'); ic('si','search'); ic('ib','bell'); ic('is','settings');
+      ic('n1','gauge'); ic('n2','layers'); ic('n3','trendUp'); ic('n4','grid');
+      ic('n5','funnel'); ic('n6','heatmap'); ic('n7','alertTriangle'); ic('n8','settings');
 
-      // Icons
-      setIcon('sidebar-toggle', 'menu');
-      setIcon('search-icon', 'search');
-      setIcon('btn-bell', 'bell');
-      setIcon('btn-settings', 'settings');
-      setIcon('ic-gauge', 'gauge');
-      setIcon('ic-layers', 'layers');
-      setIcon('ic-trend', 'trendUp');
-      setIcon('ic-grid', 'grid');
-      setIcon('ic-funnel', 'funnel');
-      setIcon('ic-heatmap', 'heatmap');
-      setIcon('ic-alert', 'alertTriangle');
-      setIcon('ic-settings', 'settings');
+      var sk = document.getElementById('sk');
+      if (sk) sk.textContent = navigator.userAgent.indexOf('Mac') !== -1 ? '\u2318K' : 'Ctrl+K';
 
-      // Cmd-K label
-      var kbdEl = document.querySelector('.search-bar__kbd');
-      if (kbdEl) kbdEl.textContent = navigator.userAgent.indexOf('Mac') !== -1 ? '\u2318K' : 'Ctrl+K';
+      var tp = document.getElementById('tp');
+      var sv = localStorage.getItem('mn-theme') || 'editorial';
+      tp.value = sv;
+      tp.addEventListener('change', function () { M.setTheme(tp.value); localStorage.setItem('mn-theme', tp.value); });
 
-      // Theme
-      var picker = document.getElementById('theme-picker');
-      var saved = localStorage.getItem('mn-theme') || 'editorial';
-      picker.value = saved;
-      picker.addEventListener('change', function () { M.setTheme(picker.value); localStorage.setItem('mn-theme', picker.value); });
-
-      // Sidebar toggle
-      var shell = document.getElementById('app-shell');
-      document.getElementById('sidebar-toggle').addEventListener('click', function () {
-        if (shell.className.indexOf('is-collapsed') !== -1) shell.className = shell.className.replace('is-collapsed', '').trim();
-        else shell.className = shell.className.trim() + ' is-collapsed';
+      var app = document.getElementById('app');
+      document.getElementById('toggle-side').addEventListener('click', function () {
+        if (app.className.indexOf('is-collapsed') !== -1) app.className = app.className.replace('is-collapsed','').trim();
+        else app.className = app.className.trim() + ' is-collapsed';
       });
 
-      // Nav
-      var links = document.querySelectorAll('.sidebar__link');
-      var bcCurrent = document.querySelector('.breadcrumb__current');
-      for (var i = 0; i < links.length; i++) {
-        links[i].addEventListener('click', function () {
-          for (var j = 0; j < links.length; j++) links[j].className = links[j].className.replace(' is-active', '');
+      var navs = document.querySelectorAll('.side__item');
+      var bc = document.getElementById('bc');
+      for (var i = 0; i < navs.length; i++) {
+        navs[i].addEventListener('click', function () {
+          for (var j = 0; j < navs.length; j++) navs[j].className = navs[j].className.replace(' is-active','');
           this.className += ' is-active';
-          var t = this.querySelector('.sidebar__link-text');
-          if (t && bcCurrent) bcCurrent.textContent = t.textContent;
+          var txt = this.querySelector('.side__item-text');
+          if (txt && bc) bc.textContent = txt.textContent;
         });
       }
 
-      // ── KPI embedded sparklines ──
-      var kpiSparkData = [
-        [10.2,10.8,11.3,11.8,12.4,12.9,13.2,13.5,13.4,13.7,14.0,14.2],
-        [20.1,20.8,21.2,21.9,22.3,22.8,23.1,23.0,23.2,23.5,23.6,23.7],
-        [980,1010,1040,1060,1095,1120,1145,1170,1195,1210,1230,1247],
-        [64,66,68,71,70,73,74,72,75,74,73,72]
-      ];
-      if (M.sparkline) {
-        for (var s = 0; s < 4; s++) {
-          var sc = document.getElementById('kpi-spark-' + s);
-          if (sc) M.sparkline(sc, kpiSparkData[s]);
+      // GPT component logic
+(function () {
+  var M = window.Maranello;
+  if (!M) return;
+
+  var styles = getComputedStyle(document.documentElement);
+
+  function token(name) {
+    return styles.getPropertyValue(name).trim();
+  }
+
+  function pick() {
+    var p = M.palette ? M.palette() : {};
+    return {
+      accent: p.accent || token('--mn-accent'),
+      success: p.signalOk || token('--mn-success'),
+      warning: p.signalWarning || p.signalWarn || token('--mn-warning'),
+      error: p.signalDanger || token('--mn-error'),
+      info: p.signalInfo || token('--mn-info'),
+      text: p.text || token('--mn-text'),
+      muted: p.textMuted || token('--mn-text-muted')
+    };
+  }
+
+  var colors = pick();
+
+  function isHexColor(value) {
+    return typeof value === 'string' && value.charAt(0) === '#';
+  }
+
+  function showToast(type, title, message) {
+    if (M.toast) M.toast({ type: type, title: title, message: message });
+  }
+
+  function bindAction(el, handler) {
+    if (!el) return;
+    el.addEventListener('click', handler);
+    el.addEventListener('keydown', function (event) {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        handler.call(el, event);
+      }
+    });
+  }
+
+  function createCanvas(host, id, label, width, height) {
+    if (!host) return null;
+    var canvas = document.createElement('canvas');
+    canvas.id = id;
+    canvas.width = width;
+    canvas.height = height;
+    canvas.setAttribute('role', 'img');
+    canvas.setAttribute('aria-label', label);
+    canvas.style.width = '100%';
+    canvas.style.height = '100%';
+    host.appendChild(canvas);
+    return canvas;
+  }
+
+  function bindAreaTooltip(canvas, series, label, color, labels) {
+    if (!canvas || !M.chartInteract || !isHexColor(color) || !series || series.length < 2) return;
+    requestAnimationFrame(function () {
+      var w = canvas.clientWidth || 240;
+      var h = canvas.clientHeight || 56;
+      var pad = { top: 4, right: 4, bottom: 4, left: 4 };
+      var min = Math.min.apply(null, series);
+      var max = Math.max.apply(null, series);
+      var range = max - min || 1;
+
+      M.chartInteract(canvas, {
+        type: 'area',
+        datasets: [{ label: label, data: series, color: color }],
+        labels: labels,
+        pad: pad,
+        maxLen: series.length,
+        gx: function (index) {
+          return pad.left + (index / (series.length - 1)) * (w - pad.left - pad.right);
+        },
+        gy: function (value) {
+          return h - pad.bottom - ((value - min) / range) * (h - pad.top - pad.bottom);
+        }
+      }, [color]);
+    });
+  }
+
+  function bindBarTooltip(canvas, data, palette) {
+    if (!canvas || !M.chartInteract || !data || !data.length) return;
+    requestAnimationFrame(function () {
+      var w = canvas.clientWidth || 360;
+      var h = canvas.clientHeight || 220;
+      var pad = { top: 10, right: 12, bottom: 28, left: 12 };
+      var max = 0;
+      var i;
+      for (i = 0; i < data.length; i++) {
+        if (data[i].value > max) max = data[i].value;
+      }
+      max = max * 1.15;
+
+      var plotW = w - pad.left - pad.right;
+      var slotW = plotW / data.length;
+      var barW = slotW * 0.66;
+      var plotH = h - pad.top - pad.bottom;
+
+      M.chartInteract(canvas, {
+        type: 'bar',
+        data: data,
+        labels: data.map(function (item) { return item.label; }),
+        pad: pad,
+        gx: function (index) {
+          return pad.left + index * slotW + slotW / 2;
+        },
+        gy: function (value) {
+          return h - pad.bottom - (value / max) * plotH;
+        },
+        barRects: data.map(function (_item, index) {
+          return {
+            x: pad.left + index * slotW + (slotW - barW) / 2,
+            w: barW
+          };
+        })
+      }, palette);
+    });
+  }
+
+  function buildDonutMeta(segments, size) {
+    var startAngle = -Math.PI / 2;
+    var gap = 0.03;
+    var outerRadius = size / 2 - 8;
+    var innerRadius = outerRadius * 0.68;
+    var total = 0;
+    var index;
+    for (index = 0; index < segments.length; index++) total += segments[index].value;
+
+    var angle = startAngle;
+    var mapped = [];
+    for (index = 0; index < segments.length; index++) {
+      var seg = segments[index];
+      var sweep = (seg.value / total) * (Math.PI * 2 - gap * segments.length);
+      var next = angle + sweep;
+      mapped.push({
+        label: seg.label,
+        value: seg.value,
+        color: seg.color,
+        pct: Math.round((seg.value / total) * 100),
+        start: angle,
+        end: next
+      });
+      angle = next + gap;
+    }
+
+    return {
+      type: 'donut',
+      center: { x: size / 2, y: size / 2 },
+      innerRadius: innerRadius,
+      outerRadius: outerRadius,
+      segments: mapped
+    };
+  }
+
+  function renderDetail(row) {
+    var title = document.getElementById('exec-detail-title');
+    var body = document.getElementById('exec-detail-body');
+    if (!title || !body || !row) return;
+
+    title.textContent = row.unit;
+    body.innerHTML = '';
+
+    var grid = document.createElement('div');
+    grid.style.display = 'grid';
+    grid.style.gridTemplateColumns = 'repeat(2, minmax(0, 1fr))';
+    grid.style.gap = '12px';
+
+    var fields = [
+      ['Region', row.region],
+      ['Executive lead', row.lead],
+      ['Revenue', row.revenue],
+      ['EBITDA', row.ebitda],
+      ['ARR', row.arr],
+      ['Net retention', row.nrr],
+      ['Churn', row.churn],
+      ['Next milestone', row.milestone]
+    ];
+
+    var i;
+    for (i = 0; i < fields.length; i++) {
+      var card = document.createElement('div');
+      card.className = 'mn-card-dark';
+      card.style.padding = '12px';
+      card.style.border = '1px solid var(--mn-border)';
+
+      var label = document.createElement('div');
+      label.className = 'mn-label';
+      label.style.marginBottom = '6px';
+      label.style.color = 'var(--mn-text-muted)';
+      label.textContent = fields[i][0];
+
+      var value = document.createElement('div');
+      value.style.fontFamily = 'var(--font-display, inherit)';
+      value.style.fontSize = '1.1rem';
+      value.style.color = 'var(--mn-text)';
+      value.textContent = fields[i][1];
+
+      card.appendChild(label);
+      card.appendChild(value);
+      grid.appendChild(card);
+    }
+
+    body.appendChild(grid);
+
+    var note = document.createElement('div');
+    note.className = 'mn-card-dark';
+    note.style.marginTop = '14px';
+    note.style.padding = '14px';
+    note.style.border = '1px solid var(--mn-border)';
+
+    var noteLabel = document.createElement('div');
+    noteLabel.className = 'mn-label';
+    noteLabel.style.marginBottom = '8px';
+    noteLabel.textContent = 'CEO note';
+
+    var noteText = document.createElement('p');
+    noteText.className = 'mn-micro';
+    noteText.style.margin = '0';
+    noteText.style.color = 'var(--mn-text-muted)';
+    noteText.textContent = row.note;
+
+    note.appendChild(noteLabel);
+    note.appendChild(noteText);
+    body.appendChild(note);
+  }
+
+  var heroLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'];
+  var kpis = [
+    {
+      id: 'arr',
+      label: 'ARR',
+      data: [112, 118, 121, 126, 131, 136, 141, 146],
+      color: colors.accent
+    },
+    {
+      id: 'fcf',
+      label: 'Free cash flow',
+      data: [380, 402, 418, 433, 451, 474, 498, 522],
+      color: colors.success
+    },
+    {
+      id: 'nps',
+      label: 'Executive NPS',
+      data: [55, 57, 60, 62, 65, 66, 69, 71],
+      color: colors.info
+    },
+    {
+      id: 'renewal',
+      label: 'Renewal rate',
+      data: [88.1, 89.6, 90.4, 91.2, 92.5, 93.1, 93.7, 94.2],
+      color: colors.warning
+    }
+  ];
+
+  var counterRevenue = M.flipCounter
+    ? M.flipCounter(document.getElementById('flip-revenue'), { value: 3840, digits: 4, prefix: '$', suffix: 'M' })
+    : null;
+  var counterEbitda = M.flipCounter
+    ? M.flipCounter(document.getElementById('flip-ebitda'), { value: 812, digits: 3, prefix: '$', suffix: 'M' })
+    : null;
+  var counterPipeline = M.flipCounter
+    ? M.flipCounter(document.getElementById('flip-pipeline'), { value: 1090, digits: 4, prefix: '$', suffix: 'M' })
+    : null;
+  var counterNrr = M.flipCounter
+    ? M.flipCounter(document.getElementById('flip-nrr'), { value: 118, digits: 3, suffix: '%' })
+    : null;
+
+  var kpiCards = document.querySelectorAll('[data-kpi-card]');
+  var k;
+  for (k = 0; k < kpiCards.length; k++) {
+    bindAction(kpiCards[k], function () {
+      showToast('info', this.getAttribute('data-kpi-title'), this.getAttribute('data-kpi-detail'));
+    });
+  }
+
+  if (M.sparkline) {
+    for (k = 0; k < kpis.length; k++) {
+      var sparkCanvas = document.getElementById('spark-' + kpis[k].id);
+      if (!sparkCanvas) continue;
+      M.sparkline(sparkCanvas, kpis[k].data, {
+        color: kpis[k].color,
+        lineWidth: 2,
+        fillOpacity: 0.18
+      });
+      bindAreaTooltip(sparkCanvas, kpis[k].data, kpis[k].label, kpis[k].color, heroLabels);
+    }
+  }
+
+  var growthSpeedo = null;
+  var cashSpeedo = null;
+
+  if (M.speedometer) {
+    growthSpeedo = M.speedometer(document.getElementById('cockpit-speedo-growth'), {
+      value: 86,
+      max: 100,
+      unit: 'pts',
+      size: 'md',
+      ticks: [0, 20, 40, 60, 80, 100],
+      needleColor: colors.error,
+      arcColor: colors.accent,
+      bar: { value: 79, max: 100, color: colors.success },
+      subLabel: 'Growth velocity',
+      animate: true
+    });
+
+    cashSpeedo = M.speedometer(document.getElementById('cockpit-speedo-cash'), {
+      value: 18,
+      max: 24,
+      unit: 'mo',
+      size: 'md',
+      ticks: [0, 6, 12, 18, 24],
+      needleColor: colors.error,
+      arcColor: colors.info,
+      bar: { value: 16, max: 24, color: colors.success },
+      subLabel: 'Liquidity buffer',
+      animate: true
+    });
+  }
+
+  if (M.createGauge) {
+    M.createGauge({
+      target: document.getElementById('cockpit-gauge-core'),
+      config: {
+        value: 94,
+        max: 100,
+        color: colors.accent,
+        ticks: 10,
+        subticks: 5,
+        numbers: [0, 25, 50, 75, 100],
+        showNeedle: true,
+        centerValue: '94',
+        centerUnit: 'IDX',
+        centerLabel: 'BOARD READINESS',
+        innerRing: { value: 118, max: 140, color: colors.success },
+        arcBar: {
+          value: 31,
+          max: 40,
+          labelLeft: '0',
+          labelRight: '40D',
+          colorStops: [colors.error, colors.warning, colors.success]
+        },
+        subDials: [
+          { x: -0.28, y: 0.18, value: 82, max: 100, label: 'OPS', color: colors.info },
+          { x: 0.28, y: 0.18, value: 91, max: 100, label: 'COMM', color: colors.success }
+        ],
+        odometer: { digits: ['2', '4', '7'], highlightLast: true },
+        statusLed: { color: colors.success, label: 'SURGE' },
+        trend: { direction: 'up', delta: '+3.2', color: colors.success },
+        crosshair: {
+          title: 'RISK / UPSIDE',
+          labelTop: 'UPSIDE',
+          labelBottom: 'CAPEX',
+          labelLeft: 'RISK',
+          labelRight: 'RETURN',
+          x: 0.42,
+          y: -0.34,
+          dotColor: colors.accent,
+          scatterDots: [
+            { x: 0.16, y: -0.18, r: 3, color: colors.info },
+            { x: -0.28, y: 0.22, r: 3, color: colors.warning },
+            { x: 0.34, y: 0.08, r: 4, color: colors.success }
+          ]
+        },
+        multigraph: {
+          label: 'QTD PULSE',
+          data: [72, 74, 76, 81, 83, 88, 91, 94],
+          color: colors.accent
         }
       }
+    });
+  }
 
-      // ── Speedometers ──
-      if (M.speedometer) {
-        var p = M.palette ? M.palette() : {};
-        var accent = p.accent || 'var(--mn-accent)';
-        var success = p.signalOk || 'var(--mn-success)';
-        var info = p.signalInfo || 'var(--mn-info)';
-        var danger = p.signalDanger || 'var(--mn-error)';
+  if (M.progressRing) {
+    M.progressRing(document.getElementById('ring-margin'), { value: 28.4, max: 35, size: 72, color: colors.success });
+    M.progressRing(document.getElementById('ring-cac'), { value: 1840, max: 2600, size: 72, color: colors.warning });
+    M.progressRing(document.getElementById('ring-churn'), { value: 2.1, max: 5, size: 72, color: colors.info });
+  }
 
-        var ticks5 = [0, 25, 50, 75, 100];
-
-        M.speedometer(document.getElementById('speedo-margin'), {
-          value: 67, max: 100, unit: '%', size: 'md',
-          ticks: ticks5, needleColor: danger, arcColor: accent,
-          subLabel: 'Target: 70%', animate: true
-        });
-        M.speedometer(document.getElementById('speedo-score'), {
-          value: 92, max: 100, unit: 'pts', size: 'lg',
-          ticks: [0, 20, 40, 60, 80, 100], needleColor: danger, arcColor: success,
-          bar: { value: 85, max: 100 },
-          subLabel: 'Above Target', animate: true
-        });
-        M.speedometer(document.getElementById('speedo-cash'), {
-          value: 60, max: 100, unit: 'x', size: 'md',
-          ticks: ticks5, needleColor: danger, arcColor: info,
-          subLabel: '1.8x ratio', animate: true
-        });
-      }
-
-      // ── Dashboard Strip with 5 zones ──
-      var stripEl = document.getElementById('cell-strip');
-      if (stripEl && M.dashboardStrip) {
-        M.dashboardStrip(stripEl, {
-          zones: [
-            {
-              type: 'gauge', label: 'OPERATIONS',
-              gaugeConfig: {
-                value: 92, max: 100, ticks: 10, subticks: 5,
-                startAngle: -225, endAngle: 45, showNeedle: true,
-                numbers: [0, 50, 100],
-                complications: {
-                  centerValue: '92', centerUnit: 'OPS',
-                  statusLed: { color: 'var(--mn-success)', label: 'LIVE' }
-                }
-              },
-              size: 'sm'
-            },
-            {
-              type: 'pipeline', title: 'REVENUE PIPELINE',
-              rows: [
-                { label: 'PROSPECT', value: 49, color: 'var(--mn-chart-series-1)', secondary: '$2.8M' },
-                { label: 'QUALIFIED', value: 36, color: 'var(--mn-chart-series-2)', secondary: '$1.9M' },
-                { label: 'PROPOSAL', value: 22, color: 'var(--mn-chart-series-3)', secondary: '$1.2M' },
-                { label: 'NEGOTIATION', value: 14, color: 'var(--mn-chart-series-4)', secondary: '$840K' },
-                { label: 'CLOSED', value: 126, color: 'var(--mn-success)', secondary: '$14.2M' }
-              ],
-              footer: { label: 'Avg cycle', value: '47 days' }
-            },
-            {
-              type: 'trend', title: 'QUARTERLY TREND',
-              items: [
-                { label: 'REVENUE', value: '$14.2M', trend: 'up', data: [10.2,11.3,12.9,14.2] },
-                { label: 'CLIENTS', value: '1,247', trend: 'up', data: [980,1060,1145,1247] },
-                { label: 'MARGIN', value: '23.7%', trend: 'flat', data: [22.3,22.8,23.1,23.7] },
-                { label: 'NPS', value: '72', trend: 'down', data: [68,74,75,72] }
-              ]
-            },
-            {
-              type: 'board', title: 'QUARTERLY KPI',
-              stats: [
-                { label: 'ARR', value: '$18.4M' },
-                { label: 'CAC', value: '$2,140' },
-                { label: 'LTV', value: '$38K' },
-                { label: 'LTV/CAC', value: '17.8x' }
-              ]
-            },
-            {
-              type: 'gauge', label: 'CHURN RISK',
-              gaugeConfig: {
-                value: 21, max: 100, colorMode: 'lower-better',
-                ticks: 10, subticks: 5, startAngle: -225, endAngle: 45,
-                showNeedle: true, numbers: [0, 50, 100],
-                complications: {
-                  centerValue: '2.1', centerUnit: '%',
-                  centerLabel: 'CHURN',
-                  statusLed: { color: 'var(--mn-success)', label: 'LOW' },
-                  trend: { direction: 'down', delta: '-0.3', color: 'var(--mn-success)' }
-                }
-              },
-              size: 'sm'
-            }
-          ],
-          ariaLabel: 'Executive instrument strip'
-        });
-      }
-
-      // ── Heatmap ──
-      var heatEl = document.getElementById('cell-heatmap');
-      if (heatEl && M.heatmap) {
-        M.heatmap(heatEl, {
-          columnLabels: ['Q1', 'Q2', 'Q3', 'Q4'],
+  var strip = null;
+  if (M.dashboardStrip) {
+    strip = M.dashboardStrip(document.getElementById('cockpit-strip'), {
+      ariaLabel: 'Executive instrument strip',
+      zones: [
+        {
+          type: 'gauge',
+          label: 'DEMAND',
+          size: 'sm',
+          gaugeConfig: {
+            value: 87,
+            max: 100,
+            showNeedle: true,
+            numbers: [0, 50, 100],
+            centerValue: '87',
+            centerUnit: 'IDX',
+            statusLed: { color: colors.success, label: 'HOT' },
+            trend: { direction: 'up', delta: '+4.1', color: colors.success }
+          }
+        },
+        {
+          type: 'pipeline',
+          title: 'COMMERCIAL PIPELINE',
           rows: [
-            { label: 'Americas', cells: [{ value: 94 }, { value: 88 }, { value: 92 }, { value: 96 }] },
-            { label: 'EMEA', cells: [{ value: 82 }, { value: 91 }, { value: 78 }, { value: 88 }] },
-            { label: 'APAC', cells: [{ value: 65 }, { value: 72 }, { value: 80 }, { value: 85 }] },
-            { label: 'LATAM', cells: [{ value: 48 }, { value: 55 }, { value: 62 }, { value: 70 }] },
-            { label: 'MENA', cells: [{ value: 35 }, { value: 42 }, { value: 51 }, { value: 58 }] }
+            { label: 'QUALIFY', value: 320, color: colors.info, secondary: '$320M' },
+            { label: 'SOLUTION', value: 248, color: colors.accent, secondary: '$248M' },
+            { label: 'NEGOTIATE', value: 176, color: colors.warning, secondary: '$176M' },
+            { label: 'LEGAL', value: 84, color: colors.error, secondary: '$84M' },
+            { label: 'CLOSED', value: 262, color: colors.success, secondary: '$262M' }
           ],
-          showValues: true,
-          ariaLabel: 'Regional performance heatmap by quarter',
-          onCellClick: function (row, cell, ri, ci) {
-            if (M.toast) M.toast({ type: 'info', title: row.label + ' Q' + (ci + 1), message: 'Performance score: ' + cell.value + '%' });
+          footer: { label: 'Weighted close', value: '$1.09B' }
+        },
+        {
+          type: 'trend',
+          title: 'EXECUTIVE PULSE',
+          items: [
+            { label: 'REVENUE', value: '$3.84B', trend: 'up', data: [3.1, 3.2, 3.3, 3.45, 3.55, 3.68, 3.78, 3.84] },
+            { label: 'EBITDA', value: '$812M', trend: 'up', data: [620, 655, 688, 720, 754, 781, 796, 812] },
+            { label: 'NRR', value: '118%', trend: 'up', data: [108, 110, 111, 113, 115, 116, 117, 118] },
+            { label: 'CHURN', value: '2.1%', trend: 'down', data: [3.4, 3.2, 3.0, 2.8, 2.5, 2.4, 2.3, 2.1] }
+          ]
+        },
+        {
+          type: 'board',
+          title: 'VALUE STACK',
+          stats: [
+            { label: 'ARR', value: '$1.46B' },
+            { label: 'CAC', value: '$1.84K' },
+            { label: 'LTV', value: '$42.6K' },
+            { label: 'NPS', value: '71' }
+          ]
+        },
+        {
+          type: 'gauge',
+          label: 'LIQUIDITY',
+          size: 'sm',
+          gaugeConfig: {
+            value: 74,
+            max: 100,
+            showNeedle: true,
+            numbers: [0, 50, 100],
+            centerValue: '18',
+            centerUnit: 'MO',
+            statusLed: { color: colors.info, label: 'BUFFER' },
+            trend: { direction: 'up', delta: '+1.4', color: colors.success }
           }
+        }
+      ]
+    });
+  }
+
+  var barData = [
+    { label: 'Americas', value: 312, color: colors.accent },
+    { label: 'EMEA', value: 214, color: colors.info },
+    { label: 'APAC', value: 176, color: colors.success },
+    { label: 'LATAM', value: 88, color: colors.warning }
+  ];
+
+  var barHost = document.getElementById('cockpit-bar-wrap');
+  if (barHost && M.charts && M.charts.barChart) {
+    var barCanvas = createCanvas(barHost, 'cockpit-bar-chart', 'Regional EBIT contribution by region', 360, 220);
+    if (barCanvas) {
+      M.charts.barChart(barCanvas, barData, { showLabels: true, showValues: true });
+      bindBarTooltip(barCanvas, barData, [colors.accent, colors.info, colors.success, colors.warning]);
+    }
+  }
+
+  var donutSegments = [
+    { label: 'Platform', value: 42, color: colors.accent },
+    { label: 'Commercial', value: 26, color: colors.success },
+    { label: 'Expansion', value: 18, color: colors.info },
+    { label: 'Reserve', value: 14, color: colors.warning }
+  ];
+
+  var donutHost = document.getElementById('cockpit-donut-wrap');
+  if (donutHost && M.charts && M.charts.donut) {
+    var donutCanvas = createCanvas(donutHost, 'cockpit-donut-chart', 'Capital allocation mix', 220, 220);
+    if (donutCanvas) {
+      M.charts.donut(donutCanvas, donutSegments, {
+        centerText: '42%',
+        centerSubtext: 'Platform'
+      });
+
+      if (M.chartInteract) {
+        requestAnimationFrame(function () {
+          M.chartInteract(
+            donutCanvas,
+            buildDonutMeta(donutSegments, donutCanvas.clientWidth || 220),
+            donutSegments.map(function (segment) { return segment.color; })
+          );
         });
       }
+    }
+  }
 
-      // ── Funnel ──
-      var funnelEl = document.getElementById('cell-funnel');
-      if (funnelEl && M.funnel) {
-        M.funnel(funnelEl, {
-          data: { pipeline: [
-            { label: 'Leads', count: 2840 },
-            { label: 'Qualified', count: 1420 },
-            { label: 'Proposal', count: 680 },
-            { label: 'Negotiation', count: 340 },
-            { label: 'Closed Won', count: 187 }
-          ], total: 2840 },
-          showCounts: true, showLabels: true,
-          onClick: function (stage) {
-            if (M.toast) M.toast({ type: 'info', title: stage.label, message: stage.count + ' items in this stage' });
-          }
+  var heatEl = document.getElementById('cockpit-heatmap');
+  if (heatEl && M.heatmap) {
+    M.heatmap(heatEl, {
+      columnLabels: ['Q1', 'Q2', 'Q3', 'Q4'],
+      rows: [
+        { label: 'North America', cells: [{ value: 94 }, { value: 96 }, { value: 101 }, { value: 108 }] },
+        { label: 'Europe', cells: [{ value: 88 }, { value: 92 }, { value: 95 }, { value: 99 }] },
+        { label: 'Asia Pacific', cells: [{ value: 76 }, { value: 82 }, { value: 89 }, { value: 96 }] },
+        { label: 'Middle East', cells: [{ value: 69 }, { value: 74 }, { value: 81 }, { value: 87 }] },
+        { label: 'Latin America', cells: [{ value: 58 }, { value: 66 }, { value: 72 }, { value: 79 }] },
+        { label: 'Africa', cells: [{ value: 44 }, { value: 49 }, { value: 56 }, { value: 63 }] }
+      ],
+      showValues: true,
+      ariaLabel: 'Regional performance heatmap',
+      onCellClick: function (row, cell, _rowIndex, columnIndex) {
+        var quarter = ['Q1', 'Q2', 'Q3', 'Q4'][columnIndex];
+        showToast('info', row.label + ' / ' + quarter, 'Attainment index ' + cell.value + ' with premium mix expanding in-region.');
+      }
+    });
+  }
+
+  var funnelEl = document.getElementById('cockpit-funnel');
+  if (funnelEl && M.funnel) {
+    M.funnel(funnelEl, {
+      data: {
+        pipeline: [
+          { label: 'Target', count: 880, color: colors.info, holdCount: 20 },
+          { label: 'Qualified', count: 610, color: colors.accent, holdCount: 18 },
+          { label: 'Solution', count: 404, color: colors.success, withdrawnCount: 14 },
+          { label: 'Proposal', count: 218, color: colors.warning, withdrawnCount: 22 },
+          { label: 'Won', count: 126, color: colors.success }
+        ],
+        total: 880,
+        onHold: { count: 38, color: colors.warning },
+        withdrawn: { count: 36, color: colors.error }
+      },
+      onClick: function (stage) {
+        showToast('info', stage.label, stage.count + ' opportunities in stage with board-level attention on conversion quality.');
+      }
+    });
+  }
+
+  var statusEl = document.getElementById('cockpit-status');
+  if (statusEl && M.systemStatus) {
+    M.systemStatus(statusEl, {
+      version: 'FY26.Q3',
+      environment: 'global operations',
+      services: [
+        { name: 'Commercial engine', status: 'healthy', latency: 21, uptime: 99.98 },
+        { name: 'Pricing intelligence', status: 'healthy', latency: 18, uptime: 99.96 },
+        { name: 'Supply planning', status: 'healthy', latency: 24, uptime: 99.91 },
+        { name: 'Treasury signals', status: 'degraded', latency: 48, uptime: 99.72 },
+        { name: 'Customer operations', status: 'healthy', latency: 16, uptime: 99.99 }
+      ]
+    });
+  }
+
+  var ganttEl = document.getElementById('cockpit-gantt');
+  if (ganttEl && M.gantt) {
+    M.gantt(ganttEl, [
+      { id: '1', title: 'North America pricing reset', start: '2026-01-12', end: '2026-04-18' },
+      { id: '2', title: 'APAC go-to-market expansion', start: '2026-02-01', end: '2026-07-22' },
+      { id: '3', title: 'Enterprise AI procurement layer', start: '2026-02-18', end: '2026-06-14' },
+      { id: '4', title: 'Treasury automation program', start: '2026-03-02', end: '2026-08-09' },
+      { id: '5', title: 'M&A diligence: Project Aurora', start: '2026-03-28', end: '2026-05-30' },
+      { id: '6', title: 'Dealer network operating model', start: '2026-04-05', end: '2026-09-12' }
+    ], {
+      onClick: function (task) {
+        showToast('info', task.title, task.start + ' to ' + task.end + ' with board checkpoint aligned to capital committee.');
+      }
+    });
+  }
+
+  var activityEl = document.getElementById('cockpit-activity');
+  if (activityEl && M.activityFeed) {
+    M.activityFeed(activityEl, [
+      { id: '1', title: 'Chair briefing', body: 'Liquidity position reaffirmed after treasury review', meta: '12 min ago', type: 'success' },
+      { id: '2', title: 'Commercial win', body: 'Global mobility account signed at $44M TCV', meta: '48 min ago', type: 'info' },
+      { id: '3', title: 'Supply signal', body: 'Battery cell lead time compressed by 11 days', meta: '2 h ago', type: 'success' },
+      { id: '4', title: 'Risk watch', body: 'EMEA FX exposure above comfort band', meta: '3 h ago', type: 'warning' },
+      { id: '5', title: 'Investor prep', body: 'Earnings narrative locked for margin bridge', meta: '5 h ago', type: 'info' }
+    ], { maxItems: 7 });
+  }
+
+  var portfolioRows = [
+    {
+      unit: 'Enterprise platform',
+      region: 'North America',
+      lead: 'Elena Rossi',
+      revenue: '$812M',
+      ebitda: '$244M',
+      arr: '$486M',
+      nrr: '124%',
+      churn: '1.4%',
+      status: 'Above plan',
+      milestone: 'Launch consumption pricing',
+      note: 'Highest quality growth engine in the portfolio. Focus on keeping attach rates above 1.8 products per logo.'
+    },
+    {
+      unit: 'Mobility cloud',
+      region: 'Europe',
+      lead: 'Jonas Keller',
+      revenue: '$644M',
+      ebitda: '$168M',
+      arr: '$392M',
+      nrr: '117%',
+      churn: '1.9%',
+      status: 'On plan',
+      milestone: 'Complete German sovereign rollout',
+      note: 'Margin structurally improving as hosting mix shifts. CEO attention on public-sector land motion.'
+    },
+    {
+      unit: 'Industrial AI',
+      region: 'Asia Pacific',
+      lead: 'Yuki Watanabe',
+      revenue: '$488M',
+      ebitda: '$136M',
+      arr: '$281M',
+      nrr: '121%',
+      churn: '1.7%',
+      status: 'Above plan',
+      milestone: 'Scale semiconductor vertical playbook',
+      note: 'Strongest cross-sell vector. Maintain premium positioning while delivery capacity expands.'
+    },
+    {
+      unit: 'Connected services',
+      region: 'Middle East',
+      lead: 'Amara Okafor',
+      revenue: '$274M',
+      ebitda: '$71M',
+      arr: '$182M',
+      nrr: '112%',
+      churn: '2.6%',
+      status: 'Watch',
+      milestone: 'Reduce implementation cycle by 18 days',
+      note: 'Demand remains strong, but implementation friction is compressing win velocity. Needs operating discipline.'
+    },
+    {
+      unit: 'Advisory ventures',
+      region: 'Latin America',
+      lead: 'Rafael Costa',
+      revenue: '$162M',
+      ebitda: '$34M',
+      arr: '$119M',
+      nrr: '105%',
+      churn: '3.2%',
+      status: 'Watch',
+      milestone: 'Reset partner incentives',
+      note: 'Healthy logo pipeline, weaker retention. Route to regional COO for a pricing and partner model reset.'
+    }
+  ];
+
+  var tableEl = document.getElementById('cockpit-table');
+  if (tableEl && M.dataTable) {
+    M.dataTable(tableEl, {
+      columns: [
+        { key: 'unit', label: 'Business line', sortable: true },
+        { key: 'region', label: 'Region', sortable: true },
+        { key: 'lead', label: 'Executive lead' },
+        { key: 'revenue', label: 'Revenue', align: 'right' },
+        { key: 'ebitda', label: 'EBITDA', align: 'right' },
+        { key: 'arr', label: 'ARR', align: 'right' },
+        { key: 'nrr', label: 'NRR', align: 'right' },
+        { key: 'status', label: 'Status', type: 'status' }
+      ],
+      data: portfolioRows,
+      compact: true,
+      crosshair: true,
+      ariaLabel: 'Portfolio operating table',
+      onRowClick: function (row) {
+        renderDetail(row);
+        if (M.openDetailPanel) M.openDetailPanel('exec-detail-panel');
+        showToast('info', row.unit, row.revenue + ' revenue and ' + row.ebitda + ' EBITDA.');
+      }
+    });
+  }
+
+  var closeBtn = document.getElementById('exec-detail-close');
+  if (closeBtn) {
+    closeBtn.addEventListener('click', function () {
+      if (M.closeDetailPanel) M.closeDetailPanel('exec-detail-panel');
+    });
+  }
+
+  var scenarioBrief = document.getElementById('scenario-brief');
+  if (scenarioBrief) {
+    scenarioBrief.addEventListener('click', function () {
+      if (counterPipeline) counterPipeline.setValue(1148);
+      if (counterNrr) counterNrr.setValue(120);
+      if (growthSpeedo && growthSpeedo.setValue) growthSpeedo.setValue(89);
+      if (cashSpeedo && cashSpeedo.setValue) {
+        cashSpeedo.setValue(19);
+        cashSpeedo.setBar(17);
+      }
+      if (strip) {
+        strip.updateZone(3, {
+          stats: [
+            { label: 'ARR', value: '$1.49B' },
+            { label: 'CAC', value: '$1.79K' },
+            { label: 'LTV', value: '$43.8K' },
+            { label: 'NPS', value: '73' }
+          ]
         });
       }
+      showToast('success', 'Investor brief refreshed', 'Upside case loaded with stronger retention and faster enterprise conversion.');
+    });
+  }
 
-      // ── Gantt ──
-      var ganttEl = document.getElementById('cell-gantt');
-      if (ganttEl && M.gantt) {
-        M.gantt(ganttEl, [
-          { id: '1', title: 'Market Expansion APAC', start: '2026-01-15', end: '2026-06-30' },
-          { id: '2', title: 'Platform Modernization', start: '2026-02-01', end: '2026-08-15' },
-          { id: '3', title: 'AI Integration Phase 1', start: '2026-03-01', end: '2026-05-31' },
-          { id: '4', title: 'Sustainability Roadmap', start: '2026-04-01', end: '2026-09-30' },
-          { id: '5', title: 'Due Diligence - Volta', start: '2026-05-01', end: '2026-07-15' },
-          { id: '6', title: 'Brand Refresh', start: '2026-06-01', end: '2026-08-31' }
-        ], {
-          onClick: function (task) {
-            if (M.toast) M.toast({ type: 'info', title: task.title, message: task.start + ' to ' + task.end });
-          }
-        });
+  var scenarioStress = document.getElementById('scenario-stress');
+  if (scenarioStress) {
+    scenarioStress.addEventListener('click', function () {
+      if (counterPipeline) counterPipeline.setValue(982);
+      if (counterNrr) counterNrr.setValue(114);
+      if (growthSpeedo && growthSpeedo.setValue) growthSpeedo.setValue(78);
+      if (cashSpeedo && cashSpeedo.setValue) {
+        cashSpeedo.setValue(14);
+        cashSpeedo.setBar(13);
       }
-
-      // ── Activity feed ──
-      var actEl = document.getElementById('cell-activity');
-      if (actEl && M.activityFeed) {
-        M.activityFeed(actEl, [
-          { id: '1', title: 'Board Meeting', body: 'Q1 results approved unanimously', meta: '2 days ago', type: 'success' },
-          { id: '2', title: 'IR Update', body: 'Goldman initiated analyst coverage', meta: '4 days ago', type: 'info' },
-          { id: '3', title: 'Risk Alert', body: 'APAC FX exposure above threshold', meta: '1 week ago', type: 'warning' },
-          { id: '4', title: 'Compliance', body: 'SOC 2 Type II audit completed', meta: '2 weeks ago', type: 'success' },
-          { id: '5', title: 'M&A', body: 'Volta NDA signed, due diligence begins', meta: '3 weeks ago', type: 'info' }
-        ], { maxItems: 8 });
-      }
-
-      // ── Portfolio table with click ──
-      var tableEl = document.getElementById('cell-table');
-      if (tableEl && M.dataTable) {
-        M.dataTable(tableEl, {
-          columns: [
-            { key: 'unit', label: 'Business Unit', sortable: true },
-            { key: 'lead', label: 'Lead' },
-            { key: 'revenue', label: 'Revenue', align: 'right' },
-            { key: 'margin', label: 'Margin', align: 'right' },
-            { key: 'growth', label: 'Growth', type: 'status' },
-            { key: 'clients', label: 'Clients', align: 'right' },
-            { key: 'nps', label: 'NPS', align: 'right' }
+      if (strip) {
+        strip.updateZone(1, {
+          rows: [
+            { label: 'QUALIFY', value: 276, color: colors.info, secondary: '$276M' },
+            { label: 'SOLUTION', value: 214, color: colors.accent, secondary: '$214M' },
+            { label: 'NEGOTIATE', value: 133, color: colors.warning, secondary: '$133M' },
+            { label: 'LEGAL', value: 62, color: colors.error, secondary: '$62M' },
+            { label: 'CLOSED', value: 201, color: colors.success, secondary: '$201M' }
           ],
-          data: [
-            { unit: 'Enterprise SaaS', lead: 'Elena Rossi', revenue: '$5.8M', margin: '28.2%', growth: 'On Track', clients: '142', nps: '78' },
-            { unit: 'Platform Services', lead: 'Marco Bianchi', revenue: '$4.1M', margin: '22.5%', growth: 'On Track', clients: '438', nps: '71' },
-            { unit: 'Data & Analytics', lead: 'Yuki Watanabe', revenue: '$2.6M', margin: '31.4%', growth: 'Above Target', clients: '89', nps: '82' },
-            { unit: 'Professional Services', lead: 'Ravi Kumar', revenue: '$1.2M', margin: '15.8%', growth: 'At Risk', clients: '367', nps: '64' },
-            { unit: 'Strategic Partnerships', lead: 'Amara Okafor', revenue: '$0.5M', margin: '41.2%', growth: 'On Track', clients: '211', nps: '76' }
-          ],
-          compact: true,
-          ariaLabel: 'Portfolio overview by business unit',
-          onRowClick: function (row) {
-            if (M.toast) M.toast({ type: 'info', title: row.unit, message: row.revenue + ' revenue, ' + row.margin + ' margin' });
-          }
+          footer: { label: 'Weighted close', value: '$982M' }
         });
       }
+      showToast('warning', 'Liquidity stress mode', 'Cash buffer compressed, regional conversion slowed, treasury lane moved to daily review.');
+    });
+  }
+
+  var leverCards = document.querySelectorAll('[data-lever-title]');
+  for (k = 0; k < leverCards.length; k++) {
+    bindAction(leverCards[k], function () {
+      showToast('info', this.getAttribute('data-lever-title'), this.getAttribute('data-lever-detail'));
+    });
+  }
+
+  if (strip) {
+    setInterval(function () {
+      var demand = 84 + Math.round(Math.random() * 6);
+      var revenueNow = 3.78 + Math.random() * 0.12;
+
+      strip.updateZone(0, {
+        gaugeConfig: {
+          value: demand,
+          max: 100,
+          showNeedle: true,
+          numbers: [0, 50, 100],
+          centerValue: String(demand),
+          centerUnit: 'IDX',
+          statusLed: { color: colors.success, label: demand > 87 ? 'HOT' : 'LIVE' },
+          trend: {
+            direction: 'up',
+            delta: '+' + (2 + Math.round(Math.random() * 3)) + '.0',
+            color: colors.success
+          }
+        }
+      });
+
+      strip.updateZone(2, {
+        items: [
+          {
+            label: 'REVENUE',
+            value: '$' + revenueNow.toFixed(2) + 'B',
+            trend: 'up',
+            data: [3.1, 3.2, 3.3, 3.45, 3.55, 3.68, 3.78, Number(revenueNow.toFixed(2))]
+          },
+          {
+            label: 'EBITDA',
+            value: '$' + (798 + Math.round(Math.random() * 24)) + 'M',
+            trend: 'up',
+            data: [620, 655, 688, 720, 754, 781, 796, 812 + Math.round(Math.random() * 10)]
+          },
+          {
+            label: 'NRR',
+            value: (117 + Math.round(Math.random() * 2)) + '%',
+            trend: 'up',
+            data: [108, 110, 111, 113, 115, 116, 117, 118]
+          },
+          {
+            label: 'CHURN',
+            value: (2.0 + Math.random() * 0.3).toFixed(1) + '%',
+            trend: 'down',
+            data: [3.4, 3.2, 3.0, 2.8, 2.5, 2.4, 2.3, 2.1 + Math.random() * 0.15]
+          }
+        ]
+      });
+    }, 7000);
+  }
+})();
     })();
   </script>
 </body>
