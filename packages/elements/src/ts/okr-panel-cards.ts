@@ -8,7 +8,7 @@ import { isValidColor } from './core/sanitize';
 import {
   type OkrStatus, type OkrScope, type KeyResultInput, type ObjectiveInput,
   type Objective, type OkrStats,
-  STATUS_COLORS, SCOPE_COLORS,
+  getStatusColors, getScopeColors,
   safeNumber, pct, statusFromProgress, statusLabel, formatKR,
   el, ringTemplate, heroGaugeSVG,
 } from './okr-panel-utils';
@@ -39,7 +39,7 @@ export function calculateStats(objectives: Objective[]): OkrStats {
 export function createSummaryCard(
   status: OkrStatus, count: number, description: string, total: number,
 ): HTMLDivElement {
-  const rawColor = STATUS_COLORS[status] || '#00A651';
+  const rawColor = getStatusColors()[status] || '#00A651';
   const color = isValidColor(rawColor) ? rawColor : '#00A651';
   const p = total > 0 ? (count / total) * 100 : 0;
   const card = el('div', `mn-okr__summary-card mn-okr__summary-card--${status}`) as HTMLDivElement;
@@ -69,7 +69,7 @@ export function createSummaryCard(
 
 export function createHero(stats: OkrStats, period: string): HTMLElement {
   const status = statusFromProgress(stats.average);
-  const rawHeroColor = STATUS_COLORS[status];
+  const rawHeroColor = getStatusColors()[status];
   const color = isValidColor(rawHeroColor) ? rawHeroColor : '#00A651';
   const section = el('section', 'mn-okr__hero');
   const gaugeBlock = el('div', 'mn-okr__gauge-wrap') as HTMLDivElement;
@@ -111,15 +111,16 @@ export function createKRRow(kr: KeyResultInput, objectiveStatus: OkrStatus): HTM
 }
 
 export function createObjectiveCard(objective: Objective, index: number): HTMLElement {
-  const scopeColor = SCOPE_COLORS[objective.scope] ||
+  const scopeColor = getScopeColors()[objective.scope] ||
     (getComputedStyle(document.documentElement).getPropertyValue('--scope-local').trim() || '#4EA8DE');
+  const statusColors = getStatusColors();
   const status: OkrStatus =
-    objective.status in STATUS_COLORS ? objective.status : statusFromProgress(objective.progress);
+    objective.status in statusColors ? objective.status : statusFromProgress(objective.progress);
   const card = el('article', `mn-okr__objective mn-okr__objective--${status}`, {
     role: 'article', 'aria-label': `${objective.title} status ${status.replace('-', ' ')}`,
   });
   (card as HTMLElement).style.setProperty('--mn-okr-scope', scopeColor);
-  (card as HTMLElement).style.setProperty('--mn-okr-status', STATUS_COLORS[status]);
+  (card as HTMLElement).style.setProperty('--mn-okr-status', statusColors[status]);
   (card as HTMLElement).style.animationDelay = index * 45 + 'ms';
   const header = el('div', 'mn-okr__objective-header') as HTMLDivElement;
   const left = el('div', 'mn-okr__objective-main') as HTMLDivElement;
@@ -127,7 +128,7 @@ export function createObjectiveCard(objective: Objective, index: number): HTMLEl
   left.appendChild(el('h3', 'mn-okr__objective-title', { text: objective.title }));
   const right = el('div', 'mn-okr__objective-ring-wrap') as HTMLDivElement;
   right.innerHTML = ringTemplate(
-    56, 6, objective.progress, STATUS_COLORS[status],
+    56, 6, objective.progress, statusColors[status],
     Math.round(objective.progress) + '%', 'mn-okr__ring-track', 'mn-okr__ring-progress',
   );
   header.appendChild(left);

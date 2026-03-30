@@ -16,6 +16,9 @@
     "test:unit": "vitest run --passWithNoTests",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
+  "dependencies": {
+    "@convergio/shared-shell-starter": "workspace:*"
+  },
   "peerDependencies": {
     "@convergio/design-elements": "workspace:*",
     "@convergio/design-tokens": "workspace:*"

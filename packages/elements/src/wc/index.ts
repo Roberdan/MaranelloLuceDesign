@@ -47,6 +47,7 @@ let _loaded = false;
 
 /** Import all WC modules (side-effect: each calls customElements.define). */
 export async function registerAll(): Promise<void> {
+  if (typeof window === 'undefined' || typeof customElements === 'undefined') return;
   if (_loaded) return;
   try {
   await Promise.all([
@@ -95,6 +96,7 @@ export async function registerAll(): Promise<void> {
 
 /** Check if a specific WC tag is already registered. */
 export function isRegistered(tag: WcTag): boolean {
+  if (typeof customElements === 'undefined') return false;
   return !!customElements.get(tag);
 }
 
@@ -105,5 +107,6 @@ export function getAvailableTags(): readonly string[] {
 
 /** Get list of currently registered WC tags. */
 export function getRegistered(): string[] {
+  if (typeof customElements === 'undefined') return [];
   return WC_TAGS.filter((tag) => !!customElements.get(tag));
 }
