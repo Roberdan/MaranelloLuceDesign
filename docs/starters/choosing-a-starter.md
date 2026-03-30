@@ -52,7 +52,7 @@ interface OpsDashboardConfig extends ShellConfig {
 ```
 
 - Default theme: `nero` (dark, high-contrast).
-- `featureFlags.executiveStrip` is `true` by default.
+- Executive strip is enabled by default for this starter.
 - Best for: service health portals, CI/CD dashboards, infrastructure monitoring.
 
 ### executive-cockpit
@@ -68,7 +68,7 @@ interface CockpitConfig extends ShellConfig {
 
 - Default theme: `editorial` (light, typography-forward).
 - `featureFlags.agentPanel` is `true` — AI narrative summarisation is expected.
-- `createCockpitConfig` returns a frozen object; spread before mutating.
+- `createCockpitConfig` returns a plain mutable object; spread if you prefer working with copies.
 - Best for: investor portals, executive briefing tools, board-level dashboards.
 
 ### program-management
@@ -111,7 +111,7 @@ interface ProgramManagementConfig extends SharedShellConfig {
 | Passing primitive CSS values (e.g., `#ff0000`) instead of semantic tokens to theme fields | Violates token contract; themes stop working |
 | Replacing `renderSharedShell` return type | Consumers depend on `SharedShellController` (`destroy`, `getState`, `setActiveItem`) |
 | Setting `themes` to an empty array | Theme toggle breaks; `data-themeModes` attribute is empty |
-| Mutating the object returned by `createCockpitConfig` directly | Returns `Object.freeze()`; throws in strict mode |
+| Passing primitive CSS values (e.g., `#ff0000`) to cockpit theme fields | Violates token contract; themes stop working |
 | Changing `content.body` to raw user-supplied HTML | Violates `no innerHTML with user data` rule; use sanitised markup only |
 
 ### Adapter independence

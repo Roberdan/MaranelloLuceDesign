@@ -95,9 +95,14 @@ function generateVercelAssets(adapters?: SharedShellAdapters): DeployAssets {
 function generateAzureAssets(adapters?: SharedShellAdapters): DeployAssets {
   const envVars = collectEnvVars(adapters);
 
-  const envBlock = envVars
-    .map((v) => `            - name: ${v.name}\n              secretRef: ${v.name.toLowerCase().replace(/_/g, '-')}`)
-    .join('\n');
+  const envBlock = envVars.length > 0
+    ? '\n          env:\n' + envVars
+        .map((v) => {
+          const secretName = v.name.toLowerCase().replace(/_/g, '-');
+          return `            - name: ${v.name}\n              valueFrom:\n                secretKeyRef:\n                  name: ${secretName}\n                  key: ${v.name}`;
+        })
+        .join('\n')
+    : '';
 
   const containerApp = `apiVersion: apps/v1
 kind: Deployment
@@ -119,9 +124,7 @@ spec:
         - name: shell
           image: convergio-shell:latest
           ports:
-            - containerPort: 3000
-          env:
-${envBlock}
+            - containerPort: 3000${envBlock}
           resources:
             limits:
               cpu: '0.5'

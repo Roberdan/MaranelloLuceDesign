@@ -36,7 +36,7 @@ interface SemanticResult extends WorkflowEntry {
 ### Query by workflow id
 
 ```ts
-import { queryByWorkflow } from '@convergio/design-elements/semantic-registry';
+import { queryByWorkflow } from '@convergio/design-elements';
 
 const entry = queryByWorkflow('ops-monitor');
 // entry.components => [{ id: 'mn-system-status', role: 'service health panel' }, ...]
@@ -46,7 +46,7 @@ const entry = queryByWorkflow('ops-monitor');
 ### Query by intent (keyword search)
 
 ```ts
-import { queryByIntent } from '@convergio/design-elements/semantic-registry';
+import { queryByIntent } from '@convergio/design-elements';
 
 const results = queryByIntent({ keywords: ['monitoring', 'real-time', 'health'] });
 // returns SemanticResult[] sorted by descending score
@@ -59,7 +59,7 @@ point. A matching `dataShape` adds 1 point. Pick `results[0]` as the primary can
 ### List all workflows
 
 ```ts
-import { listWorkflows } from '@convergio/design-elements/semantic-registry';
+import { listWorkflows } from '@convergio/design-elements';
 
 listWorkflows();
 // [{ id, label, description }, ...]

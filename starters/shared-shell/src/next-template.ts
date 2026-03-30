@@ -35,6 +35,7 @@ export default function HomePage() {
 `,
     'src/shared-shell/config.ts': `import type { SharedShellConfig } from '@convergio/shared-shell-starter';
 
+export type { SharedShellConfig };
 export const sharedShellConfig: SharedShellConfig = ${serialized};
 `,
     'src/shared-shell/runtime.ts': `import { renderSharedShell } from '@convergio/shared-shell-starter';
