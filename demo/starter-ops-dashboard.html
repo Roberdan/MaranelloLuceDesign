@@ -3,231 +3,946 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ops Dashboard Starter — Maranello Luce Design</title>
-  <link rel="icon" href="../src/assets/favicon.svg">
+  <title>ConvergIO Operations — NOC/DevOps Dashboard</title>
   <link rel="stylesheet" href="../src/fonts/local-fonts.css">
   <link rel="stylesheet" href="../dist/css/maranello.css">
   <style>
-    body { margin: 0; padding: 0; background: var(--mn-surface); color: var(--mn-text); }
-    .ops-back {
-      display: inline-block; padding: 10px 20px; font-family: var(--font-mono);
-      font-size: 0.7rem; color: var(--mn-accent); text-decoration: none;
+    body { margin: 0; background: var(--mn-surface); color: var(--mn-text); }
+
+    /* ── Toolbar ── */
+    .toolbar-inner {
+      display: flex; align-items: center; gap: 0.5rem;
+      padding: 0 0.75rem; flex-wrap: nowrap;
+      background: var(--mn-surface-raised);
+      border-bottom: 1px solid var(--mn-border);
+      min-height: 48px;
     }
-    .ops-back:hover { text-decoration: underline; }
-    .ops-wrap { max-width: 1400px; margin: 0 auto; padding: 0 20px 40px; }
-    .ops-section-title {
-      font-family: var(--font-display); font-size: 0.7rem; text-transform: uppercase;
-      letter-spacing: 0.1em; color: var(--mn-accent); margin: 32px 0 12px;
+    .toolbar-brand {
+      font-family: var(--font-display); font-size: 0.75rem;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--mn-accent); white-space: nowrap; margin-right: 0.5rem;
     }
-    .ops-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 16px; }
-    .ops-grid--full { grid-column: 1 / -1; }
-    .ops-card {
-      background: var(--mn-surface-raised); border: 1px solid var(--mn-border);
-      border-radius: var(--radius-md); padding: 20px; overflow: hidden;
+    .toolbar-sep { width: 1px; height: 20px; background: var(--mn-border); margin: 0 0.25rem; }
+    .toolbar-spacer { flex: 1; min-width: 0.5rem; }
+    .view-btn {
+      display: inline-flex; align-items: center; gap: 0.35rem;
+      font-family: var(--font-display); font-size: 0.65rem;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      padding: 6px 10px; border: 1px solid var(--mn-border);
+      border-radius: var(--radius-md); background: transparent;
+      color: var(--mn-text-muted); cursor: pointer;
+      transition: border-color 0.15s, color 0.15s, background 0.15s;
+      white-space: nowrap; min-height: 32px;
     }
-    .ops-card__title {
-      font-family: var(--font-display); font-size: 0.65rem; text-transform: uppercase;
-      letter-spacing: 0.08em; color: var(--mn-text-muted); margin: 0 0 16px;
+    .view-btn:hover { border-color: var(--mn-accent); color: var(--mn-text); }
+    .view-btn[aria-pressed="true"] {
+      border-color: var(--mn-accent); color: var(--mn-accent);
+      background: var(--mn-surface-sunken);
     }
-    .ops-chart-wrap { position: relative; width: 100%; height: 180px; }
-    .ops-chart-wrap canvas { width: 100%; height: 100%; }
-    .ops-controls { display: flex; gap: 10px; flex-wrap: wrap; margin: 20px 0 8px; }
-    .ops-controls button {
-      font-family: var(--font-mono); font-size: 0.65rem; text-transform: uppercase;
-      letter-spacing: 0.05em; padding: 5px 12px; border: 1px solid var(--mn-border);
+    .view-btn svg { width: 14px; height: 14px; fill: currentColor; flex-shrink: 0; }
+    .toolbar-icon-btn {
+      position: relative; display: inline-flex; align-items: center;
+      justify-content: center; width: 32px; height: 32px;
+      border: 1px solid var(--mn-border); border-radius: var(--radius-md);
+      background: transparent; color: var(--mn-text-muted); cursor: pointer;
+      transition: border-color 0.15s, color 0.15s; flex-shrink: 0;
+    }
+    .toolbar-icon-btn:hover { border-color: var(--mn-accent); color: var(--mn-text); }
+    .toolbar-icon-btn svg { width: 14px; height: 14px; fill: currentColor; }
+    .badge-count {
+      position: absolute; top: -4px; right: -4px;
+      background: var(--mn-error); color: var(--mn-text-inverse);
+      font-family: var(--font-mono); font-size: 0.55rem; font-weight: 700;
+      border-radius: 8px; padding: 1px 4px; line-height: 1.4;
+      pointer-events: none;
+    }
+    .toolbar-avatar {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 28px; height: 28px; border-radius: 50%;
+      background: var(--mn-accent); color: var(--mn-surface);
+      font-family: var(--font-mono); font-size: 0.6rem; font-weight: 700;
+      flex-shrink: 0; cursor: default;
+    }
+
+    /* ── Sidebar ── */
+    .sidebar-section-label {
+      font-family: var(--font-display); font-size: 0.6rem;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--mn-text-muted); padding: 0.75rem 0.75rem 0.25rem;
+    }
+    .service-list { list-style: none; margin: 0; padding: 0 0.5rem; }
+    .service-item {
+      display: flex; align-items: center; gap: 0.5rem;
+      padding: 0.4rem 0.5rem; border-radius: var(--radius-md);
+      font-family: var(--font-mono); font-size: 0.65rem;
+      color: var(--mn-text); cursor: pointer;
+      transition: background 0.12s;
+    }
+    .service-item:hover { background: var(--mn-surface-raised); }
+    .service-item.is-active { background: var(--mn-surface-sunken); color: var(--mn-accent); }
+    .service-dot {
+      width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+    }
+    .dot-green  { background: var(--mn-success); }
+    .dot-amber  { background: var(--mn-warning); }
+    .dot-red    { background: var(--mn-error); }
+    .health-summary {
+      margin: 0.75rem 0.5rem 0; padding: 0.6rem 0.75rem;
+      background: var(--mn-surface-raised); border-radius: var(--radius-md);
+      border: 1px solid var(--mn-border);
+    }
+    .health-label {
+      font-family: var(--font-display); font-size: 0.55rem;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--mn-text-muted); margin-bottom: 0.35rem;
+    }
+    .health-value {
+      font-family: var(--font-mono); font-size: 0.9rem;
+      color: var(--mn-accent); font-weight: 700; margin-bottom: 0.35rem;
+    }
+    .health-bar {
+      height: 4px; border-radius: 2px;
+      background: var(--mn-surface-sunken);
+      overflow: hidden;
+    }
+    .health-bar-fill {
+      height: 100%; border-radius: 2px;
+      background: var(--mn-accent); width: 99.97%;
+    }
+
+    /* ── Layout slots ── */
+    #mn-slot-page .mn-panel-view,
+    #mn-slot-side-panel .mn-panel-view { height: 100%; }
+
+    /* ── View container padding ── */
+    .view-pad { padding: 1rem; height: 100%; box-sizing: border-box; overflow: auto; }
+
+    /* ── Panel box ── */
+    .panel-box {
+      border: 1px solid var(--mn-border); border-radius: var(--radius-md);
+      background: var(--mn-surface-raised); padding: 0.75rem;
+    }
+    .panel-title {
+      font-family: var(--font-display); font-size: 0.6rem;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--mn-text-muted); margin: 0 0 0.5rem;
+    }
+
+    /* ── Dashboard charts row ── */
+    .charts-row {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 1rem; margin-top: 1rem;
+    }
+    .chart-canvas-wrap { height: 120px; position: relative; }
+    .chart-canvas-wrap canvas { width: 100% !important; height: 100% !important; }
+
+    /* ── Infrastructure grid ── */
+    .infra-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 0.75rem;
+    }
+    .infra-card {
+      padding: 0.75rem; border: 1px solid var(--mn-border);
       border-radius: var(--radius-md); background: var(--mn-surface-raised);
-      color: var(--mn-text); cursor: pointer; transition: all 0.15s;
     }
-    .ops-controls button:hover { border-color: var(--mn-accent); color: var(--mn-accent); }
-    @media (max-width: 768px) { .ops-grid { grid-template-columns: 1fr; } }
+    .infra-card-name {
+      font-family: var(--font-mono); font-size: 0.65rem;
+      color: var(--mn-text); margin-bottom: 0.4rem; font-weight: 600;
+    }
+    .infra-card-row {
+      display: flex; justify-content: space-between; align-items: center;
+      font-family: var(--font-mono); font-size: 0.6rem;
+      color: var(--mn-text-muted); margin-bottom: 0.25rem;
+    }
+    .infra-card-row .value { color: var(--mn-text); font-weight: 600; }
+    .infra-status { display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.5rem; }
+    .infra-status .label {
+      font-family: var(--font-display); font-size: 0.55rem;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--mn-text-muted);
+    }
+
+    /* ── Side detail panel ── */
+    .detail-panel {
+      display: flex; flex-direction: column; height: 100%;
+      background: var(--mn-surface); overflow: hidden;
+    }
+    .detail-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.75rem 1rem; border-bottom: 1px solid var(--mn-border);
+      background: var(--mn-surface-raised); flex-shrink: 0;
+    }
+    .detail-title {
+      font-family: var(--font-display); font-size: 0.7rem;
+      text-transform: uppercase; letter-spacing: 0.08em; color: var(--mn-text);
+    }
+    .detail-close {
+      display: flex; align-items: center; justify-content: center;
+      width: 28px; height: 28px; border: 1px solid var(--mn-border);
+      border-radius: var(--radius-md); background: transparent;
+      color: var(--mn-text-muted); cursor: pointer; font-size: 1rem;
+      line-height: 1;
+    }
+    .detail-close:hover { border-color: var(--mn-error); color: var(--mn-error); }
+    .detail-tabs {
+      display: flex; gap: 0; border-bottom: 1px solid var(--mn-border);
+      background: var(--mn-surface-raised); flex-shrink: 0;
+    }
+    .detail-tab {
+      padding: 0.5rem 1rem; font-family: var(--font-display); font-size: 0.6rem;
+      text-transform: uppercase; letter-spacing: 0.08em; color: var(--mn-text-muted);
+      cursor: pointer; border-bottom: 2px solid transparent;
+      background: transparent; border-top: none; border-left: none; border-right: none;
+      transition: color 0.12s, border-color 0.12s;
+    }
+    .detail-tab:hover { color: var(--mn-text); }
+    .detail-tab.is-active { color: var(--mn-accent); border-bottom-color: var(--mn-accent); }
+    .detail-body { flex: 1; overflow: auto; padding: 1rem; }
+    .detail-tab-pane { display: none; }
+    .detail-tab-pane.is-active { display: block; }
+    .detail-field { margin-bottom: 0.75rem; }
+    .detail-field-label {
+      font-family: var(--font-display); font-size: 0.55rem;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--mn-text-muted); margin-bottom: 0.2rem;
+    }
+    .detail-field-value {
+      font-family: var(--font-mono); font-size: 0.75rem; color: var(--mn-text);
+    }
+    .timeline { list-style: none; margin: 0; padding: 0; }
+    .timeline-item {
+      display: flex; gap: 0.6rem; padding: 0.4rem 0;
+      border-bottom: 1px solid var(--mn-border); font-size: 0.65rem;
+    }
+    .timeline-time { color: var(--mn-text-muted); font-family: var(--font-mono); white-space: nowrap; }
+    .timeline-msg { color: var(--mn-text); font-family: var(--font-mono); }
+    .log-block {
+      background: var(--mn-surface-sunken); border-radius: var(--radius-md);
+      padding: 0.6rem; font-family: var(--font-mono); font-size: 0.6rem;
+      color: var(--mn-text-muted); white-space: pre-wrap; word-break: break-all;
+      max-height: 180px; overflow: auto; line-height: 1.5;
+    }
+    .affected-list { list-style: none; margin: 0; padding: 0; }
+    .affected-list li {
+      font-family: var(--font-mono); font-size: 0.65rem; color: var(--mn-text);
+      padding: 0.2rem 0; border-bottom: 1px solid var(--mn-border);
+    }
+
+    /* ── Badges ── */
+    .badge {
+      display: inline-flex; align-items: center;
+      font-family: var(--font-mono); font-size: 0.55rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.05em;
+      padding: 2px 7px; border-radius: 3px; line-height: 1.4;
+    }
+    .badge-critical { background: var(--mn-error);   color: var(--mn-text-inverse); }
+    .badge-warning  { background: var(--mn-warning); color: var(--mn-surface); }
+    .badge-info     { background: var(--mn-info);    color: var(--mn-text-inverse); }
+    .badge-success  { background: var(--mn-success); color: var(--mn-text-inverse); }
+    .badge-purple   { background: var(--mn-accent);  color: var(--mn-surface); }
+    .badge-muted    { background: var(--mn-surface-sunken); color: var(--mn-text-muted);
+                      border: 1px solid var(--mn-border); }
+    .badge-active      { background: var(--mn-error);   color: var(--mn-text-inverse); }
+    .badge-resolved    { background: var(--mn-success); color: var(--mn-text-inverse); }
+    .badge-investigating { background: var(--mn-warning); color: var(--mn-surface); }
+    .badge-deploying   { background: var(--mn-info); color: var(--mn-text-inverse); }
+    .badge-rolled-back { background: var(--mn-surface-sunken); color: var(--mn-text-muted);
+                         border: 1px solid var(--mn-border); }
+    .badge-prod  { background: var(--mn-error);   color: var(--mn-text-inverse); }
+    .badge-stage { background: var(--mn-warning); color: var(--mn-surface); }
+    .badge-dev   { background: var(--mn-success); color: var(--mn-text-inverse); }
+
+    @media (max-width: 680px) {
+      .charts-row { grid-template-columns: 1fr; }
+      .view-btn span { display: none; }
+    }
   </style>
 </head>
-<body>
-  <script>
-    try {
-      var t = localStorage.getItem('mn-theme');
-      if (t && t !== 'editorial') document.body.classList.add('mn-' + t);
-    } catch (_) {}
-  </script>
+<body class="mn-nero">
 
-  <a class="ops-back" href="index.html">&larr; Back to Gallery</a>
+  <mn-app-shell id="ops-shell" layout="full">
 
-  <div id="header-mount"></div>
+    <!-- NAV SLOT: Service tree sidebar -->
+    <div slot="nav">
+      <aside class="mn-sidebar" aria-label="Service navigation">
+        <div class="mn-sidebar__header">
+          <span class="mn-sidebar__brand">Ops Center</span>
+        </div>
+        <p class="sidebar-section-label">Services</p>
+        <ul class="service-list" id="service-list" role="list" aria-label="Service status">
+          <li class="service-item is-active" data-service="all" role="button" tabindex="0"
+              aria-pressed="true" aria-label="All services">
+            <span class="service-dot dot-green" aria-hidden="true"></span>All Services
+          </li>
+          <li class="service-item" data-service="api-gateway" role="button" tabindex="0"
+              aria-label="API Gateway - operational">
+            <span class="service-dot dot-green" aria-hidden="true"></span>API Gateway
+          </li>
+          <li class="service-item" data-service="auth-service" role="button" tabindex="0"
+              aria-label="Auth Service - operational">
+            <span class="service-dot dot-green" aria-hidden="true"></span>Auth Service
+          </li>
+          <li class="service-item" data-service="user-db" role="button" tabindex="0"
+              aria-label="User Database - operational">
+            <span class="service-dot dot-green" aria-hidden="true"></span>User Database
+          </li>
+          <li class="service-item" data-service="redis-cache" role="button" tabindex="0"
+              aria-label="Redis Cache - degraded">
+            <span class="service-dot dot-amber" aria-hidden="true"></span>Redis Cache
+          </li>
+          <li class="service-item" data-service="task-queue" role="button" tabindex="0"
+              aria-label="Task Queue - critical">
+            <span class="service-dot dot-red" aria-hidden="true"></span>Task Queue
+          </li>
+          <li class="service-item" data-service="blob-storage" role="button" tabindex="0"
+              aria-label="Blob Storage - operational">
+            <span class="service-dot dot-green" aria-hidden="true"></span>Blob Storage
+          </li>
+        </ul>
 
-  <div class="ops-wrap">
-    <div class="ops-controls">
-      <button onclick="Maranello.setTheme('editorial')">Editorial</button>
-      <button onclick="Maranello.setTheme('nero')">Nero</button>
-      <button onclick="Maranello.setTheme('avorio')">Avorio</button>
-      <button onclick="Maranello.setTheme('colorblind')">Colorblind</button>
-      <button onclick="Maranello.setTheme('sugar')">Sugar</button>
-      <button onclick="Maranello.setTheme('navy')">Navy</button>
+        <div class="health-summary" role="region" aria-label="System health summary">
+          <div class="health-label">System Health</div>
+          <div class="health-value" aria-live="polite">99.97%</div>
+          <div class="health-bar" role="progressbar" aria-valuenow="99.97"
+               aria-valuemin="0" aria-valuemax="100" aria-label="System health 99.97%">
+            <div class="health-bar-fill"></div>
+          </div>
+        </div>
+      </aside>
     </div>
 
-    <div id="strip-mount"></div>
+    <!-- TOOLBAR SLOT -->
+    <div slot="toolbar">
+      <div class="toolbar-inner" role="toolbar" aria-label="Operations toolbar">
+        <span class="toolbar-brand" aria-label="ConvergIO Operations">ConvergIO Operations</span>
+        <div class="toolbar-sep" aria-hidden="true"></div>
 
-    <h2 class="ops-section-title">Recent Deployments</h2>
-    <div id="table-mount"></div>
+        <!-- View switcher -->
+        <button type="button" class="view-btn" id="btn-view-dashboard"
+                aria-pressed="true" data-view="dashboard" aria-label="Dashboard view">
+          <svg aria-hidden="true" viewBox="0 0 16 16"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>
+          <span>Dashboard</span>
+        </button>
+        <button type="button" class="view-btn" id="btn-view-alerts"
+                aria-pressed="false" data-view="alerts" aria-label="Alerts view">
+          <svg aria-hidden="true" viewBox="0 0 16 16"><path d="M8 1a5 5 0 0 0-5 5v3L1 11h14l-2-2V6a5 5 0 0 0-5-5zm0 14a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2z"/></svg>
+          <span>Alerts</span>
+        </button>
+        <button type="button" class="view-btn" id="btn-view-deployments"
+                aria-pressed="false" data-view="deployments" aria-label="Deployments view">
+          <svg aria-hidden="true" viewBox="0 0 16 16"><path d="M8 1l7 4v6l-7 4-7-4V5l7-4zm0 2L3 6v4l5 3 5-3V6L8 3z"/></svg>
+          <span>Deployments</span>
+        </button>
+        <button type="button" class="view-btn" id="btn-view-infrastructure"
+                aria-pressed="false" data-view="infrastructure" aria-label="Infrastructure view">
+          <svg aria-hidden="true" viewBox="0 0 16 16"><rect x="1" y="3" width="14" height="3" rx="1"/><rect x="1" y="8" width="14" height="3" rx="1"/><rect x="1" y="13" width="14" height="2" rx="1"/><circle cx="4" cy="4.5" r="1"/><circle cx="4" cy="9.5" r="1"/><circle cx="4" cy="14" r="1"/></svg>
+          <span>Infrastructure</span>
+        </button>
 
-    <div class="ops-grid">
-      <div class="ops-card">
-        <p class="ops-card__title">Request Throughput — Last 24h</p>
-        <div class="ops-chart-wrap">
-          <canvas id="chart-sparkline" role="img" aria-label="Sparkline chart showing request throughput over 24 hours"></canvas>
-          <span class="sr-only">Request throughput sparkline: peaks at 4200 req/s, current 3800 req/s</span>
-        </div>
-      </div>
-      <div class="ops-card">
-        <p class="ops-card__title">Error Distribution by Service</p>
-        <div class="ops-chart-wrap">
-          <canvas id="chart-bar" role="img" aria-label="Bar chart showing error counts per service"></canvas>
-          <span class="sr-only">Error counts: api-gateway 47, auth-service 12, user-db 8, redis-cache 3, task-queue 21, blob-storage 5</span>
-        </div>
+        <div class="toolbar-sep" aria-hidden="true"></div>
+
+        <!-- Severity filter -->
+        <label for="severity-filter" class="mn-sr-only">Filter by severity</label>
+        <select id="severity-filter" class="mn-form-select" aria-label="Filter alerts by severity">
+          <option value="all">All Severities</option>
+          <option value="critical">Critical</option>
+          <option value="warning">Warning</option>
+          <option value="info">Info</option>
+        </select>
+
+        <div class="toolbar-spacer"></div>
+
+        <!-- Cmd-K -->
+        <button type="button" class="view-btn" id="cmd-k-btn"
+                aria-label="Open command palette (Ctrl+K)">
+          <svg aria-hidden="true" viewBox="0 0 16 16"><circle cx="6.5" cy="6.5" r="4" fill="none" stroke="currentColor" stroke-width="1.5"/><line x1="10" y1="10" x2="14" y2="14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <span>Cmd-K</span>
+        </button>
+
+        <!-- Alert bell -->
+        <button type="button" class="toolbar-icon-btn" aria-label="Alerts: 3 active">
+          <svg aria-hidden="true" viewBox="0 0 16 16"><path d="M8 1a5 5 0 0 0-5 5v3L1 11h14l-2-2V6a5 5 0 0 0-5-5zm0 14a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2z"/></svg>
+          <span class="badge-count" aria-hidden="true">3</span>
+        </button>
+
+        <!-- Settings -->
+        <button type="button" class="toolbar-icon-btn" aria-label="Settings">
+          <svg aria-hidden="true" viewBox="0 0 16 16"><path d="M8 10a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm4.94-1a5.06 5.06 0 0 0 .06-.99 5.06 5.06 0 0 0-.06-1l1.52-1.19a.5.5 0 0 0 .12-.64l-1.44-2.49a.5.5 0 0 0-.61-.22l-1.79.72A5.02 5.02 0 0 0 9.5 2.4l-.27-1.9A.49.49 0 0 0 8.75 0h-1.5a.49.49 0 0 0-.48.41l-.27 1.9a5.02 5.02 0 0 0-1.14.63l-1.79-.72a.5.5 0 0 0-.61.22L1.52 4.93a.49.49 0 0 0 .12.64L3.16 6.76A5.29 5.29 0 0 0 3.1 7.75a5.06 5.06 0 0 0 .06 1L1.64 9.94a.5.5 0 0 0-.12.64l1.44 2.49a.5.5 0 0 0 .61.22l1.79-.72c.35.24.74.45 1.14.63l.27 1.9c.05.23.26.4.48.4h1.5c.23 0 .43-.17.48-.41l.27-1.9a5.02 5.02 0 0 0 1.14-.63l1.79.72a.5.5 0 0 0 .61-.22l1.44-2.49a.49.49 0 0 0-.12-.64L12.94 8.75z"/></svg>
+        </button>
+
+        <!-- Theme -->
+        <label for="theme-select" class="mn-sr-only">Theme</label>
+        <select id="theme-select" class="mn-form-select" aria-label="Select theme">
+          <option value="nero" selected>Nero</option>
+          <option value="editorial">Editorial</option>
+          <option value="avorio">Avorio</option>
+          <option value="colorblind">Colorblind</option>
+          <option value="sugar">Sugar</option>
+          <option value="navy">Navy</option>
+        </select>
+
+        <!-- Avatar -->
+        <div class="toolbar-avatar" aria-label="Omar Eriksson" title="Omar Eriksson">OE</div>
       </div>
     </div>
 
-    <h2 class="ops-section-title">System Status</h2>
-    <div id="status-mount"></div>
-  </div>
+    <!-- MAIN SLOT -->
+    <div slot="main" id="mn-slot-page" class="mn-slot mn-slot--page"></div>
+
+    <!-- DETAIL SLOT -->
+    <div slot="detail" id="mn-slot-side-panel" class="mn-slot mn-slot--side-panel"></div>
+
+  </mn-app-shell>
 
   <script src="../dist/iife/maranello.min.js"></script>
+  <script type="module" src="../dist/wc/mn-app-shell.js"></script>
   <script>
-    var M = window.Maranello;
+    (function () {
+      var M = window.Maranello;
+      if (!M) return;
 
-    /* ── Header Shell ─────────────────────────────────────────── */
-    M.headerShell(document.getElementById('header-mount'), {
-      ariaLabel: 'Operations dashboard navigation',
-      sections: [
-        { type: 'brand', label: 'ConvergIO Operations', href: 'index.html' },
-        {
-          type: 'actions', role: 'pre', presentation: 'segmented',
-          items: [
-            { id: 'overview',       label: 'Overview',       active: true },
-            { id: 'alerts',         label: 'Alerts' },
-            { id: 'deployments',    label: 'Deployments' },
-            { id: 'infrastructure', label: 'Infrastructure' }
-          ]
-        },
-        { type: 'spacer' },
-        { type: 'theme' }
-      ],
-      callbacks: {
-        onAction: function (p) { console.log('[ops] nav:', p.id); }
+      var shellEl = document.getElementById('ops-shell');
+      var pageSlot = document.getElementById('mn-slot-page');
+      var currentService = 'all';
+      var currentSeverity = 'all';
+
+      /* ── Registry & Orchestrator ── */
+      var registry = M.ViewRegistry.getInstance();
+      registry.clear();
+      var navigation = new M.NavigationModel();
+      var orchestrator = new M.PanelOrchestrator(registry, navigation);
+      shellEl.orchestrator = orchestrator;
+
+      /* ── Data ── */
+      var SERVICES = ['api-gateway', 'auth-service', 'user-db', 'redis-cache', 'task-queue', 'blob-storage'];
+
+      var ALERTS = [
+        { id: 'A-001', severity: 'CRITICAL', service: 'task-queue',   message: 'CPU utilization exceeded 95%',          time: '08:14:02', status: 'Active',        first: '2024-01-15 08:14', last: '2024-01-15 08:42', affected: ['task-queue', 'api-gateway'] },
+        { id: 'A-002', severity: 'CRITICAL', service: 'redis-cache',  message: 'Connection pool exhausted',             time: '08:21:17', status: 'Investigating',  first: '2024-01-15 08:21', last: '2024-01-15 08:55', affected: ['redis-cache', 'auth-service'] },
+        { id: 'A-003', severity: 'CRITICAL', service: 'task-queue',   message: 'Memory pressure above threshold',       time: '08:33:45', status: 'Active',        first: '2024-01-15 08:33', last: '2024-01-15 09:01', affected: ['task-queue'] },
+        { id: 'A-004', severity: 'WARNING',  service: 'api-gateway',  message: 'P99 latency above 500ms SLO',           time: '07:58:11', status: 'Investigating',  first: '2024-01-15 07:58', last: '2024-01-15 08:30', affected: ['api-gateway'] },
+        { id: 'A-005', severity: 'WARNING',  service: 'user-db',      message: 'Replication lag 42s on replica-3',      time: '07:45:33', status: 'Resolved',      first: '2024-01-15 07:45', last: '2024-01-15 08:10', affected: ['user-db'] },
+        { id: 'A-006', severity: 'WARNING',  service: 'blob-storage', message: 'Storage capacity at 87%',               time: '06:30:00', status: 'Active',        first: '2024-01-14 22:00', last: '2024-01-15 06:30', affected: ['blob-storage'] },
+        { id: 'A-007', severity: 'INFO',     service: 'auth-service', message: 'Token rotation scheduled in 2 hours',   time: '06:00:00', status: 'Active',        first: '2024-01-15 06:00', last: '2024-01-15 06:00', affected: ['auth-service'] },
+        { id: 'A-008', severity: 'INFO',     service: 'api-gateway',  message: 'Certificate renewal in 14 days',        time: '05:00:00', status: 'Active',        first: '2024-01-01 05:00', last: '2024-01-15 05:00', affected: ['api-gateway'] },
+        { id: 'A-009', severity: 'WARNING',  service: 'redis-cache',  message: 'Cache hit rate dropped to 71%',         time: '07:12:08', status: 'Investigating',  first: '2024-01-15 07:12', last: '2024-01-15 07:55', affected: ['redis-cache'] },
+        { id: 'A-010', severity: 'CRITICAL', service: 'task-queue',   message: 'Dead letter queue depth 1,204 messages',time: '08:05:52', status: 'Active',        first: '2024-01-15 08:05', last: '2024-01-15 08:50', affected: ['task-queue', 'blob-storage'] },
+        { id: 'A-011', severity: 'INFO',     service: 'user-db',      message: 'Scheduled maintenance window at 22:00', time: '04:00:00', status: 'Resolved',      first: '2024-01-15 04:00', last: '2024-01-15 04:00', affected: ['user-db'] },
+        { id: 'A-012', severity: 'WARNING',  service: 'auth-service', message: 'Failed login attempts spike from AS-102',time: '07:33:19', status: 'Investigating',  first: '2024-01-15 07:33', last: '2024-01-15 08:15', affected: ['auth-service'] },
+        { id: 'A-013', severity: 'INFO',     service: 'blob-storage', message: 'CDN cache purge completed successfully', time: '03:45:00', status: 'Resolved',      first: '2024-01-15 03:45', last: '2024-01-15 03:45', affected: ['blob-storage'] },
+        { id: 'A-014', severity: 'WARNING',  service: 'api-gateway',  message: 'Rate limit threshold reached on /auth',  time: '08:02:41', status: 'Active',        first: '2024-01-15 08:02', last: '2024-01-15 08:44', affected: ['api-gateway', 'auth-service'] },
+        { id: 'A-015', severity: 'CRITICAL', service: 'redis-cache',  message: 'Primary node failover initiated',        time: '08:44:00', status: 'Investigating',  first: '2024-01-15 08:44', last: '2024-01-15 09:02', affected: ['redis-cache', 'auth-service', 'task-queue'] },
+        { id: 'A-016', severity: 'INFO',     service: 'user-db',      message: 'Slow query report generated: 3 queries', time: '02:00:00', status: 'Resolved',      first: '2024-01-15 02:00', last: '2024-01-15 02:00', affected: ['user-db'] },
+        { id: 'A-017', severity: 'WARNING',  service: 'task-queue',   message: 'Worker thread pool at 94% utilization',  time: '07:50:22', status: 'Active',        first: '2024-01-15 07:50', last: '2024-01-15 08:49', affected: ['task-queue'] },
+        { id: 'A-018', severity: 'INFO',     service: 'api-gateway',  message: 'Upstream dependency version mismatch',   time: '01:30:00', status: 'Resolved',      first: '2024-01-15 01:30', last: '2024-01-15 01:30', affected: ['api-gateway'] },
+        { id: 'A-019', severity: 'WARNING',  service: 'auth-service', message: 'OAuth2 provider response time 340ms',   time: '06:55:14', status: 'Resolved',      first: '2024-01-15 06:55', last: '2024-01-15 07:22', affected: ['auth-service'] },
+        { id: 'A-020', severity: 'INFO',     service: 'blob-storage', message: 'Backup job completed: 2.4TB archived',  time: '00:15:00', status: 'Resolved',      first: '2024-01-15 00:00', last: '2024-01-15 00:15', affected: ['blob-storage'] }
+      ];
+
+      var DEPLOYMENTS = [
+        { id: 'D-001', service: 'api-gateway',   version: 'v3.2.1',      env: 'production', status: 'Success',      deployer: 'Omar Eriksson',     time: '07:30:00', region: 'us-east-1',  duration: '4m 12s',  buildLog: '[INFO] Build started\n[INFO] Tests: 412 passed\n[INFO] Image pushed: api-gateway:v3.2.1\n[INFO] Canary: 10% traffic\n[INFO] Rollout complete' },
+        { id: 'D-002', service: 'auth-service',  version: 'v2.8.0',      env: 'production', status: 'Success',      deployer: 'Yuki Tanaka',       time: '06:45:00', region: 'eu-west-1',  duration: '3m 58s',  buildLog: '[INFO] Build started\n[INFO] Tests: 289 passed\n[INFO] Image pushed: auth-service:v2.8.0\n[INFO] Rollout complete' },
+        { id: 'D-003', service: 'user-db',       version: 'v1.14.3',     env: 'staging',    status: 'Success',      deployer: 'Fatima Al-Rashid',  time: '05:20:00', region: 'us-east-1',  duration: '6m 03s',  buildLog: '[INFO] Migration: 3 scripts applied\n[INFO] Schema verified\n[INFO] Deploy complete' },
+        { id: 'D-004', service: 'redis-cache',   version: 'v4.0.0-rc2',  env: 'staging',    status: 'Deploying',    deployer: 'Pavel Novak',       time: '08:50:00', region: 'ap-south-1', duration: '1m 44s',  buildLog: '[INFO] Build started\n[INFO] Tests: 177 passed\n[WARN] Config reloading...' },
+        { id: 'D-005', service: 'task-queue',    version: 'v2.1.7',      env: 'production', status: 'Rolled Back',  deployer: 'Omar Eriksson',     time: '04:10:00', region: 'us-east-1',  duration: '2m 31s',  buildLog: '[INFO] Build started\n[ERROR] Health check failed after 60s\n[WARN] Rolling back to v2.1.6\n[INFO] Rollback complete' },
+        { id: 'D-006', service: 'blob-storage',  version: 'v1.9.0',      env: 'production', status: 'Success',      deployer: 'Yuki Tanaka',       time: '02:00:00', region: 'eu-west-1',  duration: '5m 17s',  buildLog: '[INFO] Build started\n[INFO] Tests: 321 passed\n[INFO] Deploy complete' },
+        { id: 'D-007', service: 'api-gateway',   version: 'v3.1.9',      env: 'staging',    status: 'Success',      deployer: 'Fatima Al-Rashid',  time: '2024-01-14 22:15', region: 'ap-south-1', duration: '3m 48s', buildLog: '[INFO] Staging deploy complete' },
+        { id: 'D-008', service: 'auth-service',  version: 'v2.7.5',      env: 'dev',        status: 'Success',      deployer: 'Pavel Novak',       time: '2024-01-14 20:00', region: 'us-east-1',  duration: '1m 55s', buildLog: '[INFO] Dev deploy complete' },
+        { id: 'D-009', service: 'user-db',       version: 'v1.14.2',     env: 'production', status: 'Success',      deployer: 'Omar Eriksson',     time: '2024-01-14 18:30', region: 'eu-west-1',  duration: '7m 02s', buildLog: '[INFO] Migration applied\n[INFO] Production deploy complete' },
+        { id: 'D-010', service: 'task-queue',    version: 'v2.1.6',      env: 'production', status: 'Success',      deployer: 'Yuki Tanaka',       time: '2024-01-14 16:45', region: 'us-east-1',  duration: '3m 21s', buildLog: '[INFO] Deploy complete' },
+        { id: 'D-011', service: 'blob-storage',  version: 'v1.8.4',      env: 'staging',    status: 'Success',      deployer: 'Fatima Al-Rashid',  time: '2024-01-14 14:00', region: 'ap-south-1', duration: '4m 09s', buildLog: '[INFO] Staging deploy complete' },
+        { id: 'D-012', service: 'redis-cache',   version: 'v3.9.2',      env: 'production', status: 'Success',      deployer: 'Pavel Novak',       time: '2024-01-14 12:30', region: 'eu-west-1',  duration: '2m 47s', buildLog: '[INFO] Cache cluster restarted\n[INFO] Deploy complete' }
+      ];
+
+      var INFRA = [
+        { name: 'API Gateway',   status: 'ok',      latency: 48,  uptime: 99.97 },
+        { name: 'Auth Service',  status: 'ok',      latency: 62,  uptime: 99.94 },
+        { name: 'User Database', status: 'ok',      latency: 91,  uptime: 99.99 },
+        { name: 'Redis Cache',   status: 'warning', latency: 210, uptime: 98.41 },
+        { name: 'Task Queue',    status: 'error',   latency: 480, uptime: 96.02 },
+        { name: 'Blob Storage',  status: 'ok',      latency: 73,  uptime: 99.88 }
+      ];
+
+      /* ── Helpers ── */
+      function severityBadge(s) {
+        var map = { CRITICAL: 'badge-critical', WARNING: 'badge-warning', INFO: 'badge-info' };
+        return '<span class="badge ' + (map[s] || 'badge-muted') + '">' + s + '</span>';
       }
-    });
+      function statusBadge(s) {
+        var clean = s.toLowerCase().replace(/\s+/g, '-');
+        return '<span class="badge badge-' + clean + '">' + s + '</span>';
+      }
+      function envBadge(e) {
+        var map = { production: 'badge-prod', staging: 'badge-stage', dev: 'badge-dev' };
+        return '<span class="badge ' + (map[e] || 'badge-muted') + '">' + e.toUpperCase() + '</span>';
+      }
 
-    /* ── Dashboard Strip ──────────────────────────────────────── */
-    M.dashboardStrip('strip-mount', {
-      ariaLabel: 'Operations instrument strip',
-      zones: [
-        {
-          type: 'gauge', label: 'SERVER UTIL', size: 'sm',
-          gaugeConfig: {
-            value: 78, max: 100, color: '#FFC72C', colorMode: 'lower-better',
-            ticks: 10, subticks: 5, startAngle: -225, endAngle: 45, showNeedle: true,
-            numbers: [0, 25, 50, 75, 100],
-            complications: {
-              centerValue: '78', centerUnit: '%', centerLabel: 'SERVER UTIL',
-              arcBar: { labelLeft: '0', labelRight: '100' },
-              statusLed: { color: '#FFC72C', label: 'LIVE' }
-            }
+      function filteredAlerts() {
+        return ALERTS.filter(function (a) {
+          if (currentService !== 'all' && a.service !== currentService) return false;
+          if (currentSeverity !== 'all' && a.severity.toLowerCase() !== currentSeverity) return false;
+          return true;
+        });
+      }
+
+      function filteredDeployments() {
+        return DEPLOYMENTS.filter(function (d) {
+          return currentService === 'all' || d.service === currentService;
+        });
+      }
+
+      /* ── Alert detail tabs ── */
+      function makeTabs(container) {
+        var tabs = container.querySelectorAll('.detail-tab');
+        var panes = container.querySelectorAll('.detail-tab-pane');
+        tabs.forEach(function (tab) {
+          tab.addEventListener('click', function () {
+            tabs.forEach(function (t) { t.classList.remove('is-active'); t.setAttribute('aria-selected', 'false'); });
+            panes.forEach(function (p) { p.classList.remove('is-active'); });
+            tab.classList.add('is-active');
+            tab.setAttribute('aria-selected', 'true');
+            var target = container.getElementById ? container.getElementById(tab.dataset.pane) : document.getElementById(tab.dataset.pane);
+            if (target) target.classList.add('is-active');
+          });
+        });
+      }
+
+      /* ── VIEW 1: Dashboard ── */
+      registry.register({
+        id: 'dashboard',
+        title: 'Dashboard',
+        defaultPlacement: 'page',
+        factory: function (container) {
+          container.innerHTML = '<div class="view-pad"><div id="dash-strip-mount"></div><div class="charts-row"><div class="panel-box"><p class="panel-title">Request Throughput // 24H</p><div class="chart-canvas-wrap"><canvas id="chart-throughput" role="img" aria-label="Request throughput over 24 hours"></canvas></div></div><div class="panel-box"><p class="panel-title">Error Distribution by Service</p><div class="chart-canvas-wrap"><canvas id="chart-errors" role="img" aria-label="Error distribution by service"></canvas></div></div></div></div>';
+
+          var stripMount = document.getElementById('dash-strip-mount');
+          var strip = null;
+          if (stripMount && M.dashboardStrip) {
+            strip = M.dashboardStrip(stripMount, {
+              ariaLabel: 'Operations instrument strip',
+              zones: [
+                {
+                  type: 'gauge',
+                  label: 'SERVER UTILIZATION',
+                  gaugeConfig: {
+                    value: 86, max: 100,
+                    color: '#FFC72C', colorMode: 'lower-better',
+                    ticks: 10, subticks: 5,
+                    startAngle: -225, endAngle: 45,
+                    showNeedle: true,
+                    numbers: [0, 25, 50, 75, 100],
+                    complications: {
+                      centerValue: '86', centerUnit: '%', centerLabel: 'UTILIZATION',
+                      arcBar: { labelLeft: '0', labelRight: '100' },
+                      statusLed: { color: '#FFC72C', label: 'LIVE' }
+                    }
+                  },
+                  size: 'sm'
+                },
+                {
+                  type: 'pipeline',
+                  title: 'CI/CD PIPELINE',
+                  rows: [
+                    { label: 'BUILD',  value: 47, color: '#448AFF' },
+                    { label: 'TEST',   value: 48, color: '#7C4DFF' },
+                    { label: 'STAGE',  value: 40, color: '#FFC72C' },
+                    { label: 'DEPLOY', value: 14, color: '#00A651' }
+                  ]
+                },
+                {
+                  type: 'trend',
+                  title: 'REQUEST & ERROR RATES',
+                  items: [
+                    { label: 'REQ/S',   value: 2841, color: '#448AFF', data: [2100, 2280, 2450, 2600, 2710, 2841] },
+                    { label: 'ERR/MIN', value: 93,   color: '#DC0000', data: [42, 57, 71, 88, 79, 93] }
+                  ]
+                },
+                {
+                  type: 'board',
+                  title: 'OPERATIONS BOARD',
+                  stats: [
+                    { label: 'UPTIME',    value: '99.97%' },
+                    { label: 'DEPLOYS',   value: 14 },
+                    { label: 'INCIDENTS', value: 3 },
+                    { label: 'AVG RESP',  value: '142ms' }
+                  ]
+                }
+              ]
+            });
           }
-        },
-        {
-          type: 'pipeline', title: 'CI/CD PIPELINE',
-          rows: [
-            { label: 'BUILD',  value: 94, color: '#00A651', secondary: '2m 18s' },
-            { label: 'TEST',   value: 87, color: '#FFC72C', secondary: '6m 42s' },
-            { label: 'STAGE',  value: 72, color: '#FFC72C', secondary: '3m 05s' },
-            { label: 'DEPLOY', value: 68, color: '#DC0000', secondary: '1m 51s' }
-          ],
-          footer: { label: 'E2E', value: '14m 56s' }
-        },
-        {
-          type: 'trend', title: 'TRAFFIC TREND',
-          items: [
-            { label: 'REQ RATE',  value: 3842, color: '#448AFF', data: [2800, 3100, 3400, 3200, 3600, 3842] },
-            { label: 'ERR RATE',  value: 1.2,  color: '#DC0000', data: [0.8, 1.0, 1.4, 1.1, 0.9, 1.2] }
-          ]
-        },
-        {
-          type: 'board', title: 'OPS BOARD',
-          stats: [
-            { label: 'UPTIME',       value: '99.97%' },
-            { label: 'DEPLOYS TODAY', value: 14 },
-            { label: 'INCIDENTS',     value: 3 },
-            { label: 'AVG RESP',      value: '142ms' }
-          ]
+
+          /* Charts — deferred until next frame */
+          setTimeout(function () {
+            var throughputEl = document.getElementById('chart-throughput');
+            if (throughputEl && M.sparkline) {
+              M.sparkline(throughputEl,
+                [1820, 1950, 2100, 2280, 2450, 2600, 2780, 2841, 2710, 2590,
+                 2480, 2340, 2250, 2180, 2320, 2510, 2680, 2790, 2841, 2730,
+                 2610, 2490, 2350, 2210],
+                { smooth: true, showDot: true, fillOpacity: 0.12, lineWidth: 2 }
+              );
+            }
+            var errorsEl = document.getElementById('chart-errors');
+            if (errorsEl && M.charts && M.charts.barChart) {
+              M.charts.barChart(errorsEl, [
+                { label: 'task-queue',   value: 47 },
+                { label: 'redis-cache',  value: 31 },
+                { label: 'api-gateway',  value: 21 },
+                { label: 'auth-service', value: 12 },
+                { label: 'user-db',      value: 8  },
+                { label: 'blob-storage', value: 5  }
+              ], { showLabels: true, showValues: true, animate: true, responsive: true });
+            }
+          }, 120);
+
+          return function () {
+            if (strip && strip.destroy) strip.destroy();
+          };
         }
-      ]
-    });
+      });
 
-    /* ── Data Table — Recent Deployments ──────────────────────── */
-    var deployments = [
-      { service: 'api-gateway',   version: 'v3.2.1', status: 'healthy',    time: '12:04 UTC', region: 'us-east-1' },
-      { service: 'auth-service',  version: 'v2.8.0', status: 'deploying',  time: '11:58 UTC', region: 'eu-west-1' },
-      { service: 'user-db',       version: 'v1.14.3',status: 'healthy',    time: '11:32 UTC', region: 'us-east-1' },
-      { service: 'redis-cache',   version: 'v4.1.0', status: 'healthy',    time: '10:47 UTC', region: 'ap-south-1' },
-      { service: 'task-queue',    version: 'v2.3.7', status: 'degraded',   time: '10:15 UTC', region: 'us-east-1' },
-      { service: 'blob-storage',  version: 'v1.9.2', status: 'rolled-back',time: '09:30 UTC', region: 'eu-west-1' },
-      { service: 'api-gateway',   version: 'v3.2.0', status: 'rolled-back',time: '08:22 UTC', region: 'us-east-1' },
-      { service: 'auth-service',  version: 'v2.7.9', status: 'healthy',    time: '07:45 UTC', region: 'ap-south-1' }
-    ];
+      /* ── VIEW 2: Alerts ── */
+      var alertsTableInst = null;
+      registry.register({
+        id: 'alerts',
+        title: 'Alerts',
+        defaultPlacement: 'page',
+        factory: function (container) {
+          container.innerHTML = '<div class="view-pad"><div id="alerts-table-host"></div></div>';
+          var host = document.getElementById('alerts-table-host');
+          if (!host || !M.dataTable) return function () {};
+          alertsTableInst = M.dataTable(host, {
+            columns: [
+              { key: 'severity', label: 'Severity', type: 'badge', sortable: true, width: 100,
+                render: function (v) { return severityBadge(v); } },
+              { key: 'service',  label: 'Service',  type: 'text',  sortable: true, width: 140 },
+              { key: 'message',  label: 'Message',  type: 'text',  sortable: false },
+              { key: 'time',     label: 'Time',     type: 'text',  sortable: true, width: 90 },
+              { key: 'status',   label: 'Status',   type: 'badge', sortable: true, width: 120,
+                render: function (v) { return statusBadge(v); } }
+            ],
+            data: filteredAlerts(),
+            onRowClick: function (row) {
+              if (orchestrator.isOpen('alert-detail')) orchestrator.close('alert-detail');
+              orchestrator.open('alert-detail', 'side-panel', row);
+              shellEl.setAttribute('layout', 'side-detail');
+            }
+          });
+          return function () {
+            if (alertsTableInst) { alertsTableInst.destroy(); alertsTableInst = null; }
+          };
+        }
+      });
 
-    M.dataTable('table-mount', {
-      columns: [
-        { key: 'service', label: 'Service',  type: 'text', sortable: true, filterable: true },
-        { key: 'version', label: 'Version',  type: 'text', sortable: true },
-        { key: 'status',  label: 'Status',   type: 'status', sortable: true, filterable: true },
-        { key: 'time',    label: 'Time',      type: 'text', sortable: true },
-        { key: 'region',  label: 'Region',    type: 'text', sortable: true, filterable: true }
-      ],
-      data: deployments,
-      pageSize: 0,
-      ariaLabel: 'Recent deployments table',
-      onRowClick: function (row) { console.log('[ops] deploy:', row.service, row.version); }
-    });
+      /* ── VIEW 3: Deployments ── */
+      var deploysTableInst = null;
+      registry.register({
+        id: 'deployments',
+        title: 'Deployments',
+        defaultPlacement: 'page',
+        factory: function (container) {
+          container.innerHTML = '<div class="view-pad"><div id="deploys-table-host"></div></div>';
+          var host = document.getElementById('deploys-table-host');
+          if (!host || !M.dataTable) return function () {};
+          deploysTableInst = M.dataTable(host, {
+            columns: [
+              { key: 'service',  label: 'Service',     type: 'text',  sortable: true, width: 130 },
+              { key: 'version',  label: 'Version',     type: 'text',  sortable: true, width: 110 },
+              { key: 'env',      label: 'Environment', type: 'badge', sortable: true, width: 110,
+                render: function (v) { return envBadge(v); } },
+              { key: 'status',   label: 'Status',      type: 'badge', sortable: true, width: 120,
+                render: function (v) { return statusBadge(v); } },
+              { key: 'deployer', label: 'Deployed By', type: 'text',  sortable: true, width: 150 },
+              { key: 'time',     label: 'Time',        type: 'text',  sortable: true, width: 100 },
+              { key: 'region',   label: 'Region',      type: 'text',  sortable: true, width: 110 }
+            ],
+            data: filteredDeployments(),
+            onRowClick: function (row) {
+              if (orchestrator.isOpen('deploy-detail')) orchestrator.close('deploy-detail');
+              orchestrator.open('deploy-detail', 'side-panel', row);
+              shellEl.setAttribute('layout', 'side-detail');
+            }
+          });
+          return function () {
+            if (deploysTableInst) { deploysTableInst.destroy(); deploysTableInst = null; }
+          };
+        }
+      });
 
-    /* ── Charts ───────────────────────────────────────────────── */
-    var throughputData = [
-      2400, 2600, 2900, 3100, 2800, 3200, 3500, 3300, 3100, 3400,
-      3600, 3900, 4200, 4100, 3800, 3600, 3500, 3700, 3900, 4000,
-      3800, 3600, 3700, 3842
-    ];
-    M.sparkline(document.getElementById('chart-sparkline'), throughputData, {
-      color: 'var(--mn-accent)', fillOpacity: 0.15, lineWidth: 2, smooth: true, showDot: true
-    });
+      /* ── VIEW 4: Infrastructure ── */
+      registry.register({
+        id: 'infrastructure',
+        title: 'Infrastructure',
+        defaultPlacement: 'page',
+        factory: function (container) {
+          var statusMount = document.createElement('div');
+          statusMount.className = 'view-pad';
+          statusMount.id = 'status-mount';
+          container.appendChild(statusMount);
 
-    M.charts.barChart(document.getElementById('chart-bar'), [
-      { label: 'api-gw',   value: 47, color: '#DC0000' },
-      { label: 'auth',     value: 12, color: '#FFC72C' },
-      { label: 'user-db',  value: 8,  color: '#448AFF' },
-      { label: 'cache',    value: 3,  color: '#00A651' },
-      { label: 'queue',    value: 21, color: '#7C4DFF' },
-      { label: 'storage',  value: 5,  color: '#9e9e9e' }
-    ], { showLabels: true, showValues: true, animate: true, responsive: true });
+          var infraGrid = document.createElement('div');
+          infraGrid.className = 'infra-grid';
+          infraGrid.setAttribute('role', 'list');
+          infraGrid.setAttribute('aria-label', 'Infrastructure services');
 
-    /* ── System Status ────────────────────────────────────────── */
-    function mockCheck(ok, minMs, maxMs) {
-      return function () {
-        var ms = Math.round(minMs + Math.random() * (maxMs - minMs));
-        return Promise.resolve({ ok: ok, ms: ms });
-      };
-    }
-    M.systemStatus('status-mount', {
-      version: 'v3.2.1',
-      environment: 'Production',
-      pollInterval: 30000,
-      services: [
-        { name: 'API Gateway',   check: mockCheck(true,  12, 45) },
-        { name: 'Auth Service',  check: mockCheck(true,  18, 60) },
-        { name: 'User DB',       check: mockCheck(true,  25, 80) },
-        { name: 'Redis Cache',   check: mockCheck(true,   4, 15) },
-        { name: 'Task Queue',    check: mockCheck(false, 90, 200) },
-        { name: 'Blob Storage',  check: mockCheck(true,  30, 70) }
-      ],
-      onClick: function (svc) { console.log('[ops] status:', svc.name); }
-    });
+          INFRA.forEach(function (svc) {
+            var dotClass = svc.status === 'ok' ? 'dot-green' : svc.status === 'warning' ? 'dot-amber' : 'dot-red';
+            var statusText = svc.status === 'ok' ? 'Operational' : svc.status === 'warning' ? 'Degraded' : 'Critical';
+            var card = document.createElement('div');
+            card.className = 'infra-card';
+            card.setAttribute('role', 'listitem');
+            card.innerHTML =
+              '<div class="infra-card-name">' + svc.name + '</div>' +
+              '<div class="infra-status" aria-label="Status: ' + statusText + '">' +
+                '<span class="service-dot ' + dotClass + '" aria-hidden="true"></span>' +
+                '<span class="label">' + statusText + '</span>' +
+              '</div>' +
+              '<div class="infra-card-row"><span>Latency</span><span class="value">' + svc.latency + 'ms</span></div>' +
+              '<div class="infra-card-row"><span>Uptime</span><span class="value">' + svc.uptime + '%</span></div>';
+            infraGrid.appendChild(card);
+          });
+
+          statusMount.appendChild(infraGrid);
+
+          var statusCtrl = null;
+          if (M.systemStatus) {
+            var statusWidget = document.createElement('div');
+            statusWidget.style.marginTop = '1rem';
+            statusMount.appendChild(statusWidget);
+            statusCtrl = M.systemStatus(statusWidget, {
+              version: 'v3.2.1',
+              environment: 'production',
+              services: INFRA.map(function (svc) {
+                return {
+                  name: svc.name,
+                  check: function () {
+                    return Promise.resolve({ ok: svc.status !== 'error', ms: svc.latency });
+                  }
+                };
+              })
+            });
+          }
+
+          return function () {
+            if (statusCtrl && statusCtrl.destroy) statusCtrl.destroy();
+          };
+        }
+      });
+
+      /* ── DETAIL: Alert ── */
+      registry.register({
+        id: 'alert-detail',
+        title: 'Alert Detail',
+        defaultPlacement: 'side-panel',
+        factory: function (container, data) {
+          var a = data || ALERTS[0];
+          container.innerHTML =
+            '<div class="detail-panel">' +
+              '<div class="detail-header">' +
+                '<span class="detail-title">Alert ' + a.id + '</span>' +
+                '<button type="button" class="detail-close" aria-label="Close alert detail">&#215;</button>' +
+              '</div>' +
+              '<div class="detail-tabs" role="tablist" aria-label="Alert detail tabs">' +
+                '<button type="button" class="detail-tab is-active" data-pane="ap-details" role="tab" aria-selected="true">Details</button>' +
+                '<button type="button" class="detail-tab" data-pane="ap-timeline" role="tab" aria-selected="false">Timeline</button>' +
+                '<button type="button" class="detail-tab" data-pane="ap-related" role="tab" aria-selected="false">Related</button>' +
+              '</div>' +
+              '<div class="detail-body">' +
+                '<div class="detail-tab-pane is-active" id="ap-details" role="tabpanel">' +
+                  '<div class="detail-field"><div class="detail-field-label">Severity</div><div class="detail-field-value">' + severityBadge(a.severity) + '</div></div>' +
+                  '<div class="detail-field"><div class="detail-field-label">Service</div><div class="detail-field-value">' + a.service + '</div></div>' +
+                  '<div class="detail-field"><div class="detail-field-label">Message</div><div class="detail-field-value">' + a.message + '</div></div>' +
+                  '<div class="detail-field"><div class="detail-field-label">Status</div><div class="detail-field-value">' + statusBadge(a.status) + '</div></div>' +
+                  '<div class="detail-field"><div class="detail-field-label">First Seen</div><div class="detail-field-value">' + a.first + '</div></div>' +
+                  '<div class="detail-field"><div class="detail-field-label">Last Seen</div><div class="detail-field-value">' + a.last + '</div></div>' +
+                  '<div class="detail-field"><div class="detail-field-label">Affected Services</div>' +
+                    '<ul class="affected-list">' + a.affected.map(function (s) { return '<li>' + s + '</li>'; }).join('') + '</ul>' +
+                  '</div>' +
+                '</div>' +
+                '<div class="detail-tab-pane" id="ap-timeline" role="tabpanel">' +
+                  '<ul class="timeline" aria-label="Alert event timeline">' +
+                    '<li class="timeline-item"><span class="timeline-time">' + a.first + '</span><span class="timeline-msg">Alert triggered — threshold breached</span></li>' +
+                    '<li class="timeline-item"><span class="timeline-time">' + a.last + '</span><span class="timeline-msg">Escalation: assigned to on-call engineer</span></li>' +
+                    '<li class="timeline-item"><span class="timeline-time">' + (a.status === 'Resolved' ? a.last : 'ongoing') + '</span><span class="timeline-msg">Status updated: ' + a.status + '</span></li>' +
+                  '</ul>' +
+                '</div>' +
+                '<div class="detail-tab-pane" id="ap-related" role="tabpanel">' +
+                  '<div class="detail-field"><div class="detail-field-label">Related Alerts</div>' +
+                    '<ul class="affected-list">' +
+                      ALERTS.filter(function (x) { return x.service === a.service && x.id !== a.id; }).slice(0, 3).map(function (x) {
+                        return '<li>' + x.id + ' — ' + x.message + '</li>';
+                      }).join('') +
+                    '</ul>' +
+                  '</div>' +
+                '</div>' +
+              '</div>' +
+            '</div>';
+
+          container.querySelector('.detail-close').addEventListener('click', function () {
+            orchestrator.close('alert-detail');
+            shellEl.setAttribute('layout', 'full');
+          });
+          makeTabs(container);
+
+          return function () {};
+        }
+      });
+
+      /* ── DETAIL: Deploy ── */
+      registry.register({
+        id: 'deploy-detail',
+        title: 'Deployment Detail',
+        defaultPlacement: 'side-panel',
+        factory: function (container, data) {
+          var d = data || DEPLOYMENTS[0];
+          container.innerHTML =
+            '<div class="detail-panel">' +
+              '<div class="detail-header">' +
+                '<span class="detail-title">Deploy ' + d.id + '</span>' +
+                '<button type="button" class="detail-close" aria-label="Close deployment detail">&#215;</button>' +
+              '</div>' +
+              '<div class="detail-tabs" role="tablist" aria-label="Deployment detail tabs">' +
+                '<button type="button" class="detail-tab is-active" data-pane="dp-details" role="tab" aria-selected="true">Details</button>' +
+                '<button type="button" class="detail-tab" data-pane="dp-timeline" role="tab" aria-selected="false">Timeline</button>' +
+                '<button type="button" class="detail-tab" data-pane="dp-related" role="tab" aria-selected="false">Related</button>' +
+              '</div>' +
+              '<div class="detail-body">' +
+                '<div class="detail-tab-pane is-active" id="dp-details" role="tabpanel">' +
+                  '<div class="detail-field"><div class="detail-field-label">Service</div><div class="detail-field-value">' + d.service + '</div></div>' +
+                  '<div class="detail-field"><div class="detail-field-label">Version</div><div class="detail-field-value">' + d.version + '</div></div>' +
+                  '<div class="detail-field"><div class="detail-field-label">Environment</div><div class="detail-field-value">' + envBadge(d.env) + '</div></div>' +
+                  '<div class="detail-field"><div class="detail-field-label">Status</div><div class="detail-field-value">' + statusBadge(d.status) + '</div></div>' +
+                  '<div class="detail-field"><div class="detail-field-label">Deployed By</div><div class="detail-field-value">' + d.deployer + '</div></div>' +
+                  '<div class="detail-field"><div class="detail-field-label">Region</div><div class="detail-field-value">' + d.region + '</div></div>' +
+                  '<div class="detail-field"><div class="detail-field-label">Duration</div><div class="detail-field-value">' + d.duration + '</div></div>' +
+                  '<div class="detail-field"><div class="detail-field-label">Build Log</div><pre class="log-block">' + d.buildLog + '</pre></div>' +
+                '</div>' +
+                '<div class="detail-tab-pane" id="dp-timeline" role="tabpanel">' +
+                  '<ul class="timeline" aria-label="Deployment timeline">' +
+                    '<li class="timeline-item"><span class="timeline-time">' + d.time + '</span><span class="timeline-msg">Deployment initiated by ' + d.deployer + '</span></li>' +
+                    '<li class="timeline-item"><span class="timeline-time">+' + d.duration + '</span><span class="timeline-msg">Deployment finished — status: ' + d.status + '</span></li>' +
+                  '</ul>' +
+                '</div>' +
+                '<div class="detail-tab-pane" id="dp-related" role="tabpanel">' +
+                  '<div class="detail-field"><div class="detail-field-label">Other Deploys: ' + d.service + '</div>' +
+                    '<ul class="affected-list">' +
+                      DEPLOYMENTS.filter(function (x) { return x.service === d.service && x.id !== d.id; }).slice(0, 3).map(function (x) {
+                        return '<li>' + x.id + ' ' + x.version + ' — ' + x.status + '</li>';
+                      }).join('') +
+                    '</ul>' +
+                  '</div>' +
+                '</div>' +
+              '</div>' +
+            '</div>';
+
+          container.querySelector('.detail-close').addEventListener('click', function () {
+            orchestrator.close('deploy-detail');
+            shellEl.setAttribute('layout', 'full');
+          });
+          makeTabs(container);
+
+          return function () {};
+        }
+      });
+
+      /* ── View switching ── */
+      var currentView = 'dashboard';
+      var viewBtns = document.querySelectorAll('.view-btn[data-view]');
+
+      function switchView(viewId) {
+        viewBtns.forEach(function (b) {
+          var active = b.getAttribute('data-view') === viewId;
+          b.setAttribute('aria-pressed', String(active));
+        });
+
+        orchestrator.closeAll();
+        shellEl.setAttribute('layout', 'full');
+        currentView = viewId;
+
+        var scaffold = new M.StateScaffold(pageSlot, { state: 'loading' });
+        setTimeout(function () {
+          scaffold.destroy();
+          pageSlot.innerHTML = '';
+          orchestrator.open(viewId, 'page');
+        }, 600);
+      }
+
+      viewBtns.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var view = btn.getAttribute('data-view');
+          if (view && view !== currentView) switchView(view);
+        });
+      });
+
+      /* ── Severity filter ── */
+      document.getElementById('severity-filter').addEventListener('change', function (e) {
+        currentSeverity = e.target.value;
+        if (currentView === 'alerts' && alertsTableInst) {
+          alertsTableInst.setData(filteredAlerts());
+        }
+      });
+
+      /* ── Service tree ── */
+      var serviceItems = document.querySelectorAll('.service-item');
+      serviceItems.forEach(function (item) {
+        item.addEventListener('click', function () {
+          currentService = item.getAttribute('data-service') || 'all';
+          serviceItems.forEach(function (s) {
+            s.classList.remove('is-active');
+            s.setAttribute('aria-pressed', 'false');
+          });
+          item.classList.add('is-active');
+          item.setAttribute('aria-pressed', 'true');
+
+          if (currentView === 'alerts' && alertsTableInst) {
+            alertsTableInst.setData(filteredAlerts());
+          } else if (currentView === 'deployments' && deploysTableInst) {
+            deploysTableInst.setData(filteredDeployments());
+          }
+        });
+        item.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); item.click(); }
+        });
+      });
+
+      /* ── Theme ── */
+      document.getElementById('theme-select').addEventListener('change', function (e) {
+        if (M.setTheme) M.setTheme(e.target.value);
+      });
+
+      /* ── Command palette ── */
+      function openCommandPalette() {
+        if (!M.commandPalette) return;
+        M.commandPalette({
+          placeholder: 'Search views, services, commands...',
+          items: [
+            { label: 'Go to Dashboard',        action: function () { switchView('dashboard'); } },
+            { label: 'Go to Alerts',           action: function () { switchView('alerts'); } },
+            { label: 'Go to Deployments',      action: function () { switchView('deployments'); } },
+            { label: 'Go to Infrastructure',   action: function () { switchView('infrastructure'); } },
+            { label: 'Filter: API Gateway',    action: function () { document.querySelector('[data-service="api-gateway"]').click(); } },
+            { label: 'Filter: Task Queue',     action: function () { document.querySelector('[data-service="task-queue"]').click(); } },
+            { label: 'Filter: Redis Cache',    action: function () { document.querySelector('[data-service="redis-cache"]').click(); } },
+            { label: 'Filter: All Services',   action: function () { document.querySelector('[data-service="all"]').click(); } },
+            { label: 'Theme: Nero',            action: function () { M.setTheme('nero');       document.getElementById('theme-select').value = 'nero'; } },
+            { label: 'Theme: Editorial',       action: function () { M.setTheme('editorial');  document.getElementById('theme-select').value = 'editorial'; } },
+            { label: 'Theme: Avorio',          action: function () { M.setTheme('avorio');     document.getElementById('theme-select').value = 'avorio'; } },
+            { label: 'Theme: Colorblind',      action: function () { M.setTheme('colorblind'); document.getElementById('theme-select').value = 'colorblind'; } },
+            { label: 'Theme: Sugar',           action: function () { M.setTheme('sugar');      document.getElementById('theme-select').value = 'sugar'; } },
+            { label: 'Theme: Navy',            action: function () { M.setTheme('navy');       document.getElementById('theme-select').value = 'navy'; } }
+          ]
+        });
+      }
+
+      document.getElementById('cmd-k-btn').addEventListener('click', openCommandPalette);
+      document.addEventListener('keydown', function (e) {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); openCommandPalette(); }
+      });
+
+      /* ── Boot ── */
+      switchView('dashboard');
+    })();
   </script>
 </body>
 </html>
