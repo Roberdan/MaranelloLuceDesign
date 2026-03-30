@@ -2,7 +2,7 @@
 
 Ferrari Luce-inspired design system for AI agent dashboards. Zero runtime dependencies. 6 adaptive themes. WCAG 2.2 AA. Framework-agnostic.
 
-**v6.4.0** | [Live Demo](https://roberdan.github.io/convergio-design/) | [CHANGELOG](CHANGELOG.md)
+**v6.5.0** | [Live Demo](https://roberdan.github.io/convergio-design/) | [CHANGELOG](CHANGELOG.md)
 
 ## Install
 
@@ -58,9 +58,9 @@ import '@convergio/design-elements/wc/mn-gantt';
 ### 4. IIFE (CDN, no bundler)
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@convergio/design-tokens@6.4.0/dist/css/index.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@convergio/design-elements@6.4.0/dist/css/index.css">
-<script src="https://cdn.jsdelivr.net/npm/@convergio/design-elements@6.4.0/dist/iife/maranello.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@convergio/design-tokens@6.5.0/dist/css/index.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@convergio/design-elements@6.5.0/dist/css/index.css">
+<script src="https://cdn.jsdelivr.net/npm/@convergio/design-elements@6.5.0/dist/iife/maranello.min.js"></script>
 <script>
   Maranello.sparkline(document.getElementById('chart'), [10, 20, 15, 30]);
   new Maranello.FerrariGauge(document.getElementById('gauge'));
@@ -335,6 +335,15 @@ Only use a `postcss-import` resolver if you insist on importing package CSS from
 
 Each starter imports `@convergio/design-elements/css`, exposes `app/api/agent/route.ts`, and is designed to be Tauri-friendly and deployable on Vercel or Azure containers.
 
+### Starter Demo Pages
+
+Each starter has a self-contained HTML demo with realistic data and all 6 themes:
+
+- [Workspace](demo/starter-workspace.html) — layout, kanban, data-table, command-palette
+- [Ops Dashboard](demo/starter-ops-dashboard.html) — dashboard strip, system-status, charts
+- [Executive Cockpit](demo/starter-executive-cockpit.html) — Ferrari gauges, heatmap, KPI strip
+- [Program Management](demo/starter-program-management.html) — gantt, gauges, portfolio table
+
 ### Web Components (any framework, zero adapter)
 
 ```html
@@ -457,6 +466,29 @@ controller.destroy();
 ```
 
 Use the imperative API for framework wrappers or direct DOM integrations. Use `<mn-header-shell>` when you want the light-DOM Web Component wrapper plus `whenReady()` host ergonomics. The returned controller supports `getState()`, `setQuery()`, `setFilter()`, and `destroy()`.
+
+### SSR Safety
+
+The root barrel of both packages is SSR-safe as of v6.5.0:
+
+```ts
+// Safe in Node.js / Next.js server components
+import { header, gantt, FerrariGauge } from '@convergio/design-elements';
+import { setTheme, palette } from '@convergio/design-tokens';
+```
+
+DOM-dependent operations (rendering, `registerAll()`) must run in client components:
+
+```tsx
+'use client';
+import { useEffect } from 'react';
+import { registerAll } from '@convergio/design-elements/register-all';
+
+export function DesignSystemProvider({ children }) {
+  useEffect(() => { registerAll(); }, []);
+  return <>{children}</>;
+}
+```
 
 ### Important: SSR Limitation
 

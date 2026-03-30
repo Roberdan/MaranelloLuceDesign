@@ -83,6 +83,12 @@ Docs: `docs/starters/` — selection guide, deployment, agent semantics.
 
 - WC `registerAll()` retryable on failure.
 
+## SSR Safety
+
+Root barrel imports are SSR-safe (v6.5.0+). No `document`/`window` at module scope.
+`registerAll()` no-ops in Node. Call it in `useEffect` / client boundary only.
+Starter demos: `demo/starter-workspace.html`, `demo/starter-ops-dashboard.html`, `demo/starter-executive-cockpit.html`, `demo/starter-program-management.html`.
+
 ## Agent
 
 NaSra — `@.github/agents/NaSra.agent.md`

@@ -90,6 +90,10 @@ import '@convergio/design-elements/wc/mn-gauge';
 import '@convergio/design-elements/wc/mn-gantt';
 ```
 
+### SSR / Server Components
+
+Both `@convergio/design-tokens` and `@convergio/design-elements` are SSR-safe — the root import will not crash in Node.js. DOM-dependent APIs (rendering, `registerAll()`) must be called in client components or `useEffect`.
+
 ### Step 4 — Use the starter platform when you need a full shell
 
 For full Next.js application shells, prefer the starter platform under `starters/`:

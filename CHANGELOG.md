@@ -5,6 +5,31 @@ All notable changes to this project will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.5.0] - 2026-03-30
+
+### Breaking Changes
+- **Maranello IIFE facade removed from ESM barrel**: `export { Maranello } from './maranello'` removed from the package root. Use named imports (`import { header, gantt, ... } from '@convergio/design-elements'`) or the IIFE script tag (`<script src="maranello.min.js">`) for `window.Maranello`. See [migration guide](docs/migrations/v6.5.0.md).
+
+### Added
+- **SSR-safe package surface**: root barrel of `@convergio/design-elements` and `@convergio/design-tokens` can now be safely imported in Node.js/SSR without crashing
+- **Consumer smoke test**: `tests/unit/consumer-smoke.test.ts` validates all key entrypoints in Node environment
+- **SSR smoke tests**: `packages/elements/tests/ssr-safe.test.ts` and `packages/tokens/tests/ssr-safe.test.ts`
+- **4 starter demo pages**: `demo/starter-workspace.html`, `demo/starter-ops-dashboard.html`, `demo/starter-executive-cockpit.html`, `demo/starter-program-management.html` — full self-contained demos with realistic data and all 6 themes
+- **Demo navigation**: starter demos linked from main gallery (`demo/index.html`)
+
+### Fixed
+- **EventBus SSR guard**: `getDefaultEventTarget()` returns `EventTarget` fallback in Node
+- **Module-scope browser globals**: 4 files converted from `const DPR = window.devicePixelRatio` to lazy `getDPR()` functions
+- **cssVar() SSR safety**: returns fallback string when `document` is unavailable
+- **registerAll() SSR safety**: returns early when `window`/`customElements` are undefined
+- **OKR panel lazy colors**: `STATUS_COLORS`/`SCOPE_COLORS` converted to lazy getter functions
+- **Tokens types export path**: fixed `dist/types/index.d.ts` → `dist/types/ts/index.d.ts`
+- **WC export types**: added `types` conditions to `./wc/*` and `./register-all` exports
+- **Starter imports**: monorepo-relative paths replaced with `@convergio/shared-shell-starter` package imports
+- **Config factory mutation safety**: `createCockpitConfig()` and `createWorkspaceConfig()` now deep-clone defaults
+- **Kubernetes deployment manifest**: proper `valueFrom.secretKeyRef` format, empty env section omitted
+- **Starter build ordering**: shared-shell declared as dependency for correct parallel build
+
 ## [6.4.0] - 2026-03-29
 
 ### Added

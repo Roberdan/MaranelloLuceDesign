@@ -105,6 +105,15 @@ deploy targets
   Tauri              wrap the Next.js app — see deployment.md
 ```
 
+## Demo Pages
+
+Each starter has a self-contained HTML demo with realistic data and all 6 themes:
+
+- [Workspace](../../demo/starter-workspace.html) — layout, kanban, data-table, command-palette
+- [Ops Dashboard](../../demo/starter-ops-dashboard.html) — dashboard strip, system-status, charts
+- [Executive Cockpit](../../demo/starter-executive-cockpit.html) — Ferrari gauges, heatmap, KPI strip
+- [Program Management](../../demo/starter-program-management.html) — gantt, gauges, portfolio table
+
 ## Further Reading
 
 - [choosing-a-starter.md](./choosing-a-starter.md) — decision matrix and customisation boundaries
