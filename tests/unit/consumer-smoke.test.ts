@@ -2,7 +2,7 @@
 
 /**
  * Consumer smoke test — validates that source entrypoints are SSR-safe
- * in Node environment. Imports from packages/*/src/ts/ (not dist) so
+ * in Node environment. Imports from packages source -- not dist -- so
  * vitest can run without a prior build step.
  *
  * For full published-package validation, see tests/consumer-nextjs/.
