@@ -4,863 +4,986 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ConvergIO Workspace</title>
+  <link rel="icon" href="../src/assets/favicon.svg">
   <link rel="stylesheet" href="../src/fonts/local-fonts.css">
   <link rel="stylesheet" href="../dist/css/maranello.css">
   <style>
-    @layer workspace {
-      body { margin: 0; background: var(--mn-surface); color: var(--mn-text); }
+    /* ── Shell colour tokens (theme-adaptive) ── */
+    body {
+      --shell-bg: #0a0a0a;
+      --shell-nav: #141414;
+      --shell-card: #171717;
+      --shell-card-2: #1d1d1d;
+      --shell-border: #262626;
+      --shell-text: #eee;
+      --shell-muted: #9a9a9a;
+      --shell-ghost: #666;
+      --shell-accent: #FFC72C;
+      --shell-accent-text: #111;
+      margin: 0;
+      background: var(--mn-surface);
+      color: var(--mn-text);
+      font-family: var(--font-body, sans-serif);
+    }
+    body.mn-avorio {
+      --shell-bg: #f5efe4;
+      --shell-nav: #f8f1e6;
+      --shell-card: #fffaf4;
+      --shell-card-2: #fffdf8;
+      --shell-border: #d9cbb7;
+      --shell-text: #241f19;
+      --shell-muted: #7b6d5a;
+      --shell-ghost: #8e7f6b;
+      --shell-accent: #b7410e;
+      --shell-accent-text: #fff8ef;
+    }
+    body.mn-colorblind {
+      --shell-accent: #0072B2;
+      --shell-accent-text: #fff;
+    }
+    body.mn-sugar {
+      --shell-bg: #f4f4f6;
+      --shell-nav: #fff;
+      --shell-card: #fff;
+      --shell-card-2: #fff;
+      --shell-border: #d8d8de;
+      --shell-text: #111;
+      --shell-muted: #666;
+      --shell-ghost: #888;
+      --shell-accent: #111;
+      --shell-accent-text: #fff;
+    }
+    body.mn-navy {
+      --shell-bg: #0b1527;
+      --shell-nav: #0f1d35;
+      --shell-card: #132040;
+      --shell-card-2: #162548;
+      --shell-border: #1e3060;
+      --shell-text: #e8edf5;
+      --shell-muted: #8a9abf;
+      --shell-ghost: #5a6e9a;
+      --shell-accent: #c9a84c;
+      --shell-accent-text: #0b1527;
+    }
 
-      /* Toolbar */
-      .ws-toolbar {
-        display: flex; align-items: center; gap: 0.375rem;
-        padding: 0 0.75rem; height: 100%;
-        background: var(--mn-surface-raised);
-        font-family: var(--font-mono, monospace);
+    /* ── Navbar ── */
+    #ws-navbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(12px);
+    }
+    body.mn-avorio #ws-navbar,
+    body.mn-sugar #ws-navbar {
+      background: color-mix(in srgb, var(--shell-nav) 96%, transparent);
+    }
+    #ws-navbar .mn-header-shell {
+      gap: 12px;
+      background: var(--shell-nav);
+      border-bottom-color: var(--shell-border);
+    }
+    #ws-navbar .mn-header-shell__brand { color: var(--shell-text); font-size: 0.9375rem; }
+    #ws-navbar .mn-header-shell__brand-logo {
+      width: 28px;
+      height: 28px;
+      filter: drop-shadow(0 0 8px color-mix(in srgb, var(--shell-accent) 35%, transparent));
+    }
+    #ws-navbar .mn-header-shell__actions--segmented,
+    #ws-navbar .mn-header-shell__actions--cluster {
+      border-color: var(--shell-border);
+      border-radius: 14px;
+      background: var(--shell-card);
+      box-shadow: inset 0 1px 0 color-mix(in srgb, #fff 4%, transparent);
+    }
+    #ws-navbar .mn-header-shell__action {
+      min-width: 48px;
+      min-height: 48px;
+      border-radius: 10px;
+      color: var(--shell-muted);
+    }
+    #ws-navbar .mn-header-shell__action:hover {
+      background: color-mix(in srgb, var(--shell-card-2) 92%, var(--shell-accent) 8%);
+      color: var(--shell-text);
+    }
+    #ws-navbar .mn-header-shell__action--active {
+      background: color-mix(in srgb, var(--shell-accent) 20%, transparent);
+      color: var(--shell-accent);
+    }
+    #ws-navbar .mn-header-shell__action:disabled { opacity: .35; cursor: not-allowed; }
+    #ws-navbar .mn-header-shell__icon svg {
+      width: 20px;
+      height: 20px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.75;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    #ws-navbar .mn-header-shell__search {
+      width: 100%;
+      min-width: 0;
+      min-height: 52px;
+      padding: 8px 12px;
+      gap: 12px;
+      border-color: var(--shell-border);
+      border-radius: 14px;
+      background: var(--shell-card);
+    }
+    #ws-navbar .mn-header-shell__search-input {
+      flex: 1 1 14rem;
+      min-width: 10rem;
+      color: var(--shell-text);
+      font-size: 1.0625rem;
+    }
+    #ws-navbar .mn-header-shell__search-input::placeholder {
+      color: color-mix(in srgb, var(--shell-muted) 78%, transparent);
+    }
+    #ws-navbar .mn-header-shell__shortcut {
+      border-color: #444;
+      background: #262626;
+      color: #999;
+      font-size: 0.875rem;
+    }
+    body.mn-avorio #ws-navbar .mn-header-shell__shortcut,
+    body.mn-sugar #ws-navbar .mn-header-shell__shortcut {
+      border-color: var(--shell-border);
+      background: var(--shell-card-2);
+      color: var(--shell-muted);
+    }
+    #ws-navbar .mn-header-shell__theme { padding-left: 14px; border-left-color: var(--shell-border); }
+    #ws-navbar .mn-profile-trigger {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: color-mix(in srgb, var(--shell-accent) 18%, transparent);
+      color: var(--shell-accent);
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid color-mix(in srgb, var(--shell-accent) 30%, var(--shell-border));
+    }
+    @media (max-width: 1200px) {
+      #ws-navbar .mn-header-shell__search { min-height: 48px; }
+      #ws-navbar .mn-header-shell__action { min-width: 42px; min-height: 42px; }
+      #ws-navbar .mn-header-shell__theme { padding-left: 10px; }
+    }
+    @media (max-width: 640px) {
+      #ws-navbar .mn-header-shell__shortcut { display: none; }
+    }
+
+    /* ── App layout ── */
+    @layer workspace {
+      .ws-layout {
+        display: grid;
+        grid-template-columns: 240px 1fr;
+        grid-template-rows: 1fr;
+        height: calc(100vh - 64px);
+        overflow: hidden;
       }
-      .ws-toolbar__brand {
-        font-weight: 700; font-size: 0.875rem; color: var(--mn-text);
-        letter-spacing: -0.02em; white-space: nowrap;
-      }
-      .ws-toolbar__sep { width: 1px; height: 1.25rem; background: var(--mn-border); flex-shrink: 0; margin: 0 0.125rem; }
-      .ws-toolbar__spacer { flex: 1 1 auto; }
-      .ws-toolbar__avatar {
-        width: 1.875rem; height: 1.875rem; border-radius: 50%;
-        background: var(--mn-accent); color: var(--mn-surface);
-        display: flex; align-items: center; justify-content: center;
-        font-size: 0.625rem; font-weight: 700; flex-shrink: 0;
-        border: 2px solid var(--mn-border); cursor: default;
-      }
-      .ws-view-btn[aria-pressed="true"] {
-        outline: 2px solid var(--mn-accent);
-        background: var(--mn-surface-raised);
+      .ws-layout--detail-open {
+        grid-template-columns: 240px 1fr 380px;
       }
 
       /* Sidebar */
-      .ws-sidebar { padding: 0.375rem; display: flex; flex-direction: column; gap: 0.125rem; }
+      .ws-sidebar {
+        border-right: 1px solid var(--mn-border);
+        overflow-y: auto;
+        background: var(--mn-surface-raised);
+        padding: 0.5rem 0;
+      }
       .ws-sidebar__label {
-        font-size: 0.5625rem; text-transform: uppercase; letter-spacing: 0.1em;
-        color: var(--mn-text-muted); padding: 0.5rem 0.5rem 0.125rem;
-        font-family: var(--font-mono, monospace);
+        font-size: 0.625rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--mn-text-muted);
+        padding: 0.75rem 0.75rem 0.25rem;
+        font-family: var(--font-display, sans-serif);
       }
       .ws-proj-btn {
-        display: flex; align-items: center; gap: 0.5rem;
-        width: 100%; background: none; border: none;
-        padding: 0.4rem 0.5rem; border-radius: var(--radius-sm);
-        cursor: pointer; font-size: 0.8rem; color: var(--mn-text);
-        text-align: left; font-family: var(--font-mono, monospace);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        width: 100%;
+        background: none;
+        border: none;
+        padding: 0.5rem 0.75rem;
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        font-size: 0.8125rem;
+        color: var(--mn-text);
+        text-align: left;
+        font-family: var(--font-body, sans-serif);
+        transition: background var(--duration-sm, 0.12s);
+        min-height: 36px;
+        margin: 0 0.375rem;
+        width: calc(100% - 0.75rem);
       }
-      .ws-proj-btn:hover { background: var(--mn-surface-raised); }
-      .ws-proj-btn.is-active { background: var(--mn-surface-raised); font-weight: 700; }
-      .ws-proj-btn:focus-visible { outline: 2px solid var(--mn-accent); outline-offset: -2px; }
-      .ws-dot {
-        width: 0.5rem; height: 0.5rem; border-radius: 50%; flex-shrink: 0;
-        background: var(--mn-text-muted);
+      .ws-proj-btn:hover { background: var(--mn-surface-sunken); }
+      .ws-proj-btn.is-active {
+        background: var(--mn-surface-sunken);
+        color: var(--mn-accent);
       }
-      .ws-dot[data-color="green"]  { background: var(--mn-status-success, var(--mn-accent)); }
-      .ws-dot[data-color="blue"]   { background: var(--mn-status-info,    var(--mn-accent)); }
-      .ws-dot[data-color="amber"]  { background: var(--mn-status-warning, var(--mn-accent)); }
-      .ws-dot[data-color="red"]    { background: var(--mn-status-error,   var(--mn-accent)); }
-      .ws-dot[data-color="purple"] { background: var(--mn-accent-secondary, var(--mn-accent)); }
+      .ws-proj-btn:focus-visible {
+        outline: 2px solid var(--mn-accent);
+        outline-offset: 2px;
+      }
+      .ws-proj-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+      .ws-proj-count {
+        margin-left: auto;
+        font-size: 0.6875rem;
+        color: var(--mn-text-muted);
+        font-family: var(--font-mono, monospace);
+      }
 
-      /* Board (Kanban) */
-      .ws-board {
-        display: flex; gap: 1rem; padding: 1rem;
-        overflow-x: auto; box-sizing: border-box;
-        align-items: flex-start; min-height: 100%;
+      /* Main content */
+      .ws-main {
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        background: var(--mn-surface);
       }
-      .ws-board-col { flex: 0 0 14.5rem; display: flex; flex-direction: column; gap: 0.5rem; }
-      .ws-board-col__hd {
-        display: flex; align-items: center; gap: 0.5rem;
-        padding: 0.375rem 0.25rem;
-        border-bottom: 2px solid var(--mn-border); margin-bottom: 0.125rem;
-      }
-      .ws-board-col__name {
-        font-size: 0.6875rem; font-weight: 700; text-transform: uppercase;
-        letter-spacing: 0.07em; color: var(--mn-text-muted);
-        font-family: var(--font-mono, monospace);
-      }
-      .ws-board-col__count {
-        font-size: 0.6875rem; background: var(--mn-surface-raised);
-        border: 1px solid var(--mn-border); border-radius: var(--radius-sm);
-        padding: 0.0625rem 0.35rem; color: var(--mn-text-muted);
-      }
-      .ws-card {
-        width: 100%; background: var(--mn-surface-raised);
-        border: 1px solid var(--mn-border);
-        border-radius: var(--radius-md); padding: 0.625rem 0.75rem;
-        cursor: pointer; text-align: left;
-      }
-      .ws-card:hover { border-color: var(--mn-accent); }
-      .ws-card:focus-visible { outline: 2px solid var(--mn-accent); outline-offset: 2px; }
-      .ws-card__title {
-        font-size: 0.8rem; font-weight: 600; color: var(--mn-text);
-        margin-bottom: 0.5rem; line-height: 1.4;
-        font-family: var(--font-mono, monospace);
-      }
-      .ws-card__meta { display: flex; align-items: center; gap: 0.375rem; }
-      .ws-card__avatar {
-        width: 1.375rem; height: 1.375rem; border-radius: 50%;
-        background: var(--mn-surface); border: 1px solid var(--mn-border);
-        color: var(--mn-text-muted); display: flex; align-items: center;
-        justify-content: center; font-size: 0.5625rem; font-weight: 700;
-        font-family: var(--font-mono, monospace); flex-shrink: 0;
-      }
-      .ws-card__pdot {
-        width: 0.4375rem; height: 0.4375rem; border-radius: 50%;
-        flex-shrink: 0; display: inline-block;
-      }
-      .ws-card__proj {
-        font-size: 0.5625rem; color: var(--mn-text-muted); margin-left: auto;
-        font-family: var(--font-mono, monospace); overflow: hidden;
-        white-space: nowrap; text-overflow: ellipsis; max-width: 6rem;
-      }
-      .ws-pdot-critical { background: var(--mn-status-error,   var(--mn-accent)); }
-      .ws-pdot-high     { background: var(--mn-status-warning, var(--mn-accent)); }
-      .ws-pdot-medium   { background: var(--mn-status-info,    var(--mn-accent)); }
-      .ws-pdot-low      { background: var(--mn-text-muted); }
 
-      /* List view */
-      .ws-list { padding: 1rem; overflow: auto; box-sizing: border-box; }
-
-      /* Timeline view */
-      .ws-timeline { padding: 1rem; overflow: auto; box-sizing: border-box; }
-      .ws-tl-group { margin-bottom: 1.5rem; }
-      .ws-tl-group__label {
-        font-size: 0.6875rem; font-weight: 700; text-transform: uppercase;
-        letter-spacing: 0.08em; color: var(--mn-text-muted);
-        margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.375rem;
-        font-family: var(--font-mono, monospace);
-      }
-      .ws-tl-row {
-        display: grid; grid-template-columns: 14rem 1fr; gap: 0.75rem;
-        align-items: center; margin-bottom: 0.375rem;
-      }
-      .ws-tl-row__name {
-        font-size: 0.75rem; color: var(--mn-text); overflow: hidden;
-        text-overflow: ellipsis; white-space: nowrap;
-        font-family: var(--font-mono, monospace);
-      }
-      .ws-tl-row__track {
-        position: relative; background: var(--mn-surface-raised);
-        border-radius: var(--radius-sm); height: 1.5rem; overflow: hidden;
-      }
-      .ws-tl-row__bar {
-        position: absolute; top: 0.25rem; bottom: 0.25rem;
-        border-radius: var(--radius-sm); background: var(--mn-accent); opacity: 0.85;
-      }
-      .ws-tl-row__bar[data-proj="apollo"]  { background: var(--mn-status-success, var(--mn-accent)); }
-      .ws-tl-row__bar[data-proj="mercury"] { background: var(--mn-status-info,    var(--mn-accent)); }
-      .ws-tl-row__bar[data-proj="venus"]   { background: var(--mn-status-warning, var(--mn-accent)); }
-      .ws-tl-row__bar[data-proj="mars"]    { background: var(--mn-status-error,   var(--mn-accent)); }
-      .ws-tl-row__bar[data-proj="jupiter"] { background: var(--mn-accent-secondary, var(--mn-accent)); }
-      .ws-tl-row__due {
-        position: absolute; right: 0.375rem; top: 50%; transform: translateY(-50%);
-        font-size: 0.5625rem; color: var(--mn-text-muted);
-        font-family: var(--font-mono, monospace);
-      }
+      /* View panels */
+      .ws-view { display: none; flex: 1; overflow: auto; }
+      .ws-view.is-active { display: flex; flex-direction: column; }
+      .ws-view--board { overflow: hidden; }
+      .ws-view--board .mn-kanban { height: 100%; overflow-y: auto; }
 
       /* Detail panel */
-      .ws-detail { padding: 1.25rem; overflow: auto; box-sizing: border-box; }
-      .ws-detail__hd { display: flex; align-items: flex-start; gap: 0.5rem; margin-bottom: 1rem; }
+      .ws-detail {
+        display: none;
+        flex-direction: column;
+        border-left: 1px solid var(--mn-border);
+        background: var(--mn-surface-raised);
+        overflow-y: auto;
+      }
+      .ws-layout--detail-open .ws-detail { display: flex; }
+      .ws-detail__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 1.25rem 0.75rem;
+        border-bottom: 1px solid var(--mn-border);
+        position: sticky;
+        top: 0;
+        background: var(--mn-surface-raised);
+        z-index: 1;
+      }
       .ws-detail__title {
-        flex: 1; font-size: 0.9375rem; font-weight: 700; margin: 0;
-        color: var(--mn-text); line-height: 1.35; font-family: var(--font-mono, monospace);
+        font-size: 0.9375rem;
+        font-weight: 600;
+        color: var(--mn-text);
+        margin: 0;
+        flex: 1;
+        padding-right: 0.5rem;
       }
       .ws-detail__close {
-        background: none; border: 1px solid var(--mn-border);
-        border-radius: var(--radius-sm); padding: 0.25rem 0.5rem;
-        cursor: pointer; color: var(--mn-text-muted); font-size: 0.75rem;
-        flex-shrink: 0; font-family: var(--font-mono, monospace);
+        width: 32px;
+        height: 32px;
+        border: 1px solid var(--mn-border);
+        border-radius: var(--radius-md);
+        background: transparent;
+        color: var(--mn-text-muted);
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
       }
-      .ws-detail__close:hover { color: var(--mn-text); border-color: var(--mn-text); }
-      .ws-detail__close:focus-visible { outline: 2px solid var(--mn-accent); }
-      .ws-detail__fields { display: grid; gap: 0.625rem; margin-bottom: 1rem; }
-      .ws-detail__field {
-        display: grid; grid-template-columns: 6.5rem 1fr;
-        gap: 0.375rem; align-items: start; font-size: 0.8rem;
+      .ws-detail__close:hover { color: var(--mn-text); border-color: var(--mn-accent); }
+      .ws-detail__close:focus-visible { outline: 2px solid var(--mn-accent); outline-offset: 2px; }
+      .ws-detail__close svg {
+        width: 16px;
+        height: 16px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
       }
-      .ws-detail__label { color: var(--mn-text-muted); font-family: var(--font-mono, monospace); }
-      .ws-detail__val   { color: var(--mn-text); font-family: var(--font-mono, monospace); }
+      .ws-detail__body { padding: 1.25rem; display: flex; flex-direction: column; gap: 1rem; }
+      .ws-detail__field { display: flex; flex-direction: column; gap: 0.25rem; }
+      .ws-detail__field-label {
+        font-size: 0.625rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--mn-text-muted);
+        font-family: var(--font-display, sans-serif);
+      }
+      .ws-detail__field-value { font-size: 0.875rem; color: var(--mn-text); }
       .ws-detail__desc {
-        font-size: 0.8rem; color: var(--mn-text-muted); line-height: 1.6;
-        background: var(--mn-surface); border: 1px solid var(--mn-border);
-        border-radius: var(--radius-sm); padding: 0.5rem 0.75rem;
-        margin-bottom: 1rem; font-family: var(--font-mono, monospace);
+        font-size: 0.8125rem;
+        color: var(--mn-text-muted);
+        line-height: 1.6;
       }
-      .ws-detail__tags { display: flex; flex-wrap: wrap; gap: 0.375rem; margin-bottom: 1rem; }
-      .ws-detail__act-hd {
-        font-size: 0.6875rem; font-weight: 700; text-transform: uppercase;
-        letter-spacing: 0.07em; color: var(--mn-text-muted);
-        margin-bottom: 0.5rem; font-family: var(--font-mono, monospace);
+      .ws-detail__activity { display: flex; flex-direction: column; gap: 0.75rem; margin-top: 0.25rem; }
+      .ws-detail__activity-entry {
+        display: flex;
+        gap: 0.625rem;
+        font-size: 0.8125rem;
+        color: var(--mn-text-muted);
       }
-      .ws-act-item {
-        padding: 0.5rem 0; border-top: 1px solid var(--mn-border);
-        font-size: 0.75rem; color: var(--mn-text-muted); line-height: 1.5;
+      .ws-detail__activity-avatar {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: color-mix(in srgb, var(--mn-accent) 18%, transparent);
+        color: var(--mn-accent);
+        font-size: 0.5625rem;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
         font-family: var(--font-mono, monospace);
       }
-      .ws-act-item strong { color: var(--mn-text); }
+      .ws-detail__activity-text { flex: 1; line-height: 1.4; }
+      .ws-detail__activity-time {
+        font-size: 0.6875rem;
+        color: var(--mn-text-muted);
+        font-family: var(--font-mono, monospace);
+        margin-top: 2px;
+        white-space: nowrap;
+      }
 
-      /* Badge */
+      /* Priority + status badges */
       .ws-badge {
-        display: inline-flex; align-items: center;
-        padding: 0.1rem 0.45rem; border-radius: var(--radius-sm);
-        font-size: 0.6875rem; font-weight: 600; border: 1px solid;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 3px 8px;
+        border-radius: var(--radius-pill);
+        font-size: 0.6875rem;
+        font-weight: 600;
         font-family: var(--font-mono, monospace);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        white-space: nowrap;
       }
-      .ws-badge--neutral { border-color: var(--mn-border); color: var(--mn-text-muted); background: var(--mn-surface-raised); }
-      .ws-badge--info    { border-color: var(--mn-accent); color: var(--mn-accent); background: var(--mn-surface-raised); }
-      .ws-badge--success { border-color: var(--mn-status-success, var(--mn-accent)); color: var(--mn-status-success, var(--mn-accent)); background: var(--mn-surface-raised); }
-      .ws-badge--warning { border-color: var(--mn-status-warning, var(--mn-accent)); color: var(--mn-status-warning, var(--mn-accent)); background: var(--mn-surface-raised); }
-      .ws-badge--error   { border-color: var(--mn-status-error,   var(--mn-accent)); color: var(--mn-status-error, var(--mn-accent)); background: var(--mn-surface-raised); }
+      .ws-badge--critical {
+        background: color-mix(in srgb, var(--mn-error) 12%, transparent);
+        color: var(--mn-error);
+      }
+      .ws-badge--high {
+        background: color-mix(in srgb, var(--mn-warning) 15%, transparent);
+        color: color-mix(in srgb, var(--mn-warning) 90%, var(--mn-text));
+      }
+      .ws-badge--medium {
+        background: color-mix(in srgb, var(--mn-accent) 12%, transparent);
+        color: var(--mn-accent);
+      }
+      .ws-badge--low {
+        background: color-mix(in srgb, var(--mn-success) 10%, transparent);
+        color: var(--mn-success);
+      }
+      .ws-badge--done {
+        background: color-mix(in srgb, var(--mn-success) 10%, transparent);
+        color: var(--mn-success);
+      }
+      .ws-badge--review {
+        background: color-mix(in srgb, var(--mn-accent) 10%, transparent);
+        color: var(--mn-accent);
+      }
+      .ws-badge--progress {
+        background: color-mix(in srgb, var(--mn-info, #3f95c9) 10%, transparent);
+        color: var(--mn-info, #3f95c9);
+      }
+      .ws-badge--backlog {
+        background: color-mix(in srgb, var(--mn-text) 8%, transparent);
+        color: var(--mn-text-muted);
+      }
+
+      /* Timeline view */
+      .ws-timeline { padding: 1.5rem; display: flex; flex-direction: column; gap: 1.5rem; }
+      .ws-timeline__group-label {
+        font-size: 0.625rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--mn-text-muted);
+        font-family: var(--font-display, sans-serif);
+        margin-bottom: 0.625rem;
+      }
+      .ws-timeline__rows { display: flex; flex-direction: column; gap: 0.5rem; }
+      .ws-timeline__row {
+        display: grid;
+        grid-template-columns: 180px 1fr;
+        align-items: center;
+        gap: 0.75rem;
+        min-height: 32px;
+      }
+      .ws-timeline__row-label {
+        font-size: 0.8125rem;
+        color: var(--mn-text);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .ws-timeline__track {
+        height: 28px;
+        border-radius: var(--radius-md);
+        display: flex;
+        align-items: center;
+        padding: 0 0.625rem;
+        font-size: 0.6875rem;
+        font-weight: 500;
+        color: #fff;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        cursor: pointer;
+        transition: filter var(--duration-sm, 0.12s);
+        min-width: 60px;
+      }
+      .ws-timeline__track:hover { filter: brightness(1.12); }
+      .ws-timeline__track:focus-visible {
+        outline: 2px solid var(--mn-accent);
+        outline-offset: 2px;
+      }
+
+      /* Assignee chip in list view */
+      .ws-assignee {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        background: color-mix(in srgb, var(--mn-accent) 15%, transparent);
+        color: var(--mn-accent);
+        font-size: 0.5625rem;
+        font-weight: 700;
+        font-family: var(--font-mono, monospace);
+        border: 1px solid color-mix(in srgb, var(--mn-accent) 25%, var(--mn-border));
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .ws-proj-btn,
+        .ws-timeline__track,
+        .ws-detail__close { transition: none; }
+      }
     }
   </style>
 </head>
 <body class="mn-nero">
+  <header id="ws-navbar" role="banner"></header>
 
-<mn-app-shell id="ws-shell" layout="full">
+  <div class="ws-layout" id="ws-layout" role="main">
+    <!-- Sidebar -->
+    <nav class="ws-sidebar" aria-label="Projects">
+      <div class="ws-sidebar__label" aria-hidden="true">Projects</div>
+      <ul id="ws-proj-list" style="list-style:none;margin:0;padding:0;" role="list"></ul>
+    </nav>
 
-  <!-- Nav slot: sidebar -->
-  <div slot="nav">
-    <aside class="mn-sidebar" aria-label="Workspace navigation">
-      <div class="mn-sidebar__header">
-        <span class="mn-sidebar__brand">ConvergIO</span>
+    <!-- Main views -->
+    <div class="ws-main" aria-live="polite" aria-atomic="false">
+      <div id="ws-view-board" class="ws-view ws-view--board is-active" role="region" aria-label="Board view"></div>
+      <div id="ws-view-list"  class="ws-view" role="region" aria-label="List view"></div>
+      <div id="ws-view-timeline" class="ws-view" role="region" aria-label="Timeline view">
+        <div id="ws-timeline-inner" class="ws-timeline"></div>
       </div>
-      <div class="ws-sidebar">
-        <span class="ws-sidebar__label" id="proj-section-label">Projects</span>
-        <nav id="project-nav" aria-labelledby="proj-section-label">
-          <button type="button" class="ws-proj-btn is-active" data-project="all" aria-current="true">
-            <span class="ws-dot" aria-hidden="true"></span>
-            All Projects
-          </button>
-          <button type="button" class="ws-proj-btn" data-project="apollo">
-            <span class="ws-dot" data-color="green" aria-hidden="true"></span>
-            Apollo Platform
-          </button>
-          <button type="button" class="ws-proj-btn" data-project="mercury">
-            <span class="ws-dot" data-color="blue" aria-hidden="true"></span>
-            Mercury API
-          </button>
-          <button type="button" class="ws-proj-btn" data-project="venus">
-            <span class="ws-dot" data-color="amber" aria-hidden="true"></span>
-            Venus Dashboard
-          </button>
-          <button type="button" class="ws-proj-btn" data-project="mars">
-            <span class="ws-dot" data-color="red" aria-hidden="true"></span>
-            Mars Analytics
-          </button>
-          <button type="button" class="ws-proj-btn" data-project="jupiter">
-            <span class="ws-dot" data-color="purple" aria-hidden="true"></span>
-            Jupiter AI
-          </button>
-        </nav>
+    </div>
+
+    <!-- Detail panel -->
+    <aside class="ws-detail" id="ws-detail" aria-label="Task detail" aria-hidden="true">
+      <div class="ws-detail__header">
+        <h2 class="ws-detail__title" id="ws-detail-title">Task</h2>
+        <button class="ws-detail__close" id="ws-detail-close" aria-label="Close detail panel" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
       </div>
+      <div class="ws-detail__body" id="ws-detail-body" role="region" aria-labelledby="ws-detail-title"></div>
     </aside>
   </div>
 
-  <!-- Toolbar slot: header -->
-  <div slot="toolbar">
-    <div class="ws-toolbar" role="toolbar" aria-label="Workspace toolbar">
-      <button type="button" class="mn-btn mn-btn--ghost" id="sidebar-toggle"
-              aria-label="Toggle sidebar" aria-expanded="true">Nav</button>
-      <span class="ws-toolbar__brand">ConvergIO Workspace</span>
-      <span class="ws-toolbar__sep" aria-hidden="true"></span>
-      <div role="group" aria-label="View switcher">
-        <button type="button" class="mn-btn mn-btn--ghost ws-view-btn"
-                id="btn-board" data-view="board" aria-pressed="true">Board</button>
-        <button type="button" class="mn-btn mn-btn--ghost ws-view-btn"
-                id="btn-list" data-view="list" aria-pressed="false">List</button>
-        <button type="button" class="mn-btn mn-btn--ghost ws-view-btn"
-                id="btn-timeline" data-view="timeline" aria-pressed="false">Timeline</button>
-      </div>
-      <span class="ws-toolbar__sep" aria-hidden="true"></span>
-      <button type="button" class="mn-btn mn-btn--ghost" id="filter-btn"
-              aria-label="Toggle filters">Filter</button>
-      <button type="button" class="mn-btn mn-btn--ghost" id="cmd-k-btn"
-              aria-label="Open command palette, shortcut Ctrl K">Cmd+K</button>
-      <span class="ws-toolbar__spacer"></span>
-      <button type="button" class="mn-btn mn-btn--ghost" id="notif-btn"
-              aria-label="Notifications">Bell</button>
-      <button type="button" class="mn-btn mn-btn--ghost" id="settings-btn"
-              aria-label="Settings">Gear</button>
-      <label for="theme-select" class="mn-sr-only">Theme</label>
-      <select id="theme-select" class="mn-form-select" aria-label="Select theme"
-              style="font-family:var(--font-mono,monospace);font-size:0.75rem;">
-        <option value="nero" selected>Nero</option>
-        <option value="editorial">Editorial</option>
-        <option value="avorio">Avorio</option>
-        <option value="colorblind">Colorblind</option>
-        <option value="sugar">Sugar</option>
-        <option value="navy">Navy</option>
-      </select>
-      <div class="ws-toolbar__avatar" role="img" aria-label="Signed in as Alex Chen">AC</div>
-    </div>
-  </div>
+  <!-- IIFE bundle -->
+  <script src="../dist/iife/maranello.min.js"></script>
 
-  <!-- Main slot: primary content -->
-  <div slot="main" id="mn-slot-page" class="mn-slot mn-slot--page"></div>
+  <!-- Header-shell WC -->
+  <script type="module" src="../packages/elements/dist/wc/mn-header-shell.js"></script>
 
-  <!-- Detail slot: side panel -->
-  <div slot="detail" id="mn-slot-side-panel" class="mn-slot mn-slot--side-panel"></div>
+  <!-- Workspace logic -->
+  <script>
+  (function () {
+    var M = window.Maranello;
+    if (!M) return;
 
-</mn-app-shell>
+    /* ── Project data ── */
+    var PROJECTS = [
+      { id: 'all',     label: 'All Projects',    color: null,      count: 15 },
+      { id: 'apollo',  label: 'Apollo Platform',  color: '#5B8DEF', count: 4 },
+      { id: 'mercury', label: 'Mercury API',       color: '#E56B4B', count: 3 },
+      { id: 'venus',   label: 'Venus Dashboard',   color: '#9B5DE5', count: 3 },
+      { id: 'mars',    label: 'Mars Analytics',    color: '#E5405E', count: 3 },
+      { id: 'jupiter', label: 'Jupiter AI',        color: '#00B4A6', count: 2 },
+    ];
 
-<script src="../dist/iife/maranello.min.js"></script>
-<script type="module" src="../dist/wc/mn-app-shell.js"></script>
-<script>
-(function () {
-  'use strict';
+    /* ── Task data ── */
+    var TASKS = [
+      { id: 't01', title: 'JWT refresh token rotation',  assignee: 'AC', assigneeName: 'Alex Chen',      priority: 'critical', status: 'progress', project: 'apollo',  due: '2025-08-12', tags: ['auth','security'],   col: 'progress', description: 'Implement silent refresh for short-lived access tokens with secure rotation.' },
+      { id: 't02', title: 'gRPC migration',              assignee: 'SK', assigneeName: 'Sarah Kim',       priority: 'high',     status: 'progress', project: 'mercury', due: '2025-08-20', tags: ['api','infra'],        col: 'progress', description: 'Migrate REST services to gRPC for improved performance and streaming support.' },
+      { id: 't03', title: 'Dark mode implementation',    assignee: 'MJ', assigneeName: 'Marcus Johnson',  priority: 'medium',   status: 'backlog',  project: 'venus',   due: '2025-09-05', tags: ['ui','design'],        col: 'backlog',  description: 'Add full dark mode support leveraging design token themes.' },
+      { id: 't04', title: 'Memory leak fix',             assignee: 'PP', assigneeName: 'Priya Patel',     priority: 'critical', status: 'done',     project: 'mars',    due: '2025-07-30', tags: ['perf','bugfix'],      col: 'done',     description: 'Resolved heap leak in analytics event buffer by clearing timers on unmount.' },
+      { id: 't05', title: 'Onboarding flow redesign',    assignee: 'LO', assigneeName: "Liam O'Brien",    priority: 'high',     status: 'review',   project: 'venus',   due: '2025-08-18', tags: ['ux','design'],        col: 'review',   description: 'Streamline the 7-step onboarding to a 3-step wizard with progress persistence.' },
+      { id: 't06', title: 'Auth middleware refactor',    assignee: 'SR', assigneeName: 'Sofia Rodriguez', priority: 'high',     status: 'progress', project: 'apollo',  due: '2025-08-15', tags: ['auth','api'],         col: 'progress', description: 'Centralise auth checking into a single pipeline middleware layer.' },
+      { id: 't07', title: 'Rate limiting service',       assignee: 'AC', assigneeName: 'Alex Chen',       priority: 'high',     status: 'progress', project: 'mercury', due: '2025-08-22', tags: ['infra','api'],        col: 'progress', description: 'Token-bucket algorithm per-IP and per-user-tier across all public routes.' },
+      { id: 't08', title: 'Analytics module',            assignee: 'SK', assigneeName: 'Sarah Kim',       priority: 'medium',   status: 'progress', project: 'mars',    due: '2025-09-01', tags: ['data','dashboard'],   col: 'progress', description: 'Build reusable analytics event model and integration with telemetry pipeline.' },
+      { id: 't09', title: 'Push notifications',          assignee: 'MJ', assigneeName: 'Marcus Johnson',  priority: 'medium',   status: 'done',     project: 'jupiter', due: '2025-07-28', tags: ['mobile','backend'],   col: 'done',     description: 'Web Push API integration with opt-in consent flow and topic subscriptions.' },
+      { id: 't10', title: 'Search indexer',              assignee: 'PP', assigneeName: 'Priya Patel',     priority: 'high',     status: 'review',   project: 'jupiter', due: '2025-08-25', tags: ['search','backend'],   col: 'review',   description: 'Incremental full-text index over tasks and comments with debounced writes.' },
+      { id: 't11', title: 'E2E test suite',              assignee: 'LO', assigneeName: "Liam O'Brien",    priority: 'medium',   status: 'backlog',  project: 'mercury', due: '2025-09-10', tags: ['testing','ci'],       col: 'backlog',  description: 'Playwright coverage for critical user paths including auth and billing flows.' },
+      { id: 't12', title: 'DB query optimisation',       assignee: 'SR', assigneeName: 'Sofia Rodriguez', priority: 'high',     status: 'review',   project: 'mars',    due: '2025-08-28', tags: ['perf','database'],    col: 'review',   description: 'Add composite indexes and rewrite N+1 queries in the reporting pipeline.' },
+      { id: 't13', title: 'CSV export feature',          assignee: 'AC', assigneeName: 'Alex Chen',       priority: 'low',      status: 'backlog',  project: 'venus',   due: '2025-09-15', tags: ['export','ux'],        col: 'backlog',  description: 'Streaming CSV generation for large dataset exports with progress feedback.' },
+      { id: 't14', title: 'SSO integration',             assignee: 'SK', assigneeName: 'Sarah Kim',       priority: 'high',     status: 'done',     project: 'apollo',  due: '2025-07-25', tags: ['auth','enterprise'],  col: 'done',     description: 'SAML 2.0 and OIDC provider federation with attribute mapping configuration.' },
+      { id: 't15', title: 'API documentation',           assignee: 'MJ', assigneeName: 'Marcus Johnson',  priority: 'low',      status: 'backlog',  project: 'apollo',  due: '2025-09-20', tags: ['docs','api'],         col: 'backlog',  description: 'OpenAPI 3.1 spec with interactive playground, auth examples, and changelogs.' },
+    ];
 
-  var M = window.Maranello;
-  if (!M) { console.error('Maranello not loaded'); return; }
+    var ACTIVITY_SEEDS = [
+      { initials: 'SK', text: 'Added acceptance criteria and linked design file.',       time: '2h ago' },
+      { initials: 'MJ', text: 'Updated priority from Medium to High after triage call.', time: '5h ago' },
+      { initials: 'AC', text: 'Assigned to sprint and moved to In Progress.',            time: '1d ago' },
+    ];
 
-  /* Data */
+    var state = { view: 'board', project: 'all', query: '', detailTask: null };
+    var kanbanCtrl = null;
+    var tableCtrl  = null;
 
-  var PROJECTS = {
-    all:     { name: 'All Projects',    color: '' },
-    apollo:  { name: 'Apollo Platform', color: 'green' },
-    mercury: { name: 'Mercury API',     color: 'blue' },
-    venus:   { name: 'Venus Dashboard', color: 'amber' },
-    mars:    { name: 'Mars Analytics',  color: 'red' },
-    jupiter: { name: 'Jupiter AI',      color: 'purple' }
-  };
-
-  var PEOPLE = {
-    AC: 'Alex Chen',
-    SK: 'Sarah Kim',
-    MJ: 'Marcus Johnson',
-    PP: 'Priya Patel',
-    LO: "Liam O'Brien",
-    SR: 'Sofia Rodriguez'
-  };
-
-  var TASKS = [
-    { id:'t01', title:'Implement JWT refresh flow',    assignee:'AC', priority:'Critical', status:'In Progress', due:'2025-02-14', project:'mercury', tags:['Auth','Backend'],     start:5,  width:30, desc:'Implement token refresh logic with sliding window expiry. Handle race conditions on concurrent requests.' },
-    { id:'t02', title:'Migrate user service to gRPC', assignee:'MJ', priority:'High',     status:'In Progress', due:'2025-03-01', project:'apollo',  tags:['Backend','Migration'],start:10, width:40, desc:'Replace REST endpoints with gRPC for the user microservice. Update all client libraries and protos.' },
-    { id:'t03', title:'Add dark mode toggle',          assignee:'SR', priority:'Medium',   status:'In Progress', due:'2025-02-20', project:'venus',   tags:['UI','Theming'],       start:20, width:25, desc:'Add a persistent dark/light toggle to the dashboard header. Respect prefers-color-scheme on first load.' },
-    { id:'t04', title:'Fix memory leak in websocket',  assignee:'AC', priority:'High',     status:'In Progress', due:'2025-02-10', project:'apollo',  tags:['Bug','Perf'],         start:3,  width:20, desc:'Event listeners accumulate on ws reconnect. Audit lifecycle hooks and clean up on disconnect.' },
-    { id:'t05', title:'Design onboarding flow',        assignee:'SK', priority:'Medium',   status:'In Progress', due:'2025-02-28', project:'venus',   tags:['UX','Design'],        start:15, width:35, desc:'Step-by-step onboarding: org setup, team invite, first project creation. Include progress indicator.' },
-    { id:'t06', title:'Refactor auth middleware',      assignee:'PP', priority:'High',     status:'Review',      due:'2025-02-17', project:'mercury', tags:['Auth','Refactor'],    start:8,  width:28, desc:'Extract auth checks into a reusable middleware chain. Consolidate token validation and error handling.' },
-    { id:'t07', title:'Add rate limiting',             assignee:'LO', priority:'Medium',   status:'Review',      due:'2025-02-22', project:'apollo',  tags:['Backend','Security'], start:12, width:30, desc:'Per-endpoint rate limiting with configurable thresholds per tier. Use Redis sliding window counters.' },
-    { id:'t08', title:'Create analytics module',       assignee:'SR', priority:'Medium',   status:'Review',      due:'2025-03-10', project:'mars',    tags:['Analytics','Feature'],start:18, width:38, desc:'Core analytics module: event ingestion pipeline, aggregation jobs, and embeddable dashboard widgets.' },
-    { id:'t09', title:'Write E2E tests',               assignee:'MJ', priority:'Low',      status:'Done',        due:'2025-01-31', project:'jupiter', tags:['Testing','QA'],       start:0,  width:22, desc:'End-to-end tests for core user journey: signup, onboarding, project creation, team invite.' },
-    { id:'t10', title:'Optimize DB queries',           assignee:'PP', priority:'High',     status:'Done',        due:'2025-01-28', project:'mars',    tags:['Perf','DB'],          start:0,  width:18, desc:'Profile and optimize the 5 slowest queries. Add missing indexes and rewrite N+1 patterns.' },
-    { id:'t11', title:'Implement notifications',       assignee:'AC', priority:'Medium',   status:'Done',        due:'2025-01-25', project:'jupiter', tags:['Feature','UX'],       start:0,  width:15, desc:'Real-time in-app notifications with read/unread state, grouping, and email digest fallback option.' },
-    { id:'t12', title:'Build search indexer',          assignee:'SK', priority:'High',     status:'Backlog',     due:'2025-03-20', project:'apollo',  tags:['Search','Backend'],   start:30, width:45, desc:'Index all entities for full-text search. Support faceted filtering and typo tolerance via fuzzy match.' },
-    { id:'t13', title:'Implement SSO',                 assignee:'MJ', priority:'Critical', status:'Backlog',     due:'2025-03-15', project:'mercury', tags:['Auth','Enterprise'],  start:35, width:40, desc:'SAML 2.0 and OIDC SSO. Auto-provision users from IdP. Admin configuration UI with domain mapping.' },
-    { id:'t14', title:'Create API docs',               assignee:'PP', priority:'Low',      status:'Backlog',     due:'2025-04-01', project:'venus',   tags:['Docs','DX'],          start:40, width:35, desc:'Auto-generate OpenAPI docs with interactive playground. Write usage guides per endpoint group.' },
-    { id:'t15', title:'Add CSV export',                assignee:'LO', priority:'Medium',   status:'Backlog',     due:'2025-03-28', project:'mars',    tags:['Feature','Data'],     start:38, width:30, desc:'Export any table view to CSV with column selection. Stream large datasets server-side to avoid timeout.' }
-  ];
-
-  /* App state */
-  var activeProject = 'all';
-  var currentView   = 'board';
-  var activeRender  = null;
-
-  function getFilteredTasks() {
-    if (activeProject === 'all') return TASKS.slice();
-    return TASKS.filter(function (t) { return t.project === activeProject; });
-  }
-
-  /* Core setup */
-  var shellEl   = document.getElementById('ws-shell');
-  var pageSlot  = document.getElementById('mn-slot-page');
-  var registry  = M.ViewRegistry.getInstance();
-  registry.clear();
-  var navigation   = new M.NavigationModel();
-  var orchestrator = new M.PanelOrchestrator(registry, navigation);
-  shellEl.orchestrator = orchestrator;
-
-  /* Helpers */
-  function esc(s) {
-    var d = document.createElement('span');
-    d.textContent = String(s == null ? '' : s);
-    return d.innerHTML;
-  }
-
-  function priorityBadge(p) {
-    var m = { Critical:'ws-badge--error', High:'ws-badge--warning', Medium:'ws-badge--info', Low:'ws-badge--neutral' };
-    return m[p] || 'ws-badge--neutral';
-  }
-
-  function statusBadge(s) {
-    var m = { Backlog:'ws-badge--neutral', 'In Progress':'ws-badge--info', Review:'ws-badge--warning', Done:'ws-badge--success' };
-    return m[s] || 'ws-badge--neutral';
-  }
-
-  function priorityDot(p) {
-    var m = { Critical:'ws-pdot-critical', High:'ws-pdot-high', Medium:'ws-pdot-medium', Low:'ws-pdot-low' };
-    return m[p] || '';
-  }
-
-  function openTaskDetail(task) {
-    if (orchestrator.isOpen('task-detail')) orchestrator.close('task-detail');
-    orchestrator.open('task-detail', 'side-panel', task);
-    shellEl.setAttribute('layout', 'side-detail');
-  }
-
-  /* View: Board (Kanban) */
-  registry.register({
-    id: 'board',
-    title: 'Board',
-    defaultPlacement: 'page',
-    factory: function (container) {
-      var boardEl = document.createElement('div');
-      boardEl.className = 'ws-board';
-      boardEl.setAttribute('role', 'region');
-      boardEl.setAttribute('aria-label', 'Kanban task board');
-      container.appendChild(boardEl);
-
-      var COLS = ['Backlog', 'In Progress', 'Review', 'Done'];
-
-      function renderBoard() {
-        boardEl.innerHTML = '';
-        var tasks = getFilteredTasks();
-        var grouped = {};
-        COLS.forEach(function (c) { grouped[c] = []; });
-        tasks.forEach(function (t) { if (grouped[t.status]) grouped[t.status].push(t); });
-
-        COLS.forEach(function (colName) {
-          var colEl = document.createElement('div');
-          colEl.className = 'ws-board-col';
-
-          var hdEl = document.createElement('div');
-          hdEl.className = 'ws-board-col__hd';
-          var nameEl = document.createElement('span');
-          nameEl.className = 'ws-board-col__name';
-          nameEl.textContent = colName;
-          var countEl = document.createElement('span');
-          countEl.className = 'ws-board-col__count';
-          countEl.setAttribute('aria-label', grouped[colName].length + ' tasks');
-          countEl.textContent = String(grouped[colName].length);
-          hdEl.appendChild(nameEl);
-          hdEl.appendChild(countEl);
-          colEl.appendChild(hdEl);
-
-          grouped[colName].forEach(function (task) {
-            var card = document.createElement('button');
-            card.type = 'button';
-            card.className = 'ws-card';
-            card.setAttribute('aria-label',
-              task.title + ', ' + task.priority + ' priority, ' + task.status +
-              ', assigned to ' + (PEOPLE[task.assignee] || task.assignee));
-
-            var titleEl = document.createElement('div');
-            titleEl.className = 'ws-card__title';
-            titleEl.textContent = task.title;
-
-            var metaEl = document.createElement('div');
-            metaEl.className = 'ws-card__meta';
-
-            var avEl = document.createElement('span');
-            avEl.className = 'ws-card__avatar';
-            avEl.setAttribute('aria-hidden', 'true');
-            avEl.textContent = task.assignee;
-
-            var dotEl = document.createElement('span');
-            dotEl.className = 'ws-card__pdot ' + priorityDot(task.priority);
-            dotEl.setAttribute('aria-hidden', 'true');
-
-            var projEl = document.createElement('span');
-            projEl.className = 'ws-card__proj';
-            projEl.setAttribute('aria-hidden', 'true');
-            projEl.textContent = PROJECTS[task.project] ? PROJECTS[task.project].name : task.project;
-
-            metaEl.appendChild(avEl);
-            metaEl.appendChild(dotEl);
-            metaEl.appendChild(projEl);
-            card.appendChild(titleEl);
-            card.appendChild(metaEl);
-
-            (function (t) {
-              card.addEventListener('click', function () { openTaskDetail(t); });
-            }(task));
-
-            colEl.appendChild(card);
-          });
-
-          boardEl.appendChild(colEl);
-        });
-      }
-
-      renderBoard();
-      activeRender = renderBoard;
-      return function () { if (activeRender === renderBoard) activeRender = null; };
+    /* ── Helpers ── */
+    function icon(name) {
+      return (M.icons && typeof M.icons[name] === 'function') ? M.icons[name]() : '';
     }
-  });
 
-  /* View: List */
-  registry.register({
-    id: 'list',
-    title: 'List',
-    defaultPlacement: 'page',
-    factory: function (container) {
-      var wrapEl = document.createElement('div');
-      wrapEl.className = 'ws-list';
-      var tableHostEl = document.createElement('div');
-      wrapEl.appendChild(tableHostEl);
-      container.appendChild(wrapEl);
+    function getColor(project) {
+      var p = PROJECTS.find(function (x) { return x.id === project; });
+      return (p && p.color) ? p.color : 'var(--mn-accent)';
+    }
 
-      function toRow(t) {
+    function filteredTasks() {
+      var q = state.query.toLowerCase().trim();
+      return TASKS.filter(function (t) {
+        if (state.project !== 'all' && t.project !== state.project) return false;
+        if (!q) return true;
+        return (t.title + ' ' + t.assigneeName + ' ' + t.tags.join(' ')).toLowerCase().indexOf(q) !== -1;
+      });
+    }
+
+    function makeBadge(type, label) {
+      return '<span class="ws-badge ws-badge--' + type + '">' + label + '</span>';
+    }
+
+    /* ── Sidebar ── */
+    function renderSidebar() {
+      var list = document.getElementById('ws-proj-list');
+      if (!list) return;
+      list.innerHTML = '';
+      PROJECTS.forEach(function (p) {
+        var li = document.createElement('li');
+        li.setAttribute('role', 'listitem');
+        var btn = document.createElement('button');
+        btn.className = 'ws-proj-btn' + (state.project === p.id ? ' is-active' : '');
+        btn.setAttribute('type', 'button');
+        btn.setAttribute('aria-pressed', state.project === p.id ? 'true' : 'false');
+
+        var dot = '';
+        if (p.color) {
+          dot = '<span class="ws-proj-dot" aria-hidden="true" style="background:' + p.color + '"></span>';
+        } else {
+          dot = '<span class="ws-proj-dot" aria-hidden="true" style="background:var(--mn-text-muted)"></span>';
+        }
+        var tasks = filteredByProject(p.id);
+        btn.innerHTML = dot + '<span>' + p.label + '</span><span class="ws-proj-count" aria-label="' + tasks + ' tasks">' + tasks + '</span>';
+        btn.addEventListener('click', function () {
+          state.project = p.id;
+          renderSidebar();
+          renderCurrentView();
+        });
+        li.appendChild(btn);
+        list.appendChild(li);
+      });
+    }
+
+    function filteredByProject(projId) {
+      if (projId === 'all') return TASKS.length;
+      return TASKS.filter(function (t) { return t.project === projId; }).length;
+    }
+
+    /* ── Board view ── */
+    function renderBoard() {
+      var container = document.getElementById('ws-view-board');
+      if (!container) return;
+      if (kanbanCtrl) { kanbanCtrl.destroy(); kanbanCtrl = null; }
+      container.innerHTML = '';
+
+      var tasks = filteredTasks();
+      var cols = [
+        { id: 'backlog',  title: 'Backlog' },
+        { id: 'progress', title: 'In Progress' },
+        { id: 'review',   title: 'Review' },
+        { id: 'done',     title: 'Done' },
+      ];
+      var cards = tasks.map(function (t) {
         return {
           id: t.id,
+          columnId: t.col,
           title: t.title,
-          assignee: PEOPLE[t.assignee] || t.assignee,
+          subtitle: t.assigneeName,
+          tags: t.tags.slice(0, 2),
           priority: t.priority,
-          status: t.status,
-          due: t.due,
-          project: PROJECTS[t.project] ? PROJECTS[t.project].name : t.project,
-          _raw: t
         };
-      }
-
-      var table = M.dataTable(tableHostEl, {
-        columns: [
-          { key: 'title',    label: 'Task',     type: 'text',   sortable: true },
-          { key: 'assignee', label: 'Assignee', type: 'text',   sortable: true },
-          { key: 'priority', label: 'Priority', type: 'tag',    sortable: true },
-          { key: 'status',   label: 'Status',   type: 'status', sortable: true },
-          { key: 'due',      label: 'Due',       type: 'date',   sortable: true },
-          { key: 'project',  label: 'Project',  type: 'text',   sortable: true }
-        ],
-        data: getFilteredTasks().map(toRow),
-        onRowClick: function (row) {
-          openTaskDetail(row._raw || row);
-        }
       });
 
-      function renderList() {
-        table.setData(getFilteredTasks().map(toRow));
-      }
-
-      activeRender = renderList;
-      return function () {
-        if (activeRender === renderList) activeRender = null;
-        table.destroy();
-      };
-    }
-  });
-
-  /* View: Timeline */
-  registry.register({
-    id: 'timeline',
-    title: 'Timeline',
-    defaultPlacement: 'page',
-    factory: function (container) {
-      var tlEl = document.createElement('div');
-      tlEl.className = 'ws-timeline';
-      tlEl.setAttribute('role', 'region');
-      tlEl.setAttribute('aria-label', 'Task timeline');
-      container.appendChild(tlEl);
-
-      function renderTimeline() {
-        tlEl.innerHTML = '';
-        var tasks = getFilteredTasks();
-
-        var groups = {};
-        var order  = [];
-        tasks.forEach(function (t) {
-          if (!groups[t.project]) { groups[t.project] = []; order.push(t.project); }
-          groups[t.project].push(t);
-        });
-
-        order.forEach(function (pid) {
-          var proj = PROJECTS[pid];
-          if (!proj) return;
-
-          var groupEl = document.createElement('div');
-          groupEl.className = 'ws-tl-group';
-
-          var labelEl = document.createElement('div');
-          labelEl.className = 'ws-tl-group__label';
-          var dotEl = document.createElement('span');
-          dotEl.className = 'ws-dot';
-          if (proj.color) dotEl.setAttribute('data-color', proj.color);
-          dotEl.setAttribute('aria-hidden', 'true');
-          labelEl.appendChild(dotEl);
-          labelEl.appendChild(document.createTextNode(' ' + proj.name));
-          groupEl.appendChild(labelEl);
-
-          groups[pid].forEach(function (task) {
-            var rowEl = document.createElement('div');
-            rowEl.className = 'ws-tl-row';
-
-            var nameEl = document.createElement('div');
-            nameEl.className = 'ws-tl-row__name';
-            nameEl.title = task.title;
-            nameEl.textContent = task.title;
-
-            var trackEl = document.createElement('div');
-            trackEl.className = 'ws-tl-row__track';
-            trackEl.setAttribute('role', 'img');
-            trackEl.setAttribute('aria-label', task.title + ', due ' + task.due);
-
-            var barEl = document.createElement('div');
-            barEl.className = 'ws-tl-row__bar';
-            barEl.setAttribute('data-proj', task.project);
-            barEl.style.left  = task.start + '%';
-            barEl.style.width = Math.max(task.width, 4) + '%';
-
-            var dueEl = document.createElement('span');
-            dueEl.className = 'ws-tl-row__due';
-            dueEl.textContent = task.due;
-
-            trackEl.appendChild(barEl);
-            trackEl.appendChild(dueEl);
-            rowEl.appendChild(nameEl);
-            rowEl.appendChild(trackEl);
-            groupEl.appendChild(rowEl);
-          });
-
-          tlEl.appendChild(groupEl);
-        });
-      }
-
-      renderTimeline();
-      activeRender = renderTimeline;
-      return function () { if (activeRender === renderTimeline) activeRender = null; };
-    }
-  });
-
-  /* View: Task Detail */
-  registry.register({
-    id: 'task-detail',
-    title: 'Task Detail',
-    defaultPlacement: 'side-panel',
-    factory: function (container, task) {
-      if (!task) return function () {};
-
-      var detailEl = document.createElement('div');
-      detailEl.className = 'ws-detail';
-
-      var projName     = PROJECTS[task.project] ? PROJECTS[task.project].name : task.project;
-      var assigneeName = PEOPLE[task.assignee] || task.assignee;
-      var priCls       = priorityBadge(task.priority);
-      var stCls        = statusBadge(task.status);
-
-      /* Header */
-      var hdEl = document.createElement('div');
-      hdEl.className = 'ws-detail__hd';
-      var titleEl = document.createElement('h2');
-      titleEl.className = 'ws-detail__title';
-      titleEl.textContent = task.title;
-      var closeBtn = document.createElement('button');
-      closeBtn.type = 'button';
-      closeBtn.className = 'ws-detail__close';
-      closeBtn.setAttribute('aria-label', 'Close task detail');
-      closeBtn.textContent = 'X';
-      hdEl.appendChild(titleEl);
-      hdEl.appendChild(closeBtn);
-
-      /* Fields */
-      var fieldsEl = document.createElement('div');
-      fieldsEl.className = 'ws-detail__fields';
-
-      function addField(label, valueNode) {
-        var f = document.createElement('div');
-        f.className = 'ws-detail__field';
-        var l = document.createElement('span');
-        l.className = 'ws-detail__label';
-        l.textContent = label;
-        f.appendChild(l);
-        f.appendChild(valueNode);
-        fieldsEl.appendChild(f);
-      }
-
-      function textVal(txt) {
-        var s = document.createElement('span');
-        s.className = 'ws-detail__val';
-        s.textContent = txt;
-        return s;
-      }
-
-      function badgeVal(txt, cls) {
-        var v = document.createElement('span');
-        v.className = 'ws-detail__val';
-        var b = document.createElement('span');
-        b.className = 'ws-badge ' + cls;
-        b.textContent = txt;
-        v.appendChild(b);
-        return v;
-      }
-
-      addField('Assignee', textVal(assigneeName));
-      addField('Priority', badgeVal(task.priority, priCls));
-      addField('Status',   badgeVal(task.status,   stCls));
-      addField('Due Date', textVal(task.due));
-      addField('Project',  textVal(projName));
-
-      /* Description */
-      var descEl = document.createElement('p');
-      descEl.className = 'ws-detail__desc';
-      descEl.setAttribute('aria-label', 'Task description');
-      descEl.textContent = task.desc;
-
-      /* Tags */
-      var tagsEl = document.createElement('div');
-      tagsEl.className = 'ws-detail__tags';
-      tagsEl.setAttribute('aria-label', 'Tags');
-      (task.tags || []).forEach(function (tag) {
-        var b = document.createElement('span');
-        b.className = 'ws-badge ws-badge--neutral';
-        b.textContent = tag;
-        tagsEl.appendChild(b);
+      kanbanCtrl = M.kanbanBoard(container, {
+        columns: cols,
+        cards: cards,
+        onCardClick: function (card) {
+          var task = TASKS.find(function (t) { return t.id === card.id; });
+          if (task) openDetail(task);
+        },
       });
+    }
 
-      /* Activity */
-      var actHdEl = document.createElement('div');
-      actHdEl.className = 'ws-detail__act-hd';
-      actHdEl.id = 'act-hd-' + esc(task.id);
-      actHdEl.textContent = 'Activity';
+    /* ── List view ── */
+    function renderList() {
+      var container = document.getElementById('ws-view-list');
+      if (!container) return;
+      if (tableCtrl) { tableCtrl.destroy(); tableCtrl = null; }
+      container.innerHTML = '';
 
-      var feedEl = document.createElement('div');
-      feedEl.setAttribute('role', 'feed');
-      feedEl.setAttribute('aria-labelledby', actHdEl.id);
-
-      var tag0 = (task.tags && task.tags[0]) ? task.tags[0] : 'general';
-      var activities = [
-        { actor: 'AC', msg: 'commented 2h ago \u2014 Reviewed the edge cases. Looks good for staging.' },
-        { actor: 'SK', msg: 'changed status to ' + task.status + ' 1d ago' },
-        { actor: 'MJ', msg: 'assigned task to ' + assigneeName + ' 2d ago' },
-        { actor: 'PP', msg: 'added tag ' + tag0 + ' 3d ago' }
+      var tasks = filteredTasks();
+      var cols = [
+        { key: 'title',    label: 'Task',     sortable: true, width: '28%' },
+        {
+          key: 'assignee', label: 'Assignee', sortable: true, width: '90px',
+          render: function (val, row) {
+            return '<span class="ws-assignee" aria-label="' + row.assigneeName + '" title="' + row.assigneeName + '">' + val + '</span>';
+          },
+        },
+        {
+          key: 'priority', label: 'Priority', sortable: true, width: '100px',
+          render: function (val) {
+            var map = { critical: 'Critical', high: 'High', medium: 'Medium', low: 'Low' };
+            return makeBadge(val, map[val] || val);
+          },
+        },
+        {
+          key: 'status', label: 'Status', sortable: true, width: '110px',
+          render: function (val) {
+            var map = { progress: 'In Progress', review: 'Review', done: 'Done', backlog: 'Backlog' };
+            return makeBadge(val, map[val] || val);
+          },
+        },
+        { key: 'due',      label: 'Due',     sortable: true, width: '100px' },
+        {
+          key: 'tags', label: 'Tags', width: '140px',
+          render: function (val) {
+            return val.slice(0, 2).map(function (t) { return makeBadge('review', t); }).join(' ');
+          },
+        },
       ];
-      activities.forEach(function (a) {
-        var item = document.createElement('div');
-        item.className = 'ws-act-item';
-        var strong = document.createElement('strong');
-        strong.textContent = a.actor;
-        item.appendChild(strong);
-        item.appendChild(document.createTextNode(' ' + a.msg));
-        feedEl.appendChild(item);
+
+      tableCtrl = M.dataTable(container, {
+        columns: cols,
+        data: tasks,
+        ariaLabel: 'Task list',
+        stickyHeader: true,
+        selectable: true,
+        showFilters: false,
+        onRowClick: function (row) { openDetail(row); },
+      });
+    }
+
+    /* ── Timeline view ── */
+    function renderTimeline() {
+      var inner = document.getElementById('ws-timeline-inner');
+      if (!inner) return;
+      inner.innerHTML = '';
+
+      var tasks = filteredTasks();
+      var groups = [
+        { projId: 'apollo',  label: 'Apollo Platform' },
+        { projId: 'mercury', label: 'Mercury API' },
+        { projId: 'venus',   label: 'Venus Dashboard' },
+        { projId: 'mars',    label: 'Mars Analytics' },
+        { projId: 'jupiter', label: 'Jupiter AI' },
+      ];
+
+      /* Rough timeline: map due date to a bar offset/width */
+      var EARLIEST = new Date('2025-07-01').getTime();
+      var LATEST   = new Date('2025-10-01').getTime();
+      var RANGE    = LATEST - EARLIEST;
+
+      groups.forEach(function (g) {
+        var groupTasks = tasks.filter(function (t) { return t.project === g.projId; });
+        if (!groupTasks.length) return;
+
+        var section = document.createElement('section');
+        section.setAttribute('aria-label', g.label);
+
+        var lbl = document.createElement('div');
+        lbl.className = 'ws-timeline__group-label';
+        lbl.textContent = g.label;
+        section.appendChild(lbl);
+
+        var rows = document.createElement('div');
+        rows.className = 'ws-timeline__rows';
+
+        groupTasks.forEach(function (t) {
+          var row = document.createElement('div');
+          row.className = 'ws-timeline__row';
+
+          var nameEl = document.createElement('div');
+          nameEl.className = 'ws-timeline__row-label';
+          nameEl.textContent = t.title;
+          nameEl.title = t.title;
+          row.appendChild(nameEl);
+
+          var trackWrap = document.createElement('div');
+          trackWrap.style.position = 'relative';
+          trackWrap.style.flex = '1';
+
+          /* Calculate bar position */
+          var endMs   = new Date(t.due).getTime();
+          var startMs = endMs - 14 * 24 * 60 * 60 * 1000; /* assume 2-week duration */
+          var leftPct = Math.max(0, Math.min(80, Math.round((startMs - EARLIEST) / RANGE * 100)));
+          var widthPct = Math.max(8, Math.min(95 - leftPct, Math.round((endMs - startMs) / RANGE * 100)));
+
+          var track = document.createElement('button');
+          track.className = 'ws-timeline__track';
+          track.setAttribute('type', 'button');
+          track.setAttribute('aria-label', t.title + ' - due ' + t.due);
+          track.style.marginLeft = leftPct + '%';
+          track.style.width = widthPct + '%';
+          track.style.background = getColor(t.project);
+          track.textContent = t.title;
+          track.addEventListener('click', function () { openDetail(t); });
+
+          trackWrap.appendChild(track);
+          row.appendChild(trackWrap);
+          rows.appendChild(row);
+        });
+
+        section.appendChild(rows);
+        inner.appendChild(section);
       });
 
-      detailEl.appendChild(hdEl);
-      detailEl.appendChild(fieldsEl);
-      detailEl.appendChild(descEl);
-      detailEl.appendChild(tagsEl);
-      detailEl.appendChild(actHdEl);
-      detailEl.appendChild(feedEl);
-      container.appendChild(detailEl);
-
-      closeBtn.addEventListener('click', function () {
-        orchestrator.close('task-detail');
-        shellEl.setAttribute('layout', 'full');
-      });
-
-      return function () {};
+      if (!inner.children.length) {
+        var empty = document.createElement('p');
+        empty.style.color = 'var(--mn-text-muted)';
+        empty.style.padding = '2rem';
+        empty.textContent = 'No tasks match the current filter.';
+        inner.appendChild(empty);
+      }
     }
-  });
 
-  /* View switching */
+    /* ── Detail panel ── */
+    function openDetail(task) {
+      state.detailTask = task;
+      var layout = document.getElementById('ws-layout');
+      var detail = document.getElementById('ws-detail');
+      var titleEl = document.getElementById('ws-detail-title');
+      var bodyEl  = document.getElementById('ws-detail-body');
+      if (!layout || !detail || !titleEl || !bodyEl) return;
 
-  function updateViewBtns(viewId) {
-    var btns = document.querySelectorAll('.ws-view-btn');
-    for (var i = 0; i < btns.length; i++) {
-      var active = btns[i].getAttribute('data-view') === viewId;
-      btns[i].setAttribute('aria-pressed', active ? 'true' : 'false');
+      titleEl.textContent = task.title;
+
+      var projLabel = (PROJECTS.find(function (p) { return p.id === task.project; }) || {}).label || task.project;
+      var priorityMap = { critical: 'Critical', high: 'High', medium: 'Medium', low: 'Low' };
+      var statusMap   = { progress: 'In Progress', review: 'Review', done: 'Done', backlog: 'Backlog' };
+
+      var html = [
+        '<div class="ws-detail__field">',
+          '<span class="ws-detail__field-label">Assignee</span>',
+          '<div style="display:flex;align-items:center;gap:0.5rem;">',
+            '<span class="ws-assignee" aria-hidden="true">' + task.assignee + '</span>',
+            '<span class="ws-detail__field-value">' + task.assigneeName + '</span>',
+          '</div>',
+        '</div>',
+        '<div class="ws-detail__field">',
+          '<span class="ws-detail__field-label">Priority</span>',
+          '<span class="ws-detail__field-value">' + makeBadge(task.priority, priorityMap[task.priority] || task.priority) + '</span>',
+        '</div>',
+        '<div class="ws-detail__field">',
+          '<span class="ws-detail__field-label">Status</span>',
+          '<span class="ws-detail__field-value">' + makeBadge(task.status, statusMap[task.status] || task.status) + '</span>',
+        '</div>',
+        '<div class="ws-detail__field">',
+          '<span class="ws-detail__field-label">Due Date</span>',
+          '<span class="ws-detail__field-value" style="font-family:var(--font-mono,monospace)">' + task.due + '</span>',
+        '</div>',
+        '<div class="ws-detail__field">',
+          '<span class="ws-detail__field-label">Project</span>',
+          '<div style="display:flex;align-items:center;gap:0.375rem;">',
+            '<span class="ws-proj-dot" aria-hidden="true" style="background:' + getColor(task.project) + '"></span>',
+            '<span class="ws-detail__field-value">' + projLabel + '</span>',
+          '</div>',
+        '</div>',
+        '<div class="ws-detail__field">',
+          '<span class="ws-detail__field-label">Description</span>',
+          '<p class="ws-detail__desc">' + task.description + '</p>',
+        '</div>',
+        '<div class="ws-detail__field">',
+          '<span class="ws-detail__field-label">Tags</span>',
+          '<div style="display:flex;flex-wrap:wrap;gap:0.25rem;margin-top:0.125rem;">',
+            task.tags.map(function (tg) { return makeBadge('review', tg); }).join(''),
+          '</div>',
+        '</div>',
+        '<div class="ws-detail__field">',
+          '<span class="ws-detail__field-label">Activity</span>',
+          '<div class="ws-detail__activity">',
+            ACTIVITY_SEEDS.map(function (a) {
+              return [
+                '<div class="ws-detail__activity-entry">',
+                  '<span class="ws-detail__activity-avatar">' + a.initials + '</span>',
+                  '<div>',
+                    '<div class="ws-detail__activity-text">' + a.text + '</div>',
+                    '<div class="ws-detail__activity-time">' + a.time + '</div>',
+                  '</div>',
+                '</div>',
+              ].join('');
+            }).join(''),
+          '</div>',
+        '</div>',
+      ].join('');
+
+      bodyEl.innerHTML = html;
+      layout.classList.add('ws-layout--detail-open');
+      detail.setAttribute('aria-hidden', 'false');
+      detail.removeAttribute('hidden');
+      var closeBtn = document.getElementById('ws-detail-close');
+      if (closeBtn) closeBtn.focus();
     }
-  }
 
-  function switchToView(viewId) {
-    currentView = viewId;
-    if (orchestrator.isOpen('task-detail')) {
-      orchestrator.close('task-detail');
-      shellEl.setAttribute('layout', 'full');
+    function closeDetail() {
+      var layout = document.getElementById('ws-layout');
+      var detail = document.getElementById('ws-detail');
+      if (!layout || !detail) return;
+      layout.classList.remove('ws-layout--detail-open');
+      detail.setAttribute('aria-hidden', 'true');
+      state.detailTask = null;
     }
-    orchestrator.closeAll();
-    var scaffold = new M.StateScaffold(pageSlot, { state: 'loading' });
-    setTimeout(function () {
-      scaffold.destroy();
-      pageSlot.innerHTML = '';
-      orchestrator.open(viewId, 'page');
-      updateViewBtns(viewId);
-    }, 500);
-  }
 
-  function refreshCurrentView() {
-    if (typeof activeRender === 'function') {
-      activeRender();
-    } else {
-      switchToView(currentView);
-    }
-  }
-
-  /* Toolbar view switcher */
-  var viewGroup = document.querySelector('[role="group"][aria-label="View switcher"]');
-  if (viewGroup) {
-    viewGroup.addEventListener('click', function (e) {
-      var btn = e.target.closest('[data-view]');
-      if (!btn) return;
-      var viewId = btn.getAttribute('data-view');
-      if (viewId === currentView) return;
-      switchToView(viewId);
-    });
-  }
-
-  /* Sidebar project filter */
-  var projectNav = document.getElementById('project-nav');
-  if (projectNav) {
-    projectNav.addEventListener('click', function (e) {
-      var btn = e.target.closest('[data-project]');
-      if (!btn) return;
-      activeProject = btn.getAttribute('data-project');
-      var allBtns = projectNav.querySelectorAll('[data-project]');
-      for (var i = 0; i < allBtns.length; i++) {
-        var isActive = allBtns[i].getAttribute('data-project') === activeProject;
-        if (isActive) {
-          allBtns[i].classList.add('is-active');
-          allBtns[i].setAttribute('aria-current', 'true');
+    /* ── View switching ── */
+    function showView(id) {
+      var views = ['board', 'list', 'timeline'];
+      views.forEach(function (v) {
+        var el = document.getElementById('ws-view-' + v);
+        if (!el) return;
+        if (v === id) {
+          el.classList.add('is-active');
+          el.removeAttribute('hidden');
         } else {
-          allBtns[i].classList.remove('is-active');
-          allBtns[i].removeAttribute('aria-current');
+          el.classList.remove('is-active');
         }
-      }
-      refreshCurrentView();
-    });
-  }
-
-  /* Sidebar toggle */
-  var sidebarToggle = document.getElementById('sidebar-toggle');
-  if (sidebarToggle) {
-    sidebarToggle.addEventListener('click', function () {
-      var collapsed = shellEl.classList.contains('mn-app-shell--sidebar-collapsed');
-      if (collapsed) {
-        shellEl.classList.remove('mn-app-shell--sidebar-collapsed');
-        sidebarToggle.setAttribute('aria-expanded', 'true');
-      } else {
-        shellEl.classList.add('mn-app-shell--sidebar-collapsed');
-        sidebarToggle.setAttribute('aria-expanded', 'false');
-      }
-    });
-  }
-
-  /* Theme select */
-  var themeSelect = document.getElementById('theme-select');
-  if (themeSelect) {
-    themeSelect.addEventListener('change', function (e) {
-      M.setTheme(e.target.value);
-    });
-  }
-
-  /* Command palette (Ctrl/Cmd+K) */
-  document.addEventListener('keydown', function (e) {
-    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-      e.preventDefault();
-      if (typeof M.commandPalette === 'function') M.commandPalette();
+      });
+      state.view = id;
+      if (id === 'board')    renderBoard();
+      else if (id === 'list') renderList();
+      else                    renderTimeline();
+      syncViewButtons();
     }
-  });
 
-  var cmdKBtn = document.getElementById('cmd-k-btn');
-  if (cmdKBtn) {
-    cmdKBtn.addEventListener('click', function () {
-      if (typeof M.commandPalette === 'function') M.commandPalette();
+    function syncViewButtons() {
+      var ids = ['board', 'list', 'timeline'];
+      ids.forEach(function (id) {
+        var btn = document.querySelector('[data-header-shell-action-id="' + id + '"]');
+        if (!btn) return;
+        if (id === state.view) btn.classList.add('mn-header-shell__action--active');
+        else btn.classList.remove('mn-header-shell__action--active');
+      });
+    }
+
+    function renderCurrentView() {
+      if (state.view === 'board')    renderBoard();
+      else if (state.view === 'list') renderList();
+      else                            renderTimeline();
+    }
+
+    /* ── Header ── */
+    function mountHeader() {
+      var navbar = document.getElementById('ws-navbar');
+      if (!navbar) return;
+
+      var host = document.createElement('mn-header-shell');
+      host.config = {
+        ariaLabel: 'ConvergIO Workspace navigation',
+        sections: [
+          {
+            type: 'brand',
+            label: 'ConvergIO Workspace',
+            logoSrc: '../src/assets/favicon.svg',
+            logoAlt: 'ConvergIO mark',
+            href: './index.html',
+          },
+          {
+            type: 'actions',
+            role: 'pre',
+            presentation: 'segmented',
+            items: [
+              { id: 'board',    label: 'Board',    icon: icon('columns'), active: true },
+              { id: 'list',     label: 'List',     icon: icon('table') },
+              { id: 'timeline', label: 'Timeline', icon: icon('gantt') },
+            ],
+          },
+          {
+            type: 'search',
+            placeholder: 'Search tasks, assignees, tags... Cmd-K',
+            shortcut: '\u2318K',
+          },
+          {
+            type: 'actions',
+            role: 'post',
+            presentation: 'cluster',
+            items: [
+              { id: 'notifications', title: 'Notifications', icon: icon('bell') },
+              { id: 'settings',      title: 'Settings',      icon: icon('settings') },
+            ],
+          },
+          { type: 'divider' },
+          { type: 'theme' },
+          { type: 'profile', name: 'Alex Chen' },
+        ],
+        callbacks: {
+          onAction: function (payload) {
+            if (payload.id === 'board' || payload.id === 'list' || payload.id === 'timeline') {
+              showView(payload.id);
+            }
+          },
+          onSearch: function (payload) {
+            state.query = payload.query || '';
+            renderSidebar();
+            renderCurrentView();
+          },
+        },
+      };
+
+      navbar.textContent = '';
+      navbar.appendChild(host);
+
+      var ready = typeof host.whenReady === 'function' ? host.whenReady() : Promise.resolve();
+      ready.then(function () {
+        if (!host.isConnected) return;
+        syncViewButtons();
+      });
+    }
+
+    /* ── Close detail on keyboard ── */
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') closeDetail();
     });
-  }
 
-  /* Init */
-  M.setTheme('nero');
-  switchToView('board');
+    var closeBtn = document.getElementById('ws-detail-close');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', closeDetail);
+    }
 
-})();
-</script>
+    /* ── Init ── */
+    mountHeader();
+    renderSidebar();
+    renderBoard();
+  })();
+  </script>
 </body>
 </html>

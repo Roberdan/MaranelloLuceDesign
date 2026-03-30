@@ -8,68 +8,143 @@
   <link rel="stylesheet" href="../src/fonts/local-fonts.css">
   <link rel="stylesheet" href="../dist/css/maranello.css">
   <style>
-    /* === Base === */
-    body { margin: 0; background: var(--mn-surface); color: var(--mn-text); }
+    /* === Shell theme palette (matching header-responsive.html) === */
+    body {
+      --shell-bg: #0a0a0a; --shell-nav: #141414; --shell-card: #171717; --shell-card-2: #1d1d1d;
+      --shell-border: #262626; --shell-text: #eee; --shell-muted: #9a9a9a; --shell-ghost: #666;
+      --shell-accent: #FFC72C; --shell-accent-text: #111;
+      margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden;
+      background: var(--mn-surface); color: var(--mn-text); font-family: var(--font-body, sans-serif);
+    }
+    body.mn-avorio {
+      --shell-bg: #f5efe4; --shell-nav: #f8f1e6; --shell-card: #fffaf4; --shell-card-2: #fffdf8;
+      --shell-border: #d9cbb7; --shell-text: #241f19; --shell-muted: #7b6d5a; --shell-ghost: #8e7f6b;
+      --shell-accent: #b7410e; --shell-accent-text: #fff8ef;
+    }
+    body.mn-colorblind { --shell-accent: #0072B2; --shell-accent-text: #fff; }
+    body.mn-sugar {
+      --shell-bg: #f4f4f6; --shell-nav: #fff; --shell-card: #fff; --shell-card-2: #ffffff;
+      --shell-border: #d8d8de; --shell-text: #111; --shell-muted: #666; --shell-ghost: #888;
+      --shell-accent: #111; --shell-accent-text: #fff;
+    }
+    body.mn-navy {
+      --shell-bg: #0e1628; --shell-nav: #111d33; --shell-card: #162040; --shell-card-2: #1c2a4e;
+      --shell-border: #243360; --shell-text: #e8eaf6; --shell-muted: #7f8db5; --shell-ghost: #505c8a;
+      --shell-accent: #d4a843; --shell-accent-text: #0e1628;
+    }
+    body.mn-editorial {
+      --shell-bg: #fafafa; --shell-nav: #fff; --shell-card: #fff; --shell-card-2: #f8f8f8;
+      --shell-border: #e2e2e2; --shell-text: #121212; --shell-muted: #777; --shell-ghost: #aaa;
+      --shell-accent: #cc1f1f; --shell-accent-text: #fff;
+    }
+
     .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
 
-    /* === Toolbar === */
-    .exec-toolbar {
-      display: flex; align-items: center; gap: 0.5rem; padding: 0 1rem; height: 100%;
-      background: var(--mn-surface-raised); border-bottom: 1px solid var(--mn-border);
-      overflow: hidden; min-width: 0;
-    }
-    .exec-brand { font-family: var(--font-display); white-space: nowrap; flex-shrink: 0; }
-    .exec-view-switcher { display: flex; gap: 0.25rem; flex-shrink: 0; }
-    .exec-view-btn { display: flex; align-items: center; gap: 0.35rem; padding: 0.35rem 0.6rem; font-size: 0.73rem; }
-    .exec-view-btn.is-active { outline: 2px solid var(--mn-accent); outline-offset: -2px; }
-    .exec-toolbar-spacer { flex: 1; min-width: 0; }
-    .exec-quarter-select,
-    .exec-theme-select { font-size: 0.73rem; padding: 0.25rem 0.5rem; flex-shrink: 0; }
-    .exec-cmd-btn { display: flex; align-items: center; gap: 0.35rem; flex-shrink: 0; }
-    .exec-toolbar-actions { display: flex; gap: 0.25rem; flex-shrink: 0; }
-    .exec-icon-btn { padding: 0.35rem; line-height: 0; }
-    .exec-avatar {
-      width: 32px; height: 32px; border-radius: 50%; background: var(--mn-accent);
-      color: var(--mn-surface); font-size: 0.63rem; font-family: var(--font-display);
-      font-weight: 700; letter-spacing: 0.02em; display: flex; align-items: center;
-      justify-content: center; border: none; cursor: pointer; flex-shrink: 0;
+    /* === Navbar === */
+    #navbar { flex-shrink: 0; position: sticky; top: 0; z-index: 20; backdrop-filter: blur(12px); }
+    body.mn-avorio #navbar, body.mn-sugar #navbar, body.mn-editorial #navbar {
+      background: color-mix(in srgb, var(--shell-nav) 96%, transparent);
     }
 
-    /* === Funnel Sidebar === */
-    .exec-funnel { display: grid; gap: 0.35rem; padding: 0.75rem; }
+    /* === Header Shell overrides (exact header-responsive.html pattern) === */
+    #navbar .mn-header-shell { gap: 12px; background: var(--shell-nav); border-bottom-color: var(--shell-border); }
+    #navbar .mn-header-shell__brand { color: var(--shell-text); font-size: 1rem; }
+    #navbar .mn-header-shell__brand-logo { width: 28px; height: 28px; filter: drop-shadow(0 0 8px color-mix(in srgb, var(--shell-accent) 35%, transparent)); }
+    #navbar .mn-header-shell__actions--segmented,
+    #navbar .mn-header-shell__actions--cluster { border-color: var(--shell-border); border-radius: 14px; background: var(--shell-card); box-shadow: inset 0 1px 0 color-mix(in srgb, #fff 4%, transparent); }
+    #navbar .mn-header-shell__action { min-width: 48px; min-height: 48px; border-radius: 10px; color: var(--shell-muted); }
+    #navbar .mn-header-shell__action:hover { background: color-mix(in srgb, var(--shell-card-2) 92%, var(--shell-accent) 8%); color: var(--shell-text); }
+    #navbar .mn-header-shell__action--active { background: color-mix(in srgb, var(--shell-accent) 20%, transparent); color: var(--shell-accent); }
+    #navbar .mn-header-shell__action:disabled { opacity: .35; cursor: not-allowed; }
+    #navbar .mn-header-shell__icon svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+    #navbar .mn-header-shell__search { width: 100%; min-width: 0; min-height: 52px; padding: 8px 12px; gap: 12px; border-color: var(--shell-border); border-radius: 14px; background: var(--shell-card); }
+    #navbar .mn-header-shell__search-input { flex: 1 1 14rem; min-width: 10rem; color: var(--shell-text); font-size: 1.0625rem; }
+    #navbar .mn-header-shell__search-input::placeholder { color: color-mix(in srgb, var(--shell-muted) 78%, transparent); }
+    #navbar .mn-header-shell__shortcut { border-color: var(--shell-border); background: var(--shell-card); color: var(--shell-ghost); font-size: 0.875rem; }
+    #navbar .mn-header-shell__filters { display: none; }
+    #navbar .mn-header-shell__filter-group legend { color: var(--shell-ghost); font-size: .78rem; letter-spacing: .08em; text-transform: uppercase; }
+    #navbar .mn-header-shell__filter-option { min-height: 36px; border-color: var(--shell-border); background: transparent; color: var(--shell-text); }
+    #navbar .mn-header-shell__filter-option.is-selected { color: var(--shell-accent); border-color: color-mix(in srgb, var(--shell-accent) 55%, var(--shell-border)); background: color-mix(in srgb, var(--shell-accent) 12%, transparent); }
+    #navbar .mn-header-shell__theme { padding-left: 14px; border-left-color: var(--shell-border); }
+    #navbar .mn-profile-trigger { width: 42px; height: 42px; border-radius: 50%; background: color-mix(in srgb, var(--shell-accent) 18%, transparent); color: var(--shell-accent); font-weight: 700; display: inline-flex; align-items: center; justify-content: center; border: 1px solid color-mix(in srgb, var(--shell-accent) 30%, var(--shell-border)); }
+
+    /* === Shell layout === */
+    .exec-layout {
+      flex: 1;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      overflow: hidden;
+    }
+    .exec-layout.has-detail { grid-template-columns: 240px 1fr 380px; }
+
+    /* === Sidebar === */
+    .exec-sidebar {
+      border-right: 1px solid var(--mn-border);
+      background: var(--mn-surface-raised);
+      overflow-y: auto; overflow-x: hidden;
+    }
+    .sidebar-label {
+      padding: 0.65rem 0.75rem 0.45rem;
+      font-family: var(--font-mono); font-size: 0.63rem;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--mn-text-muted); border-bottom: 1px solid var(--mn-border);
+    }
+    .exec-funnel { display: grid; gap: 0.2rem; padding: 0.45rem; }
     .funnel-card {
       display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;
-      padding: 0.5rem 0.75rem; border: 1px solid var(--mn-border);
+      padding: 0.45rem 0.65rem;
+      border: 1px solid var(--mn-border);
       border-left: 3px solid var(--funnel-color, var(--mn-border));
-      border-radius: var(--radius-md); background: var(--mn-surface-raised);
+      border-radius: var(--radius-md, 6px);
+      background: var(--mn-surface-raised);
       color: var(--mn-text); cursor: pointer; text-align: left;
-      font-family: var(--font-mono); font-size: 0.72rem; transition: border-color 0.15s;
+      font-family: var(--font-mono); font-size: 0.69rem;
+      transition: background 0.12s, border-color 0.12s;
     }
-    .funnel-card:hover { border-color: var(--funnel-color, var(--mn-accent)); }
+    .funnel-card:hover { background: var(--mn-surface); border-color: var(--funnel-color, var(--mn-accent)); }
     .funnel-card.is-active { background: var(--mn-surface); border-left-width: 4px; }
-    .funnel-card--all { border-left-color: var(--mn-border-strong); }
-    .funnel-card__name { text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.67rem; }
+    .funnel-card--all { border-left-color: var(--mn-border-strong, var(--mn-border)); }
+    .funnel-card__name { text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.64rem; }
     .funnel-card__meta { display: flex; align-items: baseline; gap: 0.3rem; }
-    .funnel-card__count { font-weight: 700; font-size: 0.82rem; }
-    .funnel-card__pct { font-size: 0.63rem; color: var(--mn-text-muted); }
+    .funnel-card__count { font-weight: 700; font-size: 0.79rem; }
+    .funnel-card__pct { font-size: 0.61rem; color: var(--mn-text-muted); }
 
-    /* === View layout === */
-    .view-pad { padding: 1rem; height: 100%; box-sizing: border-box; overflow: auto; }
-    .cockpit-wrap { display: flex; flex-direction: column; gap: 1.25rem; }
+    /* === Main area === */
+    .exec-main { overflow: hidden; background: var(--mn-surface); display: flex; flex-direction: column; }
+    .exec-view { flex: 1; min-height: 0; display: none; overflow: auto; }
+    .exec-view.is-active { display: flex; flex-direction: column; }
+
+    /* === Cockpit view === */
+    .cockpit-wrap { padding: 1rem; display: flex; flex-direction: column; gap: 1.25rem; overflow: auto; }
     .cockpit-gauge-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
     .gauge-card {
       background: var(--mn-surface-raised); border: 1px solid var(--mn-border);
-      border-radius: var(--radius-md); padding: 1.25rem; text-align: center;
+      border-radius: var(--radius-md, 6px); padding: 1.25rem; text-align: center;
     }
     .gauge-card canvas { display: block; margin: 0 auto 0.75rem; }
     .gauge-label {
       font-family: var(--font-mono); font-size: 0.63rem; text-transform: uppercase;
-      letter-spacing: 0.08em; color: var(--mn-text-muted);
+      letter-spacing: 0.08em; color: var(--mn-text-muted); margin: 0;
     }
-    .portfolio-wrap { height: 100%; min-height: 520px; }
 
-    /* === Detail Panel === */
-    .detail-wrap { height: 100%; display: flex; flex-direction: column; overflow: hidden; }
+    /* === Portfolio view === */
+    .portfolio-wrap { flex: 1; min-height: 520px; }
+
+    /* === Market view === */
+    .market-wrap { flex: 1; padding: 1rem; }
+
+    /* === Board view === */
+    .board-wrap { flex: 1; padding: 1rem; }
+
+    /* === Detail panel === */
+    .exec-detail {
+      border-left: 1px solid var(--mn-border);
+      background: var(--mn-surface-raised);
+      display: flex; flex-direction: column;
+      overflow: hidden;
+    }
+    .exec-detail[hidden] { display: none; }
     .detail-header {
       padding: 1rem; border-bottom: 1px solid var(--mn-border);
       background: var(--mn-surface-raised); flex-shrink: 0;
@@ -78,9 +153,16 @@
       display: flex; align-items: flex-start; justify-content: space-between;
       gap: 0.75rem; margin-bottom: 0.5rem;
     }
-    .detail-company { font-family: var(--font-display); font-size: 0.85rem; font-weight: 700; }
+    .detail-company { font-family: var(--font-display); font-size: 0.9rem; font-weight: 700; }
     .detail-project { font-size: 0.73rem; color: var(--mn-text-muted); margin-top: 0.15rem; }
-    .detail-header-actions { display: flex; gap: 0.5rem; flex-shrink: 0; }
+    .detail-close {
+      background: none; border: none; cursor: pointer;
+      color: var(--mn-text-muted); padding: 0.25rem; line-height: 0;
+      border-radius: var(--radius-sm, 4px); min-width: 28px; min-height: 28px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .detail-close:hover { color: var(--mn-text); background: var(--mn-surface); }
+    .detail-close svg { width: 16px; height: 16px; }
     .detail-tabs {
       display: flex; border-bottom: 1px solid var(--mn-border); flex-shrink: 0;
       background: var(--mn-surface-raised); overflow-x: auto; scrollbar-width: none;
@@ -91,11 +173,13 @@
       text-transform: uppercase; letter-spacing: 0.04em; border: none;
       border-bottom: 2px solid transparent; background: none; color: var(--mn-text-muted);
       cursor: pointer; white-space: nowrap; transition: color 0.15s, border-color 0.15s;
+      min-height: 40px;
     }
     .detail-tab:hover { color: var(--mn-text); }
     .detail-tab.is-active { color: var(--mn-accent); border-bottom-color: var(--mn-accent); }
-    .detail-panel-content { padding: 1rem; overflow: auto; flex: 1; }
-    .detail-panel-content.is-hidden { display: none; }
+    .detail-panel-body { padding: 1rem; overflow: auto; flex: 1; }
+    .detail-tab-content { display: none; }
+    .detail-tab-content.is-active { display: block; }
     .detail-field { margin-bottom: 1rem; }
     .detail-field-label {
       font-family: var(--font-mono); font-size: 0.63rem; text-transform: uppercase;
@@ -105,896 +189,768 @@
     .detail-fields-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 1rem; }
     .detail-description {
       font-size: 0.82rem; color: var(--mn-text); line-height: 1.65; margin-bottom: 1.25rem;
-      padding: 0.75rem; background: var(--mn-surface); border-radius: var(--radius-sm);
-      border: 1px solid var(--mn-border);
+      padding: 0.75rem; background: var(--mn-surface);
+      border-radius: var(--radius-sm, 4px); border: 1px solid var(--mn-border);
     }
     .detail-placeholder {
       padding: 2.5rem 1rem; text-align: center; color: var(--mn-text-muted);
-      font-size: 0.78rem; font-family: var(--font-mono); text-transform: uppercase;
-      letter-spacing: 0.06em;
+      font-size: 0.78rem; font-family: var(--font-mono);
+      text-transform: uppercase; letter-spacing: 0.06em;
     }
     .state-dot {
       display: inline-block; width: 8px; height: 8px; border-radius: 50%;
-      background: var(--state-color, var(--mn-border)); margin-right: 0.4rem;
-      vertical-align: middle;
+      background: var(--state-color, var(--mn-border)); margin-right: 0.4rem; vertical-align: middle;
     }
-    @media (max-width: 700px) {
+
+    @media (max-width: 1200px) {
+      #navbar .mn-header-shell__search { min-height: 48px; }
+      #navbar .mn-header-shell__action { min-width: 42px; min-height: 42px; }
+      #navbar .mn-header-shell__theme { padding-left: 10px; }
+    }
+    @media (max-width: 900px) {
+      .exec-layout, .exec-layout.has-detail { grid-template-columns: 1fr; }
+      .exec-sidebar { display: none; }
+    }
+    @media (max-width: 640px) {
+      #navbar .mn-header-shell__shortcut { display: none; }
+      #navbar .mn-header-shell__actions--segmented,
+      #navbar .mn-header-shell__actions--cluster { width: 100%; justify-content: space-between; }
+      #navbar .mn-header-shell__search { max-width: none; }
+      #navbar .mn-header-shell__theme { width: 100%; justify-content: flex-end; border-left: none; padding-left: 0; }
       .cockpit-gauge-row { grid-template-columns: 1fr; }
-      .exec-brand { display: none; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .funnel-card { transition: none; }
+      .detail-tab { transition: none; }
     }
   </style>
 </head>
 <body class="mn-nero">
   <script>
     try {
-      var t = localStorage.getItem('mn-theme');
-      if (t && t !== 'editorial') document.body.classList.add('mn-' + t);
+      var _t = localStorage.getItem('mn-theme');
+      if (_t) document.body.className = 'mn-' + _t;
     } catch (_) {}
   </script>
 
-  <mn-app-shell id="exec-shell" layout="full">
+  <header id="navbar"></header>
 
-    <!-- NAV: Engagement Pipeline Funnel -->
-    <div slot="nav">
-      <aside class="mn-sidebar">
-        <div class="mn-sidebar__header">
-          <span class="mn-sidebar__brand">Pipeline</span>
-        </div>
-        <nav class="exec-funnel" id="funnel-nav" aria-label="Filter portfolio by stage">
-          <button type="button" class="funnel-card funnel-card--all is-active" data-state="all" aria-pressed="true">
-            <span class="funnel-card__name">All Stages</span>
-            <span class="funnel-card__count">362</span>
-          </button>
-          <button type="button" class="funnel-card" data-state="Prospect" style="--funnel-color:#FFC72C" aria-pressed="false">
-            <span class="funnel-card__name">Prospect</span>
-            <div class="funnel-card__meta"><span class="funnel-card__count">45</span><span class="funnel-card__pct">18%</span></div>
-          </button>
-          <button type="button" class="funnel-card" data-state="Exploration" style="--funnel-color:#448AFF" aria-pressed="false">
-            <span class="funnel-card__name">Exploration</span>
-            <div class="funnel-card__meta"><span class="funnel-card__count">40</span><span class="funnel-card__pct">16%</span></div>
-          </button>
-          <button type="button" class="funnel-card" data-state="Sprint" style="--funnel-color:#7C4DFF" aria-pressed="false">
-            <span class="funnel-card__name">Sprint</span>
-            <div class="funnel-card__meta"><span class="funnel-card__count">40</span><span class="funnel-card__pct">16%</span></div>
-          </button>
-          <button type="button" class="funnel-card" data-state="Wrap Up" style="--funnel-color:#DC0000" aria-pressed="false">
-            <span class="funnel-card__name">Wrap Up</span>
-            <div class="funnel-card__meta"><span class="funnel-card__count">4</span><span class="funnel-card__pct">2%</span></div>
-          </button>
-          <button type="button" class="funnel-card" data-state="On Hold" style="--funnel-color:#9e9e9e" aria-pressed="false">
-            <span class="funnel-card__name">On Hold</span>
-            <div class="funnel-card__meta"><span class="funnel-card__count">14</span><span class="funnel-card__pct">6%</span></div>
-          </button>
-          <button type="button" class="funnel-card" data-state="Completed" style="--funnel-color:#00A651" aria-pressed="false">
-            <span class="funnel-card__name">Completed</span>
-            <div class="funnel-card__meta"><span class="funnel-card__count">138</span><span class="funnel-card__pct">55%</span></div>
-          </button>
-          <button type="button" class="funnel-card" data-state="Withdrawn" style="--funnel-color:#616161" aria-pressed="false">
-            <span class="funnel-card__name">Withdrawn</span>
-            <div class="funnel-card__meta"><span class="funnel-card__count">81</span></div>
-          </button>
-        </nav>
-      </aside>
-    </div>
-
-    <!-- TOOLBAR -->
-    <div slot="toolbar">
-      <div class="exec-toolbar" role="toolbar" aria-label="Executive dashboard toolbar">
-        <span class="exec-brand mn-title-sm">ConvergIO Executive</span>
-
-        <div class="exec-view-switcher" id="view-switcher" role="group" aria-label="Switch view">
-          <button type="button" class="mn-btn mn-btn--ghost exec-view-btn is-active" data-view="cockpit" aria-pressed="true" title="Cockpit overview">
-            <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true"><circle cx="7.5" cy="7.5" r="5.5" stroke="currentColor" stroke-width="1.4"/><line x1="7.5" y1="7.5" x2="10.5" y2="4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="7.5" cy="7.5" r="1" fill="currentColor"/></svg>
-            <span>Cockpit</span>
-          </button>
-          <button type="button" class="mn-btn mn-btn--ghost exec-view-btn" data-view="portfolio" aria-pressed="false" title="Portfolio gantt">
-            <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true"><rect x="2" y="3.5" width="6" height="2" rx="0.8" fill="currentColor"/><rect x="5" y="6.5" width="8" height="2" rx="0.8" fill="currentColor"/><rect x="1" y="9.5" width="5" height="2" rx="0.8" fill="currentColor"/></svg>
-            <span>Portfolio</span>
-          </button>
-          <button type="button" class="mn-btn mn-btn--ghost exec-view-btn" data-view="market" aria-pressed="false" title="Market heatmap">
-            <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true"><rect x="1.5" y="1.5" width="5" height="5" rx="0.8" stroke="currentColor" stroke-width="1.3"/><rect x="8.5" y="1.5" width="5" height="5" rx="0.8" stroke="currentColor" stroke-width="1.3"/><rect x="1.5" y="8.5" width="5" height="5" rx="0.8" stroke="currentColor" stroke-width="1.3"/><rect x="8.5" y="8.5" width="5" height="5" rx="0.8" stroke="currentColor" stroke-width="1.3"/></svg>
-            <span>Market</span>
-          </button>
-          <button type="button" class="mn-btn mn-btn--ghost exec-view-btn" data-view="board" aria-pressed="false" title="Board items">
-            <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true"><rect x="1.5" y="1.5" width="12" height="3" rx="0.8" stroke="currentColor" stroke-width="1.3"/><line x1="1.5" y1="8" x2="13.5" y2="8" stroke="currentColor" stroke-width="1.3"/><line x1="1.5" y1="12" x2="13.5" y2="12" stroke="currentColor" stroke-width="1.3"/></svg>
-            <span>Board</span>
-          </button>
-        </div>
-
-        <div class="exec-toolbar-spacer"></div>
-
-        <label for="quarter-filter" class="sr-only">Quarter</label>
-        <select id="quarter-filter" class="mn-form-select exec-quarter-select" aria-label="Filter by quarter">
-          <option value="Q1">Q1 2026</option>
-          <option value="Q2" selected>Q2 2026</option>
-          <option value="Q3">Q3 2026</option>
-          <option value="Q4">Q4 2026</option>
-        </select>
-
-        <button type="button" class="mn-btn mn-btn--ghost exec-cmd-btn" id="cmd-k-btn" aria-label="Open command palette (Cmd+K)">
-          <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true"><circle cx="5.5" cy="5.5" r="3.8" stroke="currentColor" stroke-width="1.3"/><line x1="8.5" y1="8.5" x2="11.5" y2="11.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
-          <span class="mn-micro">Cmd+K</span>
+  <div class="exec-layout" id="exec-layout">
+    <!-- Sidebar: Pipeline funnel -->
+    <aside class="exec-sidebar" aria-label="Engagement pipeline filter">
+      <div class="sidebar-label">Pipeline</div>
+      <nav class="exec-funnel" id="funnel-nav" aria-label="Filter portfolio by stage">
+        <button type="button" class="funnel-card funnel-card--all is-active" data-state="all" aria-pressed="true">
+          <span class="funnel-card__name">All Stages</span>
+          <span class="funnel-card__count">362</span>
         </button>
-
-        <div class="exec-toolbar-actions" role="group" aria-label="Actions">
-          <button type="button" class="mn-btn mn-btn--ghost exec-icon-btn" aria-label="Notifications">
-            <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true"><path d="M7.5 2a3.8 3.8 0 0 1 3.8 3.8v2.5l1.2 2H2.5l1.2-2V5.8A3.8 3.8 0 0 1 7.5 2z" stroke="currentColor" stroke-width="1.3"/><path d="M6 12.5a1.5 1.5 0 0 0 3 0" stroke="currentColor" stroke-width="1.3"/></svg>
-          </button>
-          <button type="button" class="mn-btn mn-btn--ghost exec-icon-btn" aria-label="Messages">
-            <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true"><path d="M2.5 2.5h10a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1H5l-3.5 2V3.5a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.3"/></svg>
-          </button>
-          <button type="button" class="mn-btn mn-btn--ghost exec-icon-btn" aria-label="Settings">
-            <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true"><circle cx="7.5" cy="7.5" r="2" stroke="currentColor" stroke-width="1.3"/><path d="M7.5 1v2M7.5 12v2M1 7.5h2M12 7.5h2M2.9 2.9l1.4 1.4M10.7 10.7l1.4 1.4M10.7 4.3l1.4-1.4M2.9 12.1l1.4-1.4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
-          </button>
-        </div>
-
-        <label for="theme-select" class="sr-only">Theme</label>
-        <select id="theme-select" class="mn-form-select exec-theme-select" aria-label="Select theme">
-          <option value="editorial">Editorial</option>
-          <option value="nero" selected>Nero</option>
-          <option value="avorio">Avorio</option>
-          <option value="colorblind">Colorblind</option>
-          <option value="sugar">Sugar</option>
-          <option value="navy">Navy</option>
-        </select>
-
-        <button type="button" class="exec-avatar" aria-label="User: Roberto D'Angelo — RD">
-          <span aria-hidden="true">RD</span>
+        <button type="button" class="funnel-card" data-state="Prospect" style="--funnel-color:#FFC72C" aria-pressed="false">
+          <span class="funnel-card__name">Prospect</span>
+          <div class="funnel-card__meta"><span class="funnel-card__count">45</span><span class="funnel-card__pct">18%</span></div>
         </button>
-      </div>
-    </div>
+        <button type="button" class="funnel-card" data-state="Exploration" style="--funnel-color:#448AFF" aria-pressed="false">
+          <span class="funnel-card__name">Exploration</span>
+          <div class="funnel-card__meta"><span class="funnel-card__count">40</span><span class="funnel-card__pct">16%</span></div>
+        </button>
+        <button type="button" class="funnel-card" data-state="Sprint" style="--funnel-color:#7C4DFF" aria-pressed="false">
+          <span class="funnel-card__name">Sprint</span>
+          <div class="funnel-card__meta"><span class="funnel-card__count">40</span><span class="funnel-card__pct">16%</span></div>
+        </button>
+        <button type="button" class="funnel-card" data-state="Wrap Up" style="--funnel-color:#DC0000" aria-pressed="false">
+          <span class="funnel-card__name">Wrap Up</span>
+          <div class="funnel-card__meta"><span class="funnel-card__count">4</span><span class="funnel-card__pct">2%</span></div>
+        </button>
+        <button type="button" class="funnel-card" data-state="On Hold" style="--funnel-color:#9e9e9e" aria-pressed="false">
+          <span class="funnel-card__name">On Hold</span>
+          <div class="funnel-card__meta"><span class="funnel-card__count">14</span><span class="funnel-card__pct">6%</span></div>
+        </button>
+        <button type="button" class="funnel-card" data-state="Completed" style="--funnel-color:#00A651" aria-pressed="false">
+          <span class="funnel-card__name">Completed</span>
+          <div class="funnel-card__meta"><span class="funnel-card__count">138</span><span class="funnel-card__pct">55%</span></div>
+        </button>
+        <button type="button" class="funnel-card" data-state="Withdrawn" style="--funnel-color:#616161" aria-pressed="false">
+          <span class="funnel-card__name">Withdrawn</span>
+          <div class="funnel-card__meta"><span class="funnel-card__count">81</span></div>
+        </button>
+      </nav>
+    </aside>
 
-    <div slot="main"   id="mn-slot-page"       class="mn-slot mn-slot--page"></div>
-    <div slot="detail" id="mn-slot-side-panel" class="mn-slot mn-slot--side-panel"></div>
-    <div slot="overlay" id="mn-slot-overlay"  class="mn-slot mn-slot--overlay"></div>
+    <!-- Main view area -->
+    <main class="exec-main">
+      <div class="exec-view is-active" id="view-cockpit"   role="region" aria-label="Cockpit overview"></div>
+      <div class="exec-view"           id="view-portfolio" role="region" aria-label="Portfolio gantt"></div>
+      <div class="exec-view"           id="view-market"    role="region" aria-label="Market heatmap"></div>
+      <div class="exec-view"           id="view-board"     role="region" aria-label="Board initiatives"></div>
+    </main>
 
-  </mn-app-shell>
+    <!-- Detail panel (hidden until item selected) -->
+    <aside class="exec-detail" id="exec-detail" hidden aria-label="Item detail" aria-live="polite">
+      <div id="detail-inner" style="height:100%;display:flex;flex-direction:column;overflow:hidden;"></div>
+    </aside>
+  </div>
 
   <script src="../dist/iife/maranello.min.js"></script>
-  <script type="module" src="../dist/wc/mn-app-shell.js"></script>
+  <script type="module" src="../packages/elements/dist/wc/mn-header-shell.js"></script>
   <script>
-    (function () {
-      var M = window.Maranello;
-      if (!M) return;
+  (function () {
+    var M = window.Maranello;
+    if (!M) return;
 
-      /* ======================================================
-         DATA
-      ====================================================== */
-      var STATE_COLORS = {
-        'Prospect':    '#FFC72C',
-        'Exploration': '#448AFF',
-        'Sprint':      '#7C4DFF',
-        'Wrap Up':     '#DC0000',
-        'On Hold':     '#9e9e9e',
-        'Completed':   '#00A651',
-        'Withdrawn':   '#616161'
-      };
+    /* ============================================================
+       DATA
+    ============================================================ */
+    var STATE_COLORS = {
+      'Prospect':    '#FFC72C',
+      'Exploration': '#448AFF',
+      'Sprint':      '#7C4DFF',
+      'Wrap Up':     '#DC0000',
+      'On Hold':     '#9e9e9e',
+      'Completed':   '#00A651',
+      'Withdrawn':   '#616161'
+    };
 
-      var ENGAGEMENTS = [
-        { id: 'AUR-001', company: 'Aurelia Dynamics',   project: 'Velocity ERP Rollout',      state: 'Sprint',      owner: 'Mara Fossati',  pm: 'Leo Hartmann',   account: 'Enterprise',  start: '2026-01-15', end: '2026-08-30', progress: 62, description: 'Full ERP implementation across 3 business units, replacing legacy Oracle stack with a cloud-native platform.' },
-        { id: 'SOL-002', company: 'Solstice Networks',  project: 'CoreNet SDWAN Migration',   state: 'Exploration', owner: 'Anika Patel',   pm: 'Diego Navarro',  account: 'Strategic',   start: '2026-02-01', end: '2026-11-15', progress: 25, description: 'Network transformation from legacy MPLS to software-defined WAN across 18 global offices and 3 data centres.' },
-        { id: 'PIN-003', company: 'Pinnacle Steel',     project: 'OpsCenter Analytics',       state: 'Prospect',    owner: 'Leo Hartmann',  pm: 'Mara Fossati',   account: 'Commercial',  start: '2026-03-01', end: '2026-09-30', progress:  5, description: 'Real-time operations analytics platform for production lines and supply-chain visibility at two facilities.' },
-        { id: 'CRE-004', company: 'Crestview Banking',  project: 'Compliance Vault 2026',     state: 'Wrap Up',     owner: 'Suki Tanaka',   pm: 'Jonas Eriksson', account: 'Financial',   start: '2025-09-01', end: '2026-04-30', progress: 92, description: 'Regulatory reporting automation and audit trail management aligned with Basel IV and DORA requirements.' },
-        { id: 'HOR-005', company: 'Horizon Minerals',   project: 'FieldSense IoT Platform',   state: 'Sprint',      owner: 'Diego Navarro', pm: 'Anika Patel',    account: 'Enterprise',  start: '2026-01-20', end: '2026-10-15', progress: 55, description: 'Industrial IoT deployment for remote monitoring of 200+ extraction sites across 4 continents.' },
-        { id: 'CAS-006', company: 'Cascade Financial',  project: 'Wealth 360 Portal',         state: 'Completed',   owner: 'Jonas Eriksson',pm: 'Suki Tanaka',    account: 'Financial',   start: '2025-06-01', end: '2026-02-28', progress: 100, description: 'Unified wealth management portal integrating portfolio analytics, client reporting, and advisor tools.' },
-        { id: 'NEX-007', company: 'Nexus Telecom',      project: 'BillingCore Modernization', state: 'On Hold',     owner: 'Mara Fossati',  pm: 'Leo Hartmann',   account: 'Strategic',   start: '2025-11-01', end: '2026-08-31', progress: 38, description: 'Billing system overhaul paused pending regulatory review of new subscriber classification rules.' },
-        { id: 'VER-008', company: 'Verdant Solutions',  project: 'CarbonTrack ESG Suite',     state: 'Exploration', owner: 'Anika Patel',   pm: 'Diego Navarro',  account: 'Commercial',  start: '2026-02-15', end: '2026-12-31', progress: 18, description: 'ESG reporting and carbon-footprint tracking platform built to satisfy mandatory disclosure requirements by 2027.' },
-        { id: 'ATL-009', company: 'Atlas Digital',      project: 'MarketEdge CDP',            state: 'Completed',   owner: 'Leo Hartmann',  pm: 'Mara Fossati',   account: 'Enterprise',  start: '2025-04-01', end: '2026-01-31', progress: 100, description: 'Customer data platform consolidating 6 siloed marketing databases into a unified customer profile store.' },
-        { id: 'PRI-010', company: 'Prism Logistics',    project: 'SupplySync Integration',    state: 'Prospect',    owner: 'Jonas Eriksson',pm: 'Suki Tanaka',    account: 'Commercial',  start: '2026-04-01', end: '2026-12-31', progress:  0, description: 'Multi-modal logistics optimisation integrating sea, air, and land freight into a single control tower.' },
-        { id: 'AUR-011', company: 'Aurelia Dynamics',   project: 'HR Self-Service Portal',    state: 'Withdrawn',   owner: 'Suki Tanaka',   pm: 'Anika Patel',    account: 'Enterprise',  start: '2025-08-01', end: '2026-01-15', progress: 15, description: 'Withdrawn after client merger announcement; scope to be revisited post-integration in Q3 2026.' },
-        { id: 'SOL-012', company: 'Solstice Networks',  project: 'Zero Trust Security',       state: 'Sprint',      owner: 'Diego Navarro', pm: 'Jonas Eriksson', account: 'Strategic',   start: '2026-03-01', end: '2026-11-30', progress: 40, description: 'End-to-end zero trust architecture replacing perimeter-based security model across all network tiers.' }
-      ];
+    var ENGAGEMENTS = [
+      {
+        id: 'AUR-001', company: 'Aurelia Dynamics',  project: 'Velocity ERP Rollout',
+        state: 'Sprint',      owner: 'Mara Fossati',   pm: 'Leo Hartmann',   account: 'Enterprise',
+        start: '2026-01-15', end: '2026-08-30', progress: 62,
+        description: 'Full ERP implementation across 3 business units, replacing a legacy Oracle stack with a cloud-native platform serving 2 400 users.'
+      },
+      {
+        id: 'SOL-002', company: 'Solstice Networks',  project: 'CoreNet SDWAN Migration',
+        state: 'Exploration', owner: 'Anika Patel',    pm: 'Diego Navarro',  account: 'Strategic',
+        start: '2026-02-01', end: '2026-11-15', progress: 25,
+        description: 'Network transformation from legacy MPLS to software-defined WAN across 18 global offices and 3 data centres.'
+      },
+      {
+        id: 'PIN-003', company: 'Pinnacle Steel',     project: 'OpsCenter Analytics',
+        state: 'Prospect',    owner: 'Leo Hartmann',   pm: 'Mara Fossati',   account: 'Commercial',
+        start: '2026-03-01', end: '2026-09-30', progress: 5,
+        description: 'Real-time operations analytics for production lines and supply-chain visibility across two primary manufacturing facilities.'
+      },
+      {
+        id: 'CRE-004', company: 'Crestview Banking',  project: 'Compliance Vault 2026',
+        state: 'Wrap Up',     owner: 'Suki Tanaka',    pm: 'Jonas Eriksson', account: 'Financial',
+        start: '2025-09-01', end: '2026-04-30', progress: 92,
+        description: 'Regulatory reporting automation and audit trail management aligned with Basel IV and DORA requirements. Final sign-off pending.'
+      },
+      {
+        id: 'HOR-005', company: 'Horizon Minerals',   project: 'FieldSense IoT Platform',
+        state: 'Sprint',      owner: 'Diego Navarro',  pm: 'Anika Patel',    account: 'Enterprise',
+        start: '2026-01-20', end: '2026-10-15', progress: 55,
+        description: 'Industrial IoT deployment for remote monitoring of 200+ extraction sites across 4 continents with edge compute and satellite uplink.'
+      },
+      {
+        id: 'CAS-006', company: 'Cascade Financial',  project: 'Wealth 360 Portal',
+        state: 'Completed',   owner: 'Jonas Eriksson', pm: 'Suki Tanaka',    account: 'Financial',
+        start: '2025-06-01', end: '2026-02-28', progress: 100,
+        description: 'Unified wealth management portal integrating portfolio analytics, client reporting, and advisor tools. Delivered on time and on budget.'
+      },
+      {
+        id: 'NEX-007', company: 'Nexus Telecom',      project: 'BillingCore Modernization',
+        state: 'On Hold',     owner: 'Mara Fossati',   pm: 'Leo Hartmann',   account: 'Strategic',
+        start: '2025-11-01', end: '2026-08-31', progress: 38,
+        description: 'Billing system overhaul paused pending regulatory review of new subscriber classification rules expected to conclude Q3 2026.'
+      },
+      {
+        id: 'VER-008', company: 'Verdant Solutions',  project: 'CarbonTrack ESG Suite',
+        state: 'Exploration', owner: 'Anika Patel',    pm: 'Diego Navarro',  account: 'Commercial',
+        start: '2026-02-15', end: '2026-12-31', progress: 18,
+        description: 'ESG reporting and carbon-footprint tracking platform built to satisfy mandatory EU disclosure requirements before 2027 deadline.'
+      },
+      {
+        id: 'ATL-009', company: 'Atlas Digital',      project: 'MarketEdge CDP',
+        state: 'Completed',   owner: 'Leo Hartmann',   pm: 'Mara Fossati',   account: 'Enterprise',
+        start: '2025-04-01', end: '2026-01-31', progress: 100,
+        description: 'Customer data platform consolidating 6 siloed marketing databases into a unified customer profile store powering personalised campaigns.'
+      },
+      {
+        id: 'PRI-010', company: 'Prism Logistics',    project: 'SupplySync Integration',
+        state: 'Prospect',    owner: 'Jonas Eriksson', pm: 'Suki Tanaka',    account: 'Commercial',
+        start: '2026-04-01', end: '2026-12-31', progress: 0,
+        description: 'Multi-modal logistics optimisation integrating sea, air, and land freight into a single control tower with AI-driven route planning.'
+      }
+    ];
 
-      var BOARD_ITEMS = [
-        { initiative: 'Digital Operations Transformation', owner: 'Mara Fossati',  role: 'CEO',    status: 'On Track',    budget: '$4.2M', progress: { value: 72, max: 100, label: '72%' } },
-        { initiative: 'APAC Market Expansion',            owner: 'Leo Hartmann',  role: 'VP Sales',status: 'At Risk',     budget: '$2.8M', progress: { value: 45, max: 100, label: '45%' } },
-        { initiative: 'Cost Structure Optimisation',      owner: 'Anika Patel',   role: 'CFO',    status: 'On Track',    budget: '$1.5M', progress: { value: 88, max: 100, label: '88%' } },
-        { initiative: 'Platform Architecture Renewal',    owner: 'Diego Navarro', role: 'CTO',    status: 'In Progress', budget: '$3.1M', progress: { value: 34, max: 100, label: '34%' } },
-        { initiative: 'Talent Pipeline Development',      owner: 'Suki Tanaka',   role: 'COO',    status: 'On Track',    budget: '$1.8M', progress: { value: 61, max: 100, label: '61%' } },
-        { initiative: 'ESG Compliance Framework',         owner: 'Jonas Eriksson',role: 'CLO',    status: 'In Progress', budget: '$0.9M', progress: { value: 52, max: 100, label: '52%' } }
-      ];
+    var BOARD_ITEMS = [
+      { initiative: 'Digital Operations Transformation', owner: 'Mara Fossati',   role: 'CEO',      status: 'On Track',    budget: '$4.2M', progress: { value: 72,  max: 100, label: '72%'  } },
+      { initiative: 'APAC Market Expansion',             owner: 'Leo Hartmann',   role: 'VP Sales', status: 'At Risk',     budget: '$2.8M', progress: { value: 45,  max: 100, label: '45%'  } },
+      { initiative: 'Cost Structure Optimisation',       owner: 'Anika Patel',    role: 'CFO',      status: 'On Track',    budget: '$1.5M', progress: { value: 88,  max: 100, label: '88%'  } },
+      { initiative: 'Platform Architecture Renewal',     owner: 'Diego Navarro',  role: 'CTO',      status: 'In Progress', budget: '$3.1M', progress: { value: 34,  max: 100, label: '34%'  } },
+      { initiative: 'Talent Pipeline Development',       owner: 'Suki Tanaka',    role: 'COO',      status: 'On Track',    budget: '$1.8M', progress: { value: 61,  max: 100, label: '61%'  } },
+      { initiative: 'ESG Compliance Framework',          owner: 'Jonas Eriksson', role: 'CLO',      status: 'In Progress', budget: '$0.9M', progress: { value: 52,  max: 100, label: '52%'  } }
+    ];
 
-      /* ======================================================
-         SHELL / ORCHESTRATOR SETUP
-      ====================================================== */
-      var shellEl   = document.getElementById('exec-shell');
-      var pageSlot  = document.getElementById('mn-slot-page');
+    /* ============================================================
+       STATE
+    ============================================================ */
+    var currentView  = 'cockpit';
+    var activeFilter = 'all';
+    var ganttCtrl    = null;
+    var tableCtrl    = null;
+    var viewInited   = {};
 
-      var registry     = M.ViewRegistry.getInstance();
-      registry.clear();
-      var navigation   = new M.NavigationModel();
-      var orchestrator = new M.PanelOrchestrator(registry, navigation);
-      shellEl.orchestrator = orchestrator;
+    var VIEW_IDS = ['cockpit', 'portfolio', 'market', 'board'];
+    var navbar    = document.getElementById('navbar');
+    var layoutEl  = document.getElementById('exec-layout');
+    var detailEl  = document.getElementById('exec-detail');
+    var headerCtrl = null;
 
-      var currentView  = 'cockpit';
-      var activeFilter = 'all';
-      var ganttCtrl    = null;
+    /* ============================================================
+       HELPERS
+    ============================================================ */
+    function icon(name) {
+      if (!M.icons || typeof M.icons[name] !== 'function') return '';
+      return M.icons[name]();
+    }
 
-      /* ======================================================
-         HELPERS
-      ====================================================== */
-      function findEng(id) {
-        for (var i = 0; i < ENGAGEMENTS.length; i++) {
-          if (ENGAGEMENTS[i].id === id) return ENGAGEMENTS[i];
+    function setClass(node, cls, on) {
+      if (!node) return;
+      if (on) node.classList.add(cls);
+      else node.classList.remove(cls);
+    }
+
+    function findEng(id) {
+      for (var i = 0; i < ENGAGEMENTS.length; i++) {
+        if (ENGAGEMENTS[i].id === id) return ENGAGEMENTS[i];
+      }
+      return null;
+    }
+
+    function filteredGanttTasks() {
+      var list = activeFilter === 'all'
+        ? ENGAGEMENTS
+        : ENGAGEMENTS.filter(function (e) { return e.state === activeFilter; });
+      return list.map(function (e) {
+        return {
+          id: e.id,
+          title: e.company + ' \u2014 ' + e.project,
+          start: e.start,
+          end: e.end,
+          progress: e.progress,
+          color: STATE_COLORS[e.state] || '#888'
+        };
+      });
+    }
+
+    function makeField(label, value) {
+      var wrap = document.createElement('div');
+      wrap.className = 'detail-field';
+      var lbl = document.createElement('div');
+      lbl.className = 'detail-field-label';
+      lbl.textContent = label;
+      var val = document.createElement('div');
+      val.className = 'detail-field-value';
+      val.textContent = value;
+      wrap.appendChild(lbl);
+      wrap.appendChild(val);
+      return wrap;
+    }
+
+    /* ============================================================
+       DETAIL PANEL
+    ============================================================ */
+    function openDetail(eng) {
+      var inner = document.getElementById('detail-inner');
+      inner.innerHTML = '';
+
+      /* Header */
+      var hdr = document.createElement('div');
+      hdr.className = 'detail-header';
+      var titleRow = document.createElement('div');
+      titleRow.className = 'detail-title-row';
+      var titleBlock = document.createElement('div');
+      var companyEl = document.createElement('div');
+      companyEl.className = 'detail-company';
+      companyEl.textContent = eng.company;
+      var projectEl = document.createElement('div');
+      projectEl.className = 'detail-project';
+      projectEl.textContent = eng.project;
+      titleBlock.appendChild(companyEl);
+      titleBlock.appendChild(projectEl);
+      var closeBtn = document.createElement('button');
+      closeBtn.type = 'button';
+      closeBtn.className = 'detail-close';
+      closeBtn.setAttribute('aria-label', 'Close detail panel');
+      closeBtn.innerHTML = icon('close');
+      closeBtn.addEventListener('click', closeDetail);
+      titleRow.appendChild(titleBlock);
+      titleRow.appendChild(closeBtn);
+      hdr.appendChild(titleRow);
+
+      var stateLine = document.createElement('div');
+      var stateDot = document.createElement('span');
+      stateDot.className = 'state-dot';
+      stateDot.style.setProperty('--state-color', STATE_COLORS[eng.state] || '#888');
+      var stateText = document.createElement('span');
+      stateText.style.cssText = 'font-family:var(--font-mono);font-size:0.7rem;color:var(--mn-text-muted);';
+      stateText.textContent = eng.state;
+      stateLine.appendChild(stateDot);
+      stateLine.appendChild(stateText);
+      hdr.appendChild(stateLine);
+      inner.appendChild(hdr);
+
+      /* Tabs */
+      var tabNames = ['Overview', 'Activities', 'Impact', 'Quality', 'Comments'];
+      var tabsEl = document.createElement('div');
+      tabsEl.className = 'detail-tabs';
+      tabsEl.setAttribute('role', 'tablist');
+      var panelBody = document.createElement('div');
+      panelBody.className = 'detail-panel-body';
+      var tabPanels = [];
+
+      tabNames.forEach(function (name, idx) {
+        var tabBtn = document.createElement('button');
+        tabBtn.type = 'button';
+        tabBtn.className = 'detail-tab' + (idx === 0 ? ' is-active' : '');
+        tabBtn.setAttribute('role', 'tab');
+        tabBtn.setAttribute('aria-selected', idx === 0 ? 'true' : 'false');
+        tabBtn.textContent = name;
+        tabsEl.appendChild(tabBtn);
+
+        var panel = document.createElement('div');
+        panel.className = 'detail-tab-content' + (idx === 0 ? ' is-active' : '');
+        panel.setAttribute('role', 'tabpanel');
+        tabPanels.push(panel);
+
+        (function (i) {
+          tabBtn.addEventListener('click', function () {
+            tabsEl.querySelectorAll('.detail-tab').forEach(function (b, j) {
+              setClass(b, 'is-active', j === i);
+              b.setAttribute('aria-selected', j === i ? 'true' : 'false');
+            });
+            tabPanels.forEach(function (p, j) { setClass(p, 'is-active', j === i); });
+          });
+        }(idx));
+      });
+
+      /* Overview content */
+      var desc = document.createElement('p');
+      desc.className = 'detail-description';
+      desc.textContent = eng.description;
+      tabPanels[0].appendChild(desc);
+      var fieldsGrid = document.createElement('div');
+      fieldsGrid.className = 'detail-fields-grid';
+      fieldsGrid.appendChild(makeField('State', eng.state));
+      fieldsGrid.appendChild(makeField('Account', eng.account));
+      fieldsGrid.appendChild(makeField('Owner', eng.owner));
+      fieldsGrid.appendChild(makeField('PM', eng.pm));
+      fieldsGrid.appendChild(makeField('Start', eng.start));
+      fieldsGrid.appendChild(makeField('End', eng.end));
+      tabPanels[0].appendChild(fieldsGrid);
+
+      /* Other tab placeholders */
+      for (var t = 1; t < tabPanels.length; t++) {
+        var ph = document.createElement('div');
+        ph.className = 'detail-placeholder';
+        ph.textContent = tabNames[t] + ' — coming soon';
+        tabPanels[t].appendChild(ph);
+      }
+
+      inner.appendChild(tabsEl);
+      tabPanels.forEach(function (p) { panelBody.appendChild(p); });
+      inner.appendChild(panelBody);
+
+      detailEl.hidden = false;
+      setClass(layoutEl, 'has-detail', true);
+    }
+
+    function closeDetail() {
+      detailEl.hidden = true;
+      setClass(layoutEl, 'has-detail', false);
+      document.getElementById('detail-inner').innerHTML = '';
+    }
+
+    /* ============================================================
+       VIEW: COCKPIT
+    ============================================================ */
+    function initCockpit() {
+      var container = document.getElementById('view-cockpit');
+      container.innerHTML = '';
+      var wrap = document.createElement('div');
+      wrap.className = 'cockpit-wrap';
+
+      var stripMount = document.createElement('div');
+      wrap.appendChild(stripMount);
+
+      var gaugeRow = document.createElement('div');
+      gaugeRow.className = 'cockpit-gauge-row';
+
+      var revCard = document.createElement('div');
+      revCard.className = 'gauge-card';
+      revCard.setAttribute('role', 'group');
+      revCard.setAttribute('aria-label', 'Revenue performance gauge');
+      var revCanvas = document.createElement('canvas');
+      revCanvas.id = 'cockpit-gauge-rev';
+      revCanvas.setAttribute('width', '200');
+      revCanvas.setAttribute('height', '200');
+      revCanvas.setAttribute('role', 'img');
+      revCanvas.setAttribute('aria-label', 'Revenue at $42.3M, 84.6 percent of $50M target');
+      var revSR = document.createElement('span');
+      revSR.className = 'sr-only';
+      revSR.textContent = 'Revenue: $42.3M of $50M target (84.6%)';
+      var revLbl = document.createElement('p');
+      revLbl.className = 'gauge-label';
+      revLbl.textContent = 'Revenue';
+      revCard.appendChild(revCanvas);
+      revCard.appendChild(revSR);
+      revCard.appendChild(revLbl);
+
+      var qualCard = document.createElement('div');
+      qualCard.className = 'gauge-card';
+      qualCard.setAttribute('role', 'group');
+      qualCard.setAttribute('aria-label', 'Delivery quality gauge');
+      var qualCanvas = document.createElement('canvas');
+      qualCanvas.id = 'cockpit-gauge-qual';
+      qualCanvas.setAttribute('width', '200');
+      qualCanvas.setAttribute('height', '200');
+      qualCanvas.setAttribute('role', 'img');
+      qualCanvas.setAttribute('aria-label', 'Delivery quality at 60 percent');
+      var qualSR = document.createElement('span');
+      qualSR.className = 'sr-only';
+      qualSR.textContent = 'Delivery quality: 60%';
+      var qualLbl = document.createElement('p');
+      qualLbl.className = 'gauge-label';
+      qualLbl.textContent = 'Delivery Quality';
+      qualCard.appendChild(qualCanvas);
+      qualCard.appendChild(qualSR);
+      qualCard.appendChild(qualLbl);
+
+      gaugeRow.appendChild(revCard);
+      gaugeRow.appendChild(qualCard);
+      wrap.appendChild(gaugeRow);
+      container.appendChild(wrap);
+
+      M.dashboardStrip(stripMount, {
+        ariaLabel: 'Executive instrument strip',
+        zones: [
+          {
+            type: 'gauge',
+            label: 'UTILIZATION',
+            size: 'sm',
+            gaugeConfig: {
+              value: 86, max: 100, color: '#FFC72C', colorMode: 'lower-better',
+              ticks: 10, subticks: 5, startAngle: -225, endAngle: 45, showNeedle: true,
+              numbers: [0, 25, 50, 75, 100],
+              complications: {
+                centerValue: '86', centerUnit: '%', centerLabel: 'UTILIZATION',
+                arcBar: { labelLeft: '0', labelRight: '100' },
+                statusLed: { color: '#FFC72C', label: 'HIGH' }
+              }
+            }
+          },
+          {
+            type: 'pipeline',
+            title: 'PIPELINE AND AVG DURATION',
+            rows: [
+              { label: 'PROSPECT',    value: 47,  color: '#FFC72C', secondary: '47d' },
+              { label: 'EXPLORATION', value: 48,  color: '#448AFF', secondary: '119d' },
+              { label: 'SPRINT',      value: 40,  color: '#7C4DFF', secondary: '141d' },
+              { label: 'WRAP UP',     value: 4,   color: '#DC0000', secondary: '181d' },
+              { label: 'ON HOLD',     value: 14,  color: '#9e9e9e', secondary: '118d' },
+              { label: 'COMPLETED',   value: 138, color: '#00A651', secondary: '166d' },
+              { label: 'WITHDRAWN',   value: 81,  color: '#616161', secondary: '142d' }
+            ],
+            footer: { label: 'E2E', value: '157d' }
+          },
+          {
+            type: 'trend',
+            title: '6 MONTH TREND',
+            items: [
+              { label: 'PROSPECTS', value: 47,  color: '#FFC72C', data: [32, 28, 35, 42, 38, 47] },
+              { label: 'IN FLIGHT', value: 94,  color: '#448AFF', data: [60, 68, 72, 78, 85, 94] },
+              { label: 'CLOSED',    value: 126, color: '#00A651', data: [80, 90, 95, 105, 118, 126] }
+            ]
+          },
+          {
+            type: 'board',
+            title: 'KEY METRICS',
+            stats: [
+              { label: 'REVENUE',      value: '$42.3M' },
+              { label: 'MARGIN',       value: '68.2%' },
+              { label: 'NPS',          value: '72' },
+              { label: 'GROWTH',       value: '23.4%' },
+              { label: 'ENGAGEMENTS',  value: '377' },
+              { label: 'FTE',          value: '260' }
+            ]
+          }
+        ]
+      });
+
+      M.createGauge({
+        target: '#cockpit-gauge-rev',
+        size: 'md',
+        config: {
+          value: 84.6, max: 100, color: '#00A651', colorMode: 'higher-better',
+          ticks: 10, subticks: 5, startAngle: -225, endAngle: 45, showNeedle: true,
+          numbers: [0, 25, 50, 75, 100],
+          complications: {
+            centerValue: '$42.3M', centerUnit: '', centerLabel: 'REVENUE',
+            arcBar: { labelLeft: '0', labelRight: '$50M' },
+            statusLed: { color: '#00A651', label: 'ON TRACK' }
+          }
         }
-        return null;
+      });
+
+      M.createGauge({
+        target: '#cockpit-gauge-qual',
+        size: 'md',
+        config: {
+          value: 60, max: 100, color: '#DC0000', colorMode: 'higher-better',
+          ticks: 10, subticks: 5, startAngle: -225, endAngle: 45, showNeedle: true,
+          numbers: [0, 25, 50, 75, 100],
+          complications: {
+            centerValue: '60', centerUnit: '%', centerLabel: 'QUALITY',
+            arcBar: { labelLeft: '0', labelRight: '100' },
+            statusLed: { color: '#DC0000', label: 'ALERT' }
+          }
+        }
+      });
+    }
+
+    /* ============================================================
+       VIEW: PORTFOLIO
+    ============================================================ */
+    function initPortfolio() {
+      var container = document.getElementById('view-portfolio');
+      container.innerHTML = '';
+      var wrap = document.createElement('div');
+      wrap.className = 'portfolio-wrap';
+      container.appendChild(wrap);
+      if (ganttCtrl && ganttCtrl.destroy) ganttCtrl.destroy();
+      ganttCtrl = M.gantt(wrap, filteredGanttTasks(), {
+        onClick: function (task) {
+          var eng = findEng(task.id);
+          if (eng) openDetail(eng);
+        }
+      });
+    }
+
+    /* ============================================================
+       VIEW: MARKET
+    ============================================================ */
+    function initMarket() {
+      var container = document.getElementById('view-market');
+      container.innerHTML = '';
+      var wrap = document.createElement('div');
+      wrap.className = 'market-wrap';
+      var mountId = 'exec-heatmap-mount';
+      var mount = document.createElement('div');
+      mount.id = mountId;
+      wrap.appendChild(mount);
+      container.appendChild(wrap);
+
+      M.heatmap(mountId, {
+        ariaLabel: 'Market opportunity matrix by region and product line',
+        columnLabels: ['Platform', 'Analytics', 'Services', 'Cloud'],
+        showValues: true,
+        cellSize: 'md',
+        colorScale: ['#DC0000', '#FFC72C', '#00A651'],
+        minValue: 0,
+        maxValue: 100,
+        rows: [
+          { label: 'North America', cells: [{ value: 92, label: '92' }, { value: 78, label: '78' }, { value: 85, label: '85' }, { value: 71, label: '71' }] },
+          { label: 'EMEA',          cells: [{ value: 74, label: '74' }, { value: 82, label: '82' }, { value: 68, label: '68' }, { value: 59, label: '59' }] },
+          { label: 'APAC',          cells: [{ value: 88, label: '88' }, { value: 55, label: '55' }, { value: 91, label: '91' }, { value: 77, label: '77' }] },
+          { label: 'LATAM',         cells: [{ value: 45, label: '45' }, { value: 62, label: '62' }, { value: 38, label: '38' }, { value: 51, label: '51' }] }
+        ],
+        onCellClick: function (row, cell) {
+          console.log('Market cell:', row.label, cell.label);
+        }
+      });
+    }
+
+    /* ============================================================
+       VIEW: BOARD
+    ============================================================ */
+    function initBoard() {
+      var container = document.getElementById('view-board');
+      container.innerHTML = '';
+      var wrap = document.createElement('div');
+      wrap.className = 'board-wrap';
+      container.appendChild(wrap);
+      if (tableCtrl && tableCtrl.destroy) tableCtrl.destroy();
+      tableCtrl = M.dataTable(wrap, {
+        ariaLabel: 'Board strategic initiatives',
+        stickyHeader: true,
+        stripedRows: true,
+        columns: [
+          { key: 'initiative', label: 'Initiative', type: 'text',     sortable: true },
+          { key: 'owner',      label: 'Owner',      type: 'text',     sortable: true },
+          { key: 'role',       label: 'Role',       type: 'text' },
+          { key: 'status',     label: 'Status',     type: 'status',   sortable: true },
+          { key: 'budget',     label: 'Budget',     type: 'text',     sortable: true },
+          { key: 'progress',   label: 'Progress',   type: 'progress' }
+        ],
+        data: BOARD_ITEMS,
+        onRowClick: function (row) {
+          openDetail({
+            id: row.initiative,
+            company: 'Board Initiative',
+            project: row.initiative,
+            state: row.status,
+            owner: row.owner,
+            pm: row.role,
+            account: row.budget,
+            start: '2026-01-01',
+            end: '2026-12-31',
+            progress: row.progress.value,
+            description: row.initiative + ' — owned by ' + row.owner + ' (' + row.role + '). Allocated budget: ' + row.budget + '. Current progress: ' + row.progress.label + '.'
+          });
+        }
+      });
+    }
+
+    /* ============================================================
+       VIEW SWITCHING
+    ============================================================ */
+    function showView(id) {
+      VIEW_IDS.forEach(function (vid) {
+        var el = document.getElementById('view-' + vid);
+        setClass(el, 'is-active', vid === id);
+      });
+      currentView = id;
+      syncViewButtons();
+      closeDetail();
+      if (viewInited[id]) return;
+      viewInited[id] = true;
+      if (id === 'cockpit')   initCockpit();
+      else if (id === 'portfolio') initPortfolio();
+      else if (id === 'market')    initMarket();
+      else if (id === 'board')     initBoard();
+    }
+
+    function syncViewButtons() {
+      VIEW_IDS.forEach(function (id) {
+        var btn = document.querySelector('[data-header-shell-action-id="' + id + '"]');
+        setClass(btn, 'mn-header-shell__action--active', id === currentView);
+      });
+    }
+
+    /* ============================================================
+       FUNNEL SIDEBAR
+    ============================================================ */
+    document.getElementById('funnel-nav').addEventListener('click', function (e) {
+      var btn = e.target;
+      while (btn && btn !== this) {
+        if (btn.classList && btn.classList.contains('funnel-card')) break;
+        btn = btn.parentElement;
       }
-
-      function filteredGanttTasks() {
-        var list = activeFilter === 'all'
-          ? ENGAGEMENTS
-          : ENGAGEMENTS.filter(function (e) { return e.state === activeFilter; });
-        return list.map(function (e) {
-          return {
-            id: e.id,
-            title: e.company + ' \u2014 ' + e.project,
-            start: e.start,
-            end: e.end,
-            progress: e.progress,
-            color: STATE_COLORS[e.state] || '#888'
-          };
-        });
+      if (!btn || !btn.classList.contains('funnel-card')) return;
+      var state = btn.getAttribute('data-state');
+      if (!state) return;
+      activeFilter = state;
+      this.querySelectorAll('.funnel-card').forEach(function (card) {
+        var on = card.getAttribute('data-state') === state;
+        setClass(card, 'is-active', on);
+        card.setAttribute('aria-pressed', on ? 'true' : 'false');
+      });
+      if (currentView === 'portfolio' && ganttCtrl && ganttCtrl.setTasks) {
+        ganttCtrl.setTasks(filteredGanttTasks());
+      } else {
+        viewInited['portfolio'] = false;
       }
+    });
 
-      function makeField(label, value) {
-        var wrap = document.createElement('div');
-        wrap.className = 'detail-field';
-        var lbl = document.createElement('div');
-        lbl.className = 'detail-field-label';
-        lbl.textContent = label;
-        var val = document.createElement('div');
-        val.className = 'detail-field-value';
-        val.textContent = value;
-        wrap.appendChild(lbl);
-        wrap.appendChild(val);
-        return wrap;
-      }
-
-      /* ======================================================
-         VIEW: COCKPIT
-      ====================================================== */
-      registry.register({
-        id: 'cockpit',
-        title: 'Cockpit',
-        defaultPlacement: 'page',
-        factory: function (container) {
-          var wrap = document.createElement('div');
-          wrap.className = 'view-pad cockpit-wrap';
-
-          /* Strip */
-          var stripMount = document.createElement('div');
-          wrap.appendChild(stripMount);
-
-          /* Gauge row */
-          var gaugeRow = document.createElement('div');
-          gaugeRow.className = 'cockpit-gauge-row';
-
-          var revCard = document.createElement('div');
-          revCard.className = 'gauge-card mn-card';
-          revCard.setAttribute('role', 'group');
-          revCard.setAttribute('aria-label', 'Revenue performance gauge');
-          var revCanvas = document.createElement('canvas');
-          revCanvas.id = 'cockpit-gauge-rev';
-          revCanvas.setAttribute('width', '200');
-          revCanvas.setAttribute('height', '200');
-          revCanvas.setAttribute('role', 'img');
-          revCanvas.setAttribute('aria-label', 'Revenue at $42.3M, 84.6 percent of $50M target');
-          var revSR = document.createElement('span');
-          revSR.className = 'sr-only';
-          revSR.textContent = 'Revenue: $42.3M of $50M target (84.6%)';
-          var revLbl = document.createElement('p');
-          revLbl.className = 'gauge-label';
-          revLbl.textContent = 'Revenue';
-          revCard.appendChild(revCanvas);
-          revCard.appendChild(revSR);
-          revCard.appendChild(revLbl);
-
-          var qualCard = document.createElement('div');
-          qualCard.className = 'gauge-card mn-card';
-          qualCard.setAttribute('role', 'group');
-          qualCard.setAttribute('aria-label', 'Delivery quality gauge');
-          var qualCanvas = document.createElement('canvas');
-          qualCanvas.id = 'cockpit-gauge-qual';
-          qualCanvas.setAttribute('width', '200');
-          qualCanvas.setAttribute('height', '200');
-          qualCanvas.setAttribute('role', 'img');
-          qualCanvas.setAttribute('aria-label', 'Delivery quality at 60 percent');
-          var qualSR = document.createElement('span');
-          qualSR.className = 'sr-only';
-          qualSR.textContent = 'Delivery quality: 60%';
-          var qualLbl = document.createElement('p');
-          qualLbl.className = 'gauge-label';
-          qualLbl.textContent = 'Delivery Quality';
-          qualCard.appendChild(qualCanvas);
-          qualCard.appendChild(qualSR);
-          qualCard.appendChild(qualLbl);
-
-          gaugeRow.appendChild(revCard);
-          gaugeRow.appendChild(qualCard);
-          wrap.appendChild(gaugeRow);
-          container.appendChild(wrap);
-
-          /* Init dashboard strip */
-          var strip = M.dashboardStrip(stripMount, {
-            ariaLabel: 'Executive instrument strip',
-            zones: [
+    /* ============================================================
+       HEADER (exact header-responsive-shell.js pattern)
+    ============================================================ */
+    function mountHeader() {
+      var headerHost = document.createElement('mn-header-shell');
+      headerHost.config = {
+        ariaLabel: 'ConvergIO Executive navigation',
+        sections: [
+          {
+            type: 'brand',
+            label: 'ConvergIO Executive',
+            logoSrc: '../src/assets/favicon.svg',
+            logoAlt: 'ConvergIO mark',
+            href: './index.html'
+          },
+          {
+            type: 'actions',
+            role: 'pre',
+            presentation: 'segmented',
+            items: [
+              { id: 'cockpit',   label: 'Cockpit',   icon: icon('dashboard'), active: true },
+              { id: 'portfolio', label: 'Portfolio', icon: icon('gantt') },
+              { id: 'market',    label: 'Market',    icon: icon('heatmap') },
+              { id: 'board',     label: 'Board',     icon: icon('table') }
+            ]
+          },
+          {
+            type: 'search',
+            placeholder: 'Search engagements, accounts...',
+            shortcut: 'Cmd+K',
+            filterButtonLabel: 'Filters',
+            filters: [
               {
-                type: 'gauge',
-                label: 'UTILIZATION',
-                size: 'sm',
-                gaugeConfig: {
-                  value: 86, max: 100, color: '#FFC72C', colorMode: 'lower-better',
-                  ticks: 10, subticks: 5, startAngle: -225, endAngle: 45, showNeedle: true,
-                  numbers: [0, 25, 50, 75, 100],
-                  complications: {
-                    centerValue: '86', centerUnit: '%', centerLabel: 'UTILIZATION',
-                    arcBar: { labelLeft: '0', labelRight: '100' },
-                    statusLed: { color: '#FFC72C', label: 'HIGH' }
-                  }
-                }
-              },
-              {
-                type: 'pipeline',
-                title: 'PIPELINE & AVG DURATION',
-                rows: [
-                  { label: 'PROSPECT',    value: 47, color: '#FFC72C', secondary: '47d' },
-                  { label: 'EXPLORATION', value: 48, color: '#448AFF', secondary: '119d' },
-                  { label: 'SPRINT',      value: 40, color: '#7C4DFF', secondary: '141d' },
-                  { label: 'WRAP UP',     value: 4,  color: '#DC0000', secondary: '181d' },
-                  { label: 'ON HOLD',     value: 14, color: '#9e9e9e', secondary: '118d' },
-                  { label: 'COMPLETED',   value: 138,color: '#00A651', secondary: '166d' },
-                  { label: 'WITHDRAWN',   value: 81, color: '#616161', secondary: '142d' }
-                ],
-                footer: { label: 'E2E', value: '157d' }
-              },
-              {
-                type: 'trend',
-                title: '6 MONTH TREND',
-                items: [
-                  { label: 'PROSPECTS', value: 47, color: '#FFC72C', data: [32, 28, 35, 42, 38, 47] },
-                  { label: 'IN FLIGHT', value: 94, color: '#448AFF', data: [60, 68, 72, 78, 85, 94] },
-                  { label: 'CLOSED',    value: 126, color: '#00A651', data: [80, 90, 95, 105, 118, 126] }
-                ]
-              },
-              {
-                type: 'board',
-                title: 'SECONDARY BOARD',
-                stats: [
-                  { label: 'ENGAGEMENTS', value: 377 },
-                  { label: 'FTE',          value: 260 }
+                id: 'quarter',
+                label: 'Quarter',
+                options: [
+                  { id: 'all', label: 'All Quarters' },
+                  { id: 'Q1', label: 'Q1 2026' },
+                  { id: 'Q2', label: 'Q2 2026' },
+                  { id: 'Q3', label: 'Q3 2026' },
+                  { id: 'Q4', label: 'Q4 2026' }
                 ]
               }
             ]
-          });
-
-          /* Init gauges (canvas is in DOM now) */
-          M.createGauge({
-            target: '#cockpit-gauge-rev',
-            size: 'md',
-            config: {
-              value: 84.6, max: 100, color: '#00A651', colorMode: 'higher-better',
-              ticks: 10, subticks: 5, startAngle: -225, endAngle: 45, showNeedle: true,
-              numbers: [0, 25, 50, 75, 100],
-              complications: {
-                centerValue: '$42.3M', centerUnit: '', centerLabel: 'REVENUE',
-                arcBar: { labelLeft: '0', labelRight: '$50M' },
-                statusLed: { color: '#00A651', label: 'ON TRACK' }
-              }
-            }
-          });
-
-          M.createGauge({
-            target: '#cockpit-gauge-qual',
-            size: 'md',
-            config: {
-              value: 60, max: 100, color: '#DC0000', colorMode: 'higher-better',
-              ticks: 10, subticks: 5, startAngle: -225, endAngle: 45, showNeedle: true,
-              numbers: [0, 25, 50, 75, 100],
-              complications: {
-                centerValue: '60', centerUnit: '%', centerLabel: 'QUALITY',
-                arcBar: { labelLeft: '0', labelRight: '100' },
-                statusLed: { color: '#DC0000', label: 'ALERT' }
-              }
-            }
-          });
-
-          return function () {
-            if (strip && strip.destroy) strip.destroy();
-            container.innerHTML = '';
-          };
-        }
-      });
-
-      /* ======================================================
-         VIEW: PORTFOLIO (Gantt)
-      ====================================================== */
-      registry.register({
-        id: 'portfolio',
-        title: 'Portfolio',
-        defaultPlacement: 'page',
-        factory: function (container) {
-          var wrap = document.createElement('div');
-          wrap.className = 'view-pad portfolio-wrap';
-          container.appendChild(wrap);
-
-          ganttCtrl = M.gantt(wrap, filteredGanttTasks(), {
-            onClick: function (task) {
-              var eng = findEng(task.id);
-              if (!eng) return;
-              if (orchestrator.isOpen('engagement-detail')) orchestrator.close('engagement-detail');
-              orchestrator.open('engagement-detail', 'side-panel', eng);
-              shellEl.setAttribute('layout', 'side-detail');
-            }
-          });
-
-          return function () {
-            if (ganttCtrl && ganttCtrl.destroy) ganttCtrl.destroy();
-            ganttCtrl = null;
-            container.innerHTML = '';
-          };
-        }
-      });
-
-      /* ======================================================
-         VIEW: MARKET (Heatmap)
-      ====================================================== */
-      registry.register({
-        id: 'market',
-        title: 'Market',
-        defaultPlacement: 'page',
-        factory: function (container) {
-          var wrap = document.createElement('div');
-          wrap.className = 'view-pad';
-          var mountId = 'market-heatmap-mount';
-          var mount = document.createElement('div');
-          mount.id = mountId;
-          wrap.appendChild(mount);
-          container.appendChild(wrap);
-
-          M.heatmap(mountId, {
-            ariaLabel: 'Market opportunity matrix by region and product line',
-            columnLabels: ['Platform', 'Analytics', 'Services', 'Cloud'],
-            showValues: true,
-            cellSize: 'md',
-            colorScale: ['#DC0000', '#FFC72C', '#00A651'],
-            minValue: 0,
-            maxValue: 100,
-            rows: [
-              { label: 'North America', cells: [{ value: 92, label: '92' }, { value: 78, label: '78' }, { value: 85, label: '85' }, { value: 71, label: '71' }] },
-              { label: 'EMEA',          cells: [{ value: 74, label: '74' }, { value: 82, label: '82' }, { value: 68, label: '68' }, { value: 59, label: '59' }] },
-              { label: 'APAC',          cells: [{ value: 88, label: '88' }, { value: 55, label: '55' }, { value: 91, label: '91' }, { value: 77, label: '77' }] },
-              { label: 'LATAM',         cells: [{ value: 45, label: '45' }, { value: 62, label: '62' }, { value: 38, label: '38' }, { value: 51, label: '51' }] }
-            ],
-            onCellClick: function (row, cell) {
-              console.log('Market cell:', row.label, cell.label);
-            }
-          });
-
-          return function () { container.innerHTML = ''; };
-        }
-      });
-
-      /* ======================================================
-         VIEW: BOARD (Data Table)
-      ====================================================== */
-      registry.register({
-        id: 'board',
-        title: 'Board',
-        defaultPlacement: 'page',
-        factory: function (container) {
-          var wrap = document.createElement('div');
-          wrap.className = 'view-pad board-wrap';
-          container.appendChild(wrap);
-
-          var table = M.dataTable(wrap, {
-            ariaLabel: 'Board strategic initiatives',
-            stickyHeader: true,
-            stripedRows: true,
-            columns: [
-              { key: 'initiative', label: 'Initiative',  type: 'text',     sortable: true },
-              { key: 'owner',      label: 'Owner',       type: 'text',     sortable: true },
-              { key: 'role',       label: 'Role',        type: 'text' },
-              { key: 'status',     label: 'Status',      type: 'status',   sortable: true },
-              { key: 'budget',     label: 'Budget',      type: 'text',     sortable: true },
-              { key: 'progress',   label: 'Progress',    type: 'progress' }
-            ],
-            data: BOARD_ITEMS,
-            onRowClick: function (row) {
-              if (orchestrator.isOpen('board-detail')) orchestrator.close('board-detail');
-              orchestrator.open('board-detail', 'side-panel', row);
-              shellEl.setAttribute('layout', 'side-detail');
-            }
-          });
-
-          return function () {
-            if (table && table.destroy) table.destroy();
-            container.innerHTML = '';
-          };
-        }
-      });
-
-      /* ======================================================
-         DETAIL PANEL: Engagement
-      ====================================================== */
-      registry.register({
-        id: 'engagement-detail',
-        title: 'Engagement Detail',
-        defaultPlacement: 'side-panel',
-        factory: function (container, eng) {
-          var wrap = document.createElement('div');
-          wrap.className = 'detail-wrap';
-
-          /* Header */
-          var hdr = document.createElement('div');
-          hdr.className = 'detail-header';
-          var titleRow = document.createElement('div');
-          titleRow.className = 'detail-title-row';
-          var titleBlock = document.createElement('div');
-          var company = document.createElement('div');
-          company.className = 'detail-company';
-          company.textContent = eng.company;
-          var project = document.createElement('div');
-          project.className = 'detail-project';
-          project.textContent = eng.project;
-          titleBlock.appendChild(company);
-          titleBlock.appendChild(project);
-          var actions = document.createElement('div');
-          actions.className = 'detail-header-actions';
-          var editBtn = document.createElement('button');
-          editBtn.type = 'button';
-          editBtn.className = 'mn-btn mn-btn--ghost';
-          editBtn.textContent = 'Edit';
-          var closeBtn = document.createElement('button');
-          closeBtn.type = 'button';
-          closeBtn.className = 'mn-btn mn-btn--ghost';
-          closeBtn.setAttribute('aria-label', 'Close detail panel');
-          closeBtn.textContent = '\u00D7';
-          closeBtn.addEventListener('click', function () {
-            orchestrator.close('engagement-detail');
-            shellEl.setAttribute('layout', 'full');
-          });
-          actions.appendChild(editBtn);
-          actions.appendChild(closeBtn);
-          titleRow.appendChild(titleBlock);
-          titleRow.appendChild(actions);
-          hdr.appendChild(titleRow);
-          wrap.appendChild(hdr);
-
-          /* Tabs */
-          var TAB_NAMES = ['Overview', 'Activities', 'Impact', 'Quality', 'Comments'];
-          var tabBar = document.createElement('div');
-          tabBar.className = 'detail-tabs';
-          tabBar.setAttribute('role', 'tablist');
-          var panels = [];
-
-          TAB_NAMES.forEach(function (name, i) {
-            var btn = document.createElement('button');
-            btn.type = 'button';
-            btn.className = 'detail-tab' + (i === 0 ? ' is-active' : '');
-            btn.setAttribute('role', 'tab');
-            btn.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
-            btn.setAttribute('id', 'etab-' + i);
-            btn.setAttribute('aria-controls', 'epanel-' + i);
-            btn.textContent = name;
-            tabBar.appendChild(btn);
-
-            var panel = document.createElement('div');
-            panel.className = 'detail-panel-content' + (i !== 0 ? ' is-hidden' : '');
-            panel.setAttribute('role', 'tabpanel');
-            panel.setAttribute('id', 'epanel-' + i);
-            panel.setAttribute('aria-labelledby', 'etab-' + i);
-            panels.push(panel);
-          });
-
-          tabBar.addEventListener('click', function (e) {
-            var btn = e.target.closest('[role="tab"]');
-            if (!btn) return;
-            var tabs = tabBar.querySelectorAll('[role="tab"]');
-            var idx = -1;
-            for (var k = 0; k < tabs.length; k++) {
-              if (tabs[k] === btn) { idx = k; break; }
-            }
-            if (idx < 0) return;
-            for (var j = 0; j < tabs.length; j++) {
-              tabs[j].setAttribute('aria-selected', j === idx ? 'true' : 'false');
-              if (j === idx) { tabs[j].classList.add('is-active'); } else { tabs[j].classList.remove('is-active'); }
-              if (j === idx) { panels[j].classList.remove('is-hidden'); } else { panels[j].classList.add('is-hidden'); }
-            }
-          });
-
-          wrap.appendChild(tabBar);
-
-          /* Overview tab */
-          var desc = document.createElement('p');
-          desc.className = 'detail-description';
-          desc.textContent = eng.description;
-          panels[0].appendChild(desc);
-          var grid = document.createElement('div');
-          grid.className = 'detail-fields-grid';
-          var stateColor = STATE_COLORS[eng.state] || 'var(--mn-border)';
-          var stateVal = document.createElement('div');
-          stateVal.className = 'detail-field-value';
-          var dot = document.createElement('span');
-          dot.className = 'state-dot';
-          dot.style.setProperty('background', stateColor);
-          stateVal.appendChild(dot);
-          stateVal.appendChild(document.createTextNode(eng.state));
-          var stateField = document.createElement('div');
-          stateField.className = 'detail-field';
-          var stateLbl = document.createElement('div');
-          stateLbl.className = 'detail-field-label';
-          stateLbl.textContent = 'Stage';
-          stateField.appendChild(stateLbl);
-          stateField.appendChild(stateVal);
-
-          grid.appendChild(stateField);
-          grid.appendChild(makeField('Account', eng.account));
-          grid.appendChild(makeField('Owner', eng.owner));
-          grid.appendChild(makeField('PM', eng.pm));
-          grid.appendChild(makeField('Start', eng.start));
-          grid.appendChild(makeField('End', eng.end));
-          panels[0].appendChild(grid);
-
-          /* Placeholder tabs */
-          var placeholderLabels = ['No activities logged yet.', 'Impact metrics pending final close.', 'Quality scorecard in review.', 'No comments yet.'];
-          for (var pi = 1; pi < panels.length; pi++) {
-            var ph = document.createElement('div');
-            ph.className = 'detail-placeholder';
-            ph.textContent = placeholderLabels[pi - 1];
-            panels[pi].appendChild(ph);
-          }
-
-          panels.forEach(function (p) { wrap.appendChild(p); });
-          container.innerHTML = '';
-          container.appendChild(wrap);
-
-          return function () { container.innerHTML = ''; };
-        }
-      });
-
-      /* ======================================================
-         DETAIL PANEL: Board Item
-      ====================================================== */
-      registry.register({
-        id: 'board-detail',
-        title: 'Initiative Detail',
-        defaultPlacement: 'side-panel',
-        factory: function (container, item) {
-          var wrap = document.createElement('div');
-          wrap.className = 'detail-wrap';
-
-          var hdr = document.createElement('div');
-          hdr.className = 'detail-header';
-          var titleRow = document.createElement('div');
-          titleRow.className = 'detail-title-row';
-          var titleBlock = document.createElement('div');
-          var company = document.createElement('div');
-          company.className = 'detail-company';
-          company.textContent = item.initiative;
-          var sub = document.createElement('div');
-          sub.className = 'detail-project';
-          sub.textContent = item.owner + ' \u00B7 ' + item.role;
-          titleBlock.appendChild(company);
-          titleBlock.appendChild(sub);
-          var actions = document.createElement('div');
-          actions.className = 'detail-header-actions';
-          var closeBtn = document.createElement('button');
-          closeBtn.type = 'button';
-          closeBtn.className = 'mn-btn mn-btn--ghost';
-          closeBtn.setAttribute('aria-label', 'Close detail panel');
-          closeBtn.textContent = '\u00D7';
-          closeBtn.addEventListener('click', function () {
-            orchestrator.close('board-detail');
-            shellEl.setAttribute('layout', 'full');
-          });
-          actions.appendChild(closeBtn);
-          titleRow.appendChild(titleBlock);
-          titleRow.appendChild(actions);
-          hdr.appendChild(titleRow);
-          wrap.appendChild(hdr);
-
-          var TAB_NAMES = ['Overview', 'Milestones', 'Budget', 'Risks', 'Notes'];
-          var tabBar = document.createElement('div');
-          tabBar.className = 'detail-tabs';
-          tabBar.setAttribute('role', 'tablist');
-          var panels = [];
-
-          TAB_NAMES.forEach(function (name, i) {
-            var btn = document.createElement('button');
-            btn.type = 'button';
-            btn.className = 'detail-tab' + (i === 0 ? ' is-active' : '');
-            btn.setAttribute('role', 'tab');
-            btn.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
-            btn.setAttribute('id', 'btab-' + i);
-            btn.setAttribute('aria-controls', 'bpanel-' + i);
-            btn.textContent = name;
-            tabBar.appendChild(btn);
-            var panel = document.createElement('div');
-            panel.className = 'detail-panel-content' + (i !== 0 ? ' is-hidden' : '');
-            panel.setAttribute('role', 'tabpanel');
-            panel.setAttribute('id', 'bpanel-' + i);
-            panel.setAttribute('aria-labelledby', 'btab-' + i);
-            panels.push(panel);
-          });
-
-          tabBar.addEventListener('click', function (e) {
-            var btn = e.target.closest('[role="tab"]');
-            if (!btn) return;
-            var tabs = tabBar.querySelectorAll('[role="tab"]');
-            var idx = -1;
-            for (var k = 0; k < tabs.length; k++) {
-              if (tabs[k] === btn) { idx = k; break; }
-            }
-            if (idx < 0) return;
-            for (var j = 0; j < tabs.length; j++) {
-              tabs[j].setAttribute('aria-selected', j === idx ? 'true' : 'false');
-              if (j === idx) { tabs[j].classList.add('is-active'); } else { tabs[j].classList.remove('is-active'); }
-              if (j === idx) { panels[j].classList.remove('is-hidden'); } else { panels[j].classList.add('is-hidden'); }
-            }
-          });
-
-          wrap.appendChild(tabBar);
-
-          var grid = document.createElement('div');
-          grid.className = 'detail-fields-grid';
-          grid.appendChild(makeField('Owner', item.owner));
-          grid.appendChild(makeField('Role', item.role));
-          grid.appendChild(makeField('Status', item.status));
-          grid.appendChild(makeField('Budget', item.budget));
-          grid.appendChild(makeField('Progress', item.progress.label));
-          panels[0].appendChild(grid);
-
-          var phLabels = ['Milestones tracked in project tool.', 'Budget breakdown pending CFO sign-off.', 'Risk register under review.', 'No notes yet.'];
-          for (var pi = 1; pi < panels.length; pi++) {
-            var ph = document.createElement('div');
-            ph.className = 'detail-placeholder';
-            ph.textContent = phLabels[pi - 1];
-            panels[pi].appendChild(ph);
-          }
-
-          panels.forEach(function (p) { wrap.appendChild(p); });
-          container.innerHTML = '';
-          container.appendChild(wrap);
-
-          return function () { container.innerHTML = ''; };
-        }
-      });
-
-      /* ======================================================
-         VIEW SWITCHING
-      ====================================================== */
-      function switchView(viewId) {
-        currentView = viewId;
-
-        /* Update toolbar buttons */
-        var viewBtns = document.querySelectorAll('.exec-view-btn');
-        for (var i = 0; i < viewBtns.length; i++) {
-          var vb = viewBtns[i];
-          if (vb.getAttribute('data-view') === viewId) {
-            vb.classList.add('is-active');
-            vb.setAttribute('aria-pressed', 'true');
-          } else {
-            vb.classList.remove('is-active');
-            vb.setAttribute('aria-pressed', 'false');
+          },
+          {
+            type: 'actions',
+            role: 'post',
+            presentation: 'cluster',
+            items: [
+              { id: 'notifications', title: 'Notifications', icon: icon('bell') },
+              { id: 'messages',      title: 'Messages',      icon: icon('message') },
+              { id: 'settings',      title: 'Settings',      icon: icon('settings') }
+            ]
+          },
+          { type: 'divider' },
+          { type: 'theme' },
+          { type: 'profile', name: 'RD' }
+        ],
+        callbacks: {
+          onAction: function (payload) {
+            if (VIEW_IDS.indexOf(payload.id) !== -1) showView(payload.id);
+          },
+          onSearch: function (payload) {
+            console.log('Search:', payload.query);
+          },
+          onFilter: function (payload) {
+            console.log('Filter:', payload.groupId, payload.values);
           }
         }
+      };
+      navbar.textContent = '';
+      navbar.appendChild(headerHost);
+      headerCtrl = headerHost;
 
-        orchestrator.closeAll();
-        shellEl.setAttribute('layout', 'full');
+      var ready = typeof headerHost.whenReady === 'function'
+        ? headerHost.whenReady()
+        : Promise.resolve();
+      ready.then(function () {
+        if (!headerHost.isConnected) return;
+        syncViewButtons();
+      });
+    }
 
-        var scaffold = new M.StateScaffold(pageSlot, { state: 'loading' });
-        setTimeout(function () {
-          scaffold.destroy();
-          pageSlot.innerHTML = '';
-          orchestrator.open(viewId, 'page');
-        }, 600);
+    /* ============================================================
+       INIT
+    ============================================================ */
+    mountHeader();
+    showView('cockpit');
+
+    document.addEventListener('keydown', function (e) {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        var inp = navbar.querySelector('.mn-header-shell__search-input');
+        if (inp) inp.focus();
       }
+    });
 
-      /* ======================================================
-         VIEW-SWITCHER CLICKS
-      ====================================================== */
-      document.getElementById('view-switcher').addEventListener('click', function (e) {
-        var btn = e.target.closest('.exec-view-btn');
-        if (!btn) return;
-        var view = btn.getAttribute('data-view');
-        if (view && view !== currentView) switchView(view);
-      });
-
-      /* ======================================================
-         FUNNEL SIDEBAR FILTER
-      ====================================================== */
-      var funnelNav = document.getElementById('funnel-nav');
-      funnelNav.addEventListener('click', function (e) {
-        var card = e.target.closest('.funnel-card');
-        if (!card) return;
-        var state = card.getAttribute('data-state');
-        if (!state) return;
-
-        activeFilter = state;
-
-        /* Update active state on cards */
-        var cards = funnelNav.querySelectorAll('.funnel-card');
-        for (var i = 0; i < cards.length; i++) {
-          var c = cards[i];
-          var pressed = c.getAttribute('data-state') === state;
-          if (pressed) { c.classList.add('is-active'); } else { c.classList.remove('is-active'); }
-          c.setAttribute('aria-pressed', pressed ? 'true' : 'false');
-        }
-
-        if (currentView === 'portfolio' && ganttCtrl) {
-          ganttCtrl.setTasks(filteredGanttTasks());
-        } else {
-          switchView('portfolio');
-        }
-      });
-
-      /* ======================================================
-         COMMAND PALETTE
-      ====================================================== */
-      function openCommandPalette() {
-        if (!M.commandPalette) return;
-        M.commandPalette({
-          placeholder: 'Search engagements, views, commands\u2026',
-          items: [
-            { label: 'Go to Cockpit',           action: function () { switchView('cockpit'); } },
-            { label: 'Go to Portfolio',          action: function () { switchView('portfolio'); } },
-            { label: 'Go to Market',             action: function () { switchView('market'); } },
-            { label: 'Go to Board',              action: function () { switchView('board'); } },
-            { label: 'Filter: Prospect',         action: function () { activeFilter = 'Prospect';    switchView('portfolio'); } },
-            { label: 'Filter: Sprint',           action: function () { activeFilter = 'Sprint';      switchView('portfolio'); } },
-            { label: 'Filter: On Hold',          action: function () { activeFilter = 'On Hold';     switchView('portfolio'); } },
-            { label: 'Filter: All Stages',       action: function () { activeFilter = 'all';         switchView('portfolio'); } },
-            { label: 'Theme: Editorial',         action: function () { M.setTheme('editorial'); setThemeSelect('editorial'); } },
-            { label: 'Theme: Nero',              action: function () { M.setTheme('nero');      setThemeSelect('nero'); } },
-            { label: 'Theme: Avorio',            action: function () { M.setTheme('avorio');    setThemeSelect('avorio'); } },
-            { label: 'Theme: Colorblind',        action: function () { M.setTheme('colorblind');setThemeSelect('colorblind'); } },
-            { label: 'Theme: Sugar',             action: function () { M.setTheme('sugar');     setThemeSelect('sugar'); } },
-            { label: 'Theme: Navy',              action: function () { M.setTheme('navy');      setThemeSelect('navy'); } }
-          ]
-        });
-      }
-
-      document.getElementById('cmd-k-btn').addEventListener('click', openCommandPalette);
-
-      document.addEventListener('keydown', function (e) {
-        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-          e.preventDefault();
-          openCommandPalette();
-        }
-      });
-
-      /* ======================================================
-         THEME SWITCHING
-      ====================================================== */
-      var THEMES = ['editorial', 'nero', 'avorio', 'colorblind', 'sugar', 'navy'];
-      var themeSelect = document.getElementById('theme-select');
-
-      function setThemeSelect(theme) {
-        for (var i = 0; i < themeSelect.options.length; i++) {
-          if (themeSelect.options[i].value === theme) {
-            themeSelect.selectedIndex = i;
-            break;
-          }
-        }
-      }
-
-      /* Restore theme selection to match persisted theme */
-      try {
-        var persisted = localStorage.getItem('mn-theme');
-        if (persisted && THEMES.indexOf(persisted) !== -1) setThemeSelect(persisted);
-      } catch (_) {}
-
-      themeSelect.addEventListener('change', function () {
-        var theme = themeSelect.value;
-        if (THEMES.indexOf(theme) !== -1 && M.setTheme) M.setTheme(theme);
-      });
-
-      /* ======================================================
-         INITIAL LOAD
-      ====================================================== */
-      switchView('cockpit');
-
-    })();
+  }());
   </script>
 </body>
 </html>

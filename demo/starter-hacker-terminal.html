@@ -4,204 +4,197 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NEXUS//CORE — Hacker Operations Center</title>
+  <link rel="icon" href="../src/assets/favicon.svg">
   <link rel="stylesheet" href="../src/fonts/local-fonts.css">
   <link rel="stylesheet" href="../dist/css/maranello.css">
   <style>
+    /* ── Animations ── */
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
     /* ── Base ── */
+    html, body { height: 100%; margin: 0; }
     body {
-      margin: 0;
       background: var(--mn-surface);
       color: var(--mn-text);
       font-family: var(--font-mono);
     }
 
-    /* ── Blink animation ── */
-    @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50%       { opacity: 0.2; }
-    }
-    @keyframes scan {
-      0%   { background-position: 0 0; }
-      100% { background-position: 0 100%; }
+    /* ── Scanlines overlay (1% opacity) ── */
+    .hk-scanlines {
+      pointer-events: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.01) 2px,
+        rgba(0,0,0,0.01) 4px
+      );
     }
 
-    /* ── Toolbar ── */
-    .hk-toolbar {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      flex-wrap: wrap;
-      width: 100%;
-      font-family: var(--font-mono);
-      font-size: 0.7rem;
+    /* ── Shell: header + body ── */
+    #hk-shell {
+      display: grid;
+      grid-template-rows: auto 1fr;
+      height: 100vh;
+      overflow: hidden;
     }
-    .hk-brand {
-      display: flex;
-      flex-direction: column;
-      gap: 0.1rem;
-      line-height: 1.1;
+    #hk-navbar { position: sticky; top: 0; z-index: 20; }
+    #hk-body {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      overflow: hidden;
     }
-    .hk-brand__name {
+    #hk-body.with-detail { grid-template-columns: 220px 1fr 380px; }
+
+    /* ── Header shell overrides ── */
+    #hk-navbar .mn-header-shell {
+      background: var(--mn-surface-raised);
+      border-bottom: 1px solid var(--mn-border);
       font-family: var(--font-mono);
-      font-size: 0.85rem;
+    }
+    #hk-navbar .mn-header-shell__brand {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
       font-weight: 700;
       letter-spacing: 0.15em;
       text-transform: uppercase;
       color: var(--mn-accent);
       text-shadow: 0 0 8px var(--mn-accent);
+      align-items: flex-start;
     }
-    .hk-brand__sub {
-      font-family: var(--font-mono);
-      font-size: 0.55rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--mn-text-muted);
+    #hk-navbar .mn-header-shell__brand-logo {
+      width: 24px;
+      height: 24px;
+      filter: drop-shadow(0 0 6px color-mix(in srgb, var(--mn-accent) 50%, transparent));
     }
-    .hk-divider {
-      width: 1px;
-      height: 2rem;
-      background: var(--mn-border);
-      flex-shrink: 0;
+    #hk-navbar .mn-header-shell__actions--segmented,
+    #hk-navbar .mn-header-shell__actions--cluster {
+      border-color: var(--mn-border);
+      border-radius: 4px;
+      background: var(--mn-surface);
+      box-shadow: inset 0 1px 0 color-mix(in srgb, var(--mn-accent) 5%, transparent);
     }
-    .hk-view-switcher {
-      display: flex;
-      gap: 0.25rem;
-    }
-    .hk-view-btn {
-      font-family: var(--font-mono);
-      font-size: 0.6rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      padding: 0.3rem 0.6rem;
-      border: 1px solid var(--mn-border);
-      border-radius: var(--radius-sm);
-      background: transparent;
-      color: var(--mn-text-muted);
-      cursor: pointer;
-      transition: border-color 0.15s, color 0.15s, box-shadow 0.15s;
-      white-space: nowrap;
-    }
-    .hk-view-btn:hover,
-    .hk-view-btn.is-active {
-      border-color: var(--mn-accent);
-      color: var(--mn-accent);
-      box-shadow: 0 0 6px var(--mn-accent);
-    }
-    .hk-live {
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-      font-family: var(--font-mono);
-      font-size: 0.6rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--mn-text-muted);
-    }
-    .hk-live__dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--signal-ok);
-      box-shadow: 0 0 6px var(--signal-ok);
-      animation: blink 1.2s ease-in-out infinite;
-      flex-shrink: 0;
-    }
-    .hk-spacer { margin-left: auto; }
-    .hk-search {
-      font-family: var(--font-mono);
-      font-size: 0.65rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      padding: 0.3rem 0.75rem;
-      background: var(--mn-surface-raised);
-      border: 1px solid var(--mn-border);
-      border-radius: var(--radius-sm);
-      color: var(--mn-text);
-      width: 14rem;
-      outline: none;
-      transition: border-color 0.15s;
-    }
-    .hk-search:focus { border-color: var(--mn-accent); }
-    .hk-search::placeholder { color: var(--mn-text-muted); }
-    .hk-threat-badge {
+    #hk-navbar .mn-header-shell__action {
       font-family: var(--font-mono);
       font-size: 0.58rem;
-      font-weight: 700;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      padding: 0.25rem 0.5rem;
-      border: 1px solid var(--signal-danger);
-      border-radius: var(--radius-sm);
-      color: var(--signal-danger);
-      text-shadow: 0 0 6px var(--signal-danger);
-      animation: blink 2s ease-in-out infinite;
-      white-space: nowrap;
-    }
-    .hk-icon-btn {
-      width: 1.75rem;
-      height: 1.75rem;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      border: 1px solid var(--mn-border);
-      border-radius: var(--radius-sm);
-      background: transparent;
       color: var(--mn-text-muted);
-      cursor: pointer;
-      font-size: 0.75rem;
-      transition: border-color 0.15s, color 0.15s;
+      border-radius: 3px;
+      min-width: 44px;
+      min-height: 44px;
     }
-    .hk-icon-btn:hover { border-color: var(--mn-accent); color: var(--mn-accent); }
-    .hk-sysload {
+    #hk-navbar .mn-header-shell__action:hover {
+      color: var(--mn-accent);
+      background: color-mix(in srgb, var(--mn-accent) 10%, transparent);
+      box-shadow: 0 0 6px color-mix(in srgb, var(--mn-accent) 25%, transparent);
+    }
+    #hk-navbar .mn-header-shell__action--active {
+      color: var(--mn-accent);
+      background: color-mix(in srgb, var(--mn-accent) 14%, transparent);
+      box-shadow: 0 0 8px color-mix(in srgb, var(--mn-accent) 35%, transparent);
+    }
+    #hk-navbar .mn-header-shell__icon svg {
+      width: 16px; height: 16px;
+      fill: none; stroke: currentColor;
+      stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round;
+    }
+    #hk-navbar .mn-header-shell__search {
+      background: var(--mn-surface);
+      border-color: var(--mn-border);
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      min-height: 44px;
+    }
+    #hk-navbar .mn-header-shell__search-input {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--mn-text);
+    }
+    #hk-navbar .mn-header-shell__search-input::placeholder { color: var(--mn-text-muted); }
+    #hk-navbar .mn-header-shell__shortcut {
+      border-color: var(--mn-border);
+      background: var(--mn-surface-sunken);
+      color: var(--mn-text-muted);
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+    }
+    #hk-navbar .mn-header-shell__filters { display: none; }
+    #hk-navbar .mn-header-shell__theme { padding-left: 12px; border-left-color: var(--mn-border); }
+    #hk-navbar .mn-profile-trigger {
+      font-family: var(--font-mono);
+      font-size: 0.5rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      background: color-mix(in srgb, var(--mn-accent) 14%, transparent);
+      color: var(--mn-accent);
+      border: 1px solid color-mix(in srgb, var(--mn-accent) 35%, var(--mn-border));
+      box-shadow: 0 0 6px color-mix(in srgb, var(--mn-accent) 20%, transparent);
+    }
+
+    /* ── Brand subtitle + live indicator injected by JS ── */
+    .hk-brand-meta {
       display: flex;
       flex-direction: column;
-      gap: 0.15rem;
+      gap: 2px;
     }
-    .hk-sysload__label {
-      font-size: 0.5rem;
+    .hk-brand-name-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .hk-brand-sub {
+      font-family: var(--font-mono);
+      font-size: 0.48rem;
       letter-spacing: 0.1em;
       text-transform: uppercase;
       color: var(--mn-text-muted);
     }
-    .hk-sysload__bar {
-      width: 3.5rem;
-      height: 4px;
-      background: var(--mn-border);
-      border-radius: 2px;
-      overflow: hidden;
-    }
-    .hk-sysload__fill {
-      height: 100%;
-      width: 62%;
-      background: var(--mn-accent);
-      border-radius: 2px;
-    }
-    .hk-operator {
+    .hk-brand-live {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
       font-family: var(--font-mono);
-      font-size: 0.6rem;
+      font-size: 0.48rem;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: var(--mn-accent);
-      padding: 0.25rem 0.5rem;
-      border: 1px solid var(--mn-accent);
-      border-radius: var(--radius-sm);
-      white-space: nowrap;
+      color: var(--mn-text-muted);
+    }
+    .hk-brand-live__dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--signal-ok);
+      box-shadow: 0 0 5px var(--signal-ok);
+      animation: blink 1s ease-in-out infinite;
+      flex-shrink: 0;
     }
 
-    /* ── Sidebar / Threat Feed ── */
-    .hk-sidebar {
+    /* ── Sidebar threat feed ── */
+    #hk-sidebar {
+      height: 100%;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid var(--mn-border);
+      background: var(--mn-surface);
+    }
+    .hk-sidebar-inner {
       padding: 0.75rem;
       height: 100%;
       box-sizing: border-box;
-      overflow: hidden;
       display: flex;
       flex-direction: column;
     }
     .hk-feed-header {
       display: flex;
       align-items: center;
-      gap: 0.4rem;
-      margin-bottom: 0.75rem;
+      gap: 5px;
       font-family: var(--font-mono);
       font-size: 0.6rem;
       font-weight: 700;
@@ -209,6 +202,7 @@
       text-transform: uppercase;
       color: var(--mn-accent);
       text-shadow: 0 0 6px var(--mn-accent);
+      margin-bottom: 0.75rem;
       flex-shrink: 0;
     }
     .hk-feed-header__dot {
@@ -222,22 +216,23 @@
     .hk-feed {
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
+      gap: 0.35rem;
       overflow-y: auto;
       flex: 1;
     }
     .hk-feed__entry {
       display: grid;
-      grid-template-columns: 5.5rem 0.5rem 1fr;
-      gap: 0.35rem;
+      grid-template-columns: 5.5rem 6px 1fr;
+      gap: 0.3rem;
       align-items: start;
       font-family: var(--font-mono);
-      font-size: 0.58rem;
-      letter-spacing: 0.06em;
+      font-size: 0.53rem;
+      letter-spacing: 0.05em;
       line-height: 1.4;
-      padding: 0.35rem 0.4rem;
+      padding: 0.3rem 0.35rem;
       border-left: 2px solid transparent;
-      transition: border-color 0.15s;
+      transition: border-color 0.12s;
+      cursor: default;
     }
     .hk-feed__entry:hover { border-left-color: var(--mn-accent); }
     .hk-feed__time { color: var(--mn-text-muted); white-space: nowrap; }
@@ -245,78 +240,76 @@
       width: 5px;
       height: 5px;
       border-radius: 50%;
-      margin-top: 0.25rem;
+      margin-top: 3px;
       flex-shrink: 0;
     }
     .hk-feed__dot--danger  { background: var(--signal-danger);  box-shadow: 0 0 4px var(--signal-danger); }
     .hk-feed__dot--warning { background: var(--signal-warning); box-shadow: 0 0 4px var(--signal-warning); }
     .hk-feed__dot--ok      { background: var(--signal-ok);      box-shadow: 0 0 4px var(--signal-ok); }
-    .hk-feed__msg { color: var(--mn-text-muted); text-transform: uppercase; }
+    .hk-feed__msg { color: var(--mn-text-muted); text-transform: uppercase; letter-spacing: 0.06em; }
 
-    /* ── Main content area ── */
-    .hk-main {
-      padding: 1rem;
-      height: 100%;
-      box-sizing: border-box;
-      overflow-y: auto;
-    }
+    /* ── Main ── */
+    #hk-main { overflow-y: auto; height: 100%; }
+    .hk-main-pad { padding: 1rem; min-height: 100%; box-sizing: border-box; }
     .hk-section-title {
       font-family: var(--font-mono);
-      font-size: 0.58rem;
+      font-size: 0.55rem;
       font-weight: 700;
       letter-spacing: 0.18em;
       text-transform: uppercase;
       color: var(--mn-text-muted);
+      text-shadow: 0 0 5px color-mix(in srgb, var(--mn-accent) 40%, transparent);
       margin: 1.25rem 0 0.6rem;
       padding-bottom: 0.3rem;
       border-bottom: 1px solid var(--mn-border);
     }
     .hk-section-title:first-child { margin-top: 0; }
+
     .hk-card {
       background: var(--mn-surface-raised);
       border: 1px solid var(--mn-border);
       border-radius: var(--radius-md);
       padding: 0.75rem;
-      transition: border-color 0.2s;
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
-    .hk-card:hover { border-color: var(--mn-accent); }
+    .hk-card:hover {
+      border-color: var(--mn-accent);
+      box-shadow: 0 0 8px color-mix(in srgb, var(--mn-accent) 18%, transparent);
+    }
     .hk-card__title {
       font-family: var(--font-mono);
-      font-size: 0.58rem;
+      font-size: 0.55rem;
       letter-spacing: 0.14em;
       text-transform: uppercase;
       color: var(--mn-text-muted);
       margin: 0 0 0.6rem;
     }
-    .hk-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-    }
+    .hk-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
     .hk-row--3 { grid-template-columns: 1fr 1fr 1fr; }
-    @media (max-width: 900px) {
-      .hk-row { grid-template-columns: 1fr; }
-      .hk-row--3 { grid-template-columns: 1fr 1fr; }
-    }
-    @media (max-width: 600px) {
-      .hk-row--3 { grid-template-columns: 1fr; }
-    }
+    @media (max-width: 960px) { .hk-row { grid-template-columns: 1fr; } .hk-row--3 { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 600px) { .hk-row--3 { grid-template-columns: 1fr; } #hk-sidebar { display: none; } }
 
-    /* ── Gauge wrapper ── */
-    .hk-gauge-wrap {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    .hk-gauge-wrap canvas {
-      display: block;
-    }
+    /* ── Gauge ── */
+    .hk-gauge-wrap { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; }
+    .hk-gauge-canvas-sm { width: 120px; height: 120px; }
 
-    /* ── Network node grid (fallback/CSS layout) ── */
+    /* ── Sparkline ── */
+    .hk-spark-wrap { position: relative; width: 100%; height: 80px; }
+    .hk-spark-wrap canvas { width: 100%; height: 100%; }
+
+    /* ── Network ── */
+    .hk-network-wrap {
+      width: 100%;
+      height: 320px;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      background: var(--mn-surface-raised);
+      border: 1px solid var(--mn-border);
+      position: relative;
+    }
     .hk-node-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(7rem, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr));
       gap: 0.5rem;
       padding: 0.5rem 0;
     }
@@ -326,45 +319,29 @@
       border-radius: var(--radius-sm);
       padding: 0.6rem;
       font-family: var(--font-mono);
-      font-size: 0.55rem;
+      font-size: 0.53rem;
       letter-spacing: 0.1em;
       text-transform: uppercase;
       text-align: center;
       cursor: pointer;
       transition: border-color 0.2s, box-shadow 0.2s;
     }
-    .hk-node-card:hover { border-color: var(--mn-accent); box-shadow: 0 0 8px var(--mn-accent); }
-    .hk-node-card__indicator {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      margin: 0 auto 0.4rem;
-    }
+    .hk-node-card:hover { border-color: var(--mn-accent); box-shadow: 0 0 8px color-mix(in srgb, var(--mn-accent) 28%, transparent); }
+    .hk-node-card__indicator { width: 8px; height: 8px; border-radius: 50%; margin: 0 auto 0.4rem; }
     .hk-node-card__label { color: var(--mn-text); }
-    .hk-node-card__status { color: var(--mn-text-muted); font-size: 0.5rem; margin-top: 0.2rem; }
+    .hk-node-card__status { color: var(--mn-text-muted); font-size: 0.48rem; margin-top: 0.2rem; }
     .hk-node-card--danger  { border-color: var(--signal-danger); }
     .hk-node-card--warning { border-color: var(--signal-warning); }
     .hk-node-card--ok      { border-color: var(--signal-ok); }
-    .hk-node-card--danger  .hk-node-card__indicator { background: var(--signal-danger); box-shadow: 0 0 6px var(--signal-danger); }
+    .hk-node-card--danger  .hk-node-card__indicator { background: var(--signal-danger);  box-shadow: 0 0 6px var(--signal-danger); }
     .hk-node-card--warning .hk-node-card__indicator { background: var(--signal-warning); box-shadow: 0 0 6px var(--signal-warning); }
-    .hk-node-card--ok      .hk-node-card__indicator { background: var(--signal-ok); box-shadow: 0 0 6px var(--signal-ok); }
+    .hk-node-card--ok      .hk-node-card__indicator { background: var(--signal-ok);      box-shadow: 0 0 6px var(--signal-ok); }
 
-    /* ── Network canvas container ── */
-    .hk-network-wrap {
-      width: 100%;
-      height: 340px;
-      border-radius: var(--radius-md);
-      overflow: hidden;
-      background: var(--mn-surface-raised);
-      border: 1px solid var(--mn-border);
-      position: relative;
-    }
-
-    /* ── Severity badge ── */
+    /* ── Badges ── */
     .hk-badge {
       display: inline-block;
       font-family: var(--font-mono);
-      font-size: 0.5rem;
+      font-size: 0.48rem;
       font-weight: 700;
       letter-spacing: 0.1em;
       text-transform: uppercase;
@@ -376,15 +353,27 @@
     .hk-badge--high     { color: var(--signal-warning); }
     .hk-badge--medium   { color: var(--mn-accent); }
     .hk-badge--zerod    { color: var(--signal-danger); animation: blink 1s ease-in-out infinite; }
+    .hk-badge--patched  { color: var(--signal-ok); }
+    .hk-badge--inprog   { color: var(--mn-accent); }
+
+    /* ── Strip / heatmap / table containers ── */
+    #hk-strip { margin-bottom: 1rem; }
+    #hk-heatmap { margin-bottom: 1rem; }
+    #hk-intercept-table { margin-top: 0.25rem; }
 
     /* ── Detail panel ── */
+    .hk-detail-panel {
+      display: none;
+      height: 100%;
+      overflow-y: auto;
+      border-left: 1px solid var(--mn-border);
+      background: var(--mn-surface);
+    }
+    #hk-body.with-detail .hk-detail-panel { display: block; }
     .hk-detail {
       padding: 0.75rem;
       font-family: var(--font-mono);
-      font-size: 0.65rem;
-      height: 100%;
-      box-sizing: border-box;
-      overflow-y: auto;
+      font-size: 0.63rem;
     }
     .hk-detail__header {
       display: flex;
@@ -396,7 +385,7 @@
     }
     .hk-detail__id {
       font-family: var(--font-mono);
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       font-weight: 700;
       letter-spacing: 0.15em;
       text-transform: uppercase;
@@ -405,24 +394,21 @@
     }
     .hk-detail__close {
       font-family: var(--font-mono);
-      font-size: 0.7rem;
+      font-size: 0.65rem;
       background: transparent;
       border: 1px solid var(--mn-border);
       border-radius: var(--radius-sm);
       color: var(--mn-text-muted);
       cursor: pointer;
       padding: 0.2rem 0.5rem;
-      transition: border-color 0.15s;
+      transition: border-color 0.15s, color 0.15s;
+      min-height: 28px;
     }
     .hk-detail__close:hover { border-color: var(--mn-accent); color: var(--mn-accent); }
-    .hk-tabs {
-      display: flex;
-      gap: 0.25rem;
-      margin-bottom: 0.75rem;
-    }
+    .hk-tabs { display: flex; gap: 0.25rem; margin-bottom: 0.75rem; }
     .hk-tab-btn {
       font-family: var(--font-mono);
-      font-size: 0.58rem;
+      font-size: 0.53rem;
       letter-spacing: 0.1em;
       text-transform: uppercase;
       padding: 0.25rem 0.6rem;
@@ -432,12 +418,10 @@
       color: var(--mn-text-muted);
       cursor: pointer;
       transition: border-color 0.15s, color 0.15s;
+      min-height: 28px;
     }
     .hk-tab-btn.is-active,
-    .hk-tab-btn:hover {
-      border-color: var(--mn-accent);
-      color: var(--mn-accent);
-    }
+    .hk-tab-btn:hover { border-color: var(--mn-accent); color: var(--mn-accent); }
     .hk-tab-panel { display: none; }
     .hk-tab-panel.is-active { display: block; }
     .hk-detail__field {
@@ -445,187 +429,208 @@
       grid-template-columns: 8rem 1fr;
       gap: 0.25rem;
       margin-bottom: 0.4rem;
-      font-size: 0.6rem;
+      font-size: 0.58rem;
     }
     .hk-detail__label { color: var(--mn-text-muted); text-transform: uppercase; letter-spacing: 0.08em; }
     .hk-detail__value { color: var(--mn-text); }
     .hk-trace-path {
       font-family: var(--font-mono);
-      font-size: 0.6rem;
+      font-size: 0.58rem;
       color: var(--mn-text-muted);
       text-transform: uppercase;
       letter-spacing: 0.08em;
       line-height: 1.8;
     }
-    .hk-trace-path span {
+    .hk-trace-path .hk-trace-node {
       color: var(--mn-accent);
       padding: 0.1rem 0.35rem;
       border: 1px solid var(--mn-border);
       border-radius: var(--radius-sm);
-      margin: 0 0.15rem;
+      margin: 0 0.12rem;
     }
     .hk-trace-arrow { color: var(--mn-text-muted); margin: 0 0.2rem; }
 
-    /* ── Scan line overlay (very subtle, CSS only) ── */
-    .hk-scanlines {
-      pointer-events: none;
-      position: fixed;
-      inset: 0;
-      z-index: 9999;
-      background: repeating-linear-gradient(
-        0deg,
-        transparent,
-        transparent 2px,
-        rgba(0,0,0,0.015) 2px,
-        rgba(0,0,0,0.015) 4px
-      );
+    @media (max-width: 1100px) {
+      #hk-navbar .mn-header-shell__shortcut { display: none; }
+      #hk-body.with-detail { grid-template-columns: 0 1fr 340px; }
     }
-
-    /* ── Strip mount ── */
-    #hk-strip { margin-bottom: 1rem; }
-
-    /* ── Canvas sizes ── */
-    .hk-spark-wrap { position: relative; width: 100%; height: 80px; }
-    .hk-spark-wrap canvas { width: 100%; height: 100%; }
-    .hk-gauge-canvas-sm { width: 120px; height: 120px; }
-
-    /* ── Heatmap/table containers ── */
-    #hk-heatmap { margin-bottom: 1rem; }
-    #hk-intercept-table { margin-top: 0.25rem; }
   </style>
 </head>
 <body class="mn-nero">
-  <!-- Scan lines overlay -->
   <div class="hk-scanlines" aria-hidden="true"></div>
 
-  <mn-app-shell id="hk-shell" layout="full">
+  <div id="hk-shell">
+    <header id="hk-navbar" role="banner"></header>
 
-    <!-- ── NAV: Threat Feed ──────────────────────────────────── -->
-    <div slot="nav">
-      <aside class="mn-sidebar">
-        <div class="hk-sidebar">
-          <div class="hk-feed-header">
-            <div class="hk-feed-header__dot" aria-hidden="true"></div>
+    <div id="hk-body">
+      <!-- Sidebar: Threat Feed -->
+      <aside id="hk-sidebar" aria-label="Live threat feed">
+        <div class="hk-sidebar-inner">
+          <div class="hk-feed-header" aria-hidden="true">
+            <div class="hk-feed-header__dot"></div>
             <span>THREAT FEED // LIVE</span>
           </div>
-          <nav class="hk-feed" id="hk-feed" aria-label="Live threat feed">
-            <!-- populated by JS -->
-          </nav>
+          <nav class="hk-feed" id="hk-feed" role="list" aria-label="Live threat feed entries"></nav>
         </div>
       </aside>
+
+      <!-- Main content -->
+      <main id="hk-main" aria-label="Operations main panel"></main>
+
+      <!-- Detail panel -->
+      <aside class="hk-detail-panel" id="hk-detail-panel" aria-label="Detail panel">
+        <div id="hk-detail-content"></div>
+      </aside>
     </div>
-
-    <!-- ── TOOLBAR ──────────────────────────────────────────── -->
-    <div slot="toolbar">
-      <div class="hk-toolbar">
-        <div class="hk-brand">
-          <span class="hk-brand__name">NEXUS//CORE</span>
-          <span class="hk-brand__sub">v7.4.1 // CLEARANCE: OMEGA</span>
-        </div>
-
-        <div class="hk-divider" aria-hidden="true"></div>
-
-        <nav class="hk-view-switcher" aria-label="View switcher" id="hk-nav">
-          <button type="button" class="hk-view-btn is-active" data-view="sigint"  aria-pressed="true">SIGINT</button>
-          <button type="button" class="hk-view-btn"           data-view="netmap"  aria-pressed="false">NETMAP</button>
-          <button type="button" class="hk-view-btn"           data-view="vulnscan" aria-pressed="false">VULNSCAN</button>
-          <button type="button" class="hk-view-btn"           data-view="datastream" aria-pressed="false">DATASTREAM</button>
-        </nav>
-
-        <div class="hk-live" aria-label="Uplink status: active">
-          <div class="hk-live__dot" aria-hidden="true"></div>
-          <span>UPLINK ACTIVE</span>
-        </div>
-
-        <span class="hk-spacer"></span>
-
-        <input
-          type="search"
-          class="hk-search"
-          id="hk-search"
-          placeholder="QUERY NEURAL MESH..."
-          aria-label="Query neural mesh"
-        >
-
-        <div class="hk-threat-badge" aria-label="Threat level: DEFCON 3" role="status">DEFCON 3</div>
-
-        <button type="button" class="hk-icon-btn" aria-label="Encrypted comms channel" title="Encrypted comms">
-          [ENC]
-        </button>
-
-        <div class="hk-sysload" aria-label="System load: 62 percent">
-          <div class="hk-sysload__label">SYS LOAD</div>
-          <div class="hk-sysload__bar" role="img" aria-label="System load bar">
-            <div class="hk-sysload__fill"></div>
-          </div>
-        </div>
-
-        <div class="hk-operator" aria-label="Operator: GHOST-7">GHOST-7</div>
-      </div>
-    </div>
-
-    <!-- ── MAIN ─────────────────────────────────────────────── -->
-    <div slot="main" id="hk-main" class="mn-slot mn-slot--page"></div>
-
-    <!-- ── DETAIL ────────────────────────────────────────────── -->
-    <div slot="detail" id="hk-detail-slot" class="mn-slot mn-slot--side-panel"></div>
-
-  </mn-app-shell>
+  </div>
 
   <script src="../dist/iife/maranello.min.js"></script>
-  <script type="module" src="../dist/wc/mn-app-shell.js"></script>
+  <script type="module" src="../packages/elements/dist/wc/mn-header-shell.js"></script>
   <script>
     (function () {
       var M = window.Maranello;
       if (!M) return;
 
-      var shellEl    = document.getElementById('hk-shell');
-      var mainSlot   = document.getElementById('hk-main');
-      var detailSlot = document.getElementById('hk-detail-slot');
-      var nav        = document.getElementById('hk-nav');
-      var feedEl     = document.getElementById('hk-feed');
+      var navbarEl     = document.getElementById('hk-navbar');
+      var bodyEl       = document.getElementById('hk-body');
+      var mainEl       = document.getElementById('hk-main');
+      var feedEl       = document.getElementById('hk-feed');
+      var detailPanel  = document.getElementById('hk-detail-panel');
+      var detailContent = document.getElementById('hk-detail-content');
 
-      /* ── Theme restore ──────────────────────────────────────── */
+      /* ── Theme restore ── */
       (function () {
         try {
           var saved = localStorage.getItem('mn-theme');
           if (saved) M.setTheme(saved);
-          else        M.setTheme('nero');
+          else M.setTheme('nero');
         } catch (_) {}
       }());
 
-      /* ─────────────────────────────────────────────────────────
-         THREAT FEED DATA
-      ───────────────────────────────────────────────────────── */
+      /* ── Icon helpers ── */
+      function icon(name) {
+        if (!M.icons || typeof M.icons[name] !== 'function') return '';
+        return M.icons[name]();
+      }
+
+      function signalSvg() {
+        return '<svg viewBox="0 0 18 18" width="18" height="18" fill="none" aria-hidden="true"><path d="M2 9a7 7 0 0 1 14 0" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M5 9a4 4 0 0 1 8 0" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M7.5 9a1.5 1.5 0 0 1 3 0" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="9" cy="9" r="1" fill="currentColor"/></svg>';
+      }
+      function shieldSvg() {
+        return '<svg viewBox="0 0 18 18" width="18" height="18" fill="none" aria-hidden="true"><path d="M9 2 3 5v4.5C3 13 5.7 15.4 9 16.5c3.3-1.1 6-3.5 6-7V5L9 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M6.5 9l1.8 1.8L12 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      }
+      function lockSvg() {
+        return '<svg viewBox="0 0 18 18" width="18" height="18" fill="none" aria-hidden="true"><rect x="3.5" y="8" width="11" height="8.5" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M6 8V5.5a3 3 0 0 1 6 0V8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="9" cy="12" r="1.2" fill="currentColor"/></svg>';
+      }
+      function barsSvg() {
+        return '<svg viewBox="0 0 18 18" width="18" height="18" fill="none" aria-hidden="true"><rect x="1" y="11" width="3" height="6" rx="1" fill="currentColor" opacity="0.45"/><rect x="5.5" y="8" width="3" height="9" rx="1" fill="currentColor" opacity="0.65"/><rect x="10" y="5" width="3" height="12" rx="1" fill="currentColor" opacity="0.82"/><rect x="14.5" y="2" width="2.5" height="15" rx="1" fill="currentColor"/></svg>';
+      }
+      function defconSvg() {
+        return '<svg viewBox="0 0 62 16" width="62" height="16" aria-hidden="true"><rect x="0.5" y="0.5" width="61" height="15" rx="2.5" stroke="currentColor" stroke-width="1"/><text x="31" y="11.5" text-anchor="middle" font-size="7.5" font-family="monospace" fill="currentColor" font-weight="700" letter-spacing="0.5">DEFCON 3</text></svg>';
+      }
+      function streamSvg() {
+        return '<svg viewBox="0 0 18 18" width="18" height="18" fill="none" aria-hidden="true"><rect x="1.5" y="1.5" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.4"/><rect x="11.5" y="1.5" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.4"/><rect x="1.5" y="11.5" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.4"/><rect x="11.5" y="11.5" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.4"/></svg>';
+      }
+
+      /* ─────────────────────────────────────────────────
+         DATA
+      ───────────────────────────────────────────────── */
       var FEED_ENTRIES = [
         { time: '14:32:07', sev: 'danger',  msg: 'INTRUSION ATTEMPT // NODE SIGMA-9 // BLOCKED' },
         { time: '14:31:52', sev: 'danger',  msg: 'EXFIL DETECTED // PORT 8443 // TRACING' },
         { time: '14:31:41', sev: 'ok',      msg: 'CERT ROTATION // CLUSTER OMEGA // COMPLETE' },
-        { time: '14:30:18', sev: 'danger',  msg: 'ZERO-DAY CVE-2026-4471 // PATCHING' },
+        { time: '14:30:18', sev: 'danger',  msg: 'ZERO-DAY CVE-2026-4471 // PATCHING IN PROGRESS' },
         { time: '14:29:55', sev: 'warning', msg: 'LATERAL MOVE // SUBNET 10.42.X // CONTAINED' },
         { time: '14:29:03', sev: 'warning', msg: 'BEACON SIGNAL // DARK RELAY // INTERCEPTED' },
         { time: '14:28:44', sev: 'ok',      msg: 'CRYPTO HANDSHAKE // QUANTUM CHANNEL // VERIFIED' },
         { time: '14:27:12', sev: 'danger',  msg: 'ANOMALY SCORE 0.94 // SECTOR 7G // ESCALATED' },
-        { time: '14:26:38', sev: 'warning', msg: 'PORT SCAN DETECTED // NODE ECHO-MESH // LOGGED' },
+        { time: '14:26:38', sev: 'warning', msg: 'PORT SCAN // NODE ECHO-MESH // LOGGED' },
         { time: '14:25:55', sev: 'ok',      msg: 'TLS HANDSHAKE // RELAY-BETA // VERIFIED' },
-        { time: '14:25:01', sev: 'danger',  msg: 'PRIVILEGE ESCALATION // AUTH-CLUSTER // BLOCKED' },
-        { time: '14:24:17', sev: 'warning', msg: 'DNS TUNNELING ATTEMPT // GHOST-PROXY // FLAGGED' },
+        { time: '14:25:01', sev: 'danger',  msg: 'PRIV ESCALATION // AUTH-CLUSTER // BLOCKED' },
+        { time: '14:24:17', sev: 'warning', msg: 'DNS TUNNELING // GHOST-PROXY // FLAGGED' },
         { time: '14:23:44', sev: 'ok',      msg: 'PATCH DEPLOYED // CVE-2026-3892 // CONFIRMED' },
         { time: '14:22:59', sev: 'danger',  msg: 'APT SIGNATURE MATCH // SECTOR DELTA // ALERT' },
-        { time: '14:22:03', sev: 'warning', msg: 'ANOMALOUS TRAFFIC // NODE VORTEX-GATE // WATCH' },
+        { time: '14:22:03', sev: 'warning', msg: 'ANOMALOUS TRAFFIC // VORTEX-GATE // WATCH' },
         { time: '14:21:18', sev: 'ok',      msg: 'KEY ROTATION // CIPHER-VAULT // COMPLETE' },
         { time: '14:20:44', sev: 'danger',  msg: 'SQL INJECTION ATTEMPT // DATA-VAULT // BLOCKED' },
         { time: '14:19:55', sev: 'warning', msg: 'UNUSUAL LOGIN // OPERATOR VECTOR-1 // LOGGED' },
       ];
 
-      (function buildFeed() {
+      var VULN_DATA = [
+        { cve: 'CVE-2026-4471', severity: 'CRITICAL', vector: 'NETWORK',  system: 'core-firewall',   status: 'ZERO-DAY',     disc: '2026-03-14' },
+        { cve: 'CVE-2026-3892', severity: 'HIGH',     vector: 'LOCAL',    system: 'auth-cluster',    status: 'IN PROGRESS',  disc: '2026-02-28' },
+        { cve: 'CVE-2026-5501', severity: 'CRITICAL', vector: 'NETWORK',  system: 'quantum-relay',   status: 'INVESTIGATING',disc: '2026-03-18' },
+        { cve: 'CVE-2026-2271', severity: 'MEDIUM',   vector: 'ADJACENT', system: 'data-vault',      status: 'PATCHED',      disc: '2026-01-09' },
+        { cve: 'CVE-2026-6012', severity: 'HIGH',     vector: 'NETWORK',  system: 'mesh-controller', status: 'IN PROGRESS',  disc: '2026-03-22' },
+        { cve: 'CVE-2026-1183', severity: 'MEDIUM',   vector: 'LOCAL',    system: 'core-firewall',   status: 'PATCHED',      disc: '2025-12-03' },
+        { cve: 'CVE-2026-7734', severity: 'CRITICAL', vector: 'NETWORK',  system: 'auth-cluster',    status: 'ZERO-DAY',     disc: '2026-03-25' },
+        { cve: 'CVE-2026-4409', severity: 'HIGH',     vector: 'PHYSICAL', system: 'quantum-relay',   status: 'PATCHED',      disc: '2026-02-14' },
+        { cve: 'CVE-2026-8821', severity: 'MEDIUM',   vector: 'ADJACENT', system: 'data-vault',      status: 'INVESTIGATING',disc: '2026-03-10' },
+        { cve: 'CVE-2026-3310', severity: 'HIGH',     vector: 'NETWORK',  system: 'mesh-controller', status: 'IN PROGRESS',  disc: '2026-03-05' },
+        { cve: 'CVE-2026-9002', severity: 'CRITICAL', vector: 'NETWORK',  system: 'core-firewall',   status: 'INVESTIGATING',disc: '2026-03-27' },
+        { cve: 'CVE-2026-0551', severity: 'MEDIUM',   vector: 'LOCAL',    system: 'auth-cluster',    status: 'PATCHED',      disc: '2025-11-20' },
+        { cve: 'CVE-2026-1812', severity: 'HIGH',     vector: 'NETWORK',  system: 'quantum-relay',   status: 'IN PROGRESS',  disc: '2026-02-19' },
+        { cve: 'CVE-2026-5544', severity: 'MEDIUM',   vector: 'ADJACENT', system: 'mesh-controller', status: 'PATCHED',      disc: '2026-01-30' },
+        { cve: 'CVE-2026-6678', severity: 'HIGH',     vector: 'LOCAL',    system: 'data-vault',      status: 'ZERO-DAY',     disc: '2026-03-29' },
+      ];
+
+      var INTERCEPT_DATA = [
+        { ts: '14:32:01', src: '10.42.7.88',   dst: '192.168.1.5',   proto: 'TLS 1.3', size: '4.2 KB',  cls: 'SUSPICIOUS' },
+        { ts: '14:31:44', src: '10.42.3.12',   dst: '10.42.9.200',   proto: 'TCP',     size: '1.1 KB',  cls: 'BENIGN' },
+        { ts: '14:31:09', src: '192.168.2.44', dst: '10.42.1.1',     proto: 'QUIC',    size: '8.7 KB',  cls: 'MALICIOUS' },
+        { ts: '14:30:55', src: '10.42.12.5',   dst: '192.168.5.201', proto: 'UDP',     size: '512 B',   cls: 'BENIGN' },
+        { ts: '14:30:22', src: '192.168.3.77', dst: '10.42.0.254',   proto: 'CUSTOM',  size: '22.4 KB', cls: 'ENCRYPTED' },
+        { ts: '14:29:48', src: '10.42.8.99',   dst: '192.168.4.18',  proto: 'TCP',     size: '3.3 KB',  cls: 'SUSPICIOUS' },
+        { ts: '14:28:33', src: '10.42.5.111',  dst: '10.42.5.112',   proto: 'TLS 1.3', size: '660 B',   cls: 'BENIGN' },
+        { ts: '14:27:17', src: '192.168.1.9',  dst: '10.42.7.1',     proto: 'QUIC',    size: '15.1 KB', cls: 'ENCRYPTED' },
+        { ts: '14:26:52', src: '10.42.4.30',   dst: '192.168.2.55',  proto: 'UDP',     size: '2.8 KB',  cls: 'MALICIOUS' },
+        { ts: '14:26:04', src: '192.168.6.3',  dst: '10.42.11.200',  proto: 'CUSTOM',  size: '9.0 KB',  cls: 'SUSPICIOUS' },
+      ];
+
+      var NODES = [
+        { id: 'core-alpha',     label: 'CORE-ALPHA',     x: 0.50, y: 0.50, color: '#DC0000', size: 14, status: 'danger'  },
+        { id: 'relay-beta',     label: 'RELAY-BETA',     x: 0.72, y: 0.35, color: '#FFC72C', size: 11, status: 'warning' },
+        { id: 'dark-node-7',    label: 'DARK-NODE-7',    x: 0.25, y: 0.25, color: '#DC0000', size: 10, status: 'danger'  },
+        { id: 'quantum-bridge', label: 'QUANTUM-BRIDGE', x: 0.80, y: 0.65, color: '#00A651', size: 12, status: 'ok'      },
+        { id: 'sentinel-east',  label: 'SENTINEL-EAST',  x: 0.15, y: 0.65, color: '#00A651', size: 11, status: 'ok'      },
+        { id: 'ghost-proxy',    label: 'GHOST-PROXY',    x: 0.35, y: 0.78, color: '#FFC72C', size: 9,  status: 'warning' },
+        { id: 'nexus-hub',      label: 'NEXUS-HUB',      x: 0.62, y: 0.18, color: '#00A651', size: 13, status: 'ok'      },
+        { id: 'cipher-vault',   label: 'CIPHER-VAULT',   x: 0.85, y: 0.20, color: '#00A651', size: 10, status: 'ok'      },
+        { id: 'phantom-link',   label: 'PHANTOM-LINK',   x: 0.10, y: 0.45, color: '#FFC72C', size: 9,  status: 'warning' },
+        { id: 'echo-mesh',      label: 'ECHO-MESH',      x: 0.42, y: 0.55, color: '#448AFF', size: 10, status: 'ok'      },
+        { id: 'vortex-gate',    label: 'VORTEX-GATE',    x: 0.65, y: 0.82, color: '#DC0000', size: 10, status: 'danger'  },
+        { id: 'helix-prime',    label: 'HELIX-PRIME',    x: 0.28, y: 0.50, color: '#00A651', size: 11, status: 'ok'      },
+      ];
+
+      var CONNECTIONS = [
+        { from: 'core-alpha',    to: 'relay-beta',     color: 'rgba(255,199,44,0.25)' },
+        { from: 'core-alpha',    to: 'echo-mesh',      color: 'rgba(68,138,255,0.3)'  },
+        { from: 'core-alpha',    to: 'quantum-bridge', color: 'rgba(0,166,81,0.25)'   },
+        { from: 'relay-beta',    to: 'nexus-hub',      color: 'rgba(68,138,255,0.3)'  },
+        { from: 'relay-beta',    to: 'cipher-vault',   color: 'rgba(68,138,255,0.2)'  },
+        { from: 'dark-node-7',   to: 'core-alpha',     color: 'rgba(220,0,0,0.4)'     },
+        { from: 'dark-node-7',   to: 'phantom-link',   color: 'rgba(220,0,0,0.3)'     },
+        { from: 'sentinel-east', to: 'helix-prime',    color: 'rgba(0,166,81,0.3)'    },
+        { from: 'sentinel-east', to: 'phantom-link',   color: 'rgba(255,199,44,0.2)'  },
+        { from: 'ghost-proxy',   to: 'echo-mesh',      color: 'rgba(255,199,44,0.25)' },
+        { from: 'ghost-proxy',   to: 'vortex-gate',    color: 'rgba(220,0,0,0.3)'     },
+        { from: 'nexus-hub',     to: 'quantum-bridge', color: 'rgba(0,166,81,0.2)'    },
+        { from: 'helix-prime',   to: 'core-alpha',     color: 'rgba(68,138,255,0.25)' },
+        { from: 'echo-mesh',     to: 'vortex-gate',    color: 'rgba(220,0,0,0.25)'    },
+        { from: 'vortex-gate',   to: 'quantum-bridge', color: 'rgba(255,199,44,0.2)'  },
+      ];
+
+      /* ── Build threat feed ── */
+      (function () {
         FEED_ENTRIES.forEach(function (entry) {
           var row = document.createElement('div');
           row.className = 'hk-feed__entry';
           row.setAttribute('role', 'listitem');
+          row.setAttribute('aria-label', entry.time + ': ' + entry.msg);
 
           var time = document.createElement('span');
           time.className = 'hk-feed__time';
+          time.setAttribute('aria-hidden', 'true');
           time.textContent = entry.time;
 
           var dot = document.createElement('span');
@@ -634,6 +639,7 @@
 
           var msg = document.createElement('span');
           msg.className = 'hk-feed__msg';
+          msg.setAttribute('aria-hidden', 'true');
           msg.textContent = entry.msg;
 
           row.appendChild(time);
@@ -641,91 +647,107 @@
           row.appendChild(msg);
           feedEl.appendChild(row);
         });
-        feedEl.setAttribute('role', 'list');
       }());
 
-      /* ─────────────────────────────────────────────────────────
-         SHARED DATA
-      ───────────────────────────────────────────────────────── */
-      var VULN_DATA = [
-        { cve: 'CVE-2026-4471', severity: 'CRITICAL', vector: 'NETWORK',  system: 'core-firewall',   status: 'ZERO-DAY',     discovery: '2026-03-14' },
-        { cve: 'CVE-2026-3892', severity: 'HIGH',     vector: 'LOCAL',    system: 'auth-cluster',    status: 'IN PROGRESS',  discovery: '2026-02-28' },
-        { cve: 'CVE-2026-5501', severity: 'CRITICAL', vector: 'NETWORK',  system: 'quantum-relay',   status: 'INVESTIGATING',discovery: '2026-03-18' },
-        { cve: 'CVE-2026-2271', severity: 'MEDIUM',   vector: 'ADJACENT', system: 'data-vault',      status: 'PATCHED',      discovery: '2026-01-09' },
-        { cve: 'CVE-2026-6012', severity: 'HIGH',     vector: 'NETWORK',  system: 'mesh-controller', status: 'IN PROGRESS',  discovery: '2026-03-22' },
-        { cve: 'CVE-2026-1183', severity: 'MEDIUM',   vector: 'LOCAL',    system: 'core-firewall',   status: 'PATCHED',      discovery: '2025-12-03' },
-        { cve: 'CVE-2026-7734', severity: 'CRITICAL', vector: 'NETWORK',  system: 'auth-cluster',    status: 'ZERO-DAY',     discovery: '2026-03-25' },
-        { cve: 'CVE-2026-4409', severity: 'HIGH',     vector: 'PHYSICAL', system: 'quantum-relay',   status: 'PATCHED',      discovery: '2026-02-14' },
-        { cve: 'CVE-2026-8821', severity: 'MEDIUM',   vector: 'ADJACENT', system: 'data-vault',      status: 'INVESTIGATING',discovery: '2026-03-10' },
-        { cve: 'CVE-2026-3310', severity: 'HIGH',     vector: 'NETWORK',  system: 'mesh-controller', status: 'IN PROGRESS',  discovery: '2026-03-05' },
-        { cve: 'CVE-2026-9002', severity: 'CRITICAL', vector: 'NETWORK',  system: 'core-firewall',   status: 'INVESTIGATING',discovery: '2026-03-27' },
-        { cve: 'CVE-2026-0551', severity: 'MEDIUM',   vector: 'LOCAL',    system: 'auth-cluster',    status: 'PATCHED',      discovery: '2025-11-20' },
-        { cve: 'CVE-2026-1812', severity: 'HIGH',     vector: 'NETWORK',  system: 'quantum-relay',   status: 'IN PROGRESS',  discovery: '2026-02-19' },
-        { cve: 'CVE-2026-5544', severity: 'MEDIUM',   vector: 'ADJACENT', system: 'mesh-controller', status: 'PATCHED',      discovery: '2026-01-30' },
-        { cve: 'CVE-2026-6678', severity: 'HIGH',     vector: 'LOCAL',    system: 'data-vault',      status: 'ZERO-DAY',     discovery: '2026-03-29' },
-      ];
+      /* ─────────────────────────────────────────────────
+         VIEW STATE
+      ───────────────────────────────────────────────── */
+      var viewIds = ['sigint', 'netmap', 'vulnscan', 'datastream'];
+      var currentView = null;
+      var currentDestroyFn = null;
 
-      var INTERCEPT_DATA = [
-        { ts: '14:32:01', src: '10.42.7.88',  dst: '192.168.1.5',   proto: 'TLS 1.3', size: '4.2 KB',  cls: 'SUSPICIOUS' },
-        { ts: '14:31:44', src: '10.42.3.12',  dst: '10.42.9.200',   proto: 'TCP',     size: '1.1 KB',  cls: 'BENIGN' },
-        { ts: '14:31:09', src: '192.168.2.44',dst: '10.42.1.1',     proto: 'QUIC',    size: '8.7 KB',  cls: 'MALICIOUS' },
-        { ts: '14:30:55', src: '10.42.12.5',  dst: '192.168.5.201', proto: 'UDP',     size: '512 B',   cls: 'BENIGN' },
-        { ts: '14:30:22', src: '192.168.3.77',dst: '10.42.0.254',   proto: 'CUSTOM',  size: '22.4 KB', cls: 'ENCRYPTED' },
-        { ts: '14:29:48', src: '10.42.8.99',  dst: '192.168.4.18',  proto: 'TCP',     size: '3.3 KB',  cls: 'SUSPICIOUS' },
-        { ts: '14:28:33', src: '10.42.5.111', dst: '10.42.5.112',   proto: 'TLS 1.3', size: '660 B',   cls: 'BENIGN' },
-        { ts: '14:27:17', src: '192.168.1.9', dst: '10.42.7.1',     proto: 'QUIC',    size: '15.1 KB', cls: 'ENCRYPTED' },
-        { ts: '14:26:52', src: '10.42.4.30',  dst: '192.168.2.55',  proto: 'UDP',     size: '2.8 KB',  cls: 'MALICIOUS' },
-        { ts: '14:26:04', src: '192.168.6.3', dst: '10.42.11.200',  proto: 'CUSTOM',  size: '9.0 KB',  cls: 'SUSPICIOUS' },
-      ];
+      function closeDetail() {
+        bodyEl.classList.remove('with-detail');
+        detailPanel.setAttribute('aria-hidden', 'true');
+        detailContent.innerHTML = '';
+      }
 
-      /* ─────────────────────────────────────────────────────────
-         VIEW REGISTRY + ORCHESTRATOR
-      ───────────────────────────────────────────────────────── */
-      var registry     = M.ViewRegistry.getInstance();
-      registry.clear();
-      var navigation   = new M.NavigationModel();
-      var orchestrator = new M.PanelOrchestrator(registry, navigation);
-      shellEl.orchestrator = orchestrator;
+      function openDetail() {
+        bodyEl.classList.add('with-detail');
+        detailPanel.setAttribute('aria-hidden', 'false');
+      }
 
-      /* ── VIEW 1: SIGINT ─────────────────────────────────────── */
-      registry.register({
-        id: 'sigint',
-        title: 'SIGINT — Signal Intelligence',
-        defaultPlacement: 'page',
-        factory: function (container) {
-          container.innerHTML =
-            '<div class="hk-main">' +
-              '<p class="hk-section-title">INSTRUMENT ARRAY // LIVE TELEMETRY</p>' +
-              '<div id="hk-strip"></div>' +
-              '<p class="hk-section-title">SUBSYSTEM GAUGES</p>' +
-              '<div class="hk-row">' +
-                '<div class="hk-card">' +
-                  '<p class="hk-card__title">FIREWALL INTEGRITY</p>' +
-                  '<div class="hk-gauge-wrap">' +
-                    '<canvas id="hk-gauge-fw" class="hk-gauge-canvas-sm" role="img" aria-label="Firewall integrity gauge: 94 percent"></canvas>' +
-                    '<span class="sr-only">Firewall integrity: 94%</span>' +
-                  '</div>' +
-                '</div>' +
-                '<div class="hk-card">' +
-                  '<p class="hk-card__title">PACKET INTERCEPTS // 24H</p>' +
-                  '<div class="hk-spark-wrap">' +
-                    '<canvas id="hk-spark-intercepts" role="img" aria-label="Packet intercepts sparkline over 24 hours"></canvas>' +
-                    '<span class="sr-only">Packet intercept count over 24 hours: peaks at 3400, showing irregular spiky traffic</span>' +
-                  '</div>' +
-                '</div>' +
+      function switchView(id) {
+        if (currentDestroyFn) {
+          try { currentDestroyFn(); } catch (_) {}
+          currentDestroyFn = null;
+        }
+        mainEl.innerHTML = '';
+        currentView = id;
+        syncNavButtons();
+        closeDetail();
+
+        var scaffold = M.StateScaffold ? new M.StateScaffold(mainEl, { state: 'loading' }) : null;
+        window.setTimeout(function () {
+          if (scaffold) scaffold.destroy();
+          mainEl.innerHTML = '';
+          var factories = getViewFactories();
+          if (factories[id]) currentDestroyFn = factories[id](mainEl) || null;
+        }, 400);
+      }
+
+      function syncNavButtons() {
+        viewIds.forEach(function (id) {
+          var btn = document.querySelector('[data-header-shell-action-id="' + id + '"]');
+          if (!btn) return;
+          if (id === currentView) btn.classList.add('mn-header-shell__action--active');
+          else btn.classList.remove('mn-header-shell__action--active');
+        });
+      }
+
+      /* ─────────────────────────────────────────────────
+         VIEW FACTORIES
+      ───────────────────────────────────────────────── */
+      function getViewFactories() {
+        return {
+          sigint: viewSigint,
+          netmap: viewNetmap,
+          vulnscan: viewVulnscan,
+          datastream: viewDatastream,
+        };
+      }
+
+      /* ── SIGINT ── */
+      function viewSigint(container) {
+        var el = document.createElement('div');
+        el.className = 'hk-main-pad';
+        el.innerHTML =
+          '<p class="hk-section-title">INSTRUMENT ARRAY // LIVE TELEMETRY</p>' +
+          '<div id="hk-strip"></div>' +
+          '<p class="hk-section-title">SUBSYSTEM GAUGES</p>' +
+          '<div class="hk-row">' +
+            '<div class="hk-card">' +
+              '<p class="hk-card__title">FIREWALL INTEGRITY</p>' +
+              '<div class="hk-gauge-wrap">' +
+                '<canvas id="hk-gauge-fw" class="hk-gauge-canvas-sm" role="img" aria-label="Firewall integrity gauge: 94 percent"></canvas>' +
+                '<span class="mn-sr-only">Firewall integrity 94%</span>' +
               '</div>' +
-              '<div class="hk-row" style="margin-top:1rem">' +
-                '<div class="hk-card">' +
-                  '<p class="hk-card__title">CRYPTO STRENGTH</p>' +
-                  '<div class="hk-gauge-wrap">' +
-                    '<canvas id="hk-gauge-crypto" class="hk-gauge-canvas-sm" role="img" aria-label="Crypto strength gauge: 88 percent"></canvas>' +
-                    '<span class="sr-only">Crypto strength: 88%</span>' +
-                  '</div>' +
-                '</div>' +
+            '</div>' +
+            '<div class="hk-card">' +
+              '<p class="hk-card__title">PACKET INTERCEPTS // 24H</p>' +
+              '<div class="hk-spark-wrap">' +
+                '<canvas id="hk-spark-intercepts" role="img" aria-label="Packet intercepts sparkline over 24 hours, peaks at 3400"></canvas>' +
               '</div>' +
-            '</div>';
+            '</div>' +
+          '</div>' +
+          '<div class="hk-row" style="margin-top:1rem">' +
+            '<div class="hk-card">' +
+              '<p class="hk-card__title">CRYPTO STRENGTH</p>' +
+              '<div class="hk-gauge-wrap">' +
+                '<canvas id="hk-gauge-crypto" class="hk-gauge-canvas-sm" role="img" aria-label="Crypto strength gauge: 88 percent"></canvas>' +
+                '<span class="mn-sr-only">Crypto strength 88%</span>' +
+              '</div>' +
+            '</div>' +
+            '<div class="hk-card" style="display:flex;flex-direction:column;justify-content:center;align-items:center;gap:0.5rem;">' +
+              '<p class="hk-card__title" style="text-align:center;text-shadow:0 0 8px var(--mn-accent)">THREAT INDEX</p>' +
+              '<p style="font-family:var(--font-mono);font-size:2.5rem;font-weight:700;color:var(--signal-danger);text-shadow:0 0 16px var(--signal-danger);margin:0">73</p>' +
+              '<p style="font-family:var(--font-mono);font-size:0.5rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--mn-text-muted);margin:0">/ 100 — ELEVATED</p>' +
+            '</div>' +
+          '</div>';
+        container.appendChild(el);
 
-          /* Dashboard strip */
+        /* Dashboard strip */
+        if (M.dashboardStrip) {
           M.dashboardStrip('hk-strip', {
             ariaLabel: 'NEXUS CORE instrument strip',
             zones: [
@@ -761,7 +783,7 @@
                 type: 'trend',
                 title: 'NETWORK ANOMALIES',
                 items: [
-                  { label: 'ANOMALIES 24H', value: 341, color: '#DC0000',  data: [180, 210, 240, 310, 290, 341] },
+                  { label: 'ANOMALIES 24H',  value: 341, color: '#DC0000', data: [180, 210, 240, 310, 290, 341] },
                   { label: 'INTERCEPT RATE', value: 94,  color: '#00A651', data: [81, 87, 90, 91, 93, 94] }
                 ]
               },
@@ -769,148 +791,111 @@
                 type: 'board',
                 title: 'OPS BOARD',
                 stats: [
-                  { label: 'ACTIVE THREATS',    value: 12 },
-                  { label: 'NEUTRALIZED',        value: 847 },
-                  { label: 'ASSETS MONITORED',   value: '2,341' },
-                  { label: 'OPERATORS ONLINE',   value: 7 }
+                  { label: 'ACTIVE THREATS',  value: 12 },
+                  { label: 'NEUTRALIZED',     value: 847 },
+                  { label: 'ASSETS',          value: '2,341' },
+                  { label: 'OPERATORS',       value: 7 }
                 ]
               }
             ]
           });
-
-          /* Gauges */
-          if (M.createGauge) {
-            M.createGauge({
-              target: '#hk-gauge-fw',
-              size: 'sm',
-              config: {
-                value: 94, max: 100, color: '#00A651',
-                colorMode: 'higher-better', ticks: 10, subticks: 5,
-                startAngle: -225, endAngle: 45, showNeedle: true,
-                numbers: [0, 25, 50, 75, 100],
-                complications: {
-                  centerValue: '94', centerUnit: '%', centerLabel: 'FIREWALL',
-                  arcBar: { labelLeft: '0', labelRight: '100' },
-                  statusLed: { color: '#00A651', label: 'NOMINAL' }
-                }
-              }
-            });
-            M.createGauge({
-              target: '#hk-gauge-crypto',
-              size: 'sm',
-              config: {
-                value: 88, max: 100, color: '#448AFF',
-                colorMode: 'higher-better', ticks: 10, subticks: 5,
-                startAngle: -225, endAngle: 45, showNeedle: true,
-                numbers: [0, 25, 50, 75, 100],
-                complications: {
-                  centerValue: '88', centerUnit: '%', centerLabel: 'CRYPTO',
-                  arcBar: { labelLeft: '0', labelRight: '100' },
-                  statusLed: { color: '#448AFF', label: 'STRONG' }
-                }
-              }
-            });
-          }
-
-          /* Sparkline */
-          var sparkEl = document.getElementById('hk-spark-intercepts');
-          if (sparkEl && M.sparkline) {
-            var interceptPts = [
-              820, 1340, 640, 980, 1200, 560, 1800, 2100, 1400, 900,
-              1600, 3400, 1200, 800, 1100, 1900, 2400, 1300, 1000, 750,
-              1450, 2100, 1700, 1300, 900, 1100, 1800, 2200, 1500, 1000,
-              800, 1200, 1600, 2000, 1400, 1100, 900, 1300, 1700, 2100,
-              1800, 1400, 1100, 900, 1200, 1600, 1900, 2200
-            ];
-            M.sparkline(sparkEl, interceptPts, {
-              color: 'var(--mn-accent)',
-              fillOpacity: 0.12,
-              lineWidth: 1.5,
-              smooth: false,
-              showDot: true
-            });
-          }
-
-          return function () {};
         }
-      });
 
-      /* ── VIEW 2: NETMAP ─────────────────────────────────────── */
-      registry.register({
-        id: 'netmap',
-        title: 'NETMAP — Network Topology',
-        defaultPlacement: 'page',
-        factory: function (container) {
-          var NODES = [
-            { id: 'core-alpha',     label: 'CORE-ALPHA',     x: 0.50, y: 0.50, color: '#DC0000', size: 14, status: 'danger'  },
-            { id: 'relay-beta',     label: 'RELAY-BETA',     x: 0.72, y: 0.35, color: '#FFC72C', size: 11, status: 'warning' },
-            { id: 'dark-node-7',    label: 'DARK-NODE-7',    x: 0.25, y: 0.25, color: '#DC0000', size: 10, status: 'danger'  },
-            { id: 'quantum-bridge', label: 'QUANTUM-BRIDGE', x: 0.80, y: 0.65, color: '#00A651', size: 12, status: 'ok'      },
-            { id: 'sentinel-east',  label: 'SENTINEL-EAST',  x: 0.15, y: 0.65, color: '#00A651', size: 11, status: 'ok'      },
-            { id: 'ghost-proxy',    label: 'GHOST-PROXY',    x: 0.35, y: 0.78, color: '#FFC72C', size: 9,  status: 'warning' },
-            { id: 'nexus-hub',      label: 'NEXUS-HUB',      x: 0.62, y: 0.18, color: '#00A651', size: 13, status: 'ok'      },
-            { id: 'cipher-vault',   label: 'CIPHER-VAULT',   x: 0.85, y: 0.20, color: '#00A651', size: 10, status: 'ok'      },
-            { id: 'phantom-link',   label: 'PHANTOM-LINK',   x: 0.10, y: 0.45, color: '#FFC72C', size: 9,  status: 'warning' },
-            { id: 'echo-mesh',      label: 'ECHO-MESH',      x: 0.42, y: 0.55, color: '#448AFF', size: 10, status: 'ok'      },
-            { id: 'vortex-gate',    label: 'VORTEX-GATE',    x: 0.65, y: 0.82, color: '#DC0000', size: 10, status: 'danger'  },
-            { id: 'helix-prime',    label: 'HELIX-PRIME',    x: 0.28, y: 0.50, color: '#00A651', size: 11, status: 'ok'      },
-          ];
-
-          var CONNECTIONS = [
-            { from: 'core-alpha',     to: 'relay-beta',     color: 'rgba(255,199,44,0.25)' },
-            { from: 'core-alpha',     to: 'echo-mesh',      color: 'rgba(68,138,255,0.3)' },
-            { from: 'core-alpha',     to: 'quantum-bridge', color: 'rgba(0,166,81,0.25)' },
-            { from: 'relay-beta',     to: 'nexus-hub',      color: 'rgba(68,138,255,0.3)' },
-            { from: 'relay-beta',     to: 'cipher-vault',   color: 'rgba(68,138,255,0.2)' },
-            { from: 'dark-node-7',    to: 'core-alpha',     color: 'rgba(220,0,0,0.4)' },
-            { from: 'dark-node-7',    to: 'phantom-link',   color: 'rgba(220,0,0,0.3)' },
-            { from: 'sentinel-east',  to: 'helix-prime',    color: 'rgba(0,166,81,0.3)' },
-            { from: 'sentinel-east',  to: 'phantom-link',   color: 'rgba(255,199,44,0.2)' },
-            { from: 'ghost-proxy',    to: 'echo-mesh',      color: 'rgba(255,199,44,0.25)' },
-            { from: 'ghost-proxy',    to: 'vortex-gate',    color: 'rgba(220,0,0,0.3)' },
-            { from: 'nexus-hub',      to: 'quantum-bridge', color: 'rgba(0,166,81,0.2)' },
-            { from: 'helix-prime',    to: 'core-alpha',     color: 'rgba(68,138,255,0.25)' },
-            { from: 'echo-mesh',      to: 'vortex-gate',    color: 'rgba(220,0,0,0.25)' },
-            { from: 'vortex-gate',    to: 'quantum-bridge', color: 'rgba(255,199,44,0.2)' },
-          ];
-
-          container.innerHTML =
-            '<div class="hk-main">' +
-              '<p class="hk-section-title">NETWORK TOPOLOGY // NODE MESH OVERVIEW</p>' +
-              '<div id="hk-network-canvas-wrap" class="hk-network-wrap" aria-label="Network topology visualization"></div>' +
-              '<p class="hk-section-title" style="margin-top:1rem">NODE STATUS REGISTRY</p>' +
-              '<div class="hk-node-grid" id="hk-node-grid" role="list" aria-label="Network node status cards"></div>' +
-            '</div>';
-
-          /* Network Messages canvas visualization */
-          var netWrap = document.getElementById('hk-network-canvas-wrap');
-          if (M.networkMessages && netWrap) {
-            var net = M.networkMessages(netWrap, {
-              nodes: NODES,
-              connections: CONNECTIONS,
-              particleTrail: true,
-              glowEffect: true
-            });
-            if (net) {
-              /* Send periodic signals */
-              var signals = [
-                { from: 'dark-node-7', to: 'core-alpha', color: '#DC0000', speed: 1.4, size: 5, label: '!' },
-                { from: 'relay-beta',  to: 'nexus-hub',  color: '#00A651', speed: 1.0, size: 4, label: 'D' },
-                { from: 'ghost-proxy', to: 'echo-mesh',  color: '#FFC72C', speed: 1.2, size: 4, label: 'Q' },
-                { from: 'echo-mesh',   to: 'vortex-gate',color: '#DC0000', speed: 1.6, size: 5, label: '!' },
-                { from: 'helix-prime', to: 'core-alpha', color: '#448AFF', speed: 0.9, size: 4, label: 'S' },
-              ];
-              var sigIdx = 0;
-              var netTimer = window.setInterval(function () {
-                try { net.send(signals[sigIdx % signals.length]); } catch (_) {}
-                sigIdx = sigIdx + 1;
-              }, 1800);
-              container._hkNetTimer = netTimer;
+        /* Gauges */
+        if (M.createGauge) {
+          M.createGauge({
+            target: '#hk-gauge-fw',
+            size: 'sm',
+            config: {
+              value: 94, max: 100, color: '#00A651',
+              colorMode: 'higher-better', ticks: 10, subticks: 5,
+              startAngle: -225, endAngle: 45, showNeedle: true,
+              numbers: [0, 25, 50, 75, 100],
+              complications: {
+                centerValue: '94', centerUnit: '%', centerLabel: 'FIREWALL',
+                arcBar: { labelLeft: '0', labelRight: '100' },
+                statusLed: { color: '#00A651', label: 'NOMINAL' }
+              }
             }
-          }
+          });
+          M.createGauge({
+            target: '#hk-gauge-crypto',
+            size: 'sm',
+            config: {
+              value: 88, max: 100, color: '#448AFF',
+              colorMode: 'higher-better', ticks: 10, subticks: 5,
+              startAngle: -225, endAngle: 45, showNeedle: true,
+              numbers: [0, 25, 50, 75, 100],
+              complications: {
+                centerValue: '88', centerUnit: '%', centerLabel: 'CRYPTO',
+                arcBar: { labelLeft: '0', labelRight: '100' },
+                statusLed: { color: '#448AFF', label: 'STRONG' }
+              }
+            }
+          });
+        }
 
-          /* Node grid (always shown as supplementary) */
-          var grid = document.getElementById('hk-node-grid');
+        /* Sparkline */
+        var sparkEl = document.getElementById('hk-spark-intercepts');
+        if (sparkEl && M.sparkline) {
+          M.sparkline(sparkEl, [
+            820, 1340, 640, 980, 1200, 560, 1800, 2100, 1400, 900,
+            1600, 3400, 1200, 800, 1100, 1900, 2400, 1300, 1000, 750,
+            1450, 2100, 1700, 1300, 900, 1100, 1800, 2200, 1500, 1000,
+            800, 1200, 1600, 2000, 1400, 1100, 900, 1300, 1700, 2100,
+            1800, 1400, 1100, 900, 1200, 1600, 1900, 2200
+          ], {
+            color: 'var(--mn-accent)',
+            fillOpacity: 0.12,
+            lineWidth: 1.5,
+            smooth: false,
+            showDot: true
+          });
+        }
+
+        return function () {};
+      }
+
+      /* ── NETMAP ── */
+      function viewNetmap(container) {
+        var el = document.createElement('div');
+        el.className = 'hk-main-pad';
+        el.innerHTML =
+          '<p class="hk-section-title">NETWORK TOPOLOGY // NODE MESH OVERVIEW</p>' +
+          '<div id="hk-network-canvas-wrap" class="hk-network-wrap" aria-label="Network topology visualization" role="img"></div>' +
+          '<p class="hk-section-title" style="margin-top:1rem">NODE STATUS REGISTRY</p>' +
+          '<div class="hk-node-grid" id="hk-node-grid" role="list" aria-label="Network node status cards"></div>';
+        container.appendChild(el);
+
+        var netWrap = document.getElementById('hk-network-canvas-wrap');
+        var netTimer = null;
+
+        if (M.networkMessages && netWrap) {
+          var net = M.networkMessages(netWrap, {
+            nodes: NODES,
+            connections: CONNECTIONS,
+            particleTrail: true,
+            glowEffect: true
+          });
+          if (net) {
+            var signals = [
+              { from: 'dark-node-7',  to: 'core-alpha',     color: '#DC0000', speed: 1.4, size: 5, label: '!' },
+              { from: 'relay-beta',   to: 'nexus-hub',      color: '#00A651', speed: 1.0, size: 4, label: 'D' },
+              { from: 'ghost-proxy',  to: 'echo-mesh',      color: '#FFC72C', speed: 1.2, size: 4, label: 'Q' },
+              { from: 'echo-mesh',    to: 'vortex-gate',    color: '#DC0000', speed: 1.6, size: 5, label: '!' },
+              { from: 'helix-prime',  to: 'core-alpha',     color: '#448AFF', speed: 0.9, size: 4, label: 'S' },
+            ];
+            var sigIdx = 0;
+            netTimer = window.setInterval(function () {
+              try { net.send(signals[sigIdx % signals.length]); } catch (_) {}
+              sigIdx = sigIdx + 1;
+            }, 1800);
+          }
+        }
+
+        /* Node grid */
+        var grid = document.getElementById('hk-node-grid');
+        if (grid) {
           NODES.forEach(function (node) {
             var card = document.createElement('article');
             card.className = 'hk-node-card hk-node-card--' + node.status;
@@ -935,79 +920,70 @@
             card.appendChild(sta);
             grid.appendChild(card);
           });
-
-          return function () {
-            if (container._hkNetTimer) window.clearInterval(container._hkNetTimer);
-          };
         }
-      });
 
-      /* ── VIEW 3: VULNSCAN ───────────────────────────────────── */
-      registry.register({
-        id: 'vulnscan',
-        title: 'VULNSCAN — Vulnerability Scanner',
-        defaultPlacement: 'page',
-        factory: function (container) {
-          container.innerHTML =
-            '<div class="hk-main">' +
-              '<p class="hk-section-title">VULNERABILITY SCAN RESULTS // CVE DATABASE</p>' +
-              '<div id="hk-vuln-table"></div>' +
-            '</div>';
+        return function () {
+          if (netTimer) window.clearInterval(netTimer);
+        };
+      }
 
-          var tableData = VULN_DATA.map(function (v) {
-            return {
-              cve:       v.cve,
-              severity:  v.severity,
-              vector:    v.vector,
-              system:    v.system,
-              status:    v.status,
-              discovery: v.discovery,
-              _raw: v
-            };
-          });
+      /* ── VULNSCAN ── */
+      function viewVulnscan(container) {
+        var el = document.createElement('div');
+        el.className = 'hk-main-pad';
+        el.innerHTML =
+          '<p class="hk-section-title">VULNERABILITY SCAN RESULTS // CVE DATABASE</p>' +
+          '<div id="hk-vuln-table"></div>';
+        container.appendChild(el);
 
-          var tbl = M.dataTable('hk-vuln-table', {
-            ariaLabel: 'Vulnerability scan results table',
+        var tableData = VULN_DATA.map(function (v) {
+          return {
+            cve: v.cve, severity: v.severity, vector: v.vector,
+            system: v.system, status: v.status, discovery: v.disc, _raw: v
+          };
+        });
+
+        var tbl = null;
+        if (M.dataTable) {
+          tbl = M.dataTable('hk-vuln-table', {
+            ariaLabel: 'Vulnerability scan results',
             stickyHeader: true,
             stripedRows: true,
             columns: [
-              { key: 'cve',       label: 'CVE ID',         type: 'text',   sortable: true },
-              { key: 'severity',  label: 'SEVERITY',       type: 'badge',  sortable: true },
-              { key: 'vector',    label: 'VECTOR',         type: 'text',   sortable: true },
-              { key: 'system',    label: 'AFFECTED SYSTEM',type: 'text',   sortable: true },
-              { key: 'status',    label: 'STATUS',         type: 'status', sortable: true },
-              { key: 'discovery', label: 'DISCOVERY',      type: 'text',   sortable: true }
+              { key: 'cve',       label: 'CVE ID',          type: 'text',   sortable: true },
+              { key: 'severity',  label: 'SEVERITY',        type: 'badge',  sortable: true },
+              { key: 'vector',    label: 'VECTOR',          type: 'text',   sortable: true },
+              { key: 'system',    label: 'AFFECTED SYSTEM', type: 'text',   sortable: true },
+              { key: 'status',    label: 'STATUS',          type: 'status', sortable: true },
+              { key: 'discovery', label: 'DISCOVERY',       type: 'text',   sortable: true }
             ],
             data: tableData,
-            onRowClick: function (row) {
-              openVulnDetail(row._raw);
-            }
+            onRowClick: function (row) { openVulnDetail(row._raw); }
           });
-
-          return function () {
-            if (tbl && tbl.destroy) tbl.destroy();
-          };
         }
-      });
 
-      /* ── VIEW 4: DATASTREAM ─────────────────────────────────── */
-      registry.register({
-        id: 'datastream',
-        title: 'DATASTREAM — Live Telemetry',
-        defaultPlacement: 'page',
-        factory: function (container) {
-          container.innerHTML =
-            '<div class="hk-main">' +
-              '<p class="hk-section-title">SECTOR ACTIVITY MATRIX // PACKET VOLUME (0-1000)</p>' +
-              '<div id="hk-heatmap"></div>' +
-              '<p class="hk-section-title">INTERCEPT LOG // LAST 10 RECORDS</p>' +
-              '<div id="hk-intercept-table"></div>' +
-            '</div>';
+        return function () {
+          if (tbl && tbl.destroy) tbl.destroy();
+        };
+      }
 
-          /* Heatmap */
+      /* ── DATASTREAM ── */
+      function viewDatastream(container) {
+        var el = document.createElement('div');
+        el.className = 'hk-main-pad';
+        el.innerHTML =
+          '<p class="hk-section-title">SECTOR ACTIVITY MATRIX // PACKET VOLUME (0-1000)</p>' +
+          '<div id="hk-heatmap"></div>' +
+          '<p class="hk-section-title">INTERCEPT LOG // LAST 10 RECORDS</p>' +
+          '<div id="hk-intercept-table"></div>';
+        container.appendChild(el);
+
+        var TIME_BLOCKS = ['00-04', '04-08', '08-12', '12-16', '16-20', '20-24'];
+
+        if (M.heatmap) {
           M.heatmap('hk-heatmap', {
             ariaLabel: 'Sector activity matrix showing packet volume by sector and time block',
-            columnLabels: ['00-04', '04-08', '08-12', '12-16', '16-20', '20-24'],
+            columnLabels: TIME_BLOCKS,
             showValues: true,
             cellSize: 'md',
             colorScale: ['#448AFF', '#FFC72C', '#DC0000'],
@@ -1024,12 +1000,14 @@
               { label: 'THETA',   cells: [{ value: 90,  label: '90'  }, { value: 170, label: '170' }, { value: 610, label: '610' }, { value: 840, label: '840' }, { value: 720, label: '720' }, { value: 290, label: '290' }] },
             ],
             onCellClick: function (row, cell, ri, ci) {
-              console.log('[hacker] sector:', row.label, 'block:', ['00-04','04-08','08-12','12-16','16-20','20-24'][ci], 'volume:', cell.value);
+              console.log('[hacker] sector:', row.label, 'block:', TIME_BLOCKS[ci], 'volume:', cell.value);
             }
           });
+        }
 
-          /* Intercept table */
-          var interceptTbl = M.dataTable('hk-intercept-table', {
+        var interceptTbl = null;
+        if (M.dataTable) {
+          interceptTbl = M.dataTable('hk-intercept-table', {
             ariaLabel: 'Network intercept log',
             stickyHeader: true,
             stripedRows: true,
@@ -1042,166 +1020,167 @@
               { key: 'cls',   label: 'CLASSIFICATION',type: 'badge', sortable: true }
             ],
             data: INTERCEPT_DATA,
-            onRowClick: function (row, idx) {
-              openInterceptDetail(row, idx);
-            }
+            onRowClick: function (row, idx) { openInterceptDetail(row, idx); }
           });
-
-          return function () {
-            if (interceptTbl && interceptTbl.destroy) interceptTbl.destroy();
-          };
         }
-      });
 
-      /* ─────────────────────────────────────────────────────────
+        return function () {
+          if (interceptTbl && interceptTbl.destroy) interceptTbl.destroy();
+        };
+      }
+
+      /* ─────────────────────────────────────────────────
          DETAIL PANEL
-      ───────────────────────────────────────────────────────── */
-      function openVulnDetail(vuln) {
-        shellEl.setAttribute('layout', 'side-detail');
-        detailSlot.innerHTML = '';
-
-        var panel = document.createElement('div');
-        panel.className = 'hk-detail';
-
-        var TRACES = {
-          'NETWORK':  'EXTERNAL >> RELAY-BETA >> CORE-ALPHA >> ' + vuln.system,
-          'LOCAL':    'INSIDER >> LOCAL-SHELL >> ' + vuln.system,
-          'ADJACENT': 'SUBNET-ADJACENT >> ECHO-MESH >> ' + vuln.system,
-          'PHYSICAL': 'PHYSICAL-ACCESS >> USB-DROP >> ' + vuln.system,
-        };
-        var MITIGATIONS = {
-          'PATCHED':       { op: 'CIPHER-3', patch: 'v' + (Math.floor(Math.random() * 4) + 2) + '.1.' + (Math.floor(Math.random() * 9) + 1), eta: 'DEPLOYED' },
-          'IN PROGRESS':   { op: 'GHOST-7',  patch: 'v' + (Math.floor(Math.random() * 4) + 2) + '.0.' + (Math.floor(Math.random() * 9) + 1), eta: '2026-04-02' },
-          'INVESTIGATING': { op: 'PHANTOM-9',patch: 'TBD',  eta: 'UNKNOWN' },
-          'ZERO-DAY':      { op: 'VECTOR-1', patch: 'NONE', eta: 'CRITICAL' },
-        };
-
-        var mit = MITIGATIONS[vuln.status] || MITIGATIONS['INVESTIGATING'];
-        var trace = TRACES[vuln.vector]    || TRACES['NETWORK'];
-
-        panel.innerHTML =
-          '<div class="hk-detail__header">' +
-            '<span class="hk-detail__id">' + vuln.cve + '</span>' +
-            '<button type="button" class="hk-detail__close" id="hk-detail-close" aria-label="Close detail panel">X</button>' +
-          '</div>' +
-          '<div class="hk-tabs" role="tablist">' +
-            '<button type="button" class="hk-tab-btn is-active" data-tab="analysis" role="tab" aria-selected="true"  aria-controls="hk-tab-analysis">ANALYSIS</button>' +
-            '<button type="button" class="hk-tab-btn"           data-tab="trace"    role="tab" aria-selected="false" aria-controls="hk-tab-trace">TRACE</button>' +
-            '<button type="button" class="hk-tab-btn"           data-tab="mitigation" role="tab" aria-selected="false" aria-controls="hk-tab-mitigation">MITIGATION</button>' +
-          '</div>' +
-          '<div id="hk-tab-analysis" class="hk-tab-panel is-active" role="tabpanel" aria-label="Analysis">' +
-            '<div class="hk-detail__field"><span class="hk-detail__label">CVE ID</span><span class="hk-detail__value">' + vuln.cve + '</span></div>' +
-            '<div class="hk-detail__field"><span class="hk-detail__label">SEVERITY</span><span class="hk-detail__value">' + vuln.severity + '</span></div>' +
-            '<div class="hk-detail__field"><span class="hk-detail__label">VECTOR</span><span class="hk-detail__value">' + vuln.vector + '</span></div>' +
-            '<div class="hk-detail__field"><span class="hk-detail__label">SYSTEM</span><span class="hk-detail__value">' + vuln.system + '</span></div>' +
-            '<div class="hk-detail__field"><span class="hk-detail__label">CVSS SCORE</span><span class="hk-detail__value">' + (vuln.severity === 'CRITICAL' ? '9.' : vuln.severity === 'HIGH' ? '7.' : '5.') + (Math.floor(Math.random() * 9)) + '</span></div>' +
-            '<div class="hk-detail__field"><span class="hk-detail__label">DISCOVERY</span><span class="hk-detail__value">' + vuln.discovery + '</span></div>' +
-            '<div class="hk-detail__field"><span class="hk-detail__label">RESEARCHER</span><span class="hk-detail__value">OPERATOR ECHO-5 // NEXUS CORE THREAT INTEL</span></div>' +
-            '<div class="hk-detail__field"><span class="hk-detail__label">DESCRIPTION</span><span class="hk-detail__value">Buffer overflow in ' + vuln.system + ' permits unauthenticated remote code execution via crafted ' + vuln.vector.toLowerCase() + ' packet sequence.</span></div>' +
-          '</div>' +
-          '<div id="hk-tab-trace" class="hk-tab-panel" role="tabpanel" aria-label="Attack trace">' +
-            '<p class="hk-detail__label" style="margin-bottom:0.75rem">ATTACK PATH RECONSTRUCTION</p>' +
-            '<div class="hk-trace-path" aria-label="Attack trace path">' + buildTracePath(trace) + '</div>' +
-            '<div class="hk-detail__field" style="margin-top:1rem"><span class="hk-detail__label">T0</span><span class="hk-detail__value">14:04:11 UTC</span></div>' +
-            '<div class="hk-detail__field"><span class="hk-detail__label">T1</span><span class="hk-detail__value">14:07:33 UTC</span></div>' +
-            '<div class="hk-detail__field"><span class="hk-detail__label">T2</span><span class="hk-detail__value">14:09:48 UTC</span></div>' +
-            '<div class="hk-detail__field"><span class="hk-detail__label">T3</span><span class="hk-detail__value">14:' + vuln.discovery.slice(5,7) + ':07 UTC</span></div>' +
-          '</div>' +
-          '<div id="hk-tab-mitigation" class="hk-tab-panel" role="tabpanel" aria-label="Mitigation">' +
-            '<div class="hk-detail__field"><span class="hk-detail__label">STATUS</span><span class="hk-detail__value">' + vuln.status + '</span></div>' +
-            '<div class="hk-detail__field"><span class="hk-detail__label">OPERATOR</span><span class="hk-detail__value">' + mit.op + '</span></div>' +
-            '<div class="hk-detail__field"><span class="hk-detail__label">PATCH VERSION</span><span class="hk-detail__value">' + mit.patch + '</span></div>' +
-            '<div class="hk-detail__field"><span class="hk-detail__label">ETA / STATUS</span><span class="hk-detail__value">' + mit.eta + '</span></div>' +
-            '<div class="hk-detail__field"><span class="hk-detail__label">PRIORITY</span><span class="hk-detail__value">' + (vuln.severity === 'CRITICAL' ? 'P0 — IMMEDIATE' : vuln.severity === 'HIGH' ? 'P1 — URGENT' : 'P2 — NORMAL') + '</span></div>' +
-          '</div>';
-
-        detailSlot.appendChild(panel);
-        wireDetailPanel(panel);
-      }
-
-      function openInterceptDetail(row, idx) {
-        shellEl.setAttribute('layout', 'side-detail');
-        detailSlot.innerHTML = '';
-
-        var panel = document.createElement('div');
-        panel.className = 'hk-detail';
-
-        var num = String(idx + 1).padStart(4, '0');
-        panel.innerHTML =
-          '<div class="hk-detail__header">' +
-            '<span class="hk-detail__id">INTERCEPT #' + num + '</span>' +
-            '<button type="button" class="hk-detail__close" id="hk-detail-close" aria-label="Close detail panel">X</button>' +
-          '</div>' +
-          '<div class="hk-tabs" role="tablist">' +
-            '<button type="button" class="hk-tab-btn is-active" data-tab="analysis" role="tab" aria-selected="true"  aria-controls="hk-tab-analysis">ANALYSIS</button>' +
-            '<button type="button" class="hk-tab-btn"           data-tab="trace"    role="tab" aria-selected="false" aria-controls="hk-tab-trace">TRACE</button>' +
-            '<button type="button" class="hk-tab-btn"           data-tab="mitigation" role="tab" aria-selected="false" aria-controls="hk-tab-mitigation">MITIGATION</button>' +
-          '</div>' +
-          '<div id="hk-tab-analysis" class="hk-tab-panel is-active" role="tabpanel" aria-label="Analysis">' +
-            '<div class="hk-detail__field"><span class="hk-detail__label">TIMESTAMP</span><span class="hk-detail__value">' + row.ts + '</span></div>' +
-            '<div class="hk-detail__field"><span class="hk-detail__label">SOURCE IP</span><span class="hk-detail__value">' + row.src + '</span></div>' +
-            '<div class="hk-detail__field"><span class="hk-detail__label">DEST IP</span><span class="hk-detail__value">' + row.dst + '</span></div>' +
-            '<div class="hk-detail__field"><span class="hk-detail__label">PROTOCOL</span><span class="hk-detail__value">' + row.proto + '</span></div>' +
-            '<div class="hk-detail__field"><span class="hk-detail__label">PAYLOAD SIZE</span><span class="hk-detail__value">' + row.size + '</span></div>' +
-            '<div class="hk-detail__field"><span class="hk-detail__label">CLASSIFICATION</span><span class="hk-detail__value">' + row.cls + '</span></div>' +
-          '</div>' +
-          '<div id="hk-tab-trace" class="hk-tab-panel" role="tabpanel" aria-label="Network trace">' +
-            '<p class="hk-detail__label" style="margin-bottom:0.75rem">NETWORK PATH RECONSTRUCTION</p>' +
-            '<div class="hk-trace-path">' + buildTracePath(row.src + ' >> RELAY-BETA >> NEXUS-HUB >> ' + row.dst) + '</div>' +
-            '<div class="hk-detail__field" style="margin-top:1rem"><span class="hk-detail__label">HOP COUNT</span><span class="hk-detail__value">3</span></div>' +
-            '<div class="hk-detail__field"><span class="hk-detail__label">LATENCY</span><span class="hk-detail__value">4ms</span></div>' +
-          '</div>' +
-          '<div id="hk-tab-mitigation" class="hk-tab-panel" role="tabpanel" aria-label="Mitigation">' +
-            '<div class="hk-detail__field"><span class="hk-detail__label">ACTION TAKEN</span><span class="hk-detail__value">' + (row.cls === 'MALICIOUS' ? 'BLOCKED + TRACED' : row.cls === 'SUSPICIOUS' ? 'FLAGGED FOR REVIEW' : 'LOGGED') + '</span></div>' +
-            '<div class="hk-detail__field"><span class="hk-detail__label">ASSIGNED TO</span><span class="hk-detail__value">OPERATOR GHOST-7</span></div>' +
-            '<div class="hk-detail__field"><span class="hk-detail__label">RULE TRIGGERED</span><span class="hk-detail__value">IDS-RULE-' + (4400 + idx * 13) + '</span></div>' +
-          '</div>';
-
-        detailSlot.appendChild(panel);
-        wireDetailPanel(panel);
-      }
-
+      ───────────────────────────────────────────────── */
       function buildTracePath(raw) {
         var parts = raw.split('>>').map(function (s) { return s.replace(/^\s+|\s+$/g, ''); });
         var html = '';
         parts.forEach(function (p, i) {
-          html += '<span>' + p + '</span>';
-          if (i < parts.length - 1) html += '<span class="hk-trace-arrow">&#x25B6;</span>';
+          html += '<span class="hk-trace-node">' + p + '</span>';
+          if (i < parts.length - 1) html += '<span class="hk-trace-arrow" aria-hidden="true">&#x25B6;</span>';
         });
         return html;
       }
 
-      function wireDetailPanel(panel) {
-        /* Tabs */
-        panel.addEventListener('click', function (e) {
+      function openVulnDetail(vuln) {
+        var TRACES = {
+          'NETWORK':  'EXTERNAL >> RELAY-BETA >> CORE-ALPHA >> ' + vuln.system,
+          'LOCAL':    'INSIDER >> LOCAL-SHELL >> ' + vuln.system,
+          'ADJACENT': 'SUBNET-ADJ >> ECHO-MESH >> ' + vuln.system,
+          'PHYSICAL': 'PHYSICAL-ACCESS >> USB-DROP >> ' + vuln.system,
+        };
+        var MITIGATION = {
+          'PATCHED':       { op: 'CIPHER-3',  patch: 'v2.1.4', eta: 'DEPLOYED' },
+          'IN PROGRESS':   { op: 'GHOST-7',   patch: 'v2.0.9', eta: '2026-04-02' },
+          'INVESTIGATING': { op: 'PHANTOM-9', patch: 'TBD',    eta: 'UNKNOWN' },
+          'ZERO-DAY':      { op: 'VECTOR-1',  patch: 'NONE',   eta: 'CRITICAL' },
+        };
+        var mit = MITIGATION[vuln.status] || MITIGATION['INVESTIGATING'];
+        var trace = TRACES[vuln.vector] || TRACES['NETWORK'];
+        var cvss = (vuln.severity === 'CRITICAL' ? '9.' : vuln.severity === 'HIGH' ? '7.' : '5.') + '3';
+
+        detailContent.innerHTML =
+          '<div class="hk-detail">' +
+          '<div class="hk-detail__header">' +
+            '<span class="hk-detail__id">' + vuln.cve + '</span>' +
+            '<button type="button" class="hk-detail__close" id="hk-close-btn" aria-label="Close detail panel">&#x2715;</button>' +
+          '</div>' +
+          '<div class="hk-tabs" role="tablist" aria-label="Detail tabs">' +
+            '<button type="button" class="hk-tab-btn is-active" data-tab="analysis"   role="tab" aria-selected="true"  aria-controls="hk-dt-analysis">ANALYSIS</button>' +
+            '<button type="button" class="hk-tab-btn"           data-tab="trace"      role="tab" aria-selected="false" aria-controls="hk-dt-trace">TRACE</button>' +
+            '<button type="button" class="hk-tab-btn"           data-tab="mitigation" role="tab" aria-selected="false" aria-controls="hk-dt-mitigation">MITIGATION</button>' +
+          '</div>' +
+          '<div id="hk-dt-analysis" class="hk-tab-panel is-active" role="tabpanel">' +
+            field('CVE ID', vuln.cve) +
+            field('SEVERITY', vuln.severity) +
+            field('VECTOR', vuln.vector) +
+            field('SYSTEM', vuln.system) +
+            field('CVSS SCORE', cvss) +
+            field('DISCOVERY', vuln.disc) +
+            field('RESEARCHER', 'OPERATOR ECHO-5 // NEXUS CORE THREAT INTEL') +
+            field('DESCRIPTION', 'Buffer overflow in ' + vuln.system + ' permits unauthenticated RCE via crafted ' + vuln.vector.toLowerCase() + ' packet sequence.') +
+          '</div>' +
+          '<div id="hk-dt-trace" class="hk-tab-panel" role="tabpanel">' +
+            '<p class="hk-detail__label" style="margin-bottom:0.75rem">ATTACK PATH RECONSTRUCTION</p>' +
+            '<div class="hk-trace-path" aria-label="Attack trace path">' + buildTracePath(trace) + '</div>' +
+            field('T0', '14:04:11 UTC') +
+            field('T1', '14:07:33 UTC') +
+            field('T2', '14:09:48 UTC') +
+            field('T3', '14:12:07 UTC') +
+          '</div>' +
+          '<div id="hk-dt-mitigation" class="hk-tab-panel" role="tabpanel">' +
+            field('STATUS', vuln.status) +
+            field('OPERATOR', mit.op) +
+            field('PATCH VERSION', mit.patch) +
+            field('ETA / STATUS', mit.eta) +
+            field('PRIORITY', vuln.severity === 'CRITICAL' ? 'P0 — IMMEDIATE' : vuln.severity === 'HIGH' ? 'P1 — URGENT' : 'P2 — NORMAL') +
+          '</div>' +
+          '</div>';
+
+        openDetail();
+        wireDetailPanel();
+      }
+
+      function openInterceptDetail(row, idx) {
+        var num = String(idx + 1);
+        while (num.length < 4) num = '0' + num;
+        var action = row.cls === 'MALICIOUS' ? 'BLOCKED + TRACED' : row.cls === 'SUSPICIOUS' ? 'FLAGGED FOR REVIEW' : 'LOGGED';
+
+        detailContent.innerHTML =
+          '<div class="hk-detail">' +
+          '<div class="hk-detail__header">' +
+            '<span class="hk-detail__id">INTERCEPT #' + num + '</span>' +
+            '<button type="button" class="hk-detail__close" id="hk-close-btn" aria-label="Close detail panel">&#x2715;</button>' +
+          '</div>' +
+          '<div class="hk-tabs" role="tablist" aria-label="Detail tabs">' +
+            '<button type="button" class="hk-tab-btn is-active" data-tab="analysis"   role="tab" aria-selected="true"  aria-controls="hk-dt-analysis">ANALYSIS</button>' +
+            '<button type="button" class="hk-tab-btn"           data-tab="trace"      role="tab" aria-selected="false" aria-controls="hk-dt-trace">TRACE</button>' +
+            '<button type="button" class="hk-tab-btn"           data-tab="mitigation" role="tab" aria-selected="false" aria-controls="hk-dt-mitigation">MITIGATION</button>' +
+          '</div>' +
+          '<div id="hk-dt-analysis" class="hk-tab-panel is-active" role="tabpanel">' +
+            field('TIMESTAMP', row.ts) +
+            field('SOURCE IP', row.src) +
+            field('DEST IP', row.dst) +
+            field('PROTOCOL', row.proto) +
+            field('PAYLOAD SIZE', row.size) +
+            field('CLASSIFICATION', row.cls) +
+          '</div>' +
+          '<div id="hk-dt-trace" class="hk-tab-panel" role="tabpanel">' +
+            '<p class="hk-detail__label" style="margin-bottom:0.75rem">NETWORK PATH RECONSTRUCTION</p>' +
+            '<div class="hk-trace-path" aria-label="Network trace path">' + buildTracePath(row.src + ' >> RELAY-BETA >> NEXUS-HUB >> ' + row.dst) + '</div>' +
+            field('HOP COUNT', '3') +
+            field('LATENCY', '4ms') +
+            field('TTL', '128') +
+          '</div>' +
+          '<div id="hk-dt-mitigation" class="hk-tab-panel" role="tabpanel">' +
+            field('ACTION TAKEN', action) +
+            field('ASSIGNED TO', 'OPERATOR GHOST-7') +
+            field('RULE TRIGGERED', 'IDS-RULE-' + (4400 + idx * 13)) +
+            field('LOGGED AT', row.ts + ' UTC') +
+          '</div>' +
+          '</div>';
+
+        openDetail();
+        wireDetailPanel();
+      }
+
+      function field(label, value) {
+        return '<div class="hk-detail__field">' +
+          '<span class="hk-detail__label">' + label + '</span>' +
+          '<span class="hk-detail__value">' + value + '</span>' +
+        '</div>';
+      }
+
+      function wireDetailPanel() {
+        detailContent.addEventListener('click', function (e) {
+          /* Close button */
+          var closeBtn = e.target.closest('#hk-close-btn');
+          if (closeBtn) { closeDetail(); return; }
+
+          /* Tab switching */
           var btn = e.target.closest('[data-tab]');
           if (!btn) return;
           var id = btn.getAttribute('data-tab');
-          panel.querySelectorAll('.hk-tab-btn').forEach(function (b) {
-            var active = b.getAttribute('data-tab') === id;
-            b.setAttribute('aria-selected', String(active));
-            if (active) b.classList.add('is-active');
-            else        b.classList.remove('is-active');
-          });
-          panel.querySelectorAll('.hk-tab-panel').forEach(function (p) {
-            if (p.id === 'hk-tab-' + id) p.classList.add('is-active');
-            else                          p.classList.remove('is-active');
-          });
-        });
-
-        /* Close button */
-        var closeBtn = document.getElementById('hk-detail-close');
-        if (closeBtn) {
-          closeBtn.addEventListener('click', function () {
-            detailSlot.innerHTML = '';
-            shellEl.setAttribute('layout', 'full');
-          });
-        }
+          var panel = detailContent;
+          var tabBtns = panel.querySelectorAll('[data-tab]');
+          var tabPanels = panel.querySelectorAll('.hk-tab-panel');
+          var i;
+          for (i = 0; i < tabBtns.length; i++) {
+            var active = tabBtns[i].getAttribute('data-tab') === id;
+            tabBtns[i].setAttribute('aria-selected', String(active));
+            if (active) tabBtns[i].classList.add('is-active');
+            else tabBtns[i].classList.remove('is-active');
+          }
+          for (i = 0; i < tabPanels.length; i++) {
+            if (tabPanels[i].id === 'hk-dt-' + id) tabPanels[i].classList.add('is-active');
+            else tabPanels[i].classList.remove('is-active');
+          }
+        }, { once: false });
       }
 
-      /* ─────────────────────────────────────────────────────────
-         COMMAND PALETTE (Cmd-K / Ctrl-K)
-      ───────────────────────────────────────────────────────── */
+      /* ─────────────────────────────────────────────────
+         COMMAND PALETTE
+      ───────────────────────────────────────────────── */
       function openCommandPalette() {
         if (!M.commandPalette) return;
         M.commandPalette({
@@ -1228,51 +1207,99 @@
         }
       });
 
-      var searchInput = document.getElementById('hk-search');
-      if (searchInput) {
-        searchInput.addEventListener('keydown', function (e) {
-          if (e.key === 'Enter') {
-            e.preventDefault();
-            openCommandPalette();
+      /* ─────────────────────────────────────────────────
+         HEADER SHELL MOUNT
+      ───────────────────────────────────────────────── */
+      function mountHeader() {
+        var headerHost = document.createElement('mn-header-shell');
+
+        headerHost.config = {
+          ariaLabel: 'NEXUS CORE navigation',
+          sections: [
+            {
+              type: 'brand',
+              label: 'NEXUS//CORE',
+              logoSrc: '../src/assets/favicon.svg',
+              logoAlt: 'NEXUS CORE mark',
+              href: './index.html'
+            },
+            {
+              type: 'actions',
+              role: 'pre',
+              presentation: 'segmented',
+              items: [
+                { id: 'sigint',     label: 'SIGINT',     icon: signalSvg(), active: true },
+                { id: 'netmap',     label: 'NETMAP',     icon: icon('network') || '' },
+                { id: 'vulnscan',   label: 'VULNSCAN',   icon: shieldSvg() },
+                { id: 'datastream', label: 'DATASTREAM', icon: streamSvg() },
+              ]
+            },
+            {
+              type: 'search',
+              placeholder: 'QUERY NEURAL MESH...',
+              shortcut: 'Cmd-K',
+            },
+            {
+              type: 'actions',
+              role: 'post',
+              presentation: 'cluster',
+              items: [
+                { id: 'defcon', title: 'DEFCON status: 3', icon: defconSvg() },
+                { id: 'comms',  title: 'Encrypted comms',  icon: lockSvg() },
+                { id: 'load',   title: 'System load 62%',  icon: barsSvg() },
+              ]
+            },
+            { type: 'divider' },
+            { type: 'theme' },
+            { type: 'profile', name: 'GHOST-7' }
+          ],
+          callbacks: {
+            onAction: function (payload) {
+              if (viewIds.indexOf(payload.id) !== -1) switchView(payload.id);
+            },
+            onSearch: function (payload) {
+              if (!payload.query) openCommandPalette();
+            }
           }
+        };
+
+        navbarEl.textContent = '';
+        navbarEl.appendChild(headerHost);
+
+        var ready = typeof headerHost.whenReady === 'function'
+          ? headerHost.whenReady()
+          : Promise.resolve();
+
+        ready.then(function () {
+          if (!headerHost.isConnected) return;
+
+          /* Inject brand subtitle + LIVE indicator */
+          var brandEl = navbarEl.querySelector('.mn-header-shell__brand');
+          if (brandEl) {
+            /* Subtitle row */
+            var sub = document.createElement('span');
+            sub.className = 'hk-brand-sub';
+            sub.textContent = 'v7.4.1 // CLEARANCE: OMEGA';
+            brandEl.appendChild(sub);
+
+            /* Live indicator */
+            var live = document.createElement('span');
+            live.className = 'hk-brand-live';
+            live.setAttribute('aria-label', 'System status: live');
+            var dot = document.createElement('span');
+            dot.className = 'hk-brand-live__dot';
+            dot.setAttribute('aria-hidden', 'true');
+            live.appendChild(dot);
+            live.appendChild(document.createTextNode('LIVE'));
+            brandEl.appendChild(live);
+          }
+
+          syncNavButtons();
         });
       }
 
-      /* ─────────────────────────────────────────────────────────
-         VIEW SWITCHING
-      ───────────────────────────────────────────────────────── */
-      function switchView(viewId) {
-        var btns = nav.querySelectorAll('.hk-view-btn');
-        btns.forEach(function (b) {
-          var active = b.getAttribute('data-view') === viewId;
-          b.setAttribute('aria-pressed', String(active));
-          if (active) b.classList.add('is-active');
-          else        b.classList.remove('is-active');
-        });
-
-        /* Close detail panel */
-        detailSlot.innerHTML = '';
-        shellEl.setAttribute('layout', 'full');
-
-        /* Show loading scaffold then open view */
-        var scaffold = new M.StateScaffold(mainSlot, { state: 'loading' });
-        window.setTimeout(function () {
-          scaffold.destroy();
-          mainSlot.innerHTML = '';
-          orchestrator.open(viewId, 'page');
-        }, 600);
-      }
-
-      nav.addEventListener('click', function (e) {
-        var btn = e.target.closest('[data-view]');
-        if (!btn) return;
-        var view = btn.getAttribute('data-view');
-        switchView(view);
-      });
-
-      /* ─────────────────────────────────────────────────────────
-         BOOT — start on SIGINT
-      ───────────────────────────────────────────────────────── */
+      /* ── Boot ── */
+      mountHeader();
       switchView('sigint');
     }());
   </script>

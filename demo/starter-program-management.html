@@ -8,49 +8,86 @@
   <link rel="stylesheet" href="../src/fonts/local-fonts.css">
   <link rel="stylesheet" href="../dist/css/maranello.css">
   <style>
-    @layer pmo-demo {
+    @layer pmo-shell {
       *, *::before, *::after { box-sizing: border-box; }
-      html, body { margin: 0; padding: 0; height: 100%; }
-      body { display: flex; flex-direction: column; background: var(--mn-surface); color: var(--mn-text); font-family: var(--font-body, sans-serif); }
+      html, body { height: 100%; margin: 0; }
 
-      /* ── Toolbar ────────────────────────────────────────── */
-      .pmo-tb { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; padding: 0.25rem 0.875rem; min-height: 44px; width: 100%; }
-      .pmo-back { font-family: var(--font-mono); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--mn-text-muted); text-decoration: none; white-space: nowrap; }
-      .pmo-back:hover { color: var(--mn-accent); }
-      .pmo-back:focus-visible { outline: 2px solid var(--mn-accent); outline-offset: 2px; }
-      .pmo-brand { font-family: var(--font-display); font-weight: 700; font-size: 0.9rem; color: var(--mn-text); white-space: nowrap; flex-shrink: 0; }
-      .pmo-div { width: 1px; height: 22px; background: var(--mn-border); flex-shrink: 0; }
-      .pmo-vsw { display: flex; gap: 0.2rem; }
-      .pmo-vbtn { font-family: var(--font-mono); font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.06em; padding: 4px 9px; border-radius: var(--radius-md); border: 1px solid transparent; background: transparent; color: var(--mn-text-muted); cursor: pointer; transition: all 0.15s; min-height: 28px; white-space: nowrap; }
-      .pmo-vbtn:hover { border-color: var(--mn-border); color: var(--mn-text); }
-      .pmo-vbtn.is-active { border-color: var(--mn-accent); color: var(--mn-accent); background: var(--mn-surface-raised); }
-      .pmo-vbtn:focus-visible { outline: 2px solid var(--mn-accent); outline-offset: 2px; }
-      .pmo-prog-sel { font-family: var(--font-body); font-size: 0.78rem; padding: 3px 8px; border: 1px solid var(--mn-border); border-radius: var(--radius-md); background: var(--mn-surface-raised); color: var(--mn-text); cursor: pointer; min-height: 28px; }
-      .pmo-prog-sel:focus-visible { outline: 2px solid var(--mn-accent); outline-offset: 2px; }
-      .pmo-spacer { flex: 1 1 auto; }
-      .pmo-tbtn { font-family: var(--font-mono); font-size: 0.62rem; text-transform: uppercase; padding: 4px 8px; border-radius: var(--radius-md); border: 1px solid var(--mn-border); background: transparent; color: var(--mn-text-muted); cursor: pointer; transition: all 0.15s; min-height: 28px; white-space: nowrap; }
-      .pmo-tbtn:hover { border-color: var(--mn-accent); color: var(--mn-accent); }
-      .pmo-tbtn:focus-visible { outline: 2px solid var(--mn-accent); outline-offset: 2px; }
-      .pmo-theme-sel { font-size: 0.75rem; padding: 3px 6px; border: 1px solid var(--mn-border); border-radius: var(--radius-md); background: var(--mn-surface-raised); color: var(--mn-text); min-height: 28px; }
-      .pmo-theme-sel:focus-visible { outline: 2px solid var(--mn-accent); outline-offset: 2px; }
-      .pmo-avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--mn-accent); color: var(--mn-surface); font-family: var(--font-display); font-size: 0.65rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; cursor: pointer; border: none; }
-      .pmo-avatar:focus-visible { outline: 2px solid var(--mn-accent); outline-offset: 2px; }
+      /* ── Shell theme variables ──────────────────────────── */
+      body {
+        --shell-bg: #0a0a0a; --shell-nav: #141414; --shell-card: #171717; --shell-card-2: #1d1d1d;
+        --shell-border: #262626; --shell-text: #eee; --shell-muted: #9a9a9a; --shell-ghost: #666;
+        --shell-accent: #FFC72C; --shell-accent-text: #111;
+        display: grid; grid-template-rows: auto 1fr; overflow: hidden;
+        background: var(--mn-surface); color: var(--mn-text); font-family: var(--font-body, sans-serif);
+      }
+      body.mn-editorial {
+        --shell-bg: #111; --shell-nav: #1a1a1a; --shell-card: #1f1f1f; --shell-card-2: #242424;
+        --shell-border: #2e2e2e; --shell-text: #f0ece4; --shell-muted: #8a8680; --shell-ghost: #5a5650;
+        --shell-accent: #e8c87a; --shell-accent-text: #111;
+      }
+      body.mn-avorio {
+        --shell-bg: #f5efe4; --shell-nav: #f8f1e6; --shell-card: #fffaf4; --shell-card-2: #fffdf8;
+        --shell-border: #d9cbb7; --shell-text: #241f19; --shell-muted: #7b6d5a; --shell-ghost: #8e7f6b;
+        --shell-accent: #b7410e; --shell-accent-text: #fff8ef;
+      }
+      body.mn-colorblind { --shell-accent: #0072B2; --shell-accent-text: #fff; }
+      body.mn-sugar {
+        --shell-bg: #f4f4f6; --shell-nav: #fff; --shell-card: #fff; --shell-card-2: #fff;
+        --shell-border: #d8d8de; --shell-text: #111; --shell-muted: #666; --shell-ghost: #888;
+        --shell-accent: #111; --shell-accent-text: #fff;
+      }
+      body.mn-navy {
+        --shell-bg: #060d1a; --shell-nav: #0b1424; --shell-card: #0f1c30; --shell-card-2: #142238;
+        --shell-border: #1e2f48; --shell-text: #e8ecf4; --shell-muted: #8898b8; --shell-ghost: #586888;
+        --shell-accent: #C9A227; --shell-accent-text: #060d1a;
+      }
 
-      /* ── Sidebar ────────────────────────────────────────── */
-      .pmo-sb { padding: 0.75rem 0.5rem; overflow-y: auto; height: 100%; }
-      .pmo-sb__title { font-family: var(--font-display); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--mn-text-muted); margin: 0 0 0.625rem 0.25rem; }
-      .pmo-prog { display: flex; align-items: flex-start; gap: 0.5rem; padding: 0.5rem 0.5rem; border-radius: var(--radius-md); border: none; background: transparent; width: 100%; text-align: left; color: var(--mn-text); cursor: pointer; transition: background 0.15s; margin-bottom: 1px; }
-      .pmo-prog:hover { background: var(--mn-surface-raised); }
-      .pmo-prog.is-active { background: var(--mn-surface-raised); }
-      .pmo-prog:focus-visible { outline: 2px solid var(--mn-accent); outline-offset: -2px; }
+      /* ── Header ─────────────────────────────────────────── */
+      #pmo-navbar { position: sticky; top: 0; z-index: 20; backdrop-filter: blur(12px); }
+      body.mn-avorio #pmo-navbar,
+      body.mn-sugar  #pmo-navbar { background: color-mix(in srgb, var(--shell-nav) 96%, transparent); }
+      #pmo-navbar .mn-header-shell { gap: 12px; background: var(--shell-nav); border-bottom-color: var(--shell-border); }
+      #pmo-navbar .mn-header-shell__brand { color: var(--shell-text); font-size: 1rem; }
+      #pmo-navbar .mn-header-shell__brand-logo { width: 28px; height: 28px; filter: drop-shadow(0 0 8px color-mix(in srgb, var(--shell-accent) 35%, transparent)); }
+      #pmo-navbar .mn-header-shell__actions--segmented,
+      #pmo-navbar .mn-header-shell__actions--cluster { border-color: var(--shell-border); border-radius: 14px; background: var(--shell-card); box-shadow: inset 0 1px 0 color-mix(in srgb, #fff 4%, transparent); }
+      #pmo-navbar .mn-header-shell__action { min-width: 48px; min-height: 48px; border-radius: 10px; color: var(--shell-muted); }
+      #pmo-navbar .mn-header-shell__action:hover { background: color-mix(in srgb, var(--shell-card-2) 92%, var(--shell-accent) 8%); color: var(--shell-text); }
+      #pmo-navbar .mn-header-shell__action--active { background: color-mix(in srgb, var(--shell-accent) 20%, transparent); color: var(--shell-accent); }
+      #pmo-navbar .mn-header-shell__action:disabled { opacity: 0.35; cursor: not-allowed; }
+      #pmo-navbar .mn-header-shell__icon svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+      #pmo-navbar .mn-header-shell__search { width: 100%; min-width: 0; min-height: 52px; padding: 8px 12px; gap: 12px; border-color: var(--shell-border); border-radius: 14px; background: var(--shell-card); }
+      #pmo-navbar .mn-header-shell__search-input { flex: 1 1 14rem; min-width: 10rem; color: var(--shell-text); font-size: 1.0625rem; }
+      #pmo-navbar .mn-header-shell__search-input::placeholder { color: color-mix(in srgb, var(--shell-muted) 78%, transparent); }
+      #pmo-navbar .mn-header-shell__shortcut { border-color: var(--shell-border); background: var(--shell-card); color: var(--shell-ghost); font-size: 0.875rem; }
+      #pmo-navbar .mn-header-shell__filters { display: none; }
+      #pmo-navbar .mn-header-shell__filter-group legend { color: var(--shell-ghost); font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; }
+      #pmo-navbar .mn-header-shell__filter-option { min-height: 36px; border-color: var(--shell-border); background: transparent; color: var(--shell-text); }
+      #pmo-navbar .mn-header-shell__filter-option.is-selected { color: var(--shell-accent); border-color: color-mix(in srgb, var(--shell-accent) 55%, var(--shell-border)); background: color-mix(in srgb, var(--shell-accent) 12%, transparent); }
+      #pmo-navbar .mn-header-shell__theme { padding-left: 14px; border-left-color: var(--shell-border); }
+      #pmo-navbar .mn-profile-trigger { width: 42px; height: 42px; border-radius: 50%; background: color-mix(in srgb, var(--shell-accent) 18%, transparent); color: var(--shell-accent); font-weight: 700; display: inline-flex; align-items: center; justify-content: center; border: 1px solid color-mix(in srgb, var(--shell-accent) 30%, var(--shell-border)); }
+
+      /* ── App layout (CSS Grid) ───────────────────────────── */
+      #pmo-app { display: grid; grid-template-columns: 240px 1fr; height: 100%; overflow: hidden; transition: grid-template-columns 0.25s ease; }
+      #pmo-app.has-detail { grid-template-columns: 240px 1fr 380px; }
+      @media (prefers-reduced-motion: reduce) { #pmo-app { transition: none; } }
+
+      /* ── Sidebar ─────────────────────────────────────────── */
+      #pmo-sidebar { overflow-y: auto; border-right: 1px solid var(--mn-border); padding: 0.75rem 0.5rem; background: var(--mn-surface-raised); }
+      .pmo-sb-title { font-family: var(--font-display); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--mn-text-muted); margin: 0 0 0.625rem 0.25rem; }
+      .pmo-prog { display: flex; align-items: flex-start; gap: 0.5rem; padding: 0.5rem; border-radius: var(--radius-md); border: none; background: transparent; width: 100%; text-align: left; color: var(--mn-text); cursor: pointer; margin-bottom: 1px; }
+      .pmo-prog:hover { background: var(--mn-surface-sunken); }
+      .pmo-prog.is-active { background: var(--mn-surface-sunken); }
+      .pmo-prog:focus-visible { outline: 2px solid var(--mn-accent); outline-offset: -2px; border-radius: var(--radius-md); }
       .pmo-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
       .pmo-pi { min-width: 0; flex: 1; }
-      .pmo-pname { font-family: var(--font-body); font-size: 0.8rem; font-weight: 600; color: var(--mn-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+      .pmo-pname { font-size: 0.8rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
       .pmo-pmeta { font-family: var(--font-mono); font-size: 0.62rem; color: var(--mn-text-muted); display: block; margin-top: 2px; }
       .pmo-bwrap { height: 3px; background: var(--mn-border); border-radius: 2px; margin-top: 5px; overflow: hidden; }
       .pmo-bbar { height: 100%; border-radius: 2px; }
 
-      /* ── View content ───────────────────────────────────── */
+      /* ── Main content ────────────────────────────────────── */
+      #pmo-main { overflow-y: auto; }
       .pmo-view { padding: 1.25rem; }
       .pmo-sec { font-family: var(--font-display); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--mn-accent); margin: 0 0 0.75rem; }
       .pmo-card { background: var(--mn-surface-raised); border: 1px solid var(--mn-border); border-radius: var(--radius-md); padding: 1.25rem; margin-bottom: 1.25rem; }
@@ -60,17 +97,20 @@
       .pmo-gc { background: var(--mn-surface-raised); border: 1px solid var(--mn-border); border-radius: var(--radius-md); padding: 1.25rem; text-align: center; }
       .pmo-glabel { font-family: var(--font-mono); font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--mn-text-muted); margin-top: 0.5rem; display: block; }
       .pmo-chart-wrap { position: relative; width: 100%; height: 200px; }
-      .pmo-chart-wrap canvas { width: 100%; height: 100%; }
+      .pmo-chart-wrap canvas { width: 100% !important; height: 100% !important; }
 
-      /* ── Detail panel ───────────────────────────────────── */
-      .pmo-dt { padding: 1.25rem; overflow-y: auto; }
+      /* ── Detail panel ────────────────────────────────────── */
+      #pmo-detail { overflow: hidden; border-left: 1px solid var(--mn-border); background: var(--mn-surface); }
+      #pmo-app.has-detail #pmo-detail { overflow-y: auto; }
+      .pmo-dt { padding: 1.25rem; }
       .pmo-dth { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; margin-bottom: 1rem; }
       .pmo-dttitle { font-family: var(--font-display); font-size: 0.95rem; font-weight: 700; color: var(--mn-text); margin: 0; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-      .pmo-xbtn { font-size: 0.9rem; line-height: 1; padding: 4px 8px; border: 1px solid var(--mn-border); border-radius: var(--radius-md); background: transparent; color: var(--mn-text-muted); cursor: pointer; min-height: 28px; font-family: var(--font-mono); }
+      .pmo-xbtn { font-size: 0.875rem; line-height: 1; padding: 6px 10px; border: 1px solid var(--mn-border); border-radius: var(--radius-md); background: transparent; color: var(--mn-text-muted); cursor: pointer; min-height: 28px; font-family: var(--font-mono); }
       .pmo-xbtn:hover { border-color: var(--mn-accent); color: var(--mn-accent); }
       .pmo-xbtn:focus-visible { outline: 2px solid var(--mn-accent); outline-offset: 2px; }
-      .pmo-tabs { display: flex; border-bottom: 1px solid var(--mn-border); margin-bottom: 1rem; overflow-x: auto; }
-      .pmo-tabbtn { font-family: var(--font-body); font-size: 0.78rem; padding: 7px 11px; border: none; border-bottom: 2px solid transparent; background: transparent; color: var(--mn-text-muted); cursor: pointer; transition: all 0.15s; white-space: nowrap; margin-bottom: -1px; }
+      .pmo-tabs { display: flex; border-bottom: 1px solid var(--mn-border); margin-bottom: 1rem; overflow-x: auto; scrollbar-width: none; }
+      .pmo-tabs::-webkit-scrollbar { display: none; }
+      .pmo-tabbtn { font-family: var(--font-body); font-size: 0.78rem; padding: 7px 11px; border: none; border-bottom: 2px solid transparent; background: transparent; color: var(--mn-text-muted); cursor: pointer; white-space: nowrap; margin-bottom: -1px; min-height: 36px; }
       .pmo-tabbtn:hover { color: var(--mn-text); }
       .pmo-tabbtn.is-active { color: var(--mn-accent); border-bottom-color: var(--mn-accent); }
       .pmo-tabbtn:focus-visible { outline: 2px solid var(--mn-accent); outline-offset: -2px; }
@@ -79,181 +119,167 @@
       .pmo-field { margin-bottom: 0.875rem; }
       .pmo-fl { font-family: var(--font-mono); font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--mn-text-muted); display: block; margin-bottom: 3px; }
       .pmo-fv { font-family: var(--font-body); font-size: 0.875rem; color: var(--mn-text); }
-      .pmo-badge { display: inline-block; font-family: var(--font-mono); font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.05em; padding: 2px 8px; border-radius: 10px; font-weight: 600; border: 1px solid currentColor; }
-      .pmo-badge--ok { color: var(--mn-signal-ok); }
-      .pmo-badge--warn { color: var(--mn-signal-warning); }
-      .pmo-badge--danger { color: var(--mn-signal-danger); }
-      .pmo-badge--info { color: var(--mn-info); }
-      .pmo-badge--muted { color: var(--mn-text-muted); }
-      .pmo-pbwrap { height: 6px; background: var(--mn-border); border-radius: 3px; overflow: hidden; }
+      .pmo-pbwrap { height: 6px; background: var(--mn-border); border-radius: 3px; overflow: hidden; margin-bottom: 4px; }
       .pmo-pb { height: 100%; border-radius: 3px; background: var(--mn-accent); }
-      .pmo-placeholder { padding: 2rem 1rem; text-align: center; color: var(--mn-text-muted); font-family: var(--font-body); font-size: 0.875rem; border: 2px dashed var(--mn-border); border-radius: var(--radius-md); }
+      .pmo-placeholder { padding: 2rem 1rem; text-align: center; color: var(--mn-text-muted); font-size: 0.875rem; border: 2px dashed var(--mn-border); border-radius: var(--radius-md); }
 
+      /* ── Badges ──────────────────────────────────────────── */
+      .pmo-badge { display: inline-block; font-family: var(--font-mono); font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.05em; padding: 2px 8px; border-radius: 10px; font-weight: 600; border: 1px solid currentColor; }
+      .pmo-badge--ok     { color: var(--mn-signal-ok); }
+      .pmo-badge--warn   { color: var(--mn-signal-warning); }
+      .pmo-badge--danger { color: var(--mn-signal-danger); }
+      .pmo-badge--info   { color: var(--mn-info); }
+      .pmo-badge--muted  { color: var(--mn-text-muted); }
+
+      /* ── Utility ─────────────────────────────────────────── */
       .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
-
-      @media (max-width: 768px) { .pmo-brand { font-size: 0.8rem; } .pmo-vbtn { padding: 3px 6px; } }
+      @media (max-width: 768px) { #pmo-sidebar { display: none; } #pmo-app, #pmo-app.has-detail { grid-template-columns: 1fr; } }
     }
   </style>
 </head>
 <body class="mn-nero">
   <script>
-    try { var t = localStorage.getItem('mn-theme'); if (t && t !== 'editorial') document.body.className = 'mn-' + t; } catch (_) {}
+    try { var _t = localStorage.getItem('mn-theme'); if (_t) document.body.className = 'mn-' + _t; } catch (_) {}
   </script>
 
-  <mn-app-shell id="pmo-shell" layout="full">
+  <header id="pmo-navbar" role="banner"></header>
 
-    <!-- NAV: Command Rail -->
-    <div slot="nav">
-      <nav class="pmo-sb" aria-label="Program navigation">
-        <p class="pmo-sb__title" aria-hidden="true">Programs</p>
-        <div id="pmo-prog-list" role="list"></div>
-      </nav>
-    </div>
-
-    <!-- TOOLBAR -->
-    <div slot="toolbar">
-      <div class="pmo-tb" role="toolbar" aria-label="PMO toolbar">
-        <a href="index.html" class="pmo-back" aria-label="Back to gallery">&larr; Gallery</a>
-        <div class="pmo-div" aria-hidden="true"></div>
-        <span class="pmo-brand">ConvergIO Programs</span>
-        <div class="pmo-div" aria-hidden="true"></div>
-        <div class="pmo-vsw" role="group" aria-label="View switcher">
-          <button type="button" class="pmo-vbtn is-active" data-view="timeline"   aria-pressed="true">Timeline</button>
-          <button type="button" class="pmo-vbtn"           data-view="portfolio"  aria-pressed="false">Portfolio</button>
-          <button type="button" class="pmo-vbtn"           data-view="resources"  aria-pressed="false">Resources</button>
-          <button type="button" class="pmo-vbtn"           data-view="risks"      aria-pressed="false">Risks</button>
-        </div>
-        <div class="pmo-div" aria-hidden="true"></div>
-        <label for="pmo-prog-filter" class="sr-only">Filter by program</label>
-        <select id="pmo-prog-filter" class="pmo-prog-sel" aria-label="Filter by program">
-          <option value="">All Programs</option>
-          <option value="quantum">Quantum Platform</option>
-          <option value="nimbus">Nimbus Migration</option>
-          <option value="helios">Helios 360</option>
-          <option value="cobalt">Cobalt Data Lake</option>
-          <option value="fortis">Fortis Security</option>
-        </select>
-        <div class="pmo-spacer"></div>
-        <button type="button" class="pmo-tbtn" id="pmo-cmdk"    aria-label="Open command palette (Ctrl+K)">Cmd+K</button>
-        <button type="button" class="pmo-tbtn" id="pmo-alerts"  aria-label="Alerts (3 active)">Alerts 3</button>
-        <button type="button" class="pmo-tbtn" id="pmo-report"  aria-label="Generate report">Report</button>
-        <div class="pmo-div" aria-hidden="true"></div>
-        <label for="pmo-theme" class="sr-only">Theme</label>
-        <select id="pmo-theme" class="pmo-theme-sel" aria-label="Select theme">
-          <option value="editorial">Editorial</option>
-          <option value="nero" selected>Nero</option>
-          <option value="avorio">Avorio</option>
-          <option value="colorblind">Colorblind</option>
-          <option value="sugar">Sugar</option>
-          <option value="navy">Navy</option>
-        </select>
-        <button type="button" class="pmo-avatar" id="pmo-avatar" aria-label="Jennifer Walsh — user menu">JW</button>
-      </div>
-    </div>
-
-    <!-- MAIN -->
-    <div slot="main"   id="mn-slot-page"   class="mn-slot mn-slot--page"></div>
-
-    <!-- DETAIL -->
-    <div slot="detail" id="mn-slot-detail" class="mn-slot mn-slot--side-panel"></div>
-
-  </mn-app-shell>
+  <div id="pmo-app" role="application" aria-label="PMO Dashboard">
+    <nav id="pmo-sidebar" aria-label="Program navigation">
+      <p class="pmo-sb-title" aria-hidden="true">Programs</p>
+      <div id="pmo-prog-list" role="list"></div>
+    </nav>
+    <main id="pmo-main" tabindex="-1" aria-live="polite" aria-atomic="false"></main>
+    <aside id="pmo-detail" aria-label="Item detail" aria-hidden="true"></aside>
+  </div>
 
   <script src="../dist/iife/maranello.min.js"></script>
-  <script type="module" src="../dist/wc/mn-app-shell.js"></script>
+  <script type="module" src="../packages/elements/dist/wc/mn-header-shell.js"></script>
   <script>
-    (function () {
-      'use strict';
-      var M = window.Maranello;
-      if (!M) {
-        document.getElementById('mn-slot-page').innerHTML = '<p style="padding:2rem">Build required — run <code>pnpm build</code> first.</p>';
-        return;
-      }
+  (function () {
+    'use strict';
+    var M = window.Maranello;
+    if (!M) {
+      var _m = document.getElementById('pmo-main');
+      if (_m) _m.innerHTML = '<p style="padding:2rem;font-family:monospace">Build required \u2014 run <code>pnpm build</code>.</p>';
+      return;
+    }
 
-      /* ── State ─────────────────────────────────────────────── */
-      var shellEl    = document.getElementById('pmo-shell');
-      var pageSlot   = document.getElementById('mn-slot-page');
-      var currentView = 'timeline';
-      var selectedProg = '';
+    /* ── DOM refs ──────────────────────────────────────────── */
+    var navbar   = document.getElementById('pmo-navbar');
+    var progList = document.getElementById('pmo-prog-list');
+    var mainEl   = document.getElementById('pmo-main');
+    var detailEl = document.getElementById('pmo-detail');
+    var appEl    = document.getElementById('pmo-app');
 
-      /* ── Orchestrator ──────────────────────────────────────── */
-      var registry = M.ViewRegistry.getInstance();
-      registry.clear();
-      var navigation   = new M.NavigationModel();
-      var orchestrator = new M.PanelOrchestrator(registry, navigation);
-      shellEl.orchestrator = orchestrator;
+    /* ── State ─────────────────────────────────────────────── */
+    var VIEW_IDS     = ['timeline', 'portfolio', 'resources', 'risks'];
+    var currentView  = 'timeline';
+    var selectedProg = '';
+    var headerCtrl   = null;
+    var cleanupFn    = null;
 
-      /* ── Data ──────────────────────────────────────────────── */
-      var PROGRAMS = [
-        { id: '',       label: 'All Programs',     dotColor: 'var(--mn-text-muted)',    status: '',          budget: '',       pct: 0   },
-        { id: 'quantum', label: 'Quantum Platform', dotColor: 'var(--mn-signal-ok)',     status: 'On Track',  budget: '$2.1M',  pct: 68  },
-        { id: 'nimbus',  label: 'Nimbus Migration', dotColor: 'var(--mn-signal-warning)',status: 'At Risk',   budget: '$3.4M',  pct: 42  },
-        { id: 'helios',  label: 'Helios 360',       dotColor: 'var(--mn-info)',          status: 'Complete',  budget: '$1.8M',  pct: 100 },
-        { id: 'cobalt',  label: 'Cobalt Data Lake',  dotColor: 'var(--mn-signal-danger)', status: 'Behind',    budget: '$950K',  pct: 28  },
-        { id: 'fortis',  label: 'Fortis Security',  dotColor: 'var(--mn-text-muted)',    status: 'Starting',  budget: '$1.2M',  pct: 12  }
-      ];
+    /* ── Data ──────────────────────────────────────────────── */
+    var PROGRAMS = [
+      { id: '',        label: 'All Programs',    dotColor: 'var(--mn-text-muted)',     status: '',          budget: '',       pct: 0   },
+      { id: 'quantum', label: 'Quantum Platform', dotColor: 'var(--mn-signal-ok)',      status: 'On Track',  budget: '$2.1M',  pct: 68  },
+      { id: 'nimbus',  label: 'Nimbus Migration', dotColor: 'var(--mn-signal-warning)', status: 'At Risk',   budget: '$3.4M',  pct: 42  },
+      { id: 'helios',  label: 'Helios 360',       dotColor: 'var(--mn-info)',           status: 'Complete',  budget: '$1.8M',  pct: 100 },
+      { id: 'cobalt',  label: 'Cobalt Data Lake',  dotColor: 'var(--mn-signal-danger)',  status: 'Behind',    budget: '$950K',  pct: 28  },
+      { id: 'fortis',  label: 'Fortis Security',  dotColor: 'var(--mn-text-muted)',     status: 'Starting',  budget: '$1.2M',  pct: 12  }
+    ];
 
-      /* Maps prog id -> portfolio row filter */
-      var PROG_ID_MAP = {
-        'quantum': 'Quantum Platform',
-        'nimbus':  'Nimbus Migration',
-        'helios':  'Helios 360',
-        'cobalt':  'Cobalt Data Lake',
-        'fortis':  'Fortis Security'
-      };
+    var ALL_GANTT = [
+      { id: 'quantum', title: 'Quantum Platform', start: '2025-01-06', end: '2025-07-31', children: [
+        { id: 'q-req',  title: 'Requirements Gathering', start: '2025-01-06', end: '2025-02-28', program: 'Quantum Platform', owner: 'Jennifer Walsh',  status: 'Complete',    progress: 100 },
+        { id: 'q-arch', title: 'Architecture Review',    start: '2025-02-17', end: '2025-03-28', program: 'Quantum Platform', owner: 'Jennifer Walsh',  status: 'Complete',    progress: 100 },
+        { id: 'q-spr',  title: 'Sprint 1-4',             start: '2025-03-31', end: '2025-06-27', program: 'Quantum Platform', owner: 'Jennifer Walsh',  status: 'In Progress', progress: 62  },
+        { id: 'q-uat',  title: 'UAT',                    start: '2025-06-30', end: '2025-07-25', program: 'Quantum Platform', owner: 'Jennifer Walsh',  status: 'Not Started', progress: 0   },
+        { id: 'q-live', title: 'Go-Live',                start: '2025-07-28', end: '2025-07-31', program: 'Quantum Platform', owner: 'Jennifer Walsh',  status: 'Not Started', progress: 0   }
+      ]},
+      { id: 'nimbus', title: 'Nimbus Migration', start: '2025-02-03', end: '2025-07-31', children: [
+        { id: 'n-disc',  title: 'Discovery',            start: '2025-02-03', end: '2025-03-14', program: 'Nimbus Migration', owner: 'David Park', status: 'Complete',    progress: 100 },
+        { id: 'n-infra', title: 'Infrastructure Setup', start: '2025-03-17', end: '2025-04-25', program: 'Nimbus Migration', owner: 'David Park', status: 'In Progress', progress: 55  },
+        { id: 'n-mig',   title: 'Data Migration',       start: '2025-04-28', end: '2025-06-27', program: 'Nimbus Migration', owner: 'David Park', status: 'At Risk',     progress: 18  },
+        { id: 'n-test',  title: 'Testing',              start: '2025-06-30', end: '2025-07-18', program: 'Nimbus Migration', owner: 'David Park', status: 'Not Started', progress: 0   },
+        { id: 'n-cut',   title: 'Cutover',              start: '2025-07-21', end: '2025-07-31', program: 'Nimbus Migration', owner: 'David Park', status: 'Not Started', progress: 0   }
+      ]},
+      { id: 'helios', title: 'Helios 360', start: '2025-01-06', end: '2025-05-30', children: [
+        { id: 'h-ux',   title: 'UX Research', start: '2025-01-06', end: '2025-02-14', program: 'Helios 360', owner: 'Aisha Mohammed', status: 'Complete', progress: 100 },
+        { id: 'h-dev',  title: 'Development',  start: '2025-02-17', end: '2025-05-09', program: 'Helios 360', owner: 'Aisha Mohammed', status: 'Complete', progress: 100 },
+        { id: 'h-beta', title: 'Beta Launch',  start: '2025-05-12', end: '2025-05-30', program: 'Helios 360', owner: 'Aisha Mohammed', status: 'Complete', progress: 100 }
+      ]},
+      { id: 'cobalt', title: 'Cobalt Data Lake', start: '2025-03-03', end: '2025-10-31', children: [
+        { id: 'c-plan',  title: 'Planning',               start: '2025-03-03', end: '2025-04-04', program: 'Cobalt Data Lake', owner: 'Carlos Rivera', status: 'Complete',    progress: 100 },
+        { id: 'c-arch',  title: 'Schema Architecture',    start: '2025-04-07', end: '2025-05-16', program: 'Cobalt Data Lake', owner: 'Carlos Rivera', status: 'Behind',      progress: 38  },
+        { id: 'c-ingest','title': 'Data Ingestion Layer', start: '2025-05-19', end: '2025-07-25', program: 'Cobalt Data Lake', owner: 'Carlos Rivera', status: 'Not Started', progress: 0   },
+        { id: 'c-valid', title: 'Validation',             start: '2025-07-28', end: '2025-10-10', program: 'Cobalt Data Lake', owner: 'Carlos Rivera', status: 'Not Started', progress: 0   }
+      ]},
+      { id: 'fortis', title: 'Fortis Security', start: '2025-04-01', end: '2025-10-31', children: [
+        { id: 'f-kick',  title: 'Kickoff',           start: '2025-04-01', end: '2025-04-18', program: 'Fortis Security', owner: 'Emma Thompson', status: 'Complete',    progress: 100 },
+        { id: 'f-iam',   title: 'IAM Integration',   start: '2025-04-22', end: '2025-06-27', program: 'Fortis Security', owner: 'Emma Thompson', status: 'In Progress', progress: 22  },
+        { id: 'f-audit', title: 'Security Audit',    start: '2025-06-30', end: '2025-08-29', program: 'Fortis Security', owner: 'Emma Thompson', status: 'Not Started', progress: 0   },
+        { id: 'f-hard',  title: 'Hardening',         start: '2025-09-01', end: '2025-10-31', program: 'Fortis Security', owner: 'Emma Thompson', status: 'Not Started', progress: 0   }
+      ]}
+    ];
 
-      var ALL_GANTT = [
-        {
-          id: 'quantum', title: 'Quantum Platform', start: '2025-01-06', end: '2025-07-31',
-          children: [
-            { id: 'q-req',    title: 'Requirements Gathering', start: '2025-01-06', end: '2025-02-28', program: 'Quantum Platform', owner: 'Jennifer Walsh', status: 'Complete',    progress: 100 },
-            { id: 'q-arch',   title: 'Architecture Review',    start: '2025-02-17', end: '2025-03-28', program: 'Quantum Platform', owner: 'Jennifer Walsh', status: 'Complete',    progress: 100 },
-            { id: 'q-spr',    title: 'Sprint 1-4',             start: '2025-03-31', end: '2025-06-27', program: 'Quantum Platform', owner: 'Jennifer Walsh', status: 'In Progress', progress: 62  },
-            { id: 'q-uat',    title: 'UAT',                    start: '2025-06-30', end: '2025-07-25', program: 'Quantum Platform', owner: 'Jennifer Walsh', status: 'Not Started', progress: 0   },
-            { id: 'q-live',   title: 'Go-Live',                start: '2025-07-28', end: '2025-07-31', program: 'Quantum Platform', owner: 'Jennifer Walsh', status: 'Not Started', progress: 0   }
-          ]
-        },
-        {
-          id: 'nimbus', title: 'Nimbus Migration', start: '2025-02-03', end: '2025-07-31',
-          children: [
-            { id: 'n-disc',  title: 'Discovery',            start: '2025-02-03', end: '2025-03-14', program: 'Nimbus Migration', owner: 'David Park', status: 'Complete',    progress: 100 },
-            { id: 'n-infra', title: 'Infrastructure Setup', start: '2025-03-17', end: '2025-04-25', program: 'Nimbus Migration', owner: 'David Park', status: 'In Progress', progress: 55  },
-            { id: 'n-mig',   title: 'Data Migration',       start: '2025-04-28', end: '2025-06-27', program: 'Nimbus Migration', owner: 'David Park', status: 'At Risk',     progress: 18  },
-            { id: 'n-test',  title: 'Testing',              start: '2025-06-30', end: '2025-07-18', program: 'Nimbus Migration', owner: 'David Park', status: 'Not Started', progress: 0   },
-            { id: 'n-cut',   title: 'Cutover',              start: '2025-07-21', end: '2025-07-31', program: 'Nimbus Migration', owner: 'David Park', status: 'Not Started', progress: 0   }
-          ]
-        },
-        {
-          id: 'helios', title: 'Helios 360', start: '2025-01-06', end: '2025-05-30',
-          children: [
-            { id: 'h-ux',   title: 'UX Research', start: '2025-01-06', end: '2025-02-14', program: 'Helios 360', owner: 'Aisha Mohammed', status: 'Complete', progress: 100 },
-            { id: 'h-dev',  title: 'Development',  start: '2025-02-17', end: '2025-05-09', program: 'Helios 360', owner: 'Aisha Mohammed', status: 'Complete', progress: 100 },
-            { id: 'h-beta', title: 'Beta Launch',  start: '2025-05-12', end: '2025-05-30', program: 'Helios 360', owner: 'Aisha Mohammed', status: 'Complete', progress: 100 }
-          ]
-        }
-      ];
+    var PORTFOLIO = [
+      { _pid: 'quantum', program: 'Quantum Platform',  owner: 'Jennifer Walsh',  status: 'On Track', budget: '$2,100,000', spent: '$1,428,000', remaining: '$672,000',   risk: 'Medium',   progress: { value: 68,  max: 100, label: '68%'  } },
+      { _pid: 'nimbus',  program: 'Nimbus Migration',  owner: 'David Park',      status: 'At Risk',  budget: '$3,400,000', spent: '$1,428,000', remaining: '$1,972,000', risk: 'High',     progress: { value: 42,  max: 100, label: '42%'  } },
+      { _pid: 'helios',  program: 'Helios 360',        owner: 'Aisha Mohammed',  status: 'Complete', budget: '$1,800,000', spent: '$1,764,000', remaining: '$36,000',    risk: 'Low',      progress: { value: 100, max: 100, label: '100%' } },
+      { _pid: 'cobalt',  program: 'Cobalt Data Lake',  owner: 'Carlos Rivera',   status: 'Behind',   budget: '$950,000',   spent: '$266,000',   remaining: '$684,000',   risk: 'Critical', progress: { value: 28,  max: 100, label: '28%'  } },
+      { _pid: 'fortis',  program: 'Fortis Security',   owner: 'Emma Thompson',   status: 'Starting', budget: '$1,200,000', spent: '$144,000',   remaining: '$1,056,000', risk: 'Low',      progress: { value: 12,  max: 100, label: '12%'  } }
+    ];
 
-      var PORTFOLIO = [
-        { _pid: 'quantum', program: 'Quantum Platform',  owner: 'Jennifer Walsh', status: 'On Track', budget: '$2,100,000', spent: '$1,428,000', remaining: '$672,000',    risk: 'Medium',   progress: { value: 68,  max: 100, label: '68%'  } },
-        { _pid: 'nimbus',  program: 'Nimbus Migration',  owner: 'David Park',     status: 'At Risk',  budget: '$3,400,000', spent: '$1,428,000', remaining: '$1,972,000',  risk: 'High',     progress: { value: 42,  max: 100, label: '42%'  } },
-        { _pid: 'helios',  program: 'Helios 360',        owner: 'Aisha Mohammed', status: 'Complete', budget: '$1,800,000', spent: '$1,764,000', remaining: '$36,000',     risk: 'Low',      progress: { value: 100, max: 100, label: '100%' } },
-        { _pid: 'cobalt',  program: 'Cobalt Data Lake',  owner: 'Carlos Rivera',  status: 'Behind',   budget: '$950,000',   spent: '$266,000',   remaining: '$684,000',    risk: 'Critical', progress: { value: 28,  max: 100, label: '28%'  } },
-        { _pid: 'fortis',  program: 'Fortis Security',   owner: 'Emma Thompson',  status: 'Starting', budget: '$1,200,000', spent: '$144,000',   remaining: '$1,056,000',  risk: 'Low',      progress: { value: 12,  max: 100, label: '12%'  } }
-      ];
+    var RISKS = [
+      { _pid: 'quantum', id: 'R-001', description: 'Key architect departure may delay architecture phase',  program: 'Quantum Platform',  impact: 'High',     prob: '35%', owner: 'Jennifer Walsh',  status: 'Open'      },
+      { _pid: 'nimbus',  id: 'R-002', description: 'Legacy data quality issues blocking migration waves',  program: 'Nimbus Migration',  impact: 'High',     prob: '60%', owner: 'David Park',      status: 'Active'    },
+      { _pid: 'nimbus',  id: 'R-003', description: 'Third-party API vendor SLA breach risk',               program: 'Nimbus Migration',  impact: 'Medium',   prob: '25%', owner: 'David Park',      status: 'Monitor'   },
+      { _pid: 'quantum', id: 'R-004', description: 'Scope creep expanding UAT requirements',               program: 'Quantum Platform',  impact: 'Medium',   prob: '50%', owner: 'Jennifer Walsh',  status: 'Active'    },
+      { _pid: 'cobalt',  id: 'R-005', description: 'Cloud cost overrun beyond approved budget threshold',  program: 'Cobalt Data Lake',  impact: 'High',     prob: '70%', owner: 'Carlos Rivera',   status: 'Escalated' },
+      { _pid: 'cobalt',  id: 'R-006', description: 'GDPR compliance gap in data lake schema design',       program: 'Cobalt Data Lake',  impact: 'Critical', prob: '45%', owner: 'Carlos Rivera',   status: 'Active'    },
+      { _pid: 'fortis',  id: 'R-007', description: 'Security tooling integration with legacy IAM system',  program: 'Fortis Security',   impact: 'Medium',   prob: '30%', owner: 'Emma Thompson',   status: 'Open'      },
+      { _pid: 'helios',  id: 'R-008', description: 'UX research findings may require design pivot',        program: 'Helios 360',        impact: 'Low',      prob: '20%', owner: 'Aisha Mohammed',  status: 'Closed'    }
+    ];
 
-      var RISKS = [
-        { _pid: 'quantum', id: 'R-001', description: 'Key architect departure may delay architecture phase',   program: 'Quantum Platform',  impact: 'High',     prob: '35%', owner: 'Jennifer Walsh',  mitigation: 'Open'      },
-        { _pid: 'nimbus',  id: 'R-002', description: 'Legacy data quality issues blocking migration waves',   program: 'Nimbus Migration',  impact: 'High',     prob: '60%', owner: 'David Park',       mitigation: 'Active'    },
-        { _pid: 'nimbus',  id: 'R-003', description: 'Third-party API vendor SLA breach risk',                program: 'Nimbus Migration',  impact: 'Medium',   prob: '25%', owner: 'David Park',       mitigation: 'Monitor'   },
-        { _pid: 'quantum', id: 'R-004', description: 'Scope creep expanding UAT requirements',                program: 'Quantum Platform',  impact: 'Medium',   prob: '50%', owner: 'Jennifer Walsh',  mitigation: 'Active'    },
-        { _pid: 'cobalt',  id: 'R-005', description: 'Cloud cost overrun beyond approved budget threshold',   program: 'Cobalt Data Lake',  impact: 'High',     prob: '70%', owner: 'Carlos Rivera',   mitigation: 'Escalated' },
-        { _pid: 'cobalt',  id: 'R-006', description: 'GDPR compliance gap in data lake schema design',        program: 'Cobalt Data Lake',  impact: 'Critical', prob: '45%', owner: 'Carlos Rivera',   mitigation: 'Active'    },
-        { _pid: 'fortis',  id: 'R-007', description: 'Security tooling integration with legacy IAM system',  program: 'Fortis Security',   impact: 'Medium',   prob: '30%', owner: 'Emma Thompson',   mitigation: 'Open'      },
-        { _pid: 'helios',  id: 'R-008', description: 'UX research findings may require design pivot',        program: 'Helios 360',        impact: 'Low',      prob: '20%', owner: 'Aisha Mohammed',  mitigation: 'Closed'    }
-      ];
+    /* ── Helpers ───────────────────────────────────────────── */
+    function esc(str) {
+      var d = document.createElement('div');
+      d.appendChild(document.createTextNode(String(str)));
+      return d.innerHTML;
+    }
 
-      /* ── Sidebar build ─────────────────────────────────────── */
-      var progListEl = document.getElementById('pmo-prog-list');
+    function bdg(val) {
+      var v = String(val || '');
+      var lv = v.toLowerCase();
+      var cls = 'pmo-badge--muted';
+      if (lv === 'on track' || lv === 'complete' || lv === 'closed' || lv === 'low' || lv === 'ok') cls = 'pmo-badge--ok';
+      else if (lv === 'at risk' || lv === 'medium' || lv === 'monitor' || lv === 'active' || lv === 'starting') cls = 'pmo-badge--warn';
+      else if (lv === 'behind' || lv === 'high' || lv === 'blocked' || lv === 'open' || lv === 'escalated' || lv === 'critical') cls = 'pmo-badge--danger';
+      else if (lv === 'completed' || lv === 'info') cls = 'pmo-badge--info';
+      return '<span class="pmo-badge ' + cls + '">' + esc(v) + '</span>';
+    }
+
+    function fld(label, valueHtml) {
+      return '<div class="pmo-field"><span class="pmo-fl">' + esc(label) + '</span><div class="pmo-fv">' + valueHtml + '</div></div>';
+    }
+
+    function pbr(pct) {
+      var n = Math.max(0, Math.min(100, Number(pct) || 0));
+      return '<div class="pmo-pbwrap" role="progressbar" aria-valuenow="' + n + '" aria-valuemin="0" aria-valuemax="100" aria-label="Progress ' + n + '%"><div class="pmo-pb" style="width:' + n + '%;"></div></div><span style="font-family:var(--font-mono);font-size:0.75rem;color:var(--mn-text-muted)">' + n + '%</span>';
+    }
+
+    function filterByProg(arr) {
+      if (!selectedProg) return arr;
+      return arr.filter(function (r) { return r._pid === selectedProg; });
+    }
+
+    function icon(name) {
+      return (M.icons && typeof M.icons[name] === 'function') ? M.icons[name]() : '';
+    }
+
+    /* ── Sidebar ───────────────────────────────────────────── */
+    function buildSidebar() {
       PROGRAMS.forEach(function (p) {
         var btn = document.createElement('button');
         btn.type = 'button';
@@ -264,420 +290,457 @@
         var inner = '<span class="pmo-dot" style="background:' + p.dotColor + ';" aria-hidden="true"></span><span class="pmo-pi">';
         inner += '<span class="pmo-pname">' + p.label + '</span>';
         if (p.id) {
-          inner += '<span class="pmo-pmeta">' + p.budget + ' &mdash; ' + p.status + '</span>';
-          inner += '<div class="pmo-bwrap" role="progressbar" aria-valuenow="' + p.pct + '" aria-valuemin="0" aria-valuemax="100" aria-label="' + p.label + ' progress">';
+          inner += '<span class="pmo-pmeta">' + p.budget + ' \u2014 ' + p.status + '</span>';
+          inner += '<div class="pmo-bwrap" role="progressbar" aria-valuenow="' + p.pct + '" aria-valuemin="0" aria-valuemax="100" aria-label="' + p.label + ' progress ' + p.pct + '%">';
           inner += '<div class="pmo-bbar" style="width:' + p.pct + '%;background:' + p.dotColor + ';"></div></div>';
         }
         inner += '</span>';
         btn.innerHTML = inner;
         btn.addEventListener('click', function () { applyProgFilter(p.id); });
-        progListEl.appendChild(btn);
+        progList.appendChild(btn);
       });
+    }
 
-      function applyProgFilter(pid) {
-        selectedProg = pid;
-        var btns = progListEl.querySelectorAll('.pmo-prog');
-        for (var i = 0; i < btns.length; i++) {
-          var active = btns[i].getAttribute('data-pid') === pid;
-          if (active) { btns[i].classList.add('is-active'); } else { btns[i].classList.remove('is-active'); }
-          btns[i].setAttribute('aria-pressed', active ? 'true' : 'false');
-        }
-        var sel = document.getElementById('pmo-prog-filter');
-        if (sel) sel.value = pid;
-        showView(currentView);
+    function applyProgFilter(pid) {
+      selectedProg = pid;
+      var btns = progList.querySelectorAll('.pmo-prog');
+      for (var i = 0; i < btns.length; i++) {
+        var active = btns[i].getAttribute('data-pid') === pid;
+        if (active) { btns[i].classList.add('is-active'); } else { btns[i].classList.remove('is-active'); }
+        btns[i].setAttribute('aria-pressed', active ? 'true' : 'false');
       }
+      if (headerCtrl && headerCtrl.setFilter) {
+        headerCtrl.setFilter('program', [pid || 'all']);
+      }
+      showView(currentView);
+    }
 
-      /* ── Toolbar events ────────────────────────────────────── */
-      var vbtns = document.querySelectorAll('.pmo-vbtn');
-      for (var vi = 0; vi < vbtns.length; vi++) {
-        vbtns[vi].addEventListener('click', function (e) {
-          switchView(e.currentTarget.getAttribute('data-view'));
-        });
-      }
-      document.getElementById('pmo-prog-filter').addEventListener('change', function (e) { applyProgFilter(e.target.value); });
-      document.getElementById('pmo-cmdk').addEventListener('click', openPalette);
-      document.getElementById('pmo-theme').addEventListener('change', function (e) { M.setTheme(e.target.value); });
-      document.addEventListener('keydown', function (e) {
-        if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); openPalette(); }
+    /* ── Header (mn-header-shell) ──────────────────────────── */
+    function syncViewButtons() {
+      VIEW_IDS.forEach(function (id) {
+        var btn = document.querySelector('[data-header-shell-action-id="' + id + '"]');
+        if (!btn) return;
+        if (id === currentView) { btn.classList.add('mn-header-shell__action--active'); }
+        else { btn.classList.remove('mn-header-shell__action--active'); }
       });
+    }
 
-      /* ── Command palette ───────────────────────────────────── */
-      function openPalette() {
-        if (!M.commandPalette) return;
-        M.commandPalette({
-          placeholder: 'Search programs, views, commands...',
-          items: [
-            { label: 'View: Timeline',           action: function () { switchView('timeline'); } },
-            { label: 'View: Portfolio',          action: function () { switchView('portfolio'); } },
-            { label: 'View: Resources',          action: function () { switchView('resources'); } },
-            { label: 'View: Risks',              action: function () { switchView('risks'); } },
-            { label: 'Filter: All Programs',     action: function () { applyProgFilter(''); } },
-            { label: 'Filter: Quantum Platform', action: function () { applyProgFilter('quantum'); } },
-            { label: 'Filter: Nimbus Migration', action: function () { applyProgFilter('nimbus'); } },
-            { label: 'Filter: Helios 360',       action: function () { applyProgFilter('helios'); } },
-            { label: 'Filter: Cobalt Data Lake', action: function () { applyProgFilter('cobalt'); } },
-            { label: 'Filter: Fortis Security',  action: function () { applyProgFilter('fortis'); } },
-            { label: 'Theme: Editorial',  action: function () { M.setTheme('editorial'); } },
-            { label: 'Theme: Nero',       action: function () { M.setTheme('nero'); } },
-            { label: 'Theme: Avorio',     action: function () { M.setTheme('avorio'); } },
-            { label: 'Theme: Colorblind', action: function () { M.setTheme('colorblind'); } },
-            { label: 'Theme: Sugar',      action: function () { M.setTheme('sugar'); } },
-            { label: 'Theme: Navy',       action: function () { M.setTheme('navy'); } }
+    function mountHeader() {
+      var filterGroups = [
+        {
+          id: 'program', label: 'Program',
+          options: [
+            { id: 'all',     label: 'All Programs'    },
+            { id: 'quantum', label: 'Quantum Platform' },
+            { id: 'nimbus',  label: 'Nimbus Migration' },
+            { id: 'helios',  label: 'Helios 360'       },
+            { id: 'cobalt',  label: 'Cobalt Data Lake'  },
+            { id: 'fortis',  label: 'Fortis Security'  }
           ]
-        });
-      }
-
-      /* ── View switching ────────────────────────────────────── */
-      function switchView(view) {
-        currentView = view;
-        for (var i = 0; i < vbtns.length; i++) {
-          var active = vbtns[i].getAttribute('data-view') === view;
-          if (active) { vbtns[i].classList.add('is-active'); } else { vbtns[i].classList.remove('is-active'); }
-          vbtns[i].setAttribute('aria-pressed', active ? 'true' : 'false');
         }
-        if (orchestrator.isOpen('detail')) { orchestrator.close('detail'); shellEl.setAttribute('layout', 'full'); }
-        showView(view);
-      }
+      ];
 
-      function showView(view) {
-        var scaffold = new M.StateScaffold(pageSlot, { state: 'loading' });
+      var host = document.createElement('mn-header-shell');
+      host.config = {
+        ariaLabel: 'ConvergIO Programs navigation',
+        sections: [
+          { type: 'brand', label: 'ConvergIO Programs', logoSrc: '../src/assets/favicon.svg', logoAlt: 'ConvergIO mark', href: './index.html' },
+          {
+            type: 'actions', role: 'pre', presentation: 'segmented',
+            items: [
+              { id: 'timeline',  label: 'Timeline',  icon: icon('gantt'),         active: true },
+              { id: 'portfolio', label: 'Portfolio', icon: icon('table')                       },
+              { id: 'resources', label: 'Resources', icon: icon('capacity')                    },
+              { id: 'risks',     label: 'Risks',     icon: icon('shield')                      }
+            ]
+          },
+          {
+            type: 'search',
+            placeholder: 'Search programs, tasks, risks... \u2318K',
+            shortcut: '\u2318K',
+            filterButtonLabel: 'Program',
+            filters: filterGroups
+          },
+          {
+            type: 'actions', role: 'post', presentation: 'cluster',
+            items: [
+              { id: 'alerts', title: 'Alerts (3)',  icon: icon('bellDot') || icon('bell') },
+              { id: 'report', title: 'Export Report', icon: icon('report')               }
+            ]
+          },
+          { type: 'divider' },
+          { type: 'theme' },
+          { type: 'profile', name: 'Jennifer Walsh' }
+        ],
+        callbacks: {
+          onAction: function (payload) {
+            if (VIEW_IDS.indexOf(payload.id) !== -1) {
+              currentView = payload.id;
+              syncViewButtons();
+              closeDetail();
+              doRender(currentView);
+            }
+            if (payload.id === 'alerts') {
+              if (M.commandPalette) M.commandPalette({ placeholder: 'Active alerts', items: [
+                { label: 'ALERT: Cobalt cloud cost overrun approaching threshold', action: function () { applyProgFilter('cobalt'); } },
+                { label: 'ALERT: Nimbus data migration at risk - 18% progress',   action: function () { applyProgFilter('nimbus'); } },
+                { label: 'ALERT: R-006 GDPR compliance gap requires immediate action', action: function () { currentView = 'risks'; syncViewButtons(); doRender('risks'); } }
+              ]});
+            }
+            if (payload.id === 'report') {
+              if (M.commandPalette) M.commandPalette({ placeholder: 'Export report', items: [
+                { label: 'Export: Portfolio Summary (PDF)'  },
+                { label: 'Export: Risk Register (CSV)'      },
+                { label: 'Export: Gantt Timeline (PNG)'     },
+                { label: 'Export: Resource Utilization (XLSX)' }
+              ]});
+            }
+          },
+          onSearch: function (payload) {
+            if ((payload.query || '').toLowerCase().indexOf('cmd') !== -1 || payload.triggerKey === 'k') {
+              openPalette();
+            }
+          },
+          onFilter: function (payload) {
+            if (payload.groupId === 'program') {
+              var val = (payload.values && payload.values[0]) || 'all';
+              applyProgFilter(val === 'all' ? '' : val);
+            }
+          }
+        }
+      };
+      navbar.textContent = '';
+      navbar.appendChild(host);
+      headerCtrl = host;
+
+      var ready = (typeof host.whenReady === 'function') ? host.whenReady() : Promise.resolve();
+      ready.then(function () {
+        if (!host.isConnected) return;
+        syncViewButtons();
+      });
+    }
+
+    /* ── View switching ────────────────────────────────────── */
+    function showView(viewId) {
+      currentView = viewId;
+      syncViewButtons();
+      closeDetail();
+      if (cleanupFn) { try { cleanupFn(); } catch (_) {} cleanupFn = null; }
+      if (M.StateScaffold) {
+        var scaffold = new M.StateScaffold(mainEl, { state: 'loading' });
         setTimeout(function () {
           scaffold.destroy();
-          pageSlot.innerHTML = '';
-          orchestrator.open(view, 'page');
-        }, 500);
+          mainEl.innerHTML = '';
+          cleanupFn = doRender(viewId) || null;
+        }, 400);
+      } else {
+        mainEl.innerHTML = '';
+        cleanupFn = doRender(viewId) || null;
       }
+    }
 
-      function openDetail(data) {
-        if (orchestrator.isOpen('detail')) orchestrator.close('detail');
-        orchestrator.open('detail', 'side-panel', data);
-        shellEl.setAttribute('layout', 'side-detail');
-      }
+    function doRender(viewId) {
+      if (cleanupFn) { try { cleanupFn(); } catch (_) {} cleanupFn = null; }
+      mainEl.innerHTML = '';
+      if (viewId === 'timeline')  return renderTimeline();
+      if (viewId === 'portfolio') return renderPortfolio();
+      if (viewId === 'resources') return renderResources();
+      if (viewId === 'risks')     return renderRisks();
+    }
 
-      /* ── Helper: filter data ───────────────────────────────── */
-      function filterByProg(arr) {
-        if (!selectedProg) return arr;
-        return arr.filter(function (r) { return r._pid === selectedProg; });
-      }
+    /* ── VIEW: Timeline ────────────────────────────────────── */
+    function renderTimeline() {
+      mainEl.innerHTML =
+        '<div class="pmo-view">' +
+          '<h2 class="pmo-sec">Program Health</h2>' +
+          '<div id="pmo-strip" class="pmo-strip-wrap"></div>' +
+          '<h2 class="pmo-sec">Program Timeline</h2>' +
+          '<div id="pmo-gantt" class="pmo-gantt-wrap"></div>' +
+        '</div>';
 
-      /* ── VIEW: Timeline ────────────────────────────────────── */
-      registry.register({
-        id: 'timeline',
-        title: 'Timeline',
-        defaultPlacement: 'page',
-        factory: function (container) {
-          container.innerHTML =
-            '<div class="pmo-view">' +
-              '<h2 class="pmo-sec">Program Health</h2>' +
-              '<div id="pmo-strip" class="pmo-strip-wrap"></div>' +
-              '<h2 class="pmo-sec">Program Timeline</h2>' +
-              '<div id="pmo-gantt" class="pmo-gantt-wrap"></div>' +
-            '</div>';
-
-          M.dashboardStrip('pmo-strip', {
-            ariaLabel: 'Program health instrument strip',
-            zones: [
-              {
-                type: 'gauge', label: 'PROGRAM HEALTH', size: 'sm',
-                gaugeConfig: {
-                  value: 82, max: 100, color: '#00A651', colorMode: 'higher-better',
-                  ticks: 10, subticks: 5, startAngle: -225, endAngle: 45, showNeedle: true,
-                  numbers: [0, 25, 50, 75, 100],
-                  complications: {
-                    centerValue: '82', centerUnit: '%', centerLabel: 'HEALTH',
-                    arcBar: { labelLeft: '0', labelRight: '100' },
-                    statusLed: { color: '#00A651', label: 'ON TRACK' }
-                  }
-                }
-              },
-              {
-                type: 'board', title: 'PORTFOLIO STATUS',
-                stats: [
-                  { label: 'ACTIVE',    value: 8 },
-                  { label: 'ON SCHED',  value: 5 },
-                  { label: 'BEHIND',    value: 2 },
-                  { label: 'BLOCKED',   value: 1 }
-                ]
-              },
-              {
-                type: 'trend', title: 'BURN RATE / UTIL',
-                items: [
-                  { label: 'BURN RATE', value: 68, color: '#FFC72C', data: [42, 48, 53, 58, 62, 68] },
-                  { label: 'RESOURCE',  value: 76, color: '#448AFF', data: [60, 63, 68, 71, 74, 76] }
-                ]
+      M.dashboardStrip('pmo-strip', {
+        ariaLabel: 'Program health instrument strip',
+        zones: [
+          {
+            type: 'gauge', label: 'PROGRAM HEALTH', size: 'sm',
+            gaugeConfig: {
+              value: 82, max: 100, colorMode: 'higher-better',
+              ticks: 10, subticks: 5, startAngle: -225, endAngle: 45, showNeedle: true,
+              numbers: [0, 25, 50, 75, 100],
+              complications: {
+                centerValue: '82', centerUnit: '%', centerLabel: 'HEALTH',
+                arcBar: { labelLeft: '0', labelRight: '100' },
+                statusLed: { label: 'ON TRACK' }
               }
+            }
+          },
+          {
+            type: 'board', title: 'PORTFOLIO STATUS',
+            stats: [
+              { label: 'ACTIVE',   value: 8 },
+              { label: 'ON SCHED', value: 5 },
+              { label: 'BEHIND',   value: 2 },
+              { label: 'BLOCKED',  value: 1 }
             ]
-          });
-
-          var tasks = selectedProg
-            ? ALL_GANTT.filter(function (t) { return t.id === selectedProg; })
-            : ALL_GANTT;
-          var ganttWrap = document.getElementById('pmo-gantt');
-          if (M.gantt && ganttWrap && tasks.length) {
-            M.gantt(ganttWrap, tasks, {
-              onClick: function (task) {
-                openDetail({ type: 'task', name: task.title, task: task });
-              }
-            });
+          },
+          {
+            type: 'trend', title: 'BURN RATE / UTIL',
+            items: [
+              { label: 'BURN RATE', value: 68, data: [42, 48, 53, 58, 62, 68] },
+              { label: 'RESOURCE',  value: 76, data: [60, 63, 68, 71, 74, 76] }
+            ]
           }
-          return function () {};
-        }
+        ]
       });
 
-      /* ── VIEW: Portfolio ───────────────────────────────────── */
-      registry.register({
-        id: 'portfolio',
-        title: 'Portfolio',
-        defaultPlacement: 'page',
-        factory: function (container) {
-          container.innerHTML =
-            '<div class="pmo-view">' +
-              '<h2 class="pmo-sec">Portfolio Overview</h2>' +
-              '<div id="pmo-ptable"></div>' +
-            '</div>';
+      var tasks = selectedProg ? ALL_GANTT.filter(function (t) { return t.id === selectedProg; }) : ALL_GANTT;
+      var ganttWrap = document.getElementById('pmo-gantt');
+      if (M.gantt && ganttWrap && tasks.length) {
+        M.gantt(ganttWrap, tasks, {
+          onClick: function (task) { openDetail({ type: 'task', name: task.title, task: task }); }
+        });
+      }
+    }
 
-          var rows = filterByProg(PORTFOLIO);
-          var tbl = M.dataTable('pmo-ptable', {
-            ariaLabel: 'Program portfolio overview',
-            stickyHeader: true,
-            stripedRows: true,
-            columns: [
-              { key: 'program',   label: 'Program',    type: 'text',     sortable: true },
-              { key: 'owner',     label: 'PM Owner',   type: 'text',     sortable: true },
-              { key: 'status',    label: 'Status',     type: 'badge',    sortable: true,  filterable: true },
-              { key: 'budget',    label: 'Budget',     type: 'text',     sortable: false, align: 'right' },
-              { key: 'spent',     label: 'Spent',      type: 'text',     sortable: false, align: 'right' },
-              { key: 'remaining', label: 'Remaining',  type: 'text',     sortable: false, align: 'right' },
-              { key: 'risk',      label: 'Risk Level', type: 'badge',    sortable: true,  filterable: true },
-              { key: 'progress',  label: 'Progress',   type: 'progress' }
-            ],
-            data: rows,
-            onRowClick: function (row) { openDetail({ type: 'program', name: row.program, row: row }); }
-          });
-          return function () { if (tbl && tbl.destroy) tbl.destroy(); };
-        }
+    /* ── VIEW: Portfolio ───────────────────────────────────── */
+    function renderPortfolio() {
+      mainEl.innerHTML =
+        '<div class="pmo-view">' +
+          '<h2 class="pmo-sec">Portfolio Overview</h2>' +
+          '<div id="pmo-ptable"></div>' +
+        '</div>';
+
+      var tbl = M.dataTable('pmo-ptable', {
+        ariaLabel: 'Program portfolio overview',
+        stickyHeader: true,
+        stripedRows: true,
+        columns: [
+          { key: 'program',   label: 'Program',    type: 'text',     sortable: true                        },
+          { key: 'owner',     label: 'PM',         type: 'text',     sortable: true                        },
+          { key: 'status',    label: 'Status',     type: 'badge',    sortable: true,  filterable: true      },
+          { key: 'budget',    label: 'Budget',     type: 'text',     sortable: false, align: 'right'        },
+          { key: 'spent',     label: 'Spent',      type: 'text',     sortable: false, align: 'right'        },
+          { key: 'remaining', label: 'Remaining',  type: 'text',     sortable: false, align: 'right'        },
+          { key: 'risk',      label: 'Risk',       type: 'badge',    sortable: true,  filterable: true      },
+          { key: 'progress',  label: 'Progress',   type: 'progress'                                        }
+        ],
+        data: filterByProg(PORTFOLIO),
+        onRowClick: function (row) { openDetail({ type: 'program', name: row.program, row: row }); }
       });
+      return function () { if (tbl && tbl.destroy) tbl.destroy(); };
+    }
 
-      /* ── VIEW: Resources ───────────────────────────────────── */
-      registry.register({
-        id: 'resources',
-        title: 'Resources',
-        defaultPlacement: 'page',
-        factory: function (container) {
-          container.innerHTML =
-            '<div class="pmo-view">' +
-              '<h2 class="pmo-sec">Resource Utilization</h2>' +
-              '<div class="pmo-gauge-grid">' +
-                '<div class="pmo-gc" role="group" aria-label="Engineering utilization">' +
-                  '<canvas id="pmo-g-eng" width="200" height="200" role="img" aria-label="Engineering resource utilization at 91 percent — high, action required"></canvas>' +
-                  '<span class="sr-only">Engineering: 91% utilized. High — action required.</span>' +
-                  '<span class="pmo-glabel">Engineering</span>' +
-                '</div>' +
-                '<div class="pmo-gc" role="group" aria-label="Design utilization">' +
-                  '<canvas id="pmo-g-des" width="200" height="200" role="img" aria-label="Design resource utilization at 67 percent — medium"></canvas>' +
-                  '<span class="sr-only">Design: 67% utilized. Medium.</span>' +
-                  '<span class="pmo-glabel">Design</span>' +
-                '</div>' +
-                '<div class="pmo-gc" role="group" aria-label="QA utilization">' +
-                  '<canvas id="pmo-g-qa" width="200" height="200" role="img" aria-label="QA resource utilization at 45 percent — available capacity"></canvas>' +
-                  '<span class="sr-only">QA: 45% utilized. Available capacity.</span>' +
-                  '<span class="pmo-glabel">QA</span>' +
-                '</div>' +
-              '</div>' +
-              '<h2 class="pmo-sec">Budget Allocation by Program</h2>' +
-              '<div class="pmo-card">' +
-                '<div class="pmo-chart-wrap">' +
-                  '<canvas id="pmo-bchart" role="img" aria-label="Bar chart showing budget allocation in thousands: Quantum $2100K, Nimbus $3400K, Helios $1800K, Cobalt $950K, Fortis $1200K"></canvas>' +
-                  '<span class="sr-only">Budget: Quantum Platform $2,100K, Nimbus Migration $3,400K, Helios 360 $1,800K, Cobalt Data Lake $950K, Fortis Security $1,200K</span>' +
-                '</div>' +
-              '</div>' +
-            '</div>';
+    /* ── VIEW: Resources ───────────────────────────────────── */
+    function renderResources() {
+      mainEl.innerHTML =
+        '<div class="pmo-view">' +
+          '<h2 class="pmo-sec">Resource Utilization</h2>' +
+          '<div class="pmo-gauge-grid">' +
+            '<div class="pmo-gc" role="group" aria-label="Engineering utilization">' +
+              '<canvas id="pmo-g-eng" width="200" height="200" role="img" aria-label="Engineering resource utilization at 91 percent, high"></canvas>' +
+              '<span class="sr-only">Engineering: 91% utilized. High utilization — action required.</span>' +
+              '<span class="pmo-glabel">Engineering</span>' +
+            '</div>' +
+            '<div class="pmo-gc" role="group" aria-label="Design utilization">' +
+              '<canvas id="pmo-g-des" width="200" height="200" role="img" aria-label="Design resource utilization at 67 percent, medium"></canvas>' +
+              '<span class="sr-only">Design: 67% utilized. Medium utilization.</span>' +
+              '<span class="pmo-glabel">Design</span>' +
+            '</div>' +
+            '<div class="pmo-gc" role="group" aria-label="QA utilization">' +
+              '<canvas id="pmo-g-qa"  width="200" height="200" role="img" aria-label="QA resource utilization at 45 percent, capacity available"></canvas>' +
+              '<span class="sr-only">QA: 45% utilized. Available capacity.</span>' +
+              '<span class="pmo-glabel">QA</span>' +
+            '</div>' +
+          '</div>' +
+          '<h2 class="pmo-sec">Budget Allocation by Program</h2>' +
+          '<div class="pmo-card">' +
+            '<div class="pmo-chart-wrap">' +
+              '<canvas id="pmo-bchart" role="img" aria-label="Bar chart: budget by program. Quantum $2.1M, Nimbus $3.4M, Helios $1.8M, Cobalt $950K, Fortis $1.2M"></canvas>' +
+              '<span class="sr-only">Budget allocation: Quantum Platform $2,100K, Nimbus Migration $3,400K, Helios 360 $1,800K, Cobalt Data Lake $950K, Fortis Security $1,200K.</span>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
 
-          [
-            { id: 'pmo-g-eng', value: 91, color: '#DC0000', label: 'ENGINEERING', led: 'HIGH UTIL' },
-            { id: 'pmo-g-des', value: 67, color: '#FFC72C', label: 'DESIGN',       led: 'MED UTIL'  },
-            { id: 'pmo-g-qa',  value: 45, color: '#00A651', label: 'QA',           led: 'OK'         }
-          ].forEach(function (gc) {
-            M.createGauge({
-              target: '#' + gc.id,
-              size: 'md',
-              config: {
-                value: gc.value, max: 100, color: gc.color, colorMode: 'lower-better',
-                ticks: 10, subticks: 5, startAngle: -225, endAngle: 45, showNeedle: true,
-                numbers: [0, 25, 50, 75, 100],
-                complications: {
-                  centerValue: String(gc.value), centerUnit: '%', centerLabel: gc.label,
-                  arcBar: { labelLeft: '0', labelRight: '100' },
-                  statusLed: { color: gc.color, label: gc.led }
-                }
-              }
-            });
-          });
-
-          var bc = document.getElementById('pmo-bchart');
-          if (bc && M.charts && M.charts.barChart) {
-            M.charts.barChart(bc, [
-              { label: 'Quantum',  value: 2100, color: '#FFC72C' },
-              { label: 'Nimbus',   value: 3400, color: '#448AFF' },
-              { label: 'Helios',   value: 1800, color: '#00A651' },
-              { label: 'Cobalt',   value: 950,  color: '#DC0000' },
-              { label: 'Fortis',   value: 1200, color: '#7C4DFF' }
-            ], { showLabels: true, showValues: true, animate: true, responsive: true });
+      [
+        { id: 'pmo-g-eng', value: 91, label: 'ENGINEERING', led: 'HIGH UTIL'  },
+        { id: 'pmo-g-des', value: 67, label: 'DESIGN',      led: 'MED UTIL'   },
+        { id: 'pmo-g-qa',  value: 45, label: 'QA',          led: 'OK'         }
+      ].forEach(function (gc) {
+        M.createGauge({
+          target: '#' + gc.id,
+          size: 'md',
+          config: {
+            value: gc.value, max: 100, colorMode: 'lower-better',
+            ticks: 10, subticks: 5, startAngle: -225, endAngle: 45, showNeedle: true,
+            numbers: [0, 25, 50, 75, 100],
+            complications: {
+              centerValue: String(gc.value), centerUnit: '%', centerLabel: gc.label,
+              arcBar: { labelLeft: '0', labelRight: '100' },
+              statusLed: { label: gc.led }
+            }
           }
-          return function () {};
-        }
+        });
       });
 
-      /* ── VIEW: Risks ───────────────────────────────────────── */
-      registry.register({
-        id: 'risks',
-        title: 'Risks',
-        defaultPlacement: 'page',
-        factory: function (container) {
-          container.innerHTML =
-            '<div class="pmo-view">' +
-              '<h2 class="pmo-sec">Risk Register</h2>' +
-              '<div id="pmo-rtable"></div>' +
-            '</div>';
+      var bc = document.getElementById('pmo-bchart');
+      if (bc && M.charts && M.charts.barChart) {
+        M.charts.barChart(bc, [
+          { label: 'Quantum', value: 2100 },
+          { label: 'Nimbus',  value: 3400 },
+          { label: 'Helios',  value: 1800 },
+          { label: 'Cobalt',  value: 950  },
+          { label: 'Fortis',  value: 1200 }
+        ], { showLabels: true, showValues: true, animate: true, responsive: true });
+      }
+    }
 
-          var rows = filterByProg(RISKS);
-          var tbl = M.dataTable('pmo-rtable', {
-            ariaLabel: 'Risk register',
-            stickyHeader: true,
-            stripedRows: true,
-            columns: [
-              { key: 'id',          label: 'ID',          type: 'text',  sortable: true },
-              { key: 'description', label: 'Description', type: 'text' },
-              { key: 'program',     label: 'Program',     type: 'text',  sortable: true, filterable: true },
-              { key: 'impact',      label: 'Impact',      type: 'badge', sortable: true, filterable: true },
-              { key: 'prob',        label: 'Probability', type: 'text',  sortable: true, align: 'right' },
-              { key: 'owner',       label: 'Owner',       type: 'text',  sortable: true },
-              { key: 'mitigation',  label: 'Mitigation',  type: 'badge', sortable: true, filterable: true }
-            ],
-            data: rows,
-            onRowClick: function (row) { openDetail({ type: 'risk', name: row.id + ': ' + row.description, row: row }); }
-          });
-          return function () { if (tbl && tbl.destroy) tbl.destroy(); };
-        }
+    /* ── VIEW: Risks ───────────────────────────────────────── */
+    function renderRisks() {
+      mainEl.innerHTML =
+        '<div class="pmo-view">' +
+          '<h2 class="pmo-sec">Risk Register</h2>' +
+          '<div id="pmo-rtable"></div>' +
+        '</div>';
+
+      var tbl = M.dataTable('pmo-rtable', {
+        ariaLabel: 'Risk register',
+        stickyHeader: true,
+        stripedRows: true,
+        columns: [
+          { key: 'id',          label: 'ID',          type: 'text',  sortable: true                   },
+          { key: 'description', label: 'Description', type: 'text'                                    },
+          { key: 'program',     label: 'Program',     type: 'text',  sortable: true, filterable: true },
+          { key: 'impact',      label: 'Impact',      type: 'badge', sortable: true, filterable: true },
+          { key: 'prob',        label: 'Probability', type: 'text',  sortable: true, align: 'right'   },
+          { key: 'owner',       label: 'Owner',       type: 'text',  sortable: true                   },
+          { key: 'status',      label: 'Status',      type: 'badge', sortable: true, filterable: true }
+        ],
+        data: filterByProg(RISKS),
+        onRowClick: function (row) { openDetail({ type: 'risk', name: row.id + ': ' + row.description, row: row }); }
       });
+      return function () { if (tbl && tbl.destroy) tbl.destroy(); };
+    }
 
-      /* ── VIEW: Detail panel ────────────────────────────────── */
-      registry.register({
-        id: 'detail',
-        title: 'Detail',
-        defaultPlacement: 'side-panel',
-        factory: function (container, data) {
-          var d   = data || {};
-          var row = d.row || d.task || {};
+    /* ── Detail panel ──────────────────────────────────────── */
+    function openDetail(data) {
+      var d   = data || {};
+      var row = d.row || d.task || {};
 
-          container.innerHTML =
-            '<div class="pmo-dt">' +
-              '<div class="pmo-dth">' +
-                '<h2 class="pmo-dttitle" id="pmo-dttl">' + esc(d.name || 'Detail') + '</h2>' +
-                '<button type="button" class="pmo-xbtn" id="pmo-xbtn" aria-label="Close detail panel">X</button>' +
-              '</div>' +
-              '<div class="pmo-tabs" role="tablist" aria-label="Detail tabs">' +
-                '<button type="button" class="pmo-tabbtn is-active" role="tab" aria-selected="true"  aria-controls="pmo-tp-details"  id="pmo-th-details">Details</button>'  +
-                '<button type="button" class="pmo-tabbtn"           role="tab" aria-selected="false" aria-controls="pmo-tp-tasks"    id="pmo-th-tasks">Tasks</button>'     +
-                '<button type="button" class="pmo-tabbtn"           role="tab" aria-selected="false" aria-controls="pmo-tp-res"      id="pmo-th-res">Resources</button>'   +
-                '<button type="button" class="pmo-tabbtn"           role="tab" aria-selected="false" aria-controls="pmo-tp-risks"    id="pmo-th-risks">Risks</button>'     +
-                '<button type="button" class="pmo-tabbtn"           role="tab" aria-selected="false" aria-controls="pmo-tp-history"  id="pmo-th-history">History</button>' +
-              '</div>' +
-              '<div id="pmo-tp-details"  class="pmo-tabp is-active" role="tabpanel" aria-labelledby="pmo-th-details">'  + buildDetailTab(d, row) + '</div>' +
-              '<div id="pmo-tp-tasks"    class="pmo-tabp"           role="tabpanel" aria-labelledby="pmo-th-tasks">'    + '<div class="pmo-placeholder">Task breakdown will appear here once linked to project management system.</div>' + '</div>' +
-              '<div id="pmo-tp-res"      class="pmo-tabp"           role="tabpanel" aria-labelledby="pmo-th-res">'      + '<div class="pmo-placeholder">Resource assignments and utilization linked to resource management.</div>' + '</div>' +
-              '<div id="pmo-tp-risks"    class="pmo-tabp"           role="tabpanel" aria-labelledby="pmo-th-risks">'    + '<div class="pmo-placeholder">Associated risks and mitigation actions linked to risk register.</div>' + '</div>' +
-              '<div id="pmo-tp-history"  class="pmo-tabp"           role="tabpanel" aria-labelledby="pmo-th-history">'  + '<div class="pmo-placeholder">Audit trail and change history. Last updated: today.</div>' + '</div>' +
-            '</div>';
+      detailEl.innerHTML =
+        '<div class="pmo-dt">' +
+          '<div class="pmo-dth">' +
+            '<h2 class="pmo-dttitle" id="pmo-dt-title">' + esc(d.name || 'Detail') + '</h2>' +
+            '<button type="button" class="pmo-xbtn" id="pmo-dt-close" aria-label="Close detail panel">X</button>' +
+          '</div>' +
+          '<div class="pmo-tabs" role="tablist" aria-label="Detail sections">' +
+            '<button type="button" class="pmo-tabbtn is-active" role="tab" aria-selected="true"  aria-controls="pmo-tp-details"  id="pmo-th-details">Details</button>'  +
+            '<button type="button" class="pmo-tabbtn"           role="tab" aria-selected="false" aria-controls="pmo-tp-tasks"    id="pmo-th-tasks">Tasks</button>'     +
+            '<button type="button" class="pmo-tabbtn"           role="tab" aria-selected="false" aria-controls="pmo-tp-res"      id="pmo-th-res">Resources</button>'   +
+            '<button type="button" class="pmo-tabbtn"           role="tab" aria-selected="false" aria-controls="pmo-tp-risks"    id="pmo-th-risks">Risks</button>'     +
+            '<button type="button" class="pmo-tabbtn"           role="tab" aria-selected="false" aria-controls="pmo-tp-hist"     id="pmo-th-hist">History</button>'    +
+          '</div>' +
+          '<div id="pmo-tp-details" class="pmo-tabp is-active" role="tabpanel" aria-labelledby="pmo-th-details">' + buildDetailTab(d, row) + '</div>' +
+          '<div id="pmo-tp-tasks"   class="pmo-tabp"           role="tabpanel" aria-labelledby="pmo-th-tasks"><div class="pmo-placeholder">Task breakdown linked to project management system.</div></div>' +
+          '<div id="pmo-tp-res"     class="pmo-tabp"           role="tabpanel" aria-labelledby="pmo-th-res"><div class="pmo-placeholder">Resource assignments and utilization details.</div></div>' +
+          '<div id="pmo-tp-risks"   class="pmo-tabp"           role="tabpanel" aria-labelledby="pmo-th-risks"><div class="pmo-placeholder">Associated risks and mitigation actions.</div></div>' +
+          '<div id="pmo-tp-hist"    class="pmo-tabp"           role="tabpanel" aria-labelledby="pmo-th-hist"><div class="pmo-placeholder">Audit trail and change history.</div></div>' +
+        '</div>';
 
-          var tbs = container.querySelectorAll('.pmo-tabbtn');
-          for (var ti = 0; ti < tbs.length; ti++) {
-            tbs[ti].addEventListener('click', function (e) {
-              var pid = e.currentTarget.getAttribute('aria-controls');
-              for (var tj = 0; tj < tbs.length; tj++) {
-                tbs[tj].classList.remove('is-active');
-                tbs[tj].setAttribute('aria-selected', 'false');
-              }
-              e.currentTarget.classList.add('is-active');
-              e.currentTarget.setAttribute('aria-selected', 'true');
-              var panels = container.querySelectorAll('.pmo-tabp');
-              for (var tp = 0; tp < panels.length; tp++) {
-                if (panels[tp].id === pid) { panels[tp].classList.add('is-active'); } else { panels[tp].classList.remove('is-active'); }
-              }
-            });
+      var tbs = detailEl.querySelectorAll('.pmo-tabbtn');
+      for (var ti = 0; ti < tbs.length; ti++) {
+        tbs[ti].addEventListener('click', function (e) {
+          var pid = e.currentTarget.getAttribute('aria-controls');
+          for (var tj = 0; tj < tbs.length; tj++) {
+            tbs[tj].classList.remove('is-active');
+            tbs[tj].setAttribute('aria-selected', 'false');
           }
-
-          var xbtn = document.getElementById('pmo-xbtn');
-          if (xbtn) {
-            xbtn.addEventListener('click', function () {
-              orchestrator.close('detail');
-              shellEl.setAttribute('layout', 'full');
-            });
+          e.currentTarget.classList.add('is-active');
+          e.currentTarget.setAttribute('aria-selected', 'true');
+          var panels = detailEl.querySelectorAll('.pmo-tabp');
+          for (var tp = 0; tp < panels.length; tp++) {
+            if (panels[tp].id === pid) { panels[tp].classList.add('is-active'); } else { panels[tp].classList.remove('is-active'); }
           }
-          return function () {};
-        }
+        });
+      }
+
+      var closeBtn = document.getElementById('pmo-dt-close');
+      if (closeBtn) closeBtn.addEventListener('click', closeDetail);
+
+      detailEl.setAttribute('aria-hidden', 'false');
+      appEl.classList.add('has-detail');
+    }
+
+    function closeDetail() {
+      detailEl.setAttribute('aria-hidden', 'true');
+      detailEl.innerHTML = '';
+      appEl.classList.remove('has-detail');
+    }
+
+    function buildDetailTab(d, row) {
+      if (d.type === 'risk') {
+        return fld('Risk ID',     esc(row.id          || '-')) +
+               fld('Description', esc(row.description || '-')) +
+               fld('Program',     esc(row.program     || '-')) +
+               fld('Impact',      bdg(row.impact))             +
+               fld('Probability', esc(row.prob        || '-')) +
+               fld('Owner',       esc(row.owner       || '-')) +
+               fld('Status',      bdg(row.status));
+      }
+      if (d.type === 'program') {
+        return fld('Program',   esc(row.program   || '-')) +
+               fld('PM Owner',  esc(row.owner     || '-')) +
+               fld('Status',    bdg(row.status))           +
+               fld('Budget',    esc(row.budget    || '-')) +
+               fld('Spent',     esc(row.spent     || '-')) +
+               fld('Remaining', esc(row.remaining || '-')) +
+               fld('Risk',      bdg(row.risk))             +
+               fld('Progress',  pbr(row.progress ? row.progress.value : 0));
+      }
+      var task = d.task || {};
+      return fld('Task',     esc(task.title   || d.name || '-')) +
+             fld('Program',  esc(task.program || '-'))           +
+             fld('Owner',    esc(task.owner   || '-'))           +
+             fld('Status',   bdg(task.status  || '-'))           +
+             fld('Progress', pbr(task.progress || 0))            +
+             fld('Start',    esc(task.start   || '-'))           +
+             fld('End',      esc(task.end     || '-'));
+    }
+
+    /* ── Command palette ───────────────────────────────────── */
+    function openPalette() {
+      if (!M.commandPalette) return;
+      M.commandPalette({
+        placeholder: 'Search programs, views, commands...',
+        items: [
+          { label: 'View: Timeline',           action: function () { showView('timeline');  } },
+          { label: 'View: Portfolio',          action: function () { showView('portfolio'); } },
+          { label: 'View: Resources',          action: function () { showView('resources'); } },
+          { label: 'View: Risks',              action: function () { showView('risks');     } },
+          { label: 'Filter: All Programs',     action: function () { applyProgFilter('');         } },
+          { label: 'Filter: Quantum Platform', action: function () { applyProgFilter('quantum');  } },
+          { label: 'Filter: Nimbus Migration', action: function () { applyProgFilter('nimbus');   } },
+          { label: 'Filter: Helios 360',       action: function () { applyProgFilter('helios');   } },
+          { label: 'Filter: Cobalt Data Lake', action: function () { applyProgFilter('cobalt');   } },
+          { label: 'Filter: Fortis Security',  action: function () { applyProgFilter('fortis');   } },
+          { label: 'Theme: Nero',              action: function () { M.setTheme('nero');       } },
+          { label: 'Theme: Editorial',         action: function () { M.setTheme('editorial');  } },
+          { label: 'Theme: Avorio',            action: function () { M.setTheme('avorio');     } },
+          { label: 'Theme: Colorblind',        action: function () { M.setTheme('colorblind'); } },
+          { label: 'Theme: Sugar',             action: function () { M.setTheme('sugar');      } },
+          { label: 'Theme: Navy',              action: function () { M.setTheme('navy');       } }
+        ]
       });
+    }
 
-      /* ── Detail tab builder ────────────────────────────────── */
-      function buildDetailTab(d, row) {
-        if (d.type === 'risk') {
-          return fld('Risk ID', esc(row.id || '-')) +
-            fld('Description', esc(row.description || '-')) +
-            fld('Program', esc(row.program || '-')) +
-            fld('Impact', bdg(row.impact)) +
-            fld('Probability', esc(row.prob || '-')) +
-            fld('Owner', esc(row.owner || '-')) +
-            fld('Mitigation', bdg(row.mitigation));
-        }
-        if (d.type === 'program') {
-          return fld('Program', esc(row.program || '-')) +
-            fld('PM Owner', esc(row.owner || '-')) +
-            fld('Status', bdg(row.status)) +
-            fld('Budget', esc(row.budget || '-')) +
-            fld('Spent', esc(row.spent || '-')) +
-            fld('Remaining', esc(row.remaining || '-')) +
-            fld('Risk Level', bdg(row.risk)) +
-            fld('Progress', pbr(row.progress ? row.progress.value : 0));
-        }
-        var task = d.task || {};
-        return fld('Task', esc(task.title || d.name || '-')) +
-          fld('Program', esc(task.program || '-')) +
-          fld('Owner', esc(task.owner || '-')) +
-          fld('Status', bdg(task.status || '-')) +
-          fld('Progress', pbr(task.progress || 0)) +
-          fld('Start Date', esc(task.start || '-')) +
-          fld('End Date', esc(task.end || '-'));
-      }
+    document.addEventListener('keydown', function (e) {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); openPalette(); }
+    });
 
-      function esc(str) {
-        var d = document.createElement('div');
-        d.appendChild(document.createTextNode(String(str)));
-        return d.innerHTML;
-      }
-
-      function fld(label, valueHtml) {
-        return '<div class="pmo-field"><span class="pmo-fl">' + esc(label) + '</span><div class="pmo-fv">' + valueHtml + '</div></div>';
-      }
-
-      function bdg(val) {
-        var v = String(val || '');
-        var lv = v.toLowerCase();
-        var cls = 'pmo-badge--muted';
-        if (lv === 'on track' || lv === 'complete' || lv === 'closed' || lv === 'low' || lv === 'ok') cls = 'pmo-badge--ok';
-        else if (lv === 'at risk' || lv === 'medium' || lv === 'monitor' || lv === 'active' || lv === 'near target') cls = 'pmo-badge--warn';
-        else if (lv === 'behind' || lv === 'high' || lv === 'blocked' || lv === 'open' || lv === 'escalated' || lv === 'critical') cls = 'pmo-badge--danger';
-        else if (lv === 'complete' || lv === 'completed') cls = 'pmo-badge--info';
-        return '<span class="pmo-badge ' + cls + '">' + esc(v) + '</span>';
-      }
-
-      function pbr(pct) {
-        var n = Math.max(0, Math.min(100, Number(pct) || 0));
-        return '<div class="pmo-pbwrap" role="progressbar" aria-valuenow="' + n + '" aria-valuemin="0" aria-valuemax="100" aria-label="Progress ' + n + '%"><div class="pmo-pb" style="width:' + n + '%"></div></div><span class="pmo-fv" style="margin-top:3px;display:inline-block">' + n + '%</span>';
-      }
-
-      /* ── Bootstrap ─────────────────────────────────────────── */
-      showView('timeline');
-    })();
+    /* ── Bootstrap ─────────────────────────────────────────── */
+    buildSidebar();
+    mountHeader();
+    showView('timeline');
+  })();
   </script>
 </body>
 </html>
