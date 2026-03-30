@@ -17,6 +17,7 @@
       overflow: hidden;
     }
 
+    /* ── Layout ── */
     .app {
       display: grid;
       grid-template-rows: 52px 1fr;
@@ -27,6 +28,7 @@
     }
     .app.is-collapsed { grid-template-columns: 0px 1fr; }
 
+    /* ── Header ── */
     .header {
       grid-area: header;
       display: flex; align-items: center; gap: 12px;
@@ -72,14 +74,12 @@
       color: var(--mn-text-muted); background: var(--mn-surface-raised);
       border: 1px solid var(--mn-border); border-radius: 4px; padding: 2px 6px;
     }
-
     .theme-select {
       font-size: 0.8rem; padding: 4px 8px; height: 32px;
       border-radius: var(--radius-md); border: 1px solid var(--mn-border);
       background: var(--mn-surface); color: var(--mn-text); font-family: inherit; cursor: pointer;
     }
     .theme-select:focus-visible { outline: 2px solid var(--mn-accent); }
-
     .avatar {
       width: 32px; height: 32px; border-radius: 50%;
       background: var(--mn-accent); color: var(--mn-surface);
@@ -88,6 +88,7 @@
       flex-shrink: 0; cursor: pointer;
     }
 
+    /* ── Sidebar ── */
     .sidebar {
       grid-area: sidebar;
       background: var(--mn-surface-raised);
@@ -133,8 +134,7 @@
     .sidebar__link-text { flex: 1; }
     .sidebar__badge {
       font-size: 0.65rem; font-weight: 600; min-width: 18px; text-align: center;
-      padding: 1px 6px; border-radius: 10px;
-      background: var(--mn-accent); color: var(--mn-surface);
+      padding: 1px 6px; border-radius: 10px; background: var(--mn-accent); color: var(--mn-surface);
     }
     .sidebar__spacer { flex: 1; }
     .sidebar__footer {
@@ -150,13 +150,15 @@
     .sidebar__footer-link svg { width: 15px; height: 15px; flex-shrink: 0; opacity: 0.5; }
     .sidebar__footer-link:hover { color: var(--mn-text); background: color-mix(in srgb, var(--mn-accent) 6%, transparent); }
 
+    /* ── Main ── */
     .main { grid-area: main; overflow-y: auto; padding: 24px 28px; }
 
+    /* ── Grid ── */
     .mn-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 16px; }
     .mn-col-3 { grid-column: span 3; } .mn-col-4 { grid-column: span 4; }
-    .mn-col-6 { grid-column: span 6; } .mn-col-8 { grid-column: span 8; }
+    .mn-col-5 { grid-column: span 5; } .mn-col-6 { grid-column: span 6; }
+    .mn-col-7 { grid-column: span 7; } .mn-col-8 { grid-column: span 8; }
     .mn-col-12 { grid-column: span 12; }
-
     .mn-cell {
       background: var(--mn-surface-raised); border: 1px solid var(--mn-border);
       border-radius: var(--radius-md); padding: 16px; min-height: 120px;
@@ -169,10 +171,14 @@
     }
     .mn-cell__body { flex: 1; position: relative; min-height: 0; }
 
+    /* ── Hero KPIs ── */
     .hero-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; grid-column: span 12; }
     .hero-kpi {
       background: var(--mn-surface-raised); border: 1px solid var(--mn-border);
-      border-radius: var(--radius-md); padding: 20px;
+      border-radius: var(--radius-md); padding: 20px; position: relative; overflow: hidden;
+    }
+    .hero-kpi__spark {
+      position: absolute; bottom: 0; right: 0; width: 100px; height: 40px; opacity: 0.3;
     }
     .hero-kpi__label {
       font-family: var(--font-display); font-size: 0.6rem;
@@ -183,23 +189,57 @@
       font-family: var(--font-display); font-size: 2rem; font-weight: 700;
       color: var(--mn-text); line-height: 1.1;
     }
-    .hero-kpi__trend { font-family: var(--font-mono); font-size: 0.7rem; margin-top: 6px; }
-    .hero-kpi__trend--up { color: var(--mn-success); }
-    .hero-kpi__trend--down { color: var(--mn-error); }
-    @media (max-width: 1100px) { .hero-kpis { grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width: 768px) { .hero-kpis { grid-template-columns: 1fr; } }
+    .hero-kpi__sub {
+      display: flex; gap: 16px; margin-top: 8px; flex-wrap: wrap;
+    }
+    .hero-kpi__delta {
+      font-family: var(--font-mono); font-size: 0.7rem;
+    }
+    .hero-kpi__delta--up { color: var(--mn-success); }
+    .hero-kpi__delta--down { color: var(--mn-error); }
+    .hero-kpi__delta--flat { color: var(--mn-text-muted); }
 
+    /* ── Speedometer row ── */
+    .speedo-row {
+      display: flex; gap: 24px; justify-content: space-around; align-items: flex-end;
+      flex-wrap: wrap; grid-column: span 12;
+      background: var(--mn-surface-raised); border: 1px solid var(--mn-border);
+      border-radius: var(--radius-md); padding: 24px 16px;
+    }
+    .speedo-item { text-align: center; }
+    .speedo-item__label {
+      font-family: var(--font-display); font-size: 0.6rem;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--mn-text-muted); margin-top: 8px;
+    }
+
+    /* ── Status indicator ── */
+    .live-dot {
+      display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+      background: var(--mn-success); margin-right: 6px;
+      animation: pulse-dot 2s infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    /* ── Responsive ── */
     @media (max-width: 1100px) {
-      .mn-col-3, .mn-col-4, .mn-col-6, .mn-col-8 { grid-column: span 6; }
+      .hero-kpis { grid-template-columns: repeat(2, 1fr); }
+      .mn-col-3, .mn-col-4, .mn-col-5, .mn-col-6, .mn-col-7, .mn-col-8 { grid-column: span 6; }
+      .speedo-row { grid-column: span 12; }
     }
     @media (max-width: 768px) {
       .app { grid-template-columns: 0px 1fr; }
       .app .sidebar { opacity: 0; padding: 0; pointer-events: none; }
-      .mn-col-3,.mn-col-4,.mn-col-6,.mn-col-8,.mn-col-12 { grid-column: span 12; }
+      .hero-kpis { grid-template-columns: 1fr; }
+      .mn-col-3,.mn-col-4,.mn-col-5,.mn-col-6,.mn-col-7,.mn-col-8,.mn-col-12 { grid-column: span 12; }
       .main { padding: 16px; }
     }
     @media (prefers-reduced-motion: reduce) {
       .app, .sidebar, .icon-btn, .sidebar__link, .search-bar { transition: none; }
+      @keyframes pulse-dot { 0%, 100% { opacity: 1; } }
     }
   </style>
 </head>
@@ -248,7 +288,7 @@
       <nav class="sidebar__nav">
         <button class="sidebar__link" data-page="funnel"><span id="ic-funnel"></span><span class="sidebar__link-text">Pipeline</span></button>
         <button class="sidebar__link" data-page="heatmap"><span id="ic-heatmap"></span><span class="sidebar__link-text">Heatmap</span></button>
-        <button class="sidebar__link" data-page="reports"><span id="ic-report"></span><span class="sidebar__link-text">Reports</span></button>
+        <button class="sidebar__link" data-page="risks"><span id="ic-alert"></span><span class="sidebar__link-text">Risks</span><span class="sidebar__badge">2</span></button>
       </nav>
       <div class="sidebar__spacer"></div>
       <div class="sidebar__footer">
@@ -258,18 +298,93 @@
 
     <main class="main" id="main-content">
       <div class="mn-grid">
-        <div class="hero-kpis">
-          <div class="hero-kpi"><div class="hero-kpi__label">Revenue</div><div class="hero-kpi__value">$14.2M</div><div class="hero-kpi__trend hero-kpi__trend--up">+8.3% QoQ</div></div>
-          <div class="hero-kpi"><div class="hero-kpi__label">EBITDA Margin</div><div class="hero-kpi__value">23.7%</div><div class="hero-kpi__trend hero-kpi__trend--up">+1.2pp YoY</div></div>
-          <div class="hero-kpi"><div class="hero-kpi__label">Active Clients</div><div class="hero-kpi__value">1,247</div><div class="hero-kpi__trend hero-kpi__trend--up">+42 this quarter</div></div>
-          <div class="hero-kpi"><div class="hero-kpi__label">Employee NPS</div><div class="hero-kpi__value">72</div><div class="hero-kpi__trend hero-kpi__trend--down">-3 vs prior</div></div>
+        <!-- Row 0: Hero KPIs with embedded sparklines -->
+        <div class="hero-kpis" id="hero-kpis">
+          <div class="hero-kpi">
+            <canvas class="hero-kpi__spark" id="kpi-spark-0" aria-hidden="true"></canvas>
+            <div class="hero-kpi__label">Revenue</div>
+            <div class="hero-kpi__value">$14.2M</div>
+            <div class="hero-kpi__sub">
+              <span class="hero-kpi__delta hero-kpi__delta--up">+8.3% YoY</span>
+              <span class="hero-kpi__delta hero-kpi__delta--up">+2.1% QoQ</span>
+            </div>
+          </div>
+          <div class="hero-kpi">
+            <canvas class="hero-kpi__spark" id="kpi-spark-1" aria-hidden="true"></canvas>
+            <div class="hero-kpi__label">EBITDA Margin</div>
+            <div class="hero-kpi__value">23.7%</div>
+            <div class="hero-kpi__sub">
+              <span class="hero-kpi__delta hero-kpi__delta--up">+1.2pp YoY</span>
+              <span class="hero-kpi__delta hero-kpi__delta--flat">+0.0pp QoQ</span>
+            </div>
+          </div>
+          <div class="hero-kpi">
+            <canvas class="hero-kpi__spark" id="kpi-spark-2" aria-hidden="true"></canvas>
+            <div class="hero-kpi__label">Active Clients</div>
+            <div class="hero-kpi__value">1,247</div>
+            <div class="hero-kpi__sub">
+              <span class="hero-kpi__delta hero-kpi__delta--up">+42 this Q</span>
+              <span class="hero-kpi__delta hero-kpi__delta--up">+156 YoY</span>
+            </div>
+          </div>
+          <div class="hero-kpi">
+            <canvas class="hero-kpi__spark" id="kpi-spark-3" aria-hidden="true"></canvas>
+            <div class="hero-kpi__label">Employee NPS</div>
+            <div class="hero-kpi__value">72</div>
+            <div class="hero-kpi__sub">
+              <span class="hero-kpi__delta hero-kpi__delta--down">-3 vs prior</span>
+              <span class="hero-kpi__delta hero-kpi__delta--up">+8 YoY</span>
+            </div>
+          </div>
         </div>
-        <div class="mn-cell mn-col-8"><div class="mn-cell__label">Performance gauges</div><div class="mn-cell__body" id="cell-strip"></div></div>
-        <div class="mn-cell mn-col-4"><div class="mn-cell__label">Revenue trend</div><div class="mn-cell__body" id="cell-sparkline"></div></div>
-        <div class="mn-cell mn-col-6"><div class="mn-cell__label">Regional performance</div><div class="mn-cell__body" id="cell-heatmap"></div></div>
-        <div class="mn-cell mn-col-6"><div class="mn-cell__label">Sales pipeline</div><div class="mn-cell__body" id="cell-funnel"></div></div>
-        <div class="mn-cell mn-col-8"><div class="mn-cell__label">Strategic initiatives</div><div class="mn-cell__body" id="cell-gantt" style="min-height:220px"></div></div>
-        <div class="mn-cell mn-col-4"><div class="mn-cell__label">Board updates</div><div class="mn-cell__body" id="cell-activity"></div></div>
+
+        <!-- Row 1: Speedometer instruments -->
+        <div class="speedo-row" id="speedo-row">
+          <div class="speedo-item">
+            <canvas id="speedo-margin" width="200" height="200" role="img" aria-label="Gross margin at 67 percent"></canvas>
+            <div class="speedo-item__label">Gross Margin</div>
+          </div>
+          <div class="speedo-item">
+            <canvas id="speedo-score" width="280" height="280" role="img" aria-label="Quality score at 92 points"></canvas>
+            <div class="speedo-item__label">Quality Score</div>
+          </div>
+          <div class="speedo-item">
+            <canvas id="speedo-cash" width="200" height="200" role="img" aria-label="Cash ratio at 1.8x"></canvas>
+            <div class="speedo-item__label">Cash Ratio</div>
+          </div>
+        </div>
+
+        <!-- Row 2: Dashboard strip -->
+        <div class="mn-cell mn-col-12">
+          <div class="mn-cell__label"><span class="live-dot"></span>Live instrument strip</div>
+          <div class="mn-cell__body" id="cell-strip"></div>
+        </div>
+
+        <!-- Row 3: Heatmap + Pipeline -->
+        <div class="mn-cell mn-col-7">
+          <div class="mn-cell__label">Regional performance Q1-Q4</div>
+          <div class="mn-cell__body" id="cell-heatmap"></div>
+        </div>
+        <div class="mn-cell mn-col-5">
+          <div class="mn-cell__label">Sales pipeline</div>
+          <div class="mn-cell__body" id="cell-funnel"></div>
+        </div>
+
+        <!-- Row 4: Gantt + Activity -->
+        <div class="mn-cell mn-col-8">
+          <div class="mn-cell__label">Strategic initiatives</div>
+          <div class="mn-cell__body" id="cell-gantt" style="min-height:240px"></div>
+        </div>
+        <div class="mn-cell mn-col-4">
+          <div class="mn-cell__label">Board updates</div>
+          <div class="mn-cell__body" id="cell-activity"></div>
+        </div>
+
+        <!-- Row 5: Portfolio table -->
+        <div class="mn-cell mn-col-12">
+          <div class="mn-cell__label">Portfolio overview</div>
+          <div class="mn-cell__body" id="cell-table"></div>
+        </div>
       </div>
     </main>
   </div>
@@ -277,26 +392,43 @@
   <script src="../dist/iife/maranello.min.js"></script>
   <script>
     (function () {
-
       var M = window.Maranello;
       if (!M) return;
 
       function setIcon(id, name) { var el = document.getElementById(id); if (el && M.icons[name]) el.innerHTML = M.icons[name](); }
 
+      // Icons
+      setIcon('sidebar-toggle', 'menu');
+      setIcon('search-icon', 'search');
+      setIcon('btn-bell', 'bell');
+      setIcon('btn-settings', 'settings');
+      setIcon('ic-gauge', 'gauge');
+      setIcon('ic-layers', 'layers');
+      setIcon('ic-trend', 'trendUp');
+      setIcon('ic-grid', 'grid');
+      setIcon('ic-funnel', 'funnel');
+      setIcon('ic-heatmap', 'heatmap');
+      setIcon('ic-alert', 'alertTriangle');
+      setIcon('ic-settings', 'settings');
+
+      // Cmd-K label
       var kbdEl = document.querySelector('.search-bar__kbd');
       if (kbdEl) kbdEl.textContent = navigator.userAgent.indexOf('Mac') !== -1 ? '\u2318K' : 'Ctrl+K';
 
+      // Theme
       var picker = document.getElementById('theme-picker');
       var saved = localStorage.getItem('mn-theme') || 'editorial';
       picker.value = saved;
       picker.addEventListener('change', function () { M.setTheme(picker.value); localStorage.setItem('mn-theme', picker.value); });
 
+      // Sidebar toggle
       var shell = document.getElementById('app-shell');
       document.getElementById('sidebar-toggle').addEventListener('click', function () {
         if (shell.className.indexOf('is-collapsed') !== -1) shell.className = shell.className.replace('is-collapsed', '').trim();
         else shell.className = shell.className.trim() + ' is-collapsed';
       });
 
+      // Nav
       var links = document.querySelectorAll('.sidebar__link');
       var bcCurrent = document.querySelector('.breadcrumb__current');
       for (var i = 0; i < links.length; i++) {
@@ -308,74 +440,154 @@
         });
       }
 
-      setIcon('sidebar-toggle', 'menu');
-      setIcon('search-icon', 'search');
-      setIcon('btn-bell', 'bell');
-      setIcon('btn-settings', 'settings');
-      setIcon('ic-gauge', 'gauge');
-      setIcon('ic-layers', 'layers');
-      setIcon('ic-trend', 'trendUp');
-      setIcon('ic-grid', 'grid');
-      setIcon('ic-funnel', 'funnel');
-      setIcon('ic-heatmap', 'heatmap');
-      setIcon('ic-report', 'report');
-      setIcon('ic-settings', 'settings');
+      // ── KPI embedded sparklines ──
+      var kpiSparkData = [
+        [10.2,10.8,11.3,11.8,12.4,12.9,13.2,13.5,13.4,13.7,14.0,14.2],
+        [20.1,20.8,21.2,21.9,22.3,22.8,23.1,23.0,23.2,23.5,23.6,23.7],
+        [980,1010,1040,1060,1095,1120,1145,1170,1195,1210,1230,1247],
+        [64,66,68,71,70,73,74,72,75,74,73,72]
+      ];
+      if (M.sparkline) {
+        for (var s = 0; s < 4; s++) {
+          var sc = document.getElementById('kpi-spark-' + s);
+          if (sc) M.sparkline(sc, kpiSparkData[s]);
+        }
+      }
 
-      // Dashboard Strip
+      // ── Speedometers ──
+      if (M.speedometer) {
+        var p = M.palette ? M.palette() : {};
+        var accent = p.accent || 'var(--mn-accent)';
+        var success = p.signalOk || 'var(--mn-success)';
+        var info = p.signalInfo || 'var(--mn-info)';
+        var danger = p.signalDanger || 'var(--mn-error)';
+
+        var ticks5 = [0, 25, 50, 75, 100];
+
+        M.speedometer(document.getElementById('speedo-margin'), {
+          value: 67, max: 100, unit: '%', size: 'md',
+          ticks: ticks5, needleColor: danger, arcColor: accent,
+          subLabel: 'Target: 70%', animate: true
+        });
+        M.speedometer(document.getElementById('speedo-score'), {
+          value: 92, max: 100, unit: 'pts', size: 'lg',
+          ticks: [0, 20, 40, 60, 80, 100], needleColor: danger, arcColor: success,
+          bar: { value: 85, max: 100 },
+          subLabel: 'Above Target', animate: true
+        });
+        M.speedometer(document.getElementById('speedo-cash'), {
+          value: 60, max: 100, unit: 'x', size: 'md',
+          ticks: ticks5, needleColor: danger, arcColor: info,
+          subLabel: '1.8x ratio', animate: true
+        });
+      }
+
+      // ── Dashboard Strip with 5 zones ──
       var stripEl = document.getElementById('cell-strip');
       if (stripEl && M.dashboardStrip) {
         M.dashboardStrip(stripEl, {
           zones: [
-            { type: 'gauge', label: 'Gross Margin', gaugeConfig: { value: 67, max: 100, showNeedle: true, complications: { centerValue: '67', centerUnit: '%' } } },
-            { type: 'gauge', label: 'Cash Ratio', gaugeConfig: { value: 1.8, max: 3, showNeedle: true, complications: { centerValue: '1.8', centerUnit: 'x' } } },
-            { type: 'board', title: 'Quarterly', stats: [
-              { label: 'ARR', value: '$18.4M' }, { label: 'CAC', value: '$2,140' },
-              { label: 'LTV', value: '$38K' }, { label: 'Churn', value: '2.1%' }
-            ] }
+            {
+              type: 'gauge', label: 'OPERATIONS',
+              gaugeConfig: {
+                value: 92, max: 100, ticks: 10, subticks: 5,
+                startAngle: -225, endAngle: 45, showNeedle: true,
+                numbers: [0, 50, 100],
+                complications: {
+                  centerValue: '92', centerUnit: 'OPS',
+                  statusLed: { color: 'var(--mn-success)', label: 'LIVE' }
+                }
+              },
+              size: 'sm'
+            },
+            {
+              type: 'pipeline', title: 'REVENUE PIPELINE',
+              rows: [
+                { label: 'PROSPECT', value: 49, color: 'var(--mn-chart-series-1)', secondary: '$2.8M' },
+                { label: 'QUALIFIED', value: 36, color: 'var(--mn-chart-series-2)', secondary: '$1.9M' },
+                { label: 'PROPOSAL', value: 22, color: 'var(--mn-chart-series-3)', secondary: '$1.2M' },
+                { label: 'NEGOTIATION', value: 14, color: 'var(--mn-chart-series-4)', secondary: '$840K' },
+                { label: 'CLOSED', value: 126, color: 'var(--mn-success)', secondary: '$14.2M' }
+              ],
+              footer: { label: 'Avg cycle', value: '47 days' }
+            },
+            {
+              type: 'trend', title: 'QUARTERLY TREND',
+              items: [
+                { label: 'REVENUE', value: '$14.2M', trend: 'up', data: [10.2,11.3,12.9,14.2] },
+                { label: 'CLIENTS', value: '1,247', trend: 'up', data: [980,1060,1145,1247] },
+                { label: 'MARGIN', value: '23.7%', trend: 'flat', data: [22.3,22.8,23.1,23.7] },
+                { label: 'NPS', value: '72', trend: 'down', data: [68,74,75,72] }
+              ]
+            },
+            {
+              type: 'board', title: 'QUARTERLY KPI',
+              stats: [
+                { label: 'ARR', value: '$18.4M' },
+                { label: 'CAC', value: '$2,140' },
+                { label: 'LTV', value: '$38K' },
+                { label: 'LTV/CAC', value: '17.8x' }
+              ]
+            },
+            {
+              type: 'gauge', label: 'CHURN RISK',
+              gaugeConfig: {
+                value: 21, max: 100, colorMode: 'lower-better',
+                ticks: 10, subticks: 5, startAngle: -225, endAngle: 45,
+                showNeedle: true, numbers: [0, 50, 100],
+                complications: {
+                  centerValue: '2.1', centerUnit: '%',
+                  centerLabel: 'CHURN',
+                  statusLed: { color: 'var(--mn-success)', label: 'LOW' },
+                  trend: { direction: 'down', delta: '-0.3', color: 'var(--mn-success)' }
+                }
+              },
+              size: 'sm'
+            }
           ],
-          ariaLabel: 'Executive performance gauges'
+          ariaLabel: 'Executive instrument strip'
         });
       }
 
-      // Sparkline
-      var sparkEl = document.getElementById('cell-sparkline');
-      if (sparkEl && M.sparkline) {
-        var c = document.createElement('canvas');
-        c.setAttribute('role', 'img'); c.setAttribute('aria-label', 'Revenue trend');
-        c.style.width = '100%'; c.style.height = '100%';
-        sparkEl.appendChild(c);
-        M.sparkline(c, [8.2,8.5,9.1,9.4,9.8,10.2,10.5,11.0,11.3,11.8,12.1,12.6,12.9,13.2,13.5,13.4,13.7,13.9,14.0,14.1,14.0,14.2,14.3,14.2]);
-      }
-
-      // Heatmap
+      // ── Heatmap ──
       var heatEl = document.getElementById('cell-heatmap');
       if (heatEl && M.heatmap) {
         M.heatmap(heatEl, {
           columnLabels: ['Q1', 'Q2', 'Q3', 'Q4'],
           rows: [
+            { label: 'Americas', cells: [{ value: 94 }, { value: 88 }, { value: 92 }, { value: 96 }] },
             { label: 'EMEA', cells: [{ value: 82 }, { value: 91 }, { value: 78 }, { value: 88 }] },
             { label: 'APAC', cells: [{ value: 65 }, { value: 72 }, { value: 80 }, { value: 85 }] },
-            { label: 'Americas', cells: [{ value: 94 }, { value: 88 }, { value: 92 }, { value: 96 }] },
-            { label: 'LATAM', cells: [{ value: 48 }, { value: 55 }, { value: 62 }, { value: 70 }] }
+            { label: 'LATAM', cells: [{ value: 48 }, { value: 55 }, { value: 62 }, { value: 70 }] },
+            { label: 'MENA', cells: [{ value: 35 }, { value: 42 }, { value: 51 }, { value: 58 }] }
           ],
-          showValues: true, ariaLabel: 'Regional performance heatmap'
+          showValues: true,
+          ariaLabel: 'Regional performance heatmap by quarter',
+          onCellClick: function (row, cell, ri, ci) {
+            if (M.toast) M.toast({ type: 'info', title: row.label + ' Q' + (ci + 1), message: 'Performance score: ' + cell.value + '%' });
+          }
         });
       }
 
-      // Funnel
+      // ── Funnel ──
       var funnelEl = document.getElementById('cell-funnel');
       if (funnelEl && M.funnel) {
         M.funnel(funnelEl, {
           data: { pipeline: [
-            { label: 'Leads', count: 2840 }, { label: 'Qualified', count: 1420 },
-            { label: 'Proposal', count: 680 }, { label: 'Negotiation', count: 340 },
+            { label: 'Leads', count: 2840 },
+            { label: 'Qualified', count: 1420 },
+            { label: 'Proposal', count: 680 },
+            { label: 'Negotiation', count: 340 },
             { label: 'Closed Won', count: 187 }
           ], total: 2840 },
-          showCounts: true, showLabels: true
+          showCounts: true, showLabels: true,
+          onClick: function (stage) {
+            if (M.toast) M.toast({ type: 'info', title: stage.label, message: stage.count + ' items in this stage' });
+          }
         });
       }
 
-      // Gantt
+      // ── Gantt ──
       var ganttEl = document.getElementById('cell-gantt');
       if (ganttEl && M.gantt) {
         M.gantt(ganttEl, [
@@ -383,19 +595,53 @@
           { id: '2', title: 'Platform Modernization', start: '2026-02-01', end: '2026-08-15' },
           { id: '3', title: 'AI Integration Phase 1', start: '2026-03-01', end: '2026-05-31' },
           { id: '4', title: 'Sustainability Roadmap', start: '2026-04-01', end: '2026-09-30' },
-          { id: '5', title: 'Due Diligence - Volta', start: '2026-05-01', end: '2026-07-15' }
-        ]);
+          { id: '5', title: 'Due Diligence - Volta', start: '2026-05-01', end: '2026-07-15' },
+          { id: '6', title: 'Brand Refresh', start: '2026-06-01', end: '2026-08-31' }
+        ], {
+          onClick: function (task) {
+            if (M.toast) M.toast({ type: 'info', title: task.title, message: task.start + ' to ' + task.end });
+          }
+        });
       }
 
-      // Activity
+      // ── Activity feed ──
       var actEl = document.getElementById('cell-activity');
       if (actEl && M.activityFeed) {
         M.activityFeed(actEl, [
           { id: '1', title: 'Board Meeting', body: 'Q1 results approved unanimously', meta: '2 days ago', type: 'success' },
-          { id: '2', title: 'IR Update', body: 'Analyst coverage initiated', meta: '4 days ago', type: 'info' },
+          { id: '2', title: 'IR Update', body: 'Goldman initiated analyst coverage', meta: '4 days ago', type: 'info' },
           { id: '3', title: 'Risk Alert', body: 'APAC FX exposure above threshold', meta: '1 week ago', type: 'warning' },
-          { id: '4', title: 'Compliance', body: 'SOC 2 Type II audit completed', meta: '2 weeks ago', type: 'success' }
-        ], { maxItems: 6 });
+          { id: '4', title: 'Compliance', body: 'SOC 2 Type II audit completed', meta: '2 weeks ago', type: 'success' },
+          { id: '5', title: 'M&A', body: 'Volta NDA signed, due diligence begins', meta: '3 weeks ago', type: 'info' }
+        ], { maxItems: 8 });
+      }
+
+      // ── Portfolio table with click ──
+      var tableEl = document.getElementById('cell-table');
+      if (tableEl && M.dataTable) {
+        M.dataTable(tableEl, {
+          columns: [
+            { key: 'unit', label: 'Business Unit', sortable: true },
+            { key: 'lead', label: 'Lead' },
+            { key: 'revenue', label: 'Revenue', align: 'right' },
+            { key: 'margin', label: 'Margin', align: 'right' },
+            { key: 'growth', label: 'Growth', type: 'status' },
+            { key: 'clients', label: 'Clients', align: 'right' },
+            { key: 'nps', label: 'NPS', align: 'right' }
+          ],
+          data: [
+            { unit: 'Enterprise SaaS', lead: 'Elena Rossi', revenue: '$5.8M', margin: '28.2%', growth: 'On Track', clients: '142', nps: '78' },
+            { unit: 'Platform Services', lead: 'Marco Bianchi', revenue: '$4.1M', margin: '22.5%', growth: 'On Track', clients: '438', nps: '71' },
+            { unit: 'Data & Analytics', lead: 'Yuki Watanabe', revenue: '$2.6M', margin: '31.4%', growth: 'Above Target', clients: '89', nps: '82' },
+            { unit: 'Professional Services', lead: 'Ravi Kumar', revenue: '$1.2M', margin: '15.8%', growth: 'At Risk', clients: '367', nps: '64' },
+            { unit: 'Strategic Partnerships', lead: 'Amara Okafor', revenue: '$0.5M', margin: '41.2%', growth: 'On Track', clients: '211', nps: '76' }
+          ],
+          compact: true,
+          ariaLabel: 'Portfolio overview by business unit',
+          onRowClick: function (row) {
+            if (M.toast) M.toast({ type: 'info', title: row.unit, message: row.revenue + ' revenue, ' + row.margin + ' margin' });
+          }
+        });
       }
     })();
   </script>
