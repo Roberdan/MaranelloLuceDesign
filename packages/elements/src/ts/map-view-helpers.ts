@@ -28,7 +28,9 @@ export interface ViewState {
   panY: number;
 }
 
-export const DPR = typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1;
+export function getDPR(): number {
+  return typeof window !== 'undefined' ? (window.devicePixelRatio || 1) : 1;
+}
 export const TAU = Math.PI * 2;
 
 const SIZE_PX: Record<string, number> = { sm: 6, md: 10, lg: 14 };

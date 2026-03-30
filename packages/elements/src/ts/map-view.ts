@@ -5,7 +5,7 @@
 import type { MapMarker, MapViewOptions, MapViewController } from './core/types';
 import { escapeHtml } from './core/utils';
 import {
-  DPR, CONTINENTS, detectTheme, getMarkerColors,
+  getDPR, CONTINENTS, detectTheme, getMarkerColors,
   project, getVisibleProjected, clusterMarkers,
   drawMarker, renderLegend, hitTest,
   type RenderedMarker, type ViewState, type MarkerColor,
@@ -50,11 +50,12 @@ export function mapView(
   function render(): void {
     const rect = container!.getBoundingClientRect();
     const vw = rect.width, vh = rect.height;
-    canvas.width = vw * DPR; canvas.height = vh * DPR;
+    const dpr = getDPR();
+    canvas.width = vw * dpr; canvas.height = vh * dpr;
     canvas.style.width = vw + 'px'; canvas.style.height = vh + 'px';
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-    ctx.scale(DPR, DPR);
+    ctx.scale(dpr, dpr);
 
     const th = detectTheme();
     const mc = getMarkerColors();

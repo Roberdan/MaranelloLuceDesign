@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Program Management Cockpit — Maranello Luce Design</title>
+  <link rel="icon" href="../src/assets/favicon.svg">
+  <link rel="stylesheet" href="../src/fonts/local-fonts.css">
+  <link rel="stylesheet" href="../dist/css/maranello.css">
+  <style>
+    body { margin: 0; padding: 0; background: var(--mn-surface); color: var(--mn-text); }
+    .demo-wrap { max-width: 1440px; margin: 0 auto; padding: 0 20px 60px; }
+    .demo-back {
+      display: inline-block; margin: 12px 20px; font-family: var(--font-mono);
+      font-size: 0.75rem; color: var(--mn-text-muted); text-decoration: none;
+    }
+    .demo-back:hover { color: var(--mn-accent); }
+    .demo-controls {
+      display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 24px; padding-top: 16px;
+    }
+    .demo-controls button {
+      font-family: var(--font-mono); font-size: 0.7rem; text-transform: uppercase;
+      letter-spacing: 0.05em; padding: 6px 14px; border: 1px solid var(--mn-border);
+      border-radius: var(--radius-md); background: var(--mn-surface-raised);
+      color: var(--mn-text); cursor: pointer; transition: all 0.15s;
+    }
+    .demo-controls button:hover { border-color: var(--mn-accent); color: var(--mn-accent); }
+    .demo-section-title {
+      font-family: var(--font-display); font-size: 0.7rem; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--mn-accent); margin: 32px 0 12px;
+    }
+    #header-host { margin-bottom: 8px; }
+    #strip-host { margin-bottom: 32px; }
+    #gantt-host { margin-bottom: 32px; }
+    #table-host { margin-bottom: 32px; }
+    .gauge-row {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 24px; margin-bottom: 32px;
+    }
+    .gauge-card {
+      border: 1px solid var(--mn-border); border-radius: var(--radius-md);
+      background: var(--mn-surface-raised); padding: 20px; text-align: center;
+    }
+    .gauge-card .mn-gauge { display: inline-block; }
+    .gauge-card .mn-gauge__instrument { width: 180px; height: 180px; margin: 0 auto; }
+    .gauge-card .mn-gauge__dial { width: 100%; height: 100%; position: relative; }
+    .gauge-card canvas { width: 100%; height: 100%; }
+    .gauge-card .mn-gauge__glass {
+      position: absolute; inset: 0; border-radius: 50%;
+      background: radial-gradient(ellipse at 40% 30%, rgba(255,255,255,0.06) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .gauge-label {
+      font-family: var(--font-display); font-size: 0.7rem; text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--mn-text-muted); margin-top: 8px;
+    }
+    .chart-card {
+      border: 1px solid var(--mn-border); border-radius: var(--radius-md);
+      background: var(--mn-surface-raised); padding: 20px;
+    }
+    .sr-only {
+      position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+      overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+    }
+  </style>
+</head>
+<body>
+  <script>
+    try {
+      var t = localStorage.getItem('mn-theme');
+      if (t && t !== 'editorial') document.body.classList.add('mn-' + t);
+    } catch (_) {}
+  </script>
+
+  <a class="demo-back" href="index.html">&#8592; Back to Gallery</a>
+
+  <div id="header-host"></div>
+
+  <div class="demo-wrap">
+    <div class="demo-controls">
+      <button onclick="Maranello.setTheme('editorial')">Editorial</button>
+      <button onclick="Maranello.setTheme('nero')">Nero</button>
+      <button onclick="Maranello.setTheme('avorio')">Avorio</button>
+      <button onclick="Maranello.setTheme('colorblind')">Colorblind</button>
+      <button onclick="Maranello.setTheme('sugar')">Sugar</button>
+      <button onclick="Maranello.setTheme('navy')">Navy</button>
+    </div>
+
+    <!-- KPI Strip -->
+    <h2 class="demo-section-title">Program Health Dashboard</h2>
+    <div id="strip-host"></div>
+
+    <!-- Gantt Timeline -->
+    <h2 class="demo-section-title">Program Timeline</h2>
+    <div id="gantt-host" class="mn-card-dark" style="padding:var(--space-lg)">
+      <mn-gantt id="gantt-chart"></mn-gantt>
+    </div>
+
+    <!-- Portfolio Table -->
+    <h2 class="demo-section-title">Portfolio Overview</h2>
+    <div id="table-host"></div>
+
+    <!-- Resource Gauges -->
+    <h2 class="demo-section-title">Resource Utilization</h2>
+    <div class="gauge-row">
+      <div class="gauge-card" role="group" aria-label="Engineering utilization gauge">
+        <div class="mn-gauge">
+          <div class="mn-gauge__instrument">
+            <div class="mn-gauge__dial">
+              <canvas id="gauge-eng" class="mn-gauge__canvas" role="img" aria-label="Engineering utilization at 91 percent"></canvas>
+              <span class="sr-only">Engineering utilization: 91%</span>
+              <div class="mn-gauge__glass"></div>
+            </div>
+          </div>
+        </div>
+        <div class="gauge-label">Engineering</div>
+      </div>
+      <div class="gauge-card" role="group" aria-label="Design utilization gauge">
+        <div class="mn-gauge">
+          <div class="mn-gauge__instrument">
+            <div class="mn-gauge__dial">
+              <canvas id="gauge-design" class="mn-gauge__canvas" role="img" aria-label="Design utilization at 67 percent"></canvas>
+              <span class="sr-only">Design utilization: 67%</span>
+              <div class="mn-gauge__glass"></div>
+            </div>
+          </div>
+        </div>
+        <div class="gauge-label">Design</div>
+      </div>
+      <div class="gauge-card" role="group" aria-label="QA utilization gauge">
+        <div class="mn-gauge">
+          <div class="mn-gauge__instrument">
+            <div class="mn-gauge__dial">
+              <canvas id="gauge-qa" class="mn-gauge__canvas" role="img" aria-label="QA utilization at 45 percent"></canvas>
+              <span class="sr-only">QA utilization: 45%</span>
+              <div class="mn-gauge__glass"></div>
+            </div>
+          </div>
+        </div>
+        <div class="gauge-label">QA</div>
+      </div>
+    </div>
+
+    <!-- Budget Bar Chart -->
+    <h2 class="demo-section-title">Budget Allocation by Program</h2>
+    <div class="chart-card">
+      <div class="mn-label" style="margin-bottom:var(--space-md)">FY 2026 Program Budget ($K)</div>
+      <canvas id="budget-chart" width="600" height="240" role="img"
+              aria-label="Bar chart showing budget allocation across five programs"
+              style="width:100%;height:240px"></canvas>
+      <span class="sr-only">Platform Modernization $2100K, Cloud Migration $3400K, Customer 360 $1800K, Data Lake v2 $950K, Security Hardening $1200K</span>
+    </div>
+  </div>
+
+  <script src="../dist/iife/maranello.min.js"></script>
+  <script>
+    (function () {
+      var M = window.Maranello;
+      if (!M) return;
+
+      /* ── Header ─────────────────────────────────────── */
+      M.header.init(document.getElementById('header-host'), {
+        brand: { label: 'ConvergIO Programs' },
+        left: [
+          { id: 'portfolio', label: 'Portfolio', active: true },
+          { id: 'timeline', label: 'Timeline' },
+          { id: 'resources', label: 'Resources' },
+          { id: 'risks', label: 'Risks' }
+        ]
+      });
+
+      /* ── KPI Strip ──────────────────────────────────── */
+      var healthGaugeConfig = {
+        value: 82,
+        max: 100,
+        color: '#00A651',
+        colorMode: 'higher-better',
+        ticks: 10,
+        subticks: 5,
+        startAngle: -225,
+        endAngle: 45,
+        showNeedle: true,
+        numbers: [0, 25, 50, 75, 100],
+        complications: {
+          centerValue: '82',
+          centerUnit: '%',
+          centerLabel: 'HEALTH',
+          arcBar: { labelLeft: '0', labelRight: '100' },
+          statusLed: { color: '#00A651', label: 'ON TRACK' }
+        }
+      };
+
+      M.dashboardStrip('strip-host', {
+        ariaLabel: 'Program Health Dashboard Strip',
+        zones: [
+          {
+            type: 'gauge',
+            label: 'PROGRAM HEALTH',
+            gaugeConfig: healthGaugeConfig,
+            size: 'sm'
+          },
+          {
+            type: 'board',
+            title: 'PORTFOLIO STATUS',
+            stats: [
+              { label: 'ACTIVE PROGRAMS', value: 8 },
+              { label: 'ON SCHEDULE', value: 5 },
+              { label: 'BEHIND', value: 2 },
+              { label: 'BLOCKED', value: 1 }
+            ]
+          },
+          {
+            type: 'trend',
+            title: 'FINANCIAL & RESOURCE',
+            items: [
+              { label: 'BUDGET BURN RATE', value: 68, color: '#FFC72C', data: [42, 48, 53, 58, 62, 68] },
+              { label: 'RESOURCE UTIL', value: 76, color: '#448AFF', data: [60, 63, 68, 71, 74, 76] }
+            ]
+          }
+        ]
+      });
+
+      /* ── Gantt Timeline ─────────────────────────────── */
+      var ganttTasks = [
+        { id: 'pm1', title: 'Platform Modernization', start: '2026-01-06', end: '2026-09-30', progress: 55, color: '#FFC72C' },
+        { id: 'pm1a', title: 'Requirements Gathering', start: '2026-01-06', end: '2026-02-14', progress: 100, color: '#FFC72C', dependencies: ['pm1'] },
+        { id: 'pm1b', title: 'Architecture Review', start: '2026-02-17', end: '2026-03-28', progress: 100, color: '#FFC72C', dependencies: ['pm1a'] },
+        { id: 'pm1c', title: 'Sprint 1-4 Development', start: '2026-03-30', end: '2026-07-18', progress: 60, color: '#FFC72C', dependencies: ['pm1b'] },
+        { id: 'pm1d', title: 'UAT & Go-Live', start: '2026-07-20', end: '2026-09-30', progress: 0, color: '#FFC72C', dependencies: ['pm1c'] },
+        { id: 'cm1', title: 'Cloud Migration', start: '2026-04-01', end: '2026-12-15', progress: 30, color: '#4EA8DE' },
+        { id: 'cm1a', title: 'Discovery & Assessment', start: '2026-04-01', end: '2026-05-31', progress: 100, color: '#4EA8DE', dependencies: ['cm1'] },
+        { id: 'cm1b', title: 'Migration Waves 1-3', start: '2026-06-01', end: '2026-10-31', progress: 25, color: '#4EA8DE', dependencies: ['cm1a'] },
+        { id: 'cm1c', title: 'Cutover & Validation', start: '2026-11-01', end: '2026-12-15', progress: 0, color: '#4EA8DE', dependencies: ['cm1b'] },
+        { id: 'c360', title: 'Customer 360', start: '2026-01-12', end: '2026-06-30', progress: 85, color: '#00A651' },
+        { id: 'c360a', title: 'Data Integration', start: '2026-01-12', end: '2026-03-15', progress: 100, color: '#00A651', dependencies: ['c360'] },
+        { id: 'c360b', title: 'Dashboard Build', start: '2026-03-16', end: '2026-05-31', progress: 90, color: '#00A651', dependencies: ['c360a'] },
+        { id: 'c360c', title: 'User Acceptance', start: '2026-06-01', end: '2026-06-30', progress: 40, color: '#00A651', dependencies: ['c360b'] }
+      ];
+
+      var ganttEl = document.getElementById('gantt-chart');
+      if (ganttEl) {
+        ganttEl.setAttribute('tasks', JSON.stringify(ganttTasks));
+      }
+
+      /* ── Data Table ─────────────────────────────────── */
+      var portfolioData = [
+        { program: 'Platform Modernization', pm: 'Jennifer Walsh', status: 'On Track', budget: 2100000, spent: 1155000, timeline: 'Q1 - Q3 2026', risk: 'Medium' },
+        { program: 'Cloud Migration', pm: 'David Park', status: 'At Risk', budget: 3400000, spent: 1020000, timeline: 'Q2 - Q4 2026', risk: 'High' },
+        { program: 'Customer 360', pm: 'Aisha Mohammed', status: 'On Track', budget: 1800000, spent: 1530000, timeline: 'Q1 - Q2 2026', risk: 'Low' },
+        { program: 'Data Lake v2', pm: 'Carlos Rivera', status: 'Behind', budget: 950000, spent: 285000, timeline: 'Q3 - Q4 2026', risk: 'Critical' },
+        { program: 'Security Hardening', pm: 'Emma Thompson', status: 'On Track', budget: 1200000, spent: 540000, timeline: 'Q1 - Q4 2026', risk: 'Low' }
+      ];
+
+      M.dataTable(document.getElementById('table-host'), {
+        columns: [
+          { key: 'program', label: 'Program', type: 'text', sortable: true },
+          { key: 'pm', label: 'PM Owner', type: 'text', sortable: true },
+          { key: 'status', label: 'Status', type: 'status', sortable: true, filterable: true },
+          { key: 'budget', label: 'Budget ($)', type: 'metric', sortable: true },
+          { key: 'spent', label: 'Spent ($)', type: 'metric', sortable: true },
+          { key: 'timeline', label: 'Timeline', type: 'text', sortable: true },
+          { key: 'risk', label: 'Risk Level', type: 'status', sortable: true, filterable: true }
+        ],
+        data: portfolioData,
+        pageSize: 10,
+        ariaLabel: 'Program portfolio overview table'
+      });
+
+      /* ── Resource Gauges ────────────────────────────── */
+      var gauges = [
+        { id: 'gauge-eng', value: 91, color: '#DC0000', label: 'ENGINEERING', led: 'CRITICAL' },
+        { id: 'gauge-design', value: 67, color: '#FFC72C', label: 'DESIGN', led: 'WARN' },
+        { id: 'gauge-qa', value: 45, color: '#00A651', label: 'QA', led: 'HEALTHY' }
+      ];
+
+      gauges.forEach(function (cfg) {
+        var canvas = document.getElementById(cfg.id);
+        if (!canvas) return;
+        canvas.setAttribute('data-gauge', JSON.stringify({
+          value: cfg.value,
+          max: 100,
+          color: cfg.color,
+          colorMode: 'lower-better',
+          ticks: 10,
+          subticks: 5,
+          startAngle: -225,
+          endAngle: 45,
+          showNeedle: true,
+          numbers: [0, 25, 50, 75, 100],
+          complications: {
+            centerValue: String(cfg.value),
+            centerUnit: '%',
+            centerLabel: cfg.label,
+            arcBar: { labelLeft: '0', labelRight: '100' },
+            statusLed: { color: cfg.color, label: cfg.led }
+          }
+        }));
+      });
+
+      if (M.initGauges) {
+        M.initGauges({ selector: '.gauge-card .mn-gauge__canvas', threshold: 0.1 });
+      }
+
+      /* ── Budget Bar Chart ───────────────────────────── */
+      var C = M.charts || M;
+      var p = M.palette ? M.palette() : {};
+      var accent = p.accent || '#FFC72C';
+      var budgetData = [
+        { label: 'Platform Mod.', value: 2100, color: accent },
+        { label: 'Cloud Migr.', value: 3400, color: accent },
+        { label: 'Customer 360', value: 1800, color: accent },
+        { label: 'Data Lake v2', value: 950, color: accent },
+        { label: 'Security', value: 1200, color: accent }
+      ];
+
+      var chartCanvas = document.getElementById('budget-chart');
+      if (chartCanvas && C.barChart) {
+        C.barChart(chartCanvas, budgetData, { width: 600, height: 240, color: accent });
+      }
+    })();
+  </script>
+</body>
+</html>

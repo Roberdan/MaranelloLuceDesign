@@ -1,16 +1,10 @@
 {
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "target": "ES2020",
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "jsx": "react-jsx",
-    "strict": true,
-    "noEmit": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "resolveJsonModule": true,
-    "lib": ["ES2020", "DOM"],
-    "types": ["react"]
+    "composite": true,
+    "rootDir": "src",
+    "outDir": "dist",
+    "declarationDir": "dist/types"
   },
-  "include": ["src/**/*", "../../packages/elements/src/react.d.ts"]
+  "include": ["src/**/*.ts"]
 }

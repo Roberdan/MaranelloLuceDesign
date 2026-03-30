@@ -1,25 +1,23 @@
 {
-  "name": "@convergio/starter-shared-shell",
+  "name": "@convergio/shared-shell-starter",
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "exports": {
-    ".": "./src/index.ts",
-    "./server/ai/route": "./src/server/ai/route.ts"
-  },
+  "description": "Configuration-driven shared app shell starter for Convergio templates",
+  "main": "./dist/index.js",
+  "types": "./dist/types/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
   "scripts": {
-    "build": "tsc --noEmit",
-    "test": "vitest run --passWithNoTests"
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run --passWithNoTests",
+    "test:unit": "vitest run --passWithNoTests",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
   },
-  "dependencies": {
+  "peerDependencies": {
     "@convergio/design-elements": "workspace:*",
-    "@convergio/design-tokens": "workspace:*",
-    "react": "^19.2.0"
-  },
-  "devDependencies": {
-    "@types/react": "^19.2.2",
-    "typescript": "^5.7.0",
-    "vitest": "^4.1.0",
-    "vite": "^7.1.12"
+    "@convergio/design-tokens": "workspace:*"
   }
 }

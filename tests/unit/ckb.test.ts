@@ -152,6 +152,46 @@ describe('Component Knowledge Base (CKB)', () => {
     });
   });
 
+  describe('workflow templates', () => {
+    it('has workflowTemplates array', () => {
+      expect(ckb).toHaveProperty('workflowTemplates');
+      expect(Array.isArray(ckb.workflowTemplates)).toBe(true);
+    });
+
+    it('has at least 8 workflow templates', () => {
+      expect(ckb.workflowTemplates.length).toBeGreaterThanOrEqual(8);
+    });
+
+    it('each template has required fields', () => {
+      for (const wf of ckb.workflowTemplates) {
+        expect(wf).toHaveProperty('workflow');
+        expect(wf).toHaveProperty('label');
+        expect(wf).toHaveProperty('description');
+        expect(wf).toHaveProperty('components');
+        expect(wf.components.length).toBeGreaterThan(0);
+        expect(wf).toHaveProperty('tags');
+        expect(wf.tags.length).toBeGreaterThan(0);
+      }
+    });
+
+    it('includes key workflows', () => {
+      const ids = ckb.workflowTemplates.map(w => w.workflow);
+      expect(ids).toContain('crm-dashboard');
+      expect(ids).toContain('data-browser');
+      expect(ids).toContain('app-shell');
+      expect(ids).toContain('ai-chat-interface');
+    });
+
+    it('component refs have id and role', () => {
+      for (const wf of ckb.workflowTemplates) {
+        for (const comp of wf.components) {
+          expect(typeof comp.id).toBe('string');
+          expect(typeof comp.role).toBe('string');
+        }
+      }
+    });
+  });
+
   describe('themes', () => {
     it('has exactly 6 themes', () => {
       expect(ckb.themes).toHaveLength(6);

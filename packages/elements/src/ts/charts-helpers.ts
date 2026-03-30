@@ -4,7 +4,9 @@
 import { cssVar } from './core/utils';
 import { escapeHtml } from './core/sanitize';
 
-const dpr = typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1;
+function getDpr(): number {
+  return typeof window !== 'undefined' ? (window.devicePixelRatio || 1) : 1;
+}
 
 /** Build the default chart color series from CSS custom properties. */
 export function buildSeries(): string[] {
@@ -24,12 +26,13 @@ export function buildSeries(): string[] {
   ];
 }
 
-export const SERIES = buildSeries();
+export function getSERIES(): string[] { return buildSeries(); }
 
 /** Set up a hi-DPI canvas and return its 2D context, or null if unavailable. */
 export function chartHiDpi(
   canvas: HTMLCanvasElement, w: number, h: number,
 ): CanvasRenderingContext2D | null {
+  const dpr = getDpr();
   const cw = Math.max(w, 20);
   const ch = Math.max(h, 20);
   canvas.width = cw * dpr;

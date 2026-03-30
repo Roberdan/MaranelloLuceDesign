@@ -1,0 +1,21 @@
+{
+  "name": "consumer-nextjs-smoke",
+  "private": true,
+  "scripts": {
+    "build": "next build",
+    "start": "next start -p 3099",
+    "test": "echo 'Run from repo root via pnpm test:e2e'"
+  },
+  "dependencies": {
+    "next": "^15.5.6",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "@convergio/design-elements": "workspace:*",
+    "@convergio/design-tokens": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2"
+  }
+}

@@ -2,7 +2,7 @@
  * Maranello Luce Design - Charts aggregator
  * Re-exports all chart modules for convenience.
  */
-export { SERIES, buildSeries, chartHiDpi, getCanvasSize } from './charts-helpers';
+export { getSERIES, buildSeries, chartHiDpi, getCanvasSize } from './charts-helpers';
 export { sparkline } from './charts-sparkline';
 export { donut } from './charts-donut';
 export { halfGauge } from './charts-halfgauge';

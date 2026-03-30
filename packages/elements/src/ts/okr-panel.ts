@@ -5,7 +5,7 @@
  */
 import type { ObjectiveInput, OkrPanelOptions, OkrPanelController } from './okr-panel-utils';
 import {
-  STATUS_COLORS, animateRings, animateSummaryRings, animateBars, animateGauge, el,
+  getStatusColors, animateRings, animateSummaryRings, animateBars, animateGauge, el,
 } from './okr-panel-utils';
 import {
   normalizeObjective, calculateStats, createSummaryCard, createHero,

@@ -12,3 +12,8 @@ coverage/
 .copilot-tracking/
 docs/virtualbpm-integration-response.md
 packages/*/.npmrc
+starters/*/dist/
+starters/*/*.tsbuildinfo
+.claire/
+starters/template-*/
+.next/

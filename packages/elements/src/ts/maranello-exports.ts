@@ -26,7 +26,7 @@ import {
   applySettings, buildPanel,
 } from './a11y-panel-dom';
 import {
-  DPR, TAU, CONTINENTS, detectTheme, getMarkerColors,
+  getDPR, TAU, CONTINENTS, detectTheme, getMarkerColors,
   project, hexToRgba, getVisibleProjected, clusterMarkers,
   markerRadius, drawMarker, renderLegend, hitTest,
 } from './map-view-helpers';
@@ -116,7 +116,7 @@ export function registerExtras(M: Record<string, unknown>): void {
   M.buildA11yPanel = buildPanel;
 
   // Map view helpers + events
-  M.MAP_DPR = DPR;
+  M.MAP_DPR = getDPR();
   M.MAP_TAU = TAU;
   M.CONTINENTS = CONTINENTS;
   M.detectMapTheme = detectTheme;

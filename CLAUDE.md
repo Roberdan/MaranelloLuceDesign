@@ -66,9 +66,28 @@ All fill parent by default (100% width/height). Override via CSS vars: `--mn-gan
 
 PATCH=fix | MINOR=feat or breaking+migration doc | Breaking: CHANGELOG `### Breaking Changes` + `docs/migrations/vX.Y.Z.md`
 
+## Starter Platform
+
+`starters/shared-shell/` — configuration-driven app shell foundation (typed contracts, adapters, deploy assets)
+`starters/workspace/` — general SaaS workspace (project switching, command palette)
+`starters/ops-dashboard/` — IT operations center (strip zones, status boards, alerts)
+`starters/executive-cockpit/` — CEO/CFO view (hero KPIs, narrative, board summaries)
+`starters/program-management/` — PMO shell (command rail, portfolio list, gantt board)
+`starters/create-starter/` — instantiation workflow + manifests for all templates
+
+Key contracts: `SharedShellConfig` -> template-specific configs (`WorkspaceConfig`, `OpsDashboardConfig`, `CockpitConfig`, `ProgramManagementConfig`). `SharedShellAdapters` bundles AI, auth, RBAC, telemetry, API, feature flag adapters. `generateDeployAssets('vercel'|'azure-container-apps')`. `createDefaultAISurfaces()` for command palette + agent panel + action routes.
+
+Docs: `docs/starters/` — selection guide, deployment, agent semantics.
+
 ## State Machine Contracts
 
 - WC `registerAll()` retryable on failure.
+
+## SSR Safety
+
+Root barrel imports are SSR-safe (v6.5.0+). No `document`/`window` at module scope.
+`registerAll()` no-ops in Node. Call it in `useEffect` / client boundary only.
+Starter demos: `demo/starter-workspace.html`, `demo/starter-ops-dashboard.html`, `demo/starter-executive-cockpit.html`, `demo/starter-program-management.html`.
 
 ## Agent
 

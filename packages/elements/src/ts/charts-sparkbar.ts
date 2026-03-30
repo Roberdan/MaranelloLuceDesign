@@ -3,7 +3,7 @@
  * Vertical bar chart with rounded tops, grid lines, and labels.
  */
 import type { BarDataItem, BarChartOptions } from './core/types';
-import { chartHiDpi, getCanvasSize, SERIES, applyChartA11y } from './charts-helpers';
+import { chartHiDpi, getCanvasSize, getSERIES, applyChartA11y } from './charts-helpers';
 
 /** Render a vertical bar chart on a canvas element. */
 export function barChart(
@@ -12,7 +12,7 @@ export function barChart(
   opts?: BarChartOptions,
 ): HTMLCanvasElement | undefined {
   const o = {
-    colors: SERIES,
+    colors: getSERIES(),
     barRadius: 3,
     gap: 0.3,
     showLabels: true,

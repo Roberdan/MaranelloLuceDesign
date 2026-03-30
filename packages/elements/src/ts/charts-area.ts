@@ -2,7 +2,7 @@
  * Maranello Luce Design - Area chart (Canvas 2D)
  */
 import type { AreaDataset, AreaChartOptions } from './core/types';
-import { chartHiDpi, getCanvasSize, SERIES, drawSmoothLine, applyChartA11y } from './charts-helpers';
+import { chartHiDpi, getCanvasSize, getSERIES, drawSmoothLine, applyChartA11y } from './charts-helpers';
 
 /** Render a multi-dataset area chart on a canvas element. */
 export function areaChart(
@@ -11,7 +11,7 @@ export function areaChart(
   opts?: AreaChartOptions,
 ): HTMLCanvasElement | undefined {
   const o = {
-    colors: SERIES,
+    colors: getSERIES(),
     fillOpacity: 0.12,
     lineWidth: 1.5,
     gridColor: 'rgba(200,200,200,0.06)',

@@ -29,16 +29,20 @@ export interface OkrPanelController {
   update: (objectives: ObjectiveInput[]) => void; destroy: () => void;
 }
 
-export const STATUS_COLORS: Record<OkrStatus, string> = {
-  'on-track': cssVar('--signal-ok', '#00A651'),
-  'at-risk': cssVar('--signal-warning', '#FFC72C'),
-  behind: cssVar('--signal-danger', '#DC0000'),
-};
-export const SCOPE_COLORS: Record<string, string> = {
-  LOCAL: cssVar('--scope-local', '#4EA8DE'),
-  TEAM: cssVar('--scope-team', '#7C3AED'),
-  GLOBAL: cssVar('--scope-global', '#FFC72C'),
-};
+export function getStatusColors(): Record<OkrStatus, string> {
+  return {
+    'on-track': cssVar('--signal-ok', '#00A651'),
+    'at-risk': cssVar('--signal-warning', '#FFC72C'),
+    behind: cssVar('--signal-danger', '#DC0000'),
+  };
+}
+export function getScopeColors(): Record<string, string> {
+  return {
+    LOCAL: cssVar('--scope-local', '#4EA8DE'),
+    TEAM: cssVar('--scope-team', '#7C3AED'),
+    GLOBAL: cssVar('--scope-global', '#FFC72C'),
+  };
+}
 
 export function safeNumber(v: unknown): number {
   const n = Number(v); return Number.isFinite(n) ? n : 0;

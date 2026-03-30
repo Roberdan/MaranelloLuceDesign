@@ -1,0 +1,26 @@
+{
+  "name": "@convergio/workspace-starter",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "General-purpose workspace app starter with project switching, search, and command palette",
+  "main": "./dist/index.js",
+  "types": "./dist/types/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run --passWithNoTests",
+    "test:unit": "vitest run --passWithNoTests",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@convergio/shared-shell-starter": "workspace:*"
+  },
+  "peerDependencies": {
+    "@convergio/design-elements": "workspace:*",
+    "@convergio/design-tokens": "workspace:*"
+  }
+}

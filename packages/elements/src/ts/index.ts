@@ -1,6 +1,6 @@
 /** @convergio/design-elements - Headless UI components barrel. */
 
-export const VERSION = '6.4.0';
+export const VERSION = '6.5.0';
 
 // Core types (all shared interfaces)
 export * from './core/types';
@@ -240,3 +240,10 @@ export type { LayoutController, LayoutViewConfig, LayoutState } from './layout';
 
 // v4.5-v4.9 components
 export * from './index-extras';
+
+// Semantic registry (agent-driven composition)
+export { queryByWorkflow, queryByIntent, listWorkflows, getStarterForWorkflow } from './semantic-registry';
+export type { WorkflowEntry, ComponentRef, StarterRef, SemanticQuery, SemanticResult } from './semantic-registry';
+
+// Maranello facade (auto-init)
+

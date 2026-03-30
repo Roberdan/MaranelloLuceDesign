@@ -4,7 +4,7 @@
   "title": "Convergio Design — Component Knowledge Base",
   "description": "Machine-readable catalog of all convergio-design components, their data shapes, composition rules, and API-to-component mapping hints. Auto-generated from source.",
   "type": "object",
-  "required": ["version", "generated", "packageVersion", "webComponents", "tsModules", "compositionRules", "mappingHints"],
+  "required": ["version", "generated", "packageVersion", "webComponents", "tsModules", "compositionRules", "mappingHints", "workflowTemplates"],
   "properties": {
     "version": {
       "type": "string",
@@ -39,6 +39,11 @@
       "description": "Heuristics for mapping API response shapes to components",
       "items": { "$ref": "#/$defs/MappingHint" }
     },
+    "workflowTemplates": {
+      "type": "array",
+      "description": "Semantic workflow-to-component mappings for agent-driven composition",
+      "items": { "$ref": "#/$defs/WorkflowTemplate" }
+    },
     "themes": {
       "type": "array",
       "description": "Available themes",
@@ -69,57 +74,18 @@
         },
         "attributes": {
           "type": "array",
-          "items": {
-            "type": "object",
-            "required": ["name", "type"],
-            "properties": {
-              "name": { "type": "string" },
-              "type": { "enum": ["string", "number", "boolean", "json"] },
-              "description": { "type": "string" },
-              "default": {}
-            }
-          }
+          "items": { "type": "object", "required": ["name", "type"], "properties": { "name": { "type": "string" }, "type": { "enum": ["string", "number", "boolean", "json"] }, "description": { "type": "string" }, "default": {} } }
         },
         "events": {
           "type": "array",
-          "items": {
-            "type": "object",
-            "required": ["name"],
-            "properties": {
-              "name": { "type": "string" },
-              "detailShape": { "type": "string", "description": "TypeScript type of event.detail" },
-              "bubbles": { "type": "boolean" }
-            }
-          }
+          "items": { "type": "object", "required": ["name"], "properties": { "name": { "type": "string" }, "detailShape": { "type": "string" }, "bubbles": { "type": "boolean" } } }
         },
-        "imports": {
-          "type": "array",
-          "items": { "type": "string" },
-          "description": "TS modules this WC depends on"
-        },
-        "bestFor": {
-          "type": "array",
-          "items": { "type": "string" },
-          "description": "Use cases this component excels at (e.g., 'KPI display', 'real-time monitoring')"
-        },
-        "dataShape": {
-          "type": "string",
-          "description": "TypeScript interface name for the primary data input"
-        },
-        "ssrSafe": {
-          "type": "boolean",
-          "default": false,
-          "description": "Whether this component can be server-side rendered (always false for WCs)"
-        },
-        "themeAware": {
-          "type": "boolean",
-          "default": true,
-          "description": "Whether this component adapts to all 6 themes"
-        },
-        "importPath": {
-          "type": "string",
-          "description": "ESM import path, e.g., @convergio/design-elements/wc/mn-gauge"
-        }
+        "imports": { "type": "array", "items": { "type": "string" }, "description": "TS module dependencies" },
+        "bestFor": { "type": "array", "items": { "type": "string" }, "description": "Use cases this component excels at" },
+        "dataShape": { "type": "string", "description": "Primary data input interface name" },
+        "ssrSafe": { "type": "boolean", "default": false, "description": "SSR-safe (always false for WCs)" },
+        "themeAware": { "type": "boolean", "default": true, "description": "Adapts to all 6 themes" },
+        "importPath": { "type": "string", "description": "ESM import path" }
       }
     },
     "TsModule": {
@@ -133,27 +99,12 @@
           "type": "string"
         },
         "exports": {
-          "type": "object",
-          "description": "Named exports with their signatures",
-          "additionalProperties": {
-            "type": "object",
-            "properties": {
-              "signature": { "type": "string" },
-              "description": { "type": "string" },
-              "kind": { "enum": ["function", "class", "constant", "type", "interface"] }
-            }
-          }
+          "type": "object", "description": "Named exports with signatures",
+          "additionalProperties": { "type": "object", "properties": { "signature": { "type": "string" }, "description": { "type": "string" }, "kind": { "enum": ["function", "class", "constant", "type", "interface"] } } }
         },
         "types": {
-          "type": "object",
-          "description": "TypeScript interfaces/types",
-          "additionalProperties": {
-            "type": "object",
-            "properties": {
-              "fields": { "type": "object" },
-              "description": { "type": "string" }
-            }
-          }
+          "type": "object", "description": "TypeScript interfaces/types",
+          "additionalProperties": { "type": "object", "properties": { "fields": { "type": "object" }, "description": { "type": "string" } } }
         },
         "bestFor": {
           "type": "array",
@@ -186,28 +137,11 @@
         "description": {
           "type": "string"
         },
-        "components": {
-          "type": "array",
-          "items": { "type": "string" },
-          "description": "Component IDs involved in this pattern"
-        },
-        "layout": {
-          "type": "string",
-          "description": "Recommended layout (e.g., '4-slot grid', 'full page', 'side-detail')"
-        },
-        "example": {
-          "type": "string",
-          "description": "Brief code example"
-        },
-        "apiPattern": {
-          "type": "string",
-          "description": "API pattern this composition typically responds to"
-        },
-        "prerequisites": {
-          "type": "array",
-          "items": { "type": "string" },
-          "description": "CSS/JS imports needed"
-        }
+        "components": { "type": "array", "items": { "type": "string" }, "description": "Component IDs involved" },
+        "layout": { "type": "string", "description": "Recommended layout" },
+        "example": { "type": "string", "description": "Brief code example" },
+        "apiPattern": { "type": "string", "description": "API pattern this composition responds to" },
+        "prerequisites": { "type": "array", "items": { "type": "string" }, "description": "CSS/JS imports needed" }
       }
     },
     "MappingHint": {
@@ -215,37 +149,47 @@
       "required": ["id", "apiPattern", "suggestedComponent"],
       "properties": {
         "id": { "type": "string" },
-        "apiPattern": {
-          "type": "string",
-          "description": "Description of the API pattern (e.g., 'GET list of items with id, name, status')"
-        },
-        "httpMethod": {
-          "enum": ["GET", "POST", "PUT", "DELETE", "WS", "SSE", "ANY"]
-        },
-        "responseShape": {
-          "type": "string",
-          "description": "TypeScript-like description of expected response shape"
-        },
-        "suggestedComponent": {
-          "type": "string",
-          "description": "Primary component ID to use"
-        },
-        "alternativeComponents": {
+        "apiPattern": { "type": "string", "description": "API pattern description" },
+        "httpMethod": { "enum": ["GET", "POST", "PUT", "DELETE", "WS", "SSE", "ANY"] },
+        "responseShape": { "type": "string", "description": "Expected response shape" },
+        "suggestedComponent": { "type": "string", "description": "Primary component ID" },
+        "alternativeComponents": { "type": "array", "items": { "type": "string" } },
+        "updateStrategy": { "enum": ["static", "poll", "websocket", "sse"], "description": "Data freshness strategy" },
+        "compositionRule": { "type": "string", "description": "Related composition rule ID" },
+        "dataTransform": { "type": "string", "description": "API response to component data transform" }
+      }
+    },
+    "WorkflowTemplate": {
+      "type": "object",
+      "required": ["workflow", "label", "description", "components", "compositionRules", "layout", "tags"],
+      "properties": {
+        "workflow": { "type": "string", "description": "Unique workflow ID (kebab-case)" },
+        "label": { "type": "string", "description": "Human-readable workflow name" },
+        "description": { "type": "string", "description": "What this workflow builds" },
+        "components": {
           "type": "array",
-          "items": { "type": "string" }
+          "items": {
+            "type": "object",
+            "required": ["id", "role"],
+            "properties": {
+              "id": { "type": "string", "description": "Component tag (mn-*) or TS module name" },
+              "role": { "type": "string", "description": "What this component does in the workflow" },
+              "importPath": { "type": "string" }
+            }
+          }
         },
-        "updateStrategy": {
-          "enum": ["static", "poll", "websocket", "sse"],
-          "description": "How the UI should keep data fresh"
+        "compositionRules": { "type": "array", "items": { "type": "string" }, "description": "IDs of related composition rules" },
+        "layout": { "type": "string", "description": "Recommended layout strategy" },
+        "tags": { "type": "array", "items": { "type": "string" }, "description": "Searchable keywords for intent matching" },
+        "starter": {
+          "type": "object",
+          "properties": {
+            "package": { "type": "string" },
+            "description": { "type": "string" },
+            "entryFunction": { "type": "string" }
+          }
         },
-        "compositionRule": {
-          "type": "string",
-          "description": "ID of related composition rule"
-        },
-        "dataTransform": {
-          "type": "string",
-          "description": "How to transform API response to component data shape"
-        }
+        "dataShapes": { "type": "array", "items": { "type": "string" }, "description": "Mapping hint IDs this workflow consumes" }
       }
     },
     "Theme": {

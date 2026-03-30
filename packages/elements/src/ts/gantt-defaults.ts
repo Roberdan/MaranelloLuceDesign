@@ -4,7 +4,9 @@
 import type { GanttDefaults, GanttPalette, GanttRow, GanttTask } from './core/types';
 import { cssVar } from './core/utils';
 
-export const DPR = typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1;
+export function getDPR(): number {
+  return typeof window !== 'undefined' ? (window.devicePixelRatio || 1) : 1;
+}
 export const MS_DAY = 864e5;
 
 export const DEFAULTS: GanttDefaults = {

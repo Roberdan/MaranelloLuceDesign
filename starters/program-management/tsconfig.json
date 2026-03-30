@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "composite": true,
+    "strict": true,
+    "rootDir": "src",
+    "outDir": "dist",
+    "declarationDir": "dist/types"
+  },
+  "references": [
+    { "path": "../shared-shell" }
+  ],
+  "include": ["src/**/*.ts"]
+}

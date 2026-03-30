@@ -1,7 +1,7 @@
 {
   "name": "convergio-design",
   "private": true,
-  "version": "6.4.0",
+  "version": "6.5.0",
   "description": "Ferrari Luce-inspired design system for business dashboards. Part of the Convergio project.",
   "type": "module",
   "devDependencies": {

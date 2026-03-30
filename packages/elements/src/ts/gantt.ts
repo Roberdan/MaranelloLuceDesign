@@ -5,7 +5,7 @@
 import type { GanttTask, GanttController, GanttRow } from './core/types';
 import { escapeHtml, isValidColor } from './core/sanitize';
 import {
-  DEFAULTS, DPR, buildPalette, buildChildPalette, buildRange, buildRows,
+  DEFAULTS, getDPR, buildPalette, buildChildPalette, buildRange, buildRows,
   parseDate, daysBetween, contentH, themeColors,
 } from './gantt-defaults';
 import { renderGrid, renderRows, renderToday, renderHeader, renderSidebar, renderScrollbars } from './gantt-render';
@@ -92,11 +92,12 @@ export function gantt(
   function render(): void {
     const cr = wrap.getBoundingClientRect();
     const vw = Math.max(cr.width, 400), vh = Math.max(cr.height, 200);
-    canvas.width = vw * DPR; canvas.height = vh * DPR;
+    const dpr = getDPR();
+    canvas.width = vw * dpr; canvas.height = vh * dpr;
     canvas.style.width = vw + 'px'; canvas.style.height = vh + 'px';
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-    ctx.scale(DPR, DPR);
+    ctx.scale(dpr, dpr);
     const lw = o.labelWidth as number, hh = o.headerHeight as number;
     const tw = (s.timelineW as () => number)();
     const ch = contentH(s.rows as GanttRow[], o);

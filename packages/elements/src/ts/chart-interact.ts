@@ -5,7 +5,9 @@
 import { cssVar, escapeHtml } from './core/utils';
 import { isValidColor } from './core/sanitize';
 
-const DPR = typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1;
+function getDPR(): number {
+  return typeof window !== 'undefined' ? (window.devicePixelRatio || 1) : 1;
+}
 let activeTooltip: HTMLDivElement | null = null;
 
 function getTooltip(): HTMLDivElement {
@@ -73,9 +75,10 @@ function drawCrosshair(canvas: HTMLCanvasElement, x: number, meta: ChartMeta, se
   if (!ctx) return;
   ctx.clearRect(0, 0, overlay.width, overlay.height);
   if (x < 0) return;
-  ctx.save(); ctx.scale(DPR, DPR);
+  const dpr = getDPR();
+  ctx.save(); ctx.scale(dpr, dpr);
   ctx.strokeStyle = 'rgba(255,199,44,0.3)'; ctx.lineWidth = 1; ctx.setLineDash([4, 3]);
-  const h = canvas.height / DPR;
+  const h = canvas.height / dpr;
   const pad = meta.pad as { top: number; bottom: number } | undefined;
   ctx.beginPath(); ctx.moveTo(x, pad ? pad.top : 0); ctx.lineTo(x, h - (pad ? pad.bottom : 0)); ctx.stroke();
   ctx.setLineDash([]);
@@ -143,7 +146,8 @@ export function chartInteract(
 
   function getLogicalXY(e: MouseEvent | Touch): { x: number; y: number } {
     const rect = canvas.getBoundingClientRect();
-    return { x: (e.clientX - rect.left) * (canvas.width / DPR / rect.width), y: (e.clientY - rect.top) * (canvas.height / DPR / rect.height) };
+    const dpr = getDPR();
+    return { x: (e.clientX - rect.left) * (canvas.width / dpr / rect.width), y: (e.clientY - rect.top) * (canvas.height / dpr / rect.height) };
   }
   function showAt(lx: number, ly: number, cx: number, cy: number): void {
     meta.mouseY = ly;
@@ -180,7 +184,8 @@ export function sparklineInteract(
 
   canvas.addEventListener('mousemove', (e) => {
     const rect = canvas.getBoundingClientRect();
-    const logicalW = canvas.width / DPR, logicalH = canvas.height / DPR;
+    const dpr = getDPR();
+    const logicalW = canvas.width / dpr, logicalH = canvas.height / dpr;
     const mouseX = (e.clientX - rect.left) * (logicalW / rect.width);
     const plotW = logicalW - chartPad.left - chartPad.right;
     const plotH = logicalH - chartPad.top - chartPad.bottom;
@@ -203,7 +208,7 @@ export function sparklineInteract(
     overlay.width = canvas.width; overlay.height = canvas.height;
     const ctx = overlay.getContext('2d');
     if (!ctx) return;
-    ctx.clearRect(0, 0, overlay.width, overlay.height); ctx.save(); ctx.scale(DPR, DPR);
+    ctx.clearRect(0, 0, overlay.width, overlay.height); ctx.save(); ctx.scale(dpr, dpr);
     const color = (opts!.color as string) || cssVar('--mn-accent');
     const cr = parseInt(color.slice(1, 3), 16), cg = parseInt(color.slice(3, 5), 16), cb = parseInt(color.slice(5, 7), 16);
     ctx.beginPath(); ctx.arc(px, py, 10, 0, Math.PI * 2); ctx.fillStyle = `rgba(${cr},${cg},${cb},0.25)`; ctx.fill();

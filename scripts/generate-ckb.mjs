@@ -6,6 +6,7 @@
  */
 import { readFileSync, writeFileSync, readdirSync, mkdirSync, existsSync } from 'node:fs';
 import { join, basename } from 'node:path';
+import { workflowTemplates } from './ckb-workflow-templates.mjs';
 
 const ROOT = new URL('..', import.meta.url).pathname;
 const ELEMENTS = join(ROOT, 'packages/elements');
@@ -483,6 +484,7 @@ function main() {
     tsModules,
     compositionRules: compositionRules(),
     mappingHints: mappingHints(),
+    workflowTemplates: workflowTemplates(),
     themes: themes(),
     constraints: constraints(),
   };
@@ -519,6 +521,7 @@ function main() {
   console.log(`  TS Modules: ${Object.keys(tsModules).length}`);
   console.log(`  Composition Rules: ${ckb.compositionRules.length}`);
   console.log(`  Mapping Hints: ${ckb.mappingHints.length}`);
+  console.log(`  Workflow Templates: ${ckb.workflowTemplates.length}`);
   console.log(`  Themes: ${ckb.themes.length}`);
 }
 
