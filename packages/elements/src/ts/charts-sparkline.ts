@@ -49,8 +49,8 @@ export function sparkline(
   ctx.lineTo(getX(0), h);
   ctx.closePath();
 
-  if (o.color!.startsWith('#')) {
-    ctx.fillStyle = hexFillGradient(ctx, o.color!, h, o.fillOpacity ?? 0.15);
+  if (o.color && o.color.startsWith('#')) {
+    ctx.fillStyle = hexFillGradient(ctx, o.color, h, o.fillOpacity ?? 0.15);
   } else {
     ctx.fillStyle = `rgba(255,199,44,${o.fillOpacity})`;
   }
@@ -61,7 +61,7 @@ export function sparkline(
     const lastY = getY(data[data.length - 1]);
     ctx.beginPath();
     ctx.arc(lastX, lastY, 3.5, 0, Math.PI * 2);
-    ctx.fillStyle = o.color!;
+    ctx.fillStyle = o.color || '#FFC72C';
     ctx.fill();
     ctx.strokeStyle = 'rgba(0,0,0,0.4)';
     ctx.lineWidth = 1;

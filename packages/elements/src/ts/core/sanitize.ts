@@ -65,6 +65,7 @@ const NAMED_COLORS = new Set([
 
 /** Validate a CSS color value. Rejects javascript:, expression(), unsafe url(). */
 export function isValidColor(val: string): boolean {
+  if (!val || typeof val !== 'string') return false;
   const trimmed = val.trim();
   if (!trimmed) return false;
 

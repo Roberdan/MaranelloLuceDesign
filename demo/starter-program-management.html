@@ -3,153 +3,228 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Program Management Cockpit — Maranello Luce Design</title>
+  <title>PMO Dashboard — Maranello Luce</title>
   <link rel="icon" href="../src/assets/favicon.svg">
   <link rel="stylesheet" href="../src/fonts/local-fonts.css">
   <link rel="stylesheet" href="../dist/css/maranello.css">
   <style>
-    body { margin: 0; padding: 0; background: var(--mn-surface); color: var(--mn-text); }
-    .demo-wrap { max-width: 1440px; margin: 0 auto; padding: 0 20px 60px; }
-    .demo-back {
-      display: inline-block; margin: 12px 20px; font-family: var(--font-mono);
-      font-size: 0.75rem; color: var(--mn-text-muted); text-decoration: none;
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body { background: var(--mn-surface); color: var(--mn-text); font-family: var(--font-body, sans-serif); overflow: hidden; }
+
+    .app {
+      display: grid; grid-template-rows: 48px 1fr;
+      grid-template-columns: 220px 1fr;
+      grid-template-areas: "side top" "side main";
+      height: 100vh; transition: grid-template-columns 0.18s ease;
     }
-    .demo-back:hover { color: var(--mn-accent); }
-    .demo-controls {
-      display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 24px; padding-top: 16px;
+    .app.is-collapsed { grid-template-columns: 0px 1fr; }
+
+    .top {
+      grid-area: top; display: flex; align-items: center; gap: 16px;
+      padding: 0 24px; height: 48px;
+      border-bottom: 1px solid var(--mn-border);
     }
-    .demo-controls button {
-      font-family: var(--font-mono); font-size: 0.7rem; text-transform: uppercase;
-      letter-spacing: 0.05em; padding: 6px 14px; border: 1px solid var(--mn-border);
+    .top__crumb { font-size: 0.85rem; color: var(--mn-text-muted); }
+    .top__crumb b { color: var(--mn-text); font-weight: 600; }
+    .top__spacer { flex: 1; }
+    .top__search {
+      display: flex; align-items: center; gap: 6px;
+      padding: 5px 12px; border-radius: var(--radius-md);
+      border: 1px solid var(--mn-border); background: var(--mn-surface-raised);
+      color: var(--mn-text-muted); font-size: 0.78rem; cursor: text;
+      min-width: 220px; transition: border-color 0.12s;
+    }
+    .top__search:focus-within { border-color: var(--mn-accent); }
+    .top__search svg { width: 14px; height: 14px; opacity: 0.4; flex-shrink: 0; }
+    .top__search input {
+      flex: 1; border: none; background: none; color: var(--mn-text);
+      font-size: 0.78rem; font-family: inherit; outline: none;
+    }
+    .top__search input::placeholder { color: var(--mn-text-muted); }
+    .top__kbd { font-family: var(--font-mono); font-size: 0.55rem; color: var(--mn-text-muted); opacity: 0.5; }
+    .ib {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 32px; height: 32px; border: none; background: none;
+      color: var(--mn-text-muted); border-radius: var(--radius-md);
+      cursor: pointer; flex-shrink: 0;
+    }
+    .ib:hover { color: var(--mn-text); }
+    .ib:focus-visible { outline: 2px solid var(--mn-accent); outline-offset: -2px; }
+    .ib svg { width: 16px; height: 16px; }
+    .top__av {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: color-mix(in srgb, var(--mn-accent) 18%, var(--mn-surface-raised));
+      color: var(--mn-accent); display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-display); font-size: 0.6rem; font-weight: 700; cursor: pointer;
+    }
+    .tsel {
+      font-size: 0.72rem; padding: 3px 6px; border-radius: var(--radius-sm, 4px);
+      border: 1px solid var(--mn-border); background: var(--mn-surface-raised);
+      color: var(--mn-text-muted); font-family: inherit; cursor: pointer;
+    }
+
+    .side {
+      grid-area: side; background: var(--mn-surface-raised);
+      border-right: 1px solid var(--mn-border);
+      display: flex; flex-direction: column; padding: 12px 8px;
+      overflow-y: auto; min-width: 0; transition: opacity 0.18s;
+    }
+    .app.is-collapsed .side { opacity: 0; pointer-events: none; }
+    .side__brand {
+      display: flex; align-items: center; gap: 8px; padding: 4px 10px 14px;
+      font-family: var(--font-display); font-weight: 700; font-size: 0.82rem; color: var(--mn-text);
+    }
+    .side__v { font-family: var(--font-mono); font-size: 0.5rem; color: var(--mn-text-muted); margin-left: auto; }
+    .side__sep { font-size: 0.58rem; font-weight: 500; color: var(--mn-text-muted); padding: 14px 10px 4px; letter-spacing: 0.03em; }
+    .side__it {
+      display: flex; align-items: center; gap: 8px; padding: 6px 10px;
+      border-radius: var(--radius-md); font-size: 0.8rem; color: var(--mn-text-muted);
+      cursor: pointer; border: none; background: none; width: 100%; text-align: left;
+      font-family: inherit; transition: background 0.1s, color 0.1s; min-height: 32px;
+    }
+    .side__it:hover { background: var(--mn-surface); color: var(--mn-text); }
+    .side__it:focus-visible { outline: 2px solid var(--mn-accent); outline-offset: -2px; }
+    .side__it.on { background: var(--mn-surface); color: var(--mn-text); font-weight: 500; }
+    .side__it svg { width: 15px; height: 15px; flex-shrink: 0; opacity: 0.45; }
+    .side__it.on svg { opacity: 0.75; }
+    .side__it span:last-child:not(:first-child) { flex: 1; }
+    .side__badge { font-family: var(--font-mono); font-size: 0.55rem; color: var(--mn-text-muted); background: var(--mn-surface); padding: 1px 5px; border-radius: 6px; }
+    .side__foot { margin-top: auto; padding-top: 8px; border-top: 1px solid var(--mn-border); }
+
+    .main { grid-area: main; overflow-y: auto; padding: 24px 28px 56px; }
+
+    .ptitle { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+    .ptitle h1 { font-family: var(--font-display); font-size: 1.15rem; font-weight: 700; }
+    .ptitle__meta { display: flex; align-items: center; gap: 10px; }
+
+    .mrow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
+    .mcard {
+      padding: 14px 16px; border-radius: var(--radius-md);
+      background: var(--mn-surface-raised); border: 1px solid var(--mn-border);
+      position: relative; overflow: hidden; cursor: pointer; transition: border-color 0.12s;
+    }
+    .mcard:hover { border-color: color-mix(in srgb, var(--mn-accent) 25%, var(--mn-border)); }
+    .mcard__lab { font-size: 0.7rem; color: var(--mn-text-muted); margin-bottom: 4px; }
+    .mcard__val { font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; line-height: 1; }
+    .mcard__row { display: flex; gap: 10px; margin-top: 6px; }
+    .mcard__d { font-family: var(--font-mono); font-size: 0.6rem; }
+    .d-up { color: var(--mn-success); } .d-dn { color: var(--mn-error); } .d-fl { color: var(--mn-text-muted); }
+
+    .g { display: grid; gap: 10px; margin-bottom: 20px; }
+    .g1 { grid-template-columns: 1fr; }
+    .g2 { grid-template-columns: 1fr 1fr; }
+    .g73 { grid-template-columns: 3fr 2fr; }
+    .g82 { grid-template-columns: 2fr 1fr; }
+    .pn {
       border-radius: var(--radius-md); background: var(--mn-surface-raised);
-      color: var(--mn-text); cursor: pointer; transition: all 0.15s;
+      border: 1px solid var(--mn-border); padding: 14px 16px;
     }
-    .demo-controls button:hover { border-color: var(--mn-accent); color: var(--mn-accent); }
-    .demo-section-title {
-      font-family: var(--font-display); font-size: 0.7rem; text-transform: uppercase;
-      letter-spacing: 0.1em; color: var(--mn-accent); margin: 32px 0 12px;
+    .pn__lab { font-size: 0.7rem; color: var(--mn-text-muted); margin-bottom: 10px; }
+
+    @media (max-width: 1100px) { .mrow { grid-template-columns: 1fr 1fr; } .g2,.g73,.g82 { grid-template-columns: 1fr; } }
+    @media (max-width: 768px) {
+      .app { grid-template-columns: 0px 1fr; } .app .side { opacity: 0; pointer-events: none; }
+      .mrow { grid-template-columns: 1fr 1fr; } .main { padding: 16px; }
     }
-    #header-host { margin-bottom: 8px; }
-    #strip-host { margin-bottom: 32px; }
-    #gantt-host { margin-bottom: 32px; }
-    #table-host { margin-bottom: 32px; }
-    .gauge-row {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 24px; margin-bottom: 32px;
-    }
-    .gauge-card {
-      border: 1px solid var(--mn-border); border-radius: var(--radius-md);
-      background: var(--mn-surface-raised); padding: 20px; text-align: center;
-    }
-    .gauge-card .mn-gauge { display: inline-block; }
-    .gauge-card .mn-gauge__instrument { width: 180px; height: 180px; margin: 0 auto; }
-    .gauge-card .mn-gauge__dial { width: 100%; height: 100%; position: relative; }
-    .gauge-card canvas { width: 100%; height: 100%; }
-    .gauge-card .mn-gauge__glass {
-      position: absolute; inset: 0; border-radius: 50%;
-      background: radial-gradient(ellipse at 40% 30%, rgba(255,255,255,0.06) 0%, transparent 60%);
-      pointer-events: none;
-    }
-    .gauge-label {
-      font-family: var(--font-display); font-size: 0.7rem; text-transform: uppercase;
-      letter-spacing: 0.08em; color: var(--mn-text-muted); margin-top: 8px;
-    }
-    .chart-card {
-      border: 1px solid var(--mn-border); border-radius: var(--radius-md);
-      background: var(--mn-surface-raised); padding: 20px;
-    }
-    .sr-only {
-      position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
-      overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
-    }
+    @media (prefers-reduced-motion: reduce) { .app,.side,.mcard { transition: none; } }
   </style>
 </head>
 <body>
-  <script>
-    try {
-      var t = localStorage.getItem('mn-theme');
-      if (t && t !== 'editorial') document.body.classList.add('mn-' + t);
-    } catch (_) {}
-  </script>
+  <script>try{var t=localStorage.getItem('mn-theme');if(t&&t!=='editorial')document.body.classList.add('mn-'+t)}catch(e){}</script>
 
-  <a class="demo-back" href="index.html">&#8592; Back to Gallery</a>
-
-  <div id="header-host"></div>
-
-  <div class="demo-wrap">
-    <div class="demo-controls">
-      <button onclick="Maranello.setTheme('editorial')">Editorial</button>
-      <button onclick="Maranello.setTheme('nero')">Nero</button>
-      <button onclick="Maranello.setTheme('avorio')">Avorio</button>
-      <button onclick="Maranello.setTheme('colorblind')">Colorblind</button>
-      <button onclick="Maranello.setTheme('sugar')">Sugar</button>
-      <button onclick="Maranello.setTheme('navy')">Navy</button>
+  <div class="app" id="app">
+    <div class="top">
+      <button class="ib" id="tog" aria-label="Toggle sidebar"></button>
+      <span class="top__crumb">Portfolio / <b id="bc">Overview</b></span>
+      <div class="top__spacer"></div>
+      <label class="top__search">
+        <span id="si"></span>
+        <input type="text" placeholder="Search..." aria-label="Search">
+        <span class="top__kbd" id="sk"></span>
+      </label>
+      <select class="tsel" id="tp" aria-label="Theme">
+        <option value="editorial">Editorial</option><option value="nero">Nero</option>
+        <option value="avorio">Avorio</option><option value="colorblind">Colorblind</option>
+        <option value="sugar">Sugar</option><option value="navy">Navy</option>
+      </select>
+      <button class="ib" id="ib" aria-label="Notifications"></button>
+      <button class="ib" id="is" aria-label="Settings"></button>
+      <div class="top__av" title="Drew Foster">DF</div>
     </div>
 
-    <!-- KPI Strip -->
-    <h2 class="demo-section-title">Program Health Dashboard</h2>
-    <div id="strip-host"></div>
+    <nav class="side" id="side" aria-label="Navigation">
+      <div class="side__brand"><img src="../src/assets/favicon.svg" alt="" width="18" height="18"> PMO <span class="side__v">6.5</span></div>
+      <div class="side__sep">Portfolio</div>
+      <button class="side__it on" data-p="Overview"><span id="n1"></span><span>Overview</span></button>
+      <button class="side__it" data-p="Timeline"><span id="n2"></span><span>Timeline</span></button>
+      <button class="side__it" data-p="Resources"><span id="n3"></span><span>Resources</span></button>
+      <div class="side__sep">Programs</div>
+      <button class="side__it" data-p="Phoenix"><span id="n4"></span><span>Phoenix</span></button>
+      <button class="side__it" data-p="Titan"><span id="n5"></span><span>Titan</span></button>
+      <button class="side__it" data-p="Horizon"><span id="n6"></span><span>Horizon</span></button>
+      <div class="side__sep">Reporting</div>
+      <button class="side__it" data-p="Risks"><span id="n7"></span><span>Risks</span><span class="side__badge">2</span></button>
+      <button class="side__it" data-p="Budget"><span id="n8"></span><span>Budget</span></button>
+    </nav>
 
-    <!-- Gantt Timeline -->
-    <h2 class="demo-section-title">Program Timeline</h2>
-    <div id="gantt-host" class="mn-card-dark" style="padding:var(--space-lg)">
-      <mn-gantt id="gantt-chart"></mn-gantt>
-    </div>
-
-    <!-- Portfolio Table -->
-    <h2 class="demo-section-title">Portfolio Overview</h2>
-    <div id="table-host"></div>
-
-    <!-- Resource Gauges -->
-    <h2 class="demo-section-title">Resource Utilization</h2>
-    <div class="gauge-row">
-      <div class="gauge-card" role="group" aria-label="Engineering utilization gauge">
-        <div class="mn-gauge">
-          <div class="mn-gauge__instrument">
-            <div class="mn-gauge__dial">
-              <canvas id="gauge-eng" class="mn-gauge__canvas" role="img" aria-label="Engineering utilization at 91 percent"></canvas>
-              <span class="sr-only">Engineering utilization: 91%</span>
-              <div class="mn-gauge__glass"></div>
-            </div>
-          </div>
-        </div>
-        <div class="gauge-label">Engineering</div>
+    <main class="main">
+      <div class="ptitle">
+        <h1>Program Portfolio Q1 2026</h1>
+        <div class="ptitle__meta"><button class="mn-btn mn-btn--accent mn-btn--sm" id="newprog">New Program</button></div>
       </div>
-      <div class="gauge-card" role="group" aria-label="Design utilization gauge">
-        <div class="mn-gauge">
-          <div class="mn-gauge__instrument">
-            <div class="mn-gauge__dial">
-              <canvas id="gauge-design" class="mn-gauge__canvas" role="img" aria-label="Design utilization at 67 percent"></canvas>
-              <span class="sr-only">Design utilization: 67%</span>
-              <div class="mn-gauge__glass"></div>
-            </div>
-          </div>
-        </div>
-        <div class="gauge-label">Design</div>
-      </div>
-      <div class="gauge-card" role="group" aria-label="QA utilization gauge">
-        <div class="mn-gauge">
-          <div class="mn-gauge__instrument">
-            <div class="mn-gauge__dial">
-              <canvas id="gauge-qa" class="mn-gauge__canvas" role="img" aria-label="QA utilization at 45 percent"></canvas>
-              <span class="sr-only">QA utilization: 45%</span>
-              <div class="mn-gauge__glass"></div>
-            </div>
-          </div>
-        </div>
-        <div class="gauge-label">QA</div>
-      </div>
-    </div>
 
-    <!-- Budget Bar Chart -->
-    <h2 class="demo-section-title">Budget Allocation by Program</h2>
-    <div class="chart-card">
-      <div class="mn-label" style="margin-bottom:var(--space-md)">FY 2026 Program Budget ($K)</div>
-      <canvas id="budget-chart" width="600" height="240" role="img"
-              aria-label="Bar chart showing budget allocation across five programs"
-              style="width:100%;height:240px"></canvas>
-      <span class="sr-only">Platform Modernization $2100K, Cloud Migration $3400K, Customer 360 $1800K, Data Lake v2 $950K, Security Hardening $1200K</span>
-    </div>
+      <div class="mrow" id="kpis">
+        <div class="mcard" data-k="Active Programs: 3 major programs in flight">
+          <div class="mcard__lab">Active Programs</div>
+          <div class="mcard__val">3</div>
+          <div class="mcard__row"><span class="mcard__d d-fl">2 on track</span><span class="mcard__d d-dn">1 at risk</span></div>
+        </div>
+        <div class="mcard" data-k="Total Budget: $4.8M allocated, 72% utilized">
+          <div class="mcard__lab">Total Budget</div>
+          <div class="mcard__val">$4.8M</div>
+          <div class="mcard__row"><span class="mcard__d d-fl">72% utilized</span></div>
+        </div>
+        <div class="mcard" data-k="Milestones: 18 of 24 milestones achieved">
+          <div class="mcard__lab">Milestones Hit</div>
+          <div class="mcard__val">18/24</div>
+          <div class="mcard__row"><span class="mcard__d d-up">75% complete</span></div>
+        </div>
+        <div class="mcard" data-k="Open Risks: 2 risks, 1 critical priority">
+          <div class="mcard__lab">Open Risks</div>
+          <div class="mcard__val">2</div>
+          <div class="mcard__row"><span class="mcard__d d-dn">1 critical</span></div>
+        </div>
+      </div>
+
+      <div class="pn" style="margin-bottom:20px">
+        <div class="pn__lab">Program timeline</div>
+        <div id="gantt" style="min-height:220px"></div>
+      </div>
+
+      <div class="g g2">
+        <div class="pn"><div class="pn__lab">Program status</div><div id="tbl"></div></div>
+        <div class="pn"><div class="pn__lab">Budget allocation</div><canvas id="donut" style="width:100%;height:240px" role="img" aria-label="Budget allocation donut chart"></canvas></div>
+      </div>
+
+      <div class="pn" style="margin-bottom:20px">
+        <div class="pn__lab">Resource utilization</div>
+        <div id="strip"></div>
+      </div>
+
+      <div class="pn" style="margin-bottom:20px">
+        <div class="pn__lab">Recent updates</div>
+        <div id="feed"></div>
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;padding-top:12px;border-top:1px solid var(--mn-border)">
+        <div class="mn-segmented" role="tablist" id="seg">
+          <button class="mn-segmented__item mn-segmented__item--active" role="tab" aria-selected="true">Programs</button>
+          <button class="mn-segmented__item" role="tab">Resources</button>
+          <button class="mn-segmented__item" role="tab">Budget</button>
+        </div>
+      </div>
+    </main>
   </div>
 
   <script src="../dist/iife/maranello.min.js"></script>
@@ -158,165 +233,127 @@
       var M = window.Maranello;
       if (!M) return;
 
-      /* ── Header ─────────────────────────────────────── */
-      M.header.init(document.getElementById('header-host'), {
-        brand: { label: 'ConvergIO Programs' },
-        left: [
-          { id: 'portfolio', label: 'Portfolio', active: true },
-          { id: 'timeline', label: 'Timeline' },
-          { id: 'resources', label: 'Resources' },
-          { id: 'risks', label: 'Risks' }
-        ]
+      function ic(id, n) { var e = document.getElementById(id); if (e && M.icons[n]) e.innerHTML = M.icons[n](); }
+      ic('tog','menu'); ic('si','search'); ic('ib','bell'); ic('is','settings');
+      ic('n1','dashboard'); ic('n2','gantt'); ic('n3','users'); ic('n4','bolt');
+      ic('n5','shield'); ic('n6','compass'); ic('n7','alertTriangle'); ic('n8','kpi');
+
+      var sk = document.getElementById('sk');
+      if (sk) sk.textContent = navigator.userAgent.indexOf('Mac') !== -1 ? '\u2318K' : 'Ctrl+K';
+
+      var tp = document.getElementById('tp');
+      tp.value = localStorage.getItem('mn-theme') || 'editorial';
+      tp.addEventListener('change', function () { M.setTheme(tp.value); localStorage.setItem('mn-theme', tp.value); });
+
+      var app = document.getElementById('app');
+      document.getElementById('tog').addEventListener('click', function () {
+        if (app.className.indexOf('is-collapsed') !== -1) app.className = app.className.replace('is-collapsed','').trim();
+        else app.className = app.className.trim() + ' is-collapsed';
       });
 
-      /* ── KPI Strip ──────────────────────────────────── */
-      var healthGaugeConfig = {
-        value: 82,
-        max: 100,
-        color: '#00A651',
-        colorMode: 'higher-better',
-        ticks: 10,
-        subticks: 5,
-        startAngle: -225,
-        endAngle: 45,
-        showNeedle: true,
-        numbers: [0, 25, 50, 75, 100],
-        complications: {
-          centerValue: '82',
-          centerUnit: '%',
-          centerLabel: 'HEALTH',
-          arcBar: { labelLeft: '0', labelRight: '100' },
-          statusLed: { color: '#00A651', label: 'ON TRACK' }
+      var navs = document.querySelectorAll('.side__it');
+      var bc = document.getElementById('bc');
+      for (var i = 0; i < navs.length; i++) {
+        navs[i].addEventListener('click', function () {
+          for (var j = 0; j < navs.length; j++) navs[j].className = navs[j].className.replace(' on', '');
+          this.className += ' on';
+          if (bc) bc.textContent = this.getAttribute('data-p');
+        });
+      }
+
+      var segs = document.querySelectorAll('#seg .mn-segmented__item');
+      for (var s = 0; s < segs.length; s++) {
+        segs[s].addEventListener('click', function () {
+          for (var k = 0; k < segs.length; k++) { segs[k].className = segs[k].className.replace(' mn-segmented__item--active',''); segs[k].removeAttribute('aria-selected'); }
+          this.className += ' mn-segmented__item--active'; this.setAttribute('aria-selected','true');
+          if (M.toast) M.toast({ type:'info', title:'View', message:'Switched to ' + this.textContent });
+        });
+      }
+
+      document.getElementById('newprog').addEventListener('click', function () {
+        if (M.toast) M.toast({ type:'success', title:'Program', message:'Create new program dialog' });
+      });
+
+      var mcards = document.querySelectorAll('[data-k]');
+      for (var m = 0; m < mcards.length; m++) {
+        mcards[m].addEventListener('click', function () {
+          if (M.toast) M.toast({ type:'info', title:'Metric', message: this.getAttribute('data-k') });
+        });
+      }
+
+      var cstyles = getComputedStyle(document.documentElement);
+      function resolveColor(n) { return cstyles.getPropertyValue(n).trim() || '#888888'; }
+
+      try { if (M.gantt) {
+        M.gantt(document.getElementById('gantt'), [
+          {id:'1',title:'Phoenix: Infrastructure Upgrade',start:'2026-01-01',end:'2026-04-30',progress:65},
+          {id:'2',title:'Phoenix: Security Hardening',start:'2026-02-15',end:'2026-05-31',progress:45},
+          {id:'3',title:'Titan: Mobile Platform Launch',start:'2026-01-15',end:'2026-06-30',progress:55},
+          {id:'4',title:'Titan: API Gateway v3',start:'2026-03-01',end:'2026-07-15',progress:30},
+          {id:'5',title:'Horizon: AI Integration',start:'2026-02-01',end:'2026-08-31',progress:25},
+          {id:'6',title:'Horizon: Analytics Dashboard',start:'2026-04-01',end:'2026-09-30',progress:15},
+          {id:'7',title:'Horizon: Data Pipeline Rebuild',start:'2026-03-15',end:'2026-10-31',progress:20}
+        ], { onClick:function(t){ if(M.toast) M.toast({type:'info',title:t.title,message:'Progress: '+t.progress+'%'}); } });
+      } } catch(e) { console.warn('gantt:', e.message); }
+
+      try { if (M.dataTable) {
+        M.dataTable(document.getElementById('tbl'), {
+          columns:[
+            {key:'program',label:'Program',sortable:true},
+            {key:'lead',label:'Lead'},
+            {key:'status',label:'Status',type:'status'},
+            {key:'budget',label:'Budget',align:'right'},
+            {key:'spent',label:'Spent',align:'right'},
+            {key:'progress',label:'Progress',type:'progress'}
+          ],
+          data:[
+            {program:'Phoenix',lead:'Sarah Martinez',status:'On Track',budget:'$1.8M',spent:'$1.3M',progress:65},
+            {program:'Titan',lead:'Kevin Zhang',status:'At Risk',budget:'$1.6M',spent:'$1.1M',progress:48},
+            {program:'Horizon',lead:'Rachel Kumar',status:'On Track',budget:'$1.4M',spent:'$0.7M',progress:38}
+          ],
+          ariaLabel:'Program status table',
+          compact:true,
+          onRowClick:function(r){ if(M.toast) M.toast({type:'info',title:r.program,message:'Lead: '+r.lead+', Budget: '+r.budget}); }
+        });
+      } } catch(e) { console.warn('dataTable:', e.message); }
+
+      try { if (M.charts && M.charts.donut) {
+        var donut = document.getElementById('donut');
+        if (donut) {
+          M.charts.donut(donut, [
+            { value:1800000, color:resolveColor("--mn-chart-series-1") },
+            { value:1600000, color:resolveColor("--mn-chart-series-2") },
+            { value:1400000, color:resolveColor("--mn-chart-series-3") }
+          ], { centerText:'$4.8M', centerSubtext:'Total Budget' });
         }
-      };
+      } } catch(e) { console.warn('donut:', e.message); }
 
-      M.dashboardStrip('strip-host', {
-        ariaLabel: 'Program Health Dashboard Strip',
-        zones: [
-          {
-            type: 'gauge',
-            label: 'PROGRAM HEALTH',
-            gaugeConfig: healthGaugeConfig,
-            size: 'sm'
-          },
-          {
-            type: 'board',
-            title: 'PORTFOLIO STATUS',
-            stats: [
-              { label: 'ACTIVE PROGRAMS', value: 8 },
-              { label: 'ON SCHEDULE', value: 5 },
-              { label: 'BEHIND', value: 2 },
-              { label: 'BLOCKED', value: 1 }
-            ]
-          },
-          {
-            type: 'trend',
-            title: 'FINANCIAL & RESOURCE',
-            items: [
-              { label: 'BUDGET BURN RATE', value: 68, color: '#FFC72C', data: [42, 48, 53, 58, 62, 68] },
-              { label: 'RESOURCE UTIL', value: 76, color: '#448AFF', data: [60, 63, 68, 71, 74, 76] }
-            ]
-          }
-        ]
-      });
+      try { if (M.dashboardStrip) {
+        M.dashboardStrip(document.getElementById('strip'), {
+          ariaLabel: 'Resource utilization',
+          zones: [
+            { type:'gauge', label:'ENG CAP', gaugeConfig:{ value:78, max:100, color:resolveColor("--mn-accent"), ticks:10, subticks:5, startAngle:-225, endAngle:45, showNeedle:true, numbers:[0,50,100], complications:{ centerValue:'78', centerUnit:'%', centerLabel:'CAPACITY' } }, size:'sm' },
+            { type:'trend', title:'VELOCITY', items:[
+              { label:'Phoenix', value:'12 pts/wk', trend:'up', data:[10,11,11,12] },
+              { label:'Titan', value:'9 pts/wk', trend:'flat', data:[9,9,8,9] },
+              { label:'Horizon', value:'7 pts/wk', trend:'down', data:[8,8,7,7] }
+            ] }
+          ]
+        });
+      } } catch(e) { console.warn('strip:', e.message); }
 
-      /* ── Gantt Timeline ─────────────────────────────── */
-      var ganttTasks = [
-        { id: 'pm1', title: 'Platform Modernization', start: '2026-01-06', end: '2026-09-30', progress: 55, color: '#FFC72C' },
-        { id: 'pm1a', title: 'Requirements Gathering', start: '2026-01-06', end: '2026-02-14', progress: 100, color: '#FFC72C', dependencies: ['pm1'] },
-        { id: 'pm1b', title: 'Architecture Review', start: '2026-02-17', end: '2026-03-28', progress: 100, color: '#FFC72C', dependencies: ['pm1a'] },
-        { id: 'pm1c', title: 'Sprint 1-4 Development', start: '2026-03-30', end: '2026-07-18', progress: 60, color: '#FFC72C', dependencies: ['pm1b'] },
-        { id: 'pm1d', title: 'UAT & Go-Live', start: '2026-07-20', end: '2026-09-30', progress: 0, color: '#FFC72C', dependencies: ['pm1c'] },
-        { id: 'cm1', title: 'Cloud Migration', start: '2026-04-01', end: '2026-12-15', progress: 30, color: '#4EA8DE' },
-        { id: 'cm1a', title: 'Discovery & Assessment', start: '2026-04-01', end: '2026-05-31', progress: 100, color: '#4EA8DE', dependencies: ['cm1'] },
-        { id: 'cm1b', title: 'Migration Waves 1-3', start: '2026-06-01', end: '2026-10-31', progress: 25, color: '#4EA8DE', dependencies: ['cm1a'] },
-        { id: 'cm1c', title: 'Cutover & Validation', start: '2026-11-01', end: '2026-12-15', progress: 0, color: '#4EA8DE', dependencies: ['cm1b'] },
-        { id: 'c360', title: 'Customer 360', start: '2026-01-12', end: '2026-06-30', progress: 85, color: '#00A651' },
-        { id: 'c360a', title: 'Data Integration', start: '2026-01-12', end: '2026-03-15', progress: 100, color: '#00A651', dependencies: ['c360'] },
-        { id: 'c360b', title: 'Dashboard Build', start: '2026-03-16', end: '2026-05-31', progress: 90, color: '#00A651', dependencies: ['c360a'] },
-        { id: 'c360c', title: 'User Acceptance', start: '2026-06-01', end: '2026-06-30', progress: 40, color: '#00A651', dependencies: ['c360b'] }
-      ];
-
-      var ganttEl = document.getElementById('gantt-chart');
-      if (ganttEl) {
-        ganttEl.setAttribute('tasks', JSON.stringify(ganttTasks));
-      }
-
-      /* ── Data Table ─────────────────────────────────── */
-      var portfolioData = [
-        { program: 'Platform Modernization', pm: 'Jennifer Walsh', status: 'On Track', budget: 2100000, spent: 1155000, timeline: 'Q1 - Q3 2026', risk: 'Medium' },
-        { program: 'Cloud Migration', pm: 'David Park', status: 'At Risk', budget: 3400000, spent: 1020000, timeline: 'Q2 - Q4 2026', risk: 'High' },
-        { program: 'Customer 360', pm: 'Aisha Mohammed', status: 'On Track', budget: 1800000, spent: 1530000, timeline: 'Q1 - Q2 2026', risk: 'Low' },
-        { program: 'Data Lake v2', pm: 'Carlos Rivera', status: 'Behind', budget: 950000, spent: 285000, timeline: 'Q3 - Q4 2026', risk: 'Critical' },
-        { program: 'Security Hardening', pm: 'Emma Thompson', status: 'On Track', budget: 1200000, spent: 540000, timeline: 'Q1 - Q4 2026', risk: 'Low' }
-      ];
-
-      M.dataTable(document.getElementById('table-host'), {
-        columns: [
-          { key: 'program', label: 'Program', type: 'text', sortable: true },
-          { key: 'pm', label: 'PM Owner', type: 'text', sortable: true },
-          { key: 'status', label: 'Status', type: 'status', sortable: true, filterable: true },
-          { key: 'budget', label: 'Budget ($)', type: 'metric', sortable: true },
-          { key: 'spent', label: 'Spent ($)', type: 'metric', sortable: true },
-          { key: 'timeline', label: 'Timeline', type: 'text', sortable: true },
-          { key: 'risk', label: 'Risk Level', type: 'status', sortable: true, filterable: true }
-        ],
-        data: portfolioData,
-        pageSize: 10,
-        ariaLabel: 'Program portfolio overview table'
-      });
-
-      /* ── Resource Gauges ────────────────────────────── */
-      var gauges = [
-        { id: 'gauge-eng', value: 91, color: '#DC0000', label: 'ENGINEERING', led: 'CRITICAL' },
-        { id: 'gauge-design', value: 67, color: '#FFC72C', label: 'DESIGN', led: 'WARN' },
-        { id: 'gauge-qa', value: 45, color: '#00A651', label: 'QA', led: 'HEALTHY' }
-      ];
-
-      gauges.forEach(function (cfg) {
-        var canvas = document.getElementById(cfg.id);
-        if (!canvas) return;
-        canvas.setAttribute('data-gauge', JSON.stringify({
-          value: cfg.value,
-          max: 100,
-          color: cfg.color,
-          colorMode: 'lower-better',
-          ticks: 10,
-          subticks: 5,
-          startAngle: -225,
-          endAngle: 45,
-          showNeedle: true,
-          numbers: [0, 25, 50, 75, 100],
-          complications: {
-            centerValue: String(cfg.value),
-            centerUnit: '%',
-            centerLabel: cfg.label,
-            arcBar: { labelLeft: '0', labelRight: '100' },
-            statusLed: { color: cfg.color, label: cfg.led }
-          }
-        }));
-      });
-
-      if (M.initGauges) {
-        M.initGauges({ selector: '.gauge-card .mn-gauge__canvas', threshold: 0.1 });
-      }
-
-      /* ── Budget Bar Chart ───────────────────────────── */
-      var C = M.charts || M;
-      var p = M.palette ? M.palette() : {};
-      var accent = p.accent || '#FFC72C';
-      var budgetData = [
-        { label: 'Platform Mod.', value: 2100, color: accent },
-        { label: 'Cloud Migr.', value: 3400, color: accent },
-        { label: 'Customer 360', value: 1800, color: accent },
-        { label: 'Data Lake v2', value: 950, color: accent },
-        { label: 'Security', value: 1200, color: accent }
-      ];
-
-      var chartCanvas = document.getElementById('budget-chart');
-      if (chartCanvas && C.barChart) {
-        C.barChart(chartCanvas, budgetData, { width: 600, height: 240, color: accent });
-      }
+      try { if (M.activityFeed) {
+        M.activityFeed(document.getElementById('feed'), [
+          {id:'1',title:'Milestone Completed',body:'Phoenix infrastructure upgrade 65% complete',meta:'2h ago',type:'success'},
+          {id:'2',title:'Risk Escalated',body:'Titan mobile launch delayed 2 weeks',meta:'5h ago',type:'warning'},
+          {id:'3',title:'Budget Updated',body:'Horizon allocated additional $200K',meta:'8h ago',type:'info'},
+          {id:'4',title:'Resource Added',body:'3 engineers assigned to Titan API Gateway',meta:'1d ago',type:'success'},
+          {id:'5',title:'Review Meeting',body:'Phoenix phase 2 kickoff scheduled',meta:'1d ago',type:'info'},
+          {id:'6',title:'Dependency Alert',body:'Horizon AI integration blocked on vendor',meta:'2d ago',type:'danger'},
+          {id:'7',title:'Status Report',body:'Q1 portfolio review submitted to exec team',meta:'3d ago',type:'success'},
+          {id:'8',title:'Contract Signed',body:'Phoenix vendor SOW approved',meta:'4d ago',type:'success'}
+        ], {maxItems:10});
+      } } catch(e) { console.warn('activityFeed:', e.message); }
     })();
   </script>
 </body>

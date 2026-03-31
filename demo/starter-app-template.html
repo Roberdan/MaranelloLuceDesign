@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SaaS Workspace — Maranello Luce</title>
+  <title>Admin Dashboard — Maranello Luce</title>
   <link rel="icon" href="../src/assets/favicon.svg">
   <link rel="stylesheet" href="../src/fonts/local-fonts.css">
   <link rel="stylesheet" href="../dist/css/maranello.css">
@@ -105,7 +105,6 @@
       position: relative; overflow: hidden; cursor: pointer; transition: border-color 0.12s;
     }
     .mcard:hover { border-color: color-mix(in srgb, var(--mn-accent) 25%, var(--mn-border)); }
-    .mcard__sp { position: absolute; bottom: 0; right: 0; width: 80px; height: 32px; opacity: 0.2; }
     .mcard__lab { font-size: 0.7rem; color: var(--mn-text-muted); margin-bottom: 4px; }
     .mcard__val { font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; line-height: 1; }
     .mcard__row { display: flex; gap: 10px; margin-top: 6px; }
@@ -137,7 +136,7 @@
   <div class="app" id="app">
     <div class="top">
       <button class="ib" id="tog" aria-label="Toggle sidebar"></button>
-      <span class="top__crumb">Workspace / <b id="bc">Aurora Platform</b></span>
+      <span class="top__crumb">General / <b id="bc">Dashboard</b></span>
       <div class="top__spacer"></div>
       <label class="top__search">
         <span id="si"></span>
@@ -151,73 +150,85 @@
       </select>
       <button class="ib" id="ib" aria-label="Notifications"></button>
       <button class="ib" id="is" aria-label="Settings"></button>
-      <div class="top__av" title="Alex Morgan">AM</div>
+      <div class="top__av" title="Admin User">AU</div>
     </div>
 
     <nav class="side" id="side" aria-label="Navigation">
-      <div class="side__brand"><img src="../src/assets/favicon.svg" alt="" width="18" height="18"> Workspace <span class="side__v">6.5</span></div>
-      <div class="side__sep">Projects</div>
-      <button class="side__it on" data-p="Aurora Platform"><span id="n1"></span><span>Aurora Platform</span></button>
-      <button class="side__it" data-p="Nexus API"><span id="n2"></span><span>Nexus API</span></button>
-      <button class="side__it" data-p="Stellar Mobile"><span id="n3"></span><span>Stellar Mobile</span></button>
-      <div class="side__sep">Team</div>
-      <button class="side__it" data-p="Team"><span id="n4"></span><span>Team</span></button>
-      <div class="side__foot"><button class="side__it" data-p="Settings"><span id="n5"></span><span>Settings</span></button></div>
+      <div class="side__brand"><img src="../src/assets/favicon.svg" alt="" width="18" height="18"> Admin <span class="side__v">6.5</span></div>
+      <div class="side__sep">General</div>
+      <button class="side__it on" data-p="Dashboard"><span id="n1"></span><span>Dashboard</span></button>
+      <button class="side__it" data-p="Users"><span id="n2"></span><span>Users</span></button>
+      <button class="side__it" data-p="Audit Log"><span id="n3"></span><span>Audit Log</span><span class="side__badge">3</span></button>
+      <div class="side__sep">Security</div>
+      <button class="side__it" data-p="PAT Tokens"><span id="n4"></span><span>PAT Tokens</span></button>
+      <button class="side__it" data-p="Feature Flags"><span id="n5"></span><span>Feature Flags</span></button>
+      <div class="side__sep">Account</div>
+      <button class="side__it" data-p="Billing"><span id="n6"></span><span>Billing</span></button>
+      <div class="side__foot">
+        <button class="side__it" data-p="Settings"><span id="n7"></span><span>Settings</span></button>
+        <button class="side__it" data-p="Documentation"><span id="n8"></span><span>Documentation</span></button>
+      </div>
     </nav>
 
     <main class="main">
       <div class="ptitle">
-        <h1>Aurora Platform Sprint 14</h1>
-        <div class="ptitle__meta"><button class="mn-btn mn-btn--accent mn-btn--sm" id="newissue">New Issue</button></div>
+        <h1>Dashboard Overview</h1>
+        <div class="ptitle__meta"><button class="mn-btn mn-btn--accent mn-btn--sm" id="refresh">Refresh Data</button></div>
       </div>
 
       <div class="mrow" id="kpis">
-        <div class="mcard" data-k="Open Issues: 47 in current sprint">
-          <canvas class="mcard__sp" id="s0" role="img" aria-label="Open issues sparkline"></canvas>
-          <div class="mcard__lab">Open Issues</div>
-          <div class="mcard__val">47</div>
-          <div class="mcard__row"><span class="mcard__d d-dn">+5 this week</span></div>
+        <div class="mcard" data-k="Active Users: 2,847 monthly active users">
+          <div class="mcard__lab">Active Users</div>
+          <div class="mcard__val">2,847</div>
+          <div class="mcard__row"><span class="mcard__d d-up">+142 this month</span></div>
         </div>
-        <div class="mcard" data-k="Sprint Velocity: 34 story points per sprint">
-          <canvas class="mcard__sp" id="s1" role="img" aria-label="Sprint velocity sparkline"></canvas>
-          <div class="mcard__lab">Sprint Velocity</div>
-          <div class="mcard__val">34 pts</div>
-          <div class="mcard__row"><span class="mcard__d d-up">+3 vs prior</span></div>
+        <div class="mcard" data-k="Revenue: $142K monthly recurring revenue">
+          <div class="mcard__lab">Revenue</div>
+          <div class="mcard__val">$142K</div>
+          <div class="mcard__row"><span class="mcard__d d-up">+$8K MRR</span></div>
         </div>
-        <div class="mcard" data-k="Cycle Time: 3.2 days average">
-          <canvas class="mcard__sp" id="s2" role="img" aria-label="Cycle time sparkline"></canvas>
-          <div class="mcard__lab">Cycle Time</div>
-          <div class="mcard__val">3.2 days</div>
-          <div class="mcard__row"><span class="mcard__d d-up">-0.4d</span></div>
+        <div class="mcard" data-k="API Calls: 3.2M calls per month">
+          <div class="mcard__lab">API Calls</div>
+          <div class="mcard__val">3.2M/mo</div>
+          <div class="mcard__row"><span class="mcard__d d-up">+240K</span></div>
         </div>
-        <div class="mcard" data-k="Completion Rate: 89% tasks completed on time">
-          <canvas class="mcard__sp" id="s3" role="img" aria-label="Completion rate sparkline"></canvas>
-          <div class="mcard__lab">Completion Rate</div>
-          <div class="mcard__val">89%</div>
-          <div class="mcard__row"><span class="mcard__d d-up">+2pp</span></div>
+        <div class="mcard" data-k="Error Rate: 0.12% of requests failed">
+          <div class="mcard__lab">Error Rate</div>
+          <div class="mcard__val">0.12%</div>
+          <div class="mcard__row"><span class="mcard__d d-up">-0.03pp</span></div>
         </div>
       </div>
 
-      <div class="g g73">
-        <div class="pn"><div class="pn__lab">Sprint board</div><div id="kanban"></div></div>
-        <div class="pn"><div class="pn__lab">Velocity trend</div><canvas id="velsp" style="width:100%;height:180px" role="img" aria-label="Velocity trend sparkline"></canvas></div>
+      <div class="pn g1" style="margin-bottom:20px">
+        <div class="pn__lab">System metrics</div>
+        <div id="strip"></div>
       </div>
 
       <div class="pn" style="margin-bottom:20px">
-        <div class="pn__lab">Backlog issues</div>
-        <div id="tbl"></div>
+        <div class="pn__lab">Revenue trend</div>
+        <canvas id="revsp" style="width:100%;height:120px" role="img" aria-label="Revenue trend sparkline"></canvas>
+      </div>
+
+      <div class="g g2">
+        <div class="pn"><div class="pn__lab">Team members</div><div id="tbl"></div></div>
+        <div class="pn"><div class="pn__lab">Traffic sources</div><canvas id="donut" style="width:100%;height:240px" role="img" aria-label="Traffic sources donut chart"></canvas></div>
+      </div>
+
+      <div class="g g2">
+        <div class="pn"><div class="pn__lab">Errors by service</div><canvas id="bar" style="width:100%;height:200px" role="img" aria-label="Errors by service bar chart"></canvas></div>
+        <div class="pn"><div class="pn__lab">Recent activity</div><div id="feed"></div></div>
       </div>
 
       <div class="pn" style="margin-bottom:20px">
-        <div class="pn__lab">Recent activity</div>
-        <div id="feed"></div>
+        <div class="pn__lab">Project timeline</div>
+        <div id="gantt" style="min-height:200px"></div>
       </div>
 
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;padding-top:12px;border-top:1px solid var(--mn-border)">
         <div class="mn-segmented" role="tablist" id="seg">
-          <button class="mn-segmented__item mn-segmented__item--active" role="tab" aria-selected="true">Board</button>
-          <button class="mn-segmented__item" role="tab">List</button>
-          <button class="mn-segmented__item" role="tab">Timeline</button>
+          <button class="mn-segmented__item" role="tab">Day</button>
+          <button class="mn-segmented__item" role="tab">Week</button>
+          <button class="mn-segmented__item mn-segmented__item--active" role="tab" aria-selected="true">Month</button>
         </div>
       </div>
     </main>
@@ -231,7 +242,8 @@
 
       function ic(id, n) { var e = document.getElementById(id); if (e && M.icons[n]) e.innerHTML = M.icons[n](); }
       ic('tog','menu'); ic('si','search'); ic('ib','bell'); ic('is','settings');
-      ic('n1','layers'); ic('n2','code'); ic('n3','globe'); ic('n4','users'); ic('n5','settings');
+      ic('n1','home'); ic('n2','users'); ic('n3','report'); ic('n4','key');
+      ic('n5','toggleOn'); ic('n6','briefcase'); ic('n7','settings'); ic('n8','file');
 
       var sk = document.getElementById('sk');
       if (sk) sk.textContent = navigator.userAgent.indexOf('Mac') !== -1 ? '\u2318K' : 'Ctrl+K';
@@ -261,12 +273,12 @@
         segs[s].addEventListener('click', function () {
           for (var k = 0; k < segs.length; k++) { segs[k].className = segs[k].className.replace(' mn-segmented__item--active',''); segs[k].removeAttribute('aria-selected'); }
           this.className += ' mn-segmented__item--active'; this.setAttribute('aria-selected','true');
-          if (M.toast) M.toast({ type:'info', title:'View', message:'Switched to ' + this.textContent });
+          if (M.toast) M.toast({ type:'info', title:'Range', message:'Switched to ' + this.textContent });
         });
       }
 
-      document.getElementById('newissue').addEventListener('click', function () {
-        if (M.toast) M.toast({ type:'success', title:'Issue', message:'Create new issue dialog' });
+      document.getElementById('refresh').addEventListener('click', function () {
+        if (M.toast) M.toast({ type:'success', title:'Data', message:'Dashboard data refreshed' });
       });
 
       var mcards = document.querySelectorAll('[data-k]');
@@ -276,80 +288,96 @@
         });
       }
 
-      var spd = [[42,45,47,50,49,48,47],[28,30,31,29,32,33,34],[4.2,3.9,3.8,3.5,3.4,3.3,3.2],[84,86,87,88,87,88,89]];
-      try { if (M.sparkline) { for (var p = 0; p < 4; p++) { var sc = document.getElementById('s'+p); if (sc) M.sparkline(sc, spd[p]); } } } catch(e) { console.warn('sparkline:', e.message); }
+      var cstyles = getComputedStyle(document.documentElement);
+      function resolveColor(n) { return cstyles.getPropertyValue(n).trim() || '#888888'; }
 
       try { if (M.sparkline) {
-        var velc = document.getElementById('velsp');
-        if (velc) M.sparkline(velc, [28,30,31,29,32,33,34,31,29,32,33,34]);
-      } } catch(e) { console.warn('velocity sparkline:', e.message); }
+        var revsp = document.getElementById('revsp');
+        if (revsp) M.sparkline(revsp, [108,112,118,122,126,128,132,134,136,138,140,142]);
+      } } catch(e) { console.warn('revenue sparkline:', e.message); }
 
-      try { if (M.kanbanBoard) {
-        M.kanbanBoard(document.getElementById('kanban'), {
-          columns: [
-            { id:'todo', title:'To Do', limit:10 },
-            { id:'prog', title:'In Progress', limit:5 },
-            { id:'review', title:'Review', limit:3 },
-            { id:'done', title:'Done' }
-          ],
-          cards: [
-            { id:'1', columnId:'todo', title:'Implement user profile API', assignee:'Sarah Chen', priority:'high' },
-            { id:'2', columnId:'todo', title:'Fix login redirect bug', assignee:'Marcus Lee', priority:'critical' },
-            { id:'3', columnId:'todo', title:'Update documentation', assignee:'Priya Patel', priority:'low' },
-            { id:'4', columnId:'prog', title:'Add OAuth2 support', assignee:'Jordan Kim', priority:'high' },
-            { id:'5', columnId:'prog', title:'Refactor data layer', assignee:'Alex Morgan', priority:'medium' },
-            { id:'6', columnId:'review', title:'Dashboard UI redesign', assignee:'Taylor Brooks', priority:'medium' },
-            { id:'7', columnId:'review', title:'Performance optimization', assignee:'Casey Wong', priority:'high' },
-            { id:'8', columnId:'done', title:'Setup CI pipeline', assignee:'Jamie Rodriguez', priority:'high' },
-            { id:'9', columnId:'done', title:'Database migration', assignee:'Morgan Silva', priority:'critical' },
-            { id:'10', columnId:'done', title:'Email notifications', assignee:'River Adams', priority:'medium' }
-          ],
-          onCardClick: function(card) {
-            if (M.toast) M.toast({ type:'info', title:card.title, message:'Assigned: ' + card.assignee });
-          }
+      try { if (M.dashboardStrip) {
+        M.dashboardStrip(document.getElementById('strip'), {
+          ariaLabel: 'System metrics',
+          zones: [
+            { type:'gauge', label:'UPTIME', gaugeConfig:{ value:99.97, max:100, color:resolveColor("--mn-success"), ticks:10, subticks:5, startAngle:-225, endAngle:45, showNeedle:true, numbers:[0,50,100], complications:{ centerValue:'99.97', centerUnit:'%' } }, size:'sm' },
+            { type:'pipeline', title:'API TRAFFIC', rows:[
+              { label:'/auth', value:840000, color:resolveColor("--mn-chart-series-1"), secondary:'840K' },
+              { label:'/users', value:1200000, color:resolveColor("--mn-chart-series-2"), secondary:'1.2M' },
+              { label:'/data', value:720000, color:resolveColor("--mn-chart-series-3"), secondary:'720K' },
+              { label:'/webhooks', value:440000, color:resolveColor("--mn-chart-series-4"), secondary:'440K' }
+            ], footer:{ label:'Total', value:'3.2M' } },
+            { type:'board', title:'KEY METRICS', stats:[ { label:'Uptime', value:'99.97%' }, { label:'Latency', value:'142ms' }, { label:'Throughput', value:'2.4K/s' }, { label:'Cache Hit', value:'94.2%' } ] }
+          ]
         });
-      } } catch(e) { console.warn('kanbanBoard:', e.message); }
+      } } catch(e) { console.warn('strip:', e.message); }
 
       try { if (M.dataTable) {
         M.dataTable(document.getElementById('tbl'), {
           columns:[
-            {key:'issue',label:'Issue',sortable:true},
-            {key:'assignee',label:'Assignee'},
-            {key:'priority',label:'Priority',type:'status'},
-            {key:'status',label:'Status',type:'badge'},
-            {key:'sprint',label:'Sprint'},
-            {key:'created',label:'Created',align:'right'}
+            {key:'name',label:'Name',sortable:true},
+            {key:'role',label:'Role'},
+            {key:'status',label:'Status',type:'status'},
+            {key:'active',label:'Last Active',align:'right'},
+            {key:'actions',label:'Actions'}
           ],
           data:[
-            {issue:'Migrate legacy auth system',assignee:'Sarah Chen',priority:'Critical',status:'In Progress',sprint:'S14',created:'3d ago'},
-            {issue:'Add bulk export feature',assignee:'Marcus Lee',priority:'High',status:'To Do',sprint:'S14',created:'5d ago'},
-            {issue:'Fix PDF generation encoding',assignee:'Priya Patel',priority:'High',status:'Review',sprint:'S14',created:'1w ago'},
-            {issue:'Implement rate limiting',assignee:'Jordan Kim',priority:'Medium',status:'To Do',sprint:'S15',created:'1w ago'},
-            {issue:'Upgrade React to v19',assignee:'Alex Morgan',priority:'Medium',status:'In Progress',sprint:'S14',created:'2w ago'},
-            {issue:'Add dark mode support',assignee:'Taylor Brooks',priority:'Low',status:'Backlog',sprint:'S16',created:'2w ago'},
-            {issue:'Refactor notification service',assignee:'Casey Wong',priority:'Medium',status:'Review',sprint:'S14',created:'3w ago'},
-            {issue:'Fix mobile responsiveness',assignee:'Jamie Rodriguez',priority:'High',status:'Done',sprint:'S13',created:'3w ago'},
-            {issue:'Add webhook support',assignee:'Morgan Silva',priority:'Low',status:'Backlog',sprint:'S16',created:'1mo ago'},
-            {issue:'Implement SSO integration',assignee:'River Adams',priority:'High',status:'To Do',sprint:'S15',created:'1mo ago'}
+            {name:'Alice Chen',role:'Admin',status:'Active',active:'2m ago',actions:'Edit'},
+            {name:'Bob Martinez',role:'Editor',status:'Active',active:'15m ago',actions:'Edit'},
+            {name:'Carol Singh',role:'Viewer',status:'Inactive',active:'3d ago',actions:'Edit'},
+            {name:'David Kim',role:'Editor',status:'Active',active:'1h ago',actions:'Edit'},
+            {name:'Emma Wilson',role:'Admin',status:'Active',active:'5m ago',actions:'Edit'}
           ],
-          ariaLabel:'Backlog issues table',
+          ariaLabel:'Team members table',
           compact:true,
-          onRowClick:function(r){ if(M.toast) M.toast({type:'info',title:r.issue,message:'Assignee: '+r.assignee+', Priority: '+r.priority}); }
+          onRowClick:function(r){ if(M.toast) M.toast({type:'info',title:r.name,message:'Role: '+r.role+', Status: '+r.status}); }
         });
       } } catch(e) { console.warn('dataTable:', e.message); }
 
+      try { if (M.charts && M.charts.donut) {
+        var donut = document.getElementById('donut');
+        if (donut) {
+          M.charts.donut(donut, [
+            { value:42, color:resolveColor("--mn-chart-series-1") },
+            { value:28, color:resolveColor("--mn-chart-series-2") },
+            { value:18, color:resolveColor("--mn-chart-series-3") },
+            { value:12, color:resolveColor("--mn-chart-series-4") }
+          ], { centerText:'100%', centerSubtext:'Traffic' });
+        }
+      } } catch(e) { console.warn('donut:', e.message); }
+
+      try { if (M.charts && M.charts.barChart) {
+        var bar = document.getElementById('bar');
+        if (bar) {
+          M.charts.barChart(bar, [
+            { label:'Auth', value:142 },
+            { label:'API', value:284 },
+            { label:'Database', value:68 },
+            { label:'Cache', value:92 },
+            { label:'Queue', value:34 }
+          ], { showLabels:true, showValues:true });
+        }
+      } } catch(e) { console.warn('barChart:', e.message); }
+
       try { if (M.activityFeed) {
         M.activityFeed(document.getElementById('feed'), [
-          {id:'1',title:'Issue Completed',body:'Dashboard UI redesign merged to main',meta:'12m ago',type:'success'},
-          {id:'2',title:'New Comment',body:'Sarah Chen commented on AUTH-847',meta:'45m ago',type:'info'},
-          {id:'3',title:'Sprint Updated',body:'5 issues moved to In Progress',meta:'2h ago',type:'info'},
-          {id:'4',title:'Build Failed',body:'PR #342 failed CI checks',meta:'3h ago',type:'danger'},
-          {id:'5',title:'Deployment',body:'Production deployment v2.8.1 successful',meta:'5h ago',type:'success'},
-          {id:'6',title:'New Issue',body:'Critical bug reported: login redirect',meta:'6h ago',type:'warning'},
-          {id:'7',title:'PR Merged',body:'Marcus Lee merged PR #338',meta:'8h ago',type:'success'},
-          {id:'8',title:'Review Requested',body:'Performance optimization needs review',meta:'1d ago',type:'info'}
-        ], {maxItems:10});
+          {id:'1',title:'User Created',body:'New user Alice Chen added by Admin',meta:'5m ago',type:'success'},
+          {id:'2',title:'Config Updated',body:'Feature flag NEW_UI enabled',meta:'12m ago',type:'info'},
+          {id:'3',title:'Payment Received',body:'Invoice #4821 paid: $4,200',meta:'1h ago',type:'success'},
+          {id:'4',title:'API Error',body:'Rate limit exceeded for client ID 8472',meta:'2h ago',type:'warning'},
+          {id:'5',title:'Backup Complete',body:'Daily backup completed successfully',meta:'3h ago',type:'success'},
+          {id:'6',title:'User Deleted',body:'User Bob Smith deactivated',meta:'5h ago',type:'info'}
+        ], {maxItems:8});
       } } catch(e) { console.warn('activityFeed:', e.message); }
+
+      try { if (M.gantt) {
+        M.gantt(document.getElementById('gantt'), [
+          {id:'1',title:'Q1 Platform Upgrade',start:'2026-01-01',end:'2026-03-31',progress:68},
+          {id:'2',title:'Security Audit',start:'2026-02-01',end:'2026-04-15',progress:42},
+          {id:'3',title:'Mobile App Launch',start:'2026-03-01',end:'2026-06-30',progress:28},
+          {id:'4',title:'API v3 Migration',start:'2026-04-01',end:'2026-07-31',progress:15}
+        ], { onClick:function(t){ if(M.toast) M.toast({type:'info',title:t.title,message:'Progress: '+t.progress+'%'}); } });
+      } } catch(e) { console.warn('gantt:', e.message); }
     })();
   </script>
 </body>

@@ -158,7 +158,7 @@ export function renderTrendZone(
     kpi.appendChild(canvas);
     kpis.appendChild(kpi);
 
-    sparkline(canvas, item.data, { color: item.color });
+    sparkline(canvas, item.data, item.color ? { color: item.color } : undefined);
   }
 
   section.appendChild(kpis);

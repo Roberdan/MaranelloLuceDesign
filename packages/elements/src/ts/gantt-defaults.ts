@@ -90,8 +90,8 @@ export const MONTH_ABBR = ['Jan','Feb','Mar','Apr','May','Jun',
 export function parseDate(s: unknown): Date | null {
   if (!s) return null;
   if (s instanceof Date) return s;
-  const p = (s as string).split('-');
-  return new Date(Date.UTC(+p[0], +p[1] - 1, +p[2] || 1));
+  const d = new Date(s as string);
+  return isNaN(d.getTime()) ? null : d;
 }
 
 export function monthStart(d: Date): Date { return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1)); }

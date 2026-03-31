@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>IT Operations Center — Maranello Luce</title>
+  <title>Cybersecurity Operations — Maranello Luce</title>
   <link rel="icon" href="../src/assets/favicon.svg">
   <link rel="stylesheet" href="../src/fonts/local-fonts.css">
   <link rel="stylesheet" href="../dist/css/maranello.css">
@@ -97,16 +97,14 @@
     .ptitle { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
     .ptitle h1 { font-family: var(--font-display); font-size: 1.15rem; font-weight: 700; }
     .ptitle__meta { display: flex; align-items: center; gap: 10px; }
-    .live { display: inline-flex; align-items: center; gap: 5px; font-size: 0.68rem; color: var(--mn-success); font-weight: 500; }
-    .live::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--mn-success); }
     .ts { font-size: 0.7rem; color: var(--mn-text-muted); }
 
     .banner {
       padding: 12px 16px; border-radius: var(--radius-md); margin-bottom: 20px;
-      background: var(--mn-surface-raised); border: 1px solid var(--mn-border);
+      background: var(--mn-surface-raised); border: 1px solid var(--mn-warning);
       display: flex; align-items: center; gap: 10px;
     }
-    .banner__dot { width: 8px; height: 8px; border-radius: 50%; background: var(--mn-success); flex-shrink: 0; }
+    .banner__level { font-family: var(--font-mono); font-size: 0.68rem; font-weight: 700; color: var(--mn-warning); padding: 2px 6px; border-radius: var(--radius-sm); background: color-mix(in srgb, var(--mn-warning) 15%, var(--mn-surface)); }
     .banner__txt { flex: 1; font-size: 0.82rem; font-weight: 500; }
     .banner__meta { font-size: 0.7rem; color: var(--mn-text-muted); }
 
@@ -144,7 +142,7 @@
   <div class="app" id="app">
     <div class="top">
       <button class="ib" id="tog" aria-label="Toggle sidebar"></button>
-      <span class="top__crumb">Monitor / <b id="bc">Overview</b></span>
+      <span class="top__crumb">Recon / <b id="bc">Threat Feed</b></span>
       <div class="top__spacer"></div>
       <label class="top__search">
         <span id="si"></span>
@@ -158,75 +156,70 @@
       </select>
       <button class="ib" id="ib" aria-label="Notifications"></button>
       <button class="ib" id="is" aria-label="Settings"></button>
-      <div class="top__av" title="Sam Rivera">SR</div>
+      <div class="top__av" title="Zero Cool">ZC</div>
     </div>
 
     <nav class="side" id="side" aria-label="Navigation">
-      <div class="side__brand"><img src="../src/assets/favicon.svg" alt="" width="18" height="18"> Operations <span class="side__v">6.5</span></div>
-      <div class="side__sep">Monitor</div>
-      <button class="side__it on" data-p="Overview"><span id="n1"></span><span>Overview</span></button>
-      <button class="side__it" data-p="Services"><span id="n2"></span><span>Services</span></button>
-      <button class="side__it" data-p="Alerts"><span id="n3"></span><span>Alerts</span><span class="side__badge">5</span></button>
-      <div class="side__sep">Infrastructure</div>
-      <button class="side__it" data-p="Compute"><span id="n4"></span><span>Compute</span></button>
-      <button class="side__it" data-p="Network"><span id="n5"></span><span>Network</span></button>
-      <button class="side__it" data-p="Storage"><span id="n6"></span><span>Storage</span></button>
-      <div class="side__sep">Tools</div>
-      <button class="side__it" data-p="Deployments"><span id="n7"></span><span>Deployments</span></button>
-      <button class="side__it" data-p="Logs"><span id="n8"></span><span>Logs</span></button>
+      <div class="side__brand"><img src="../src/assets/favicon.svg" alt="" width="18" height="18"> SecOps <span class="side__v">6.5</span></div>
+      <div class="side__sep">Recon</div>
+      <button class="side__it on" data-p="Threat Feed"><span id="n1"></span><span>Threat Feed</span></button>
+      <button class="side__it" data-p="Network Map"><span id="n2"></span><span>Network Map</span></button>
+      <button class="side__it" data-p="CVE Scanner"><span id="n3"></span><span>CVE Scanner</span><span class="side__badge">12</span></button>
+      <div class="side__sep">Analysis</div>
+      <button class="side__it" data-p="Traffic"><span id="n4"></span><span>Traffic</span></button>
+      <button class="side__it" data-p="Endpoints"><span id="n5"></span><span>Endpoints</span></button>
+      <button class="side__it" data-p="Forensics"><span id="n6"></span><span>Forensics</span></button>
+      <div class="side__sep">Intel</div>
+      <button class="side__it" data-p="IOC Database"><span id="n7"></span><span>IOC Database</span></button>
+      <button class="side__it" data-p="YARA Rules"><span id="n8"></span><span>YARA Rules</span></button>
     </nav>
 
     <main class="main">
       <div class="ptitle">
-        <h1>System Operations</h1>
-        <div class="ptitle__meta"><span class="live">Live</span><span class="ts">Updated 12s ago</span></div>
+        <h1>Security Operations Center</h1>
+        <div class="ptitle__meta"><span class="ts">Last scan: 4m ago</span></div>
       </div>
 
       <div class="banner">
-        <div class="banner__dot"></div>
-        <div class="banner__txt">All systems operational</div>
-        <div class="banner__meta">Uptime: 99.97%</div>
+        <div class="banner__level">ELEVATED</div>
+        <div class="banner__txt">Active threat campaign detected: APT-Phantom lateral movement</div>
+        <div class="banner__meta">Detected 23m ago</div>
       </div>
 
-      <div class="pn g1" style="margin-bottom:20px">
-        <div class="pn__lab">Infrastructure metrics</div>
-        <div id="strip"></div>
+      <div class="pn" style="margin-bottom:20px">
+        <div class="pn__lab">Network topology</div>
+        <div id="network"></div>
       </div>
 
       <div class="mrow">
         <div class="mcard">
-          <div class="mcard__lab">Request rate</div>
-          <canvas class="mcard__sp" id="sp1" role="img" aria-label="Request rate sparkline"></canvas>
+          <div class="mcard__lab">Packet rate</div>
+          <canvas class="mcard__sp" id="sp1" role="img" aria-label="Packet rate sparkline"></canvas>
         </div>
         <div class="mcard">
-          <div class="mcard__lab">Error rate</div>
-          <canvas class="mcard__sp" id="sp2" role="img" aria-label="Error rate sparkline"></canvas>
+          <div class="mcard__lab">Anomaly score</div>
+          <canvas class="mcard__sp" id="sp2" role="img" aria-label="Anomaly score sparkline"></canvas>
         </div>
         <div class="mcard">
-          <div class="mcard__lab">Latency p99</div>
-          <canvas class="mcard__sp" id="sp3" role="img" aria-label="Latency p99 sparkline"></canvas>
+          <div class="mcard__lab">Blocked requests</div>
+          <canvas class="mcard__sp" id="sp3" role="img" aria-label="Blocked requests sparkline"></canvas>
         </div>
       </div>
 
       <div class="g g2">
-        <div class="pn"><div class="pn__lab">Service status</div><div id="status"></div></div>
-        <div class="pn"><div class="pn__lab">Errors by service</div><canvas id="bar" style="width:100%;height:200px" role="img" aria-label="Errors by service bar chart"></canvas></div>
+        <div class="pn"><div class="pn__lab">CVE vulnerabilities</div><div id="tbl"></div></div>
+        <div class="pn"><div class="pn__lab">Security services</div><div id="status"></div></div>
       </div>
 
       <div class="pn" style="margin-bottom:20px">
-        <div class="pn__lab">Active incidents</div>
-        <div id="tbl"></div>
-      </div>
-
-      <div class="pn" style="margin-bottom:20px">
-        <div class="pn__lab">Deployment activity</div>
+        <div class="pn__lab">Threat activity feed</div>
         <div id="feed"></div>
       </div>
 
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;padding-top:12px;border-top:1px solid var(--mn-border)">
         <div class="mn-segmented" role="tablist" id="seg">
-          <button class="mn-segmented__item mn-segmented__item--active" role="tab" aria-selected="true">1h</button>
-          <button class="mn-segmented__item" role="tab">6h</button>
+          <button class="mn-segmented__item mn-segmented__item--active" role="tab" aria-selected="true">Real-time</button>
+          <button class="mn-segmented__item" role="tab">1h</button>
           <button class="mn-segmented__item" role="tab">24h</button>
           <button class="mn-segmented__item" role="tab">7d</button>
         </div>
@@ -242,8 +235,8 @@
 
       function ic(id, n) { var e = document.getElementById(id); if (e && M.icons[n]) e.innerHTML = M.icons[n](); }
       ic('tog','menu'); ic('si','search'); ic('ib','bell'); ic('is','settings');
-      ic('n1','dashboard'); ic('n2','server'); ic('n3','alertTriangle'); ic('n4','cpu');
-      ic('n5','network'); ic('n6','database'); ic('n7','deploy'); ic('n8','file');
+      ic('n1','shieldCheck'); ic('n2','network'); ic('n3','search'); ic('n4','activity');
+      ic('n5','server'); ic('n6','terminal'); ic('n7','database'); ic('n8','code');
 
       var sk = document.getElementById('sk');
       if (sk) sk.textContent = navigator.userAgent.indexOf('Mac') !== -1 ? '\u2318K' : 'Ctrl+K';
@@ -277,96 +270,90 @@
         });
       }
 
-      var cstyles = getComputedStyle(document.documentElement);
-      function resolveColor(n) { return cstyles.getPropertyValue(n).trim() || '#888888'; }
-
       try { if (M.sparkline) {
         var sp1 = document.getElementById('sp1');
         var sp2 = document.getElementById('sp2');
         var sp3 = document.getElementById('sp3');
-        if (sp1) M.sparkline(sp1, [2840,2910,3020,2980,3100,3240,3180,3320,3280,3420,3380,3520]);
-        if (sp2) M.sparkline(sp2, [12,15,18,14,22,19,16,21,17,23,20,18]);
-        if (sp3) M.sparkline(sp3, [142,138,145,152,148,156,151,159,154,162,158,165]);
+        if (sp1) M.sparkline(sp1, [8420,8680,9120,8840,9280,9540,9820,10140,9980,10420,10280,10680]);
+        if (sp2) M.sparkline(sp2, [24,28,32,42,38,54,62,58,72,68,76,84]);
+        if (sp3) M.sparkline(sp3, [142,158,174,188,196,214,228,242,256,268,284,298]);
       } } catch(e) { console.warn('sparkline:', e.message); }
 
-      try { if (M.dashboardStrip) {
-        M.dashboardStrip(document.getElementById('strip'), {
-          ariaLabel: 'Infrastructure metrics',
-          zones: [
-            { type:'gauge', label:'CPU', gaugeConfig:{ value:68, max:100, color:resolveColor("--mn-warning"), ticks:10, subticks:5, startAngle:-225, endAngle:45, showNeedle:true, numbers:[0,50,100], complications:{ centerValue:'68', centerUnit:'%' } }, size:'sm' },
-            { type:'gauge', label:'MEMORY', gaugeConfig:{ value:74, max:100, color:resolveColor("--mn-warning"), ticks:10, subticks:5, startAngle:-225, endAngle:45, showNeedle:true, numbers:[0,50,100], complications:{ centerValue:'74', centerUnit:'%' } }, size:'sm' },
-            { type:'gauge', label:'DISK I/O', gaugeConfig:{ value:42, max:100, color:resolveColor("--mn-success"), ticks:10, subticks:5, startAngle:-225, endAngle:45, showNeedle:true, numbers:[0,50,100], complications:{ centerValue:'42', centerUnit:'%' } }, size:'sm' },
-            { type:'pipeline', title:'BANDWIDTH', rows:[
-              { label:'Inbound', value:3240, color:resolveColor("--mn-chart-series-1"), secondary:'3.2 Gbps' },
-              { label:'Outbound', value:1820, color:resolveColor("--mn-chart-series-2"), secondary:'1.8 Gbps' },
-              { label:'Internal', value:840, color:resolveColor("--mn-chart-series-3"), secondary:'840 Mbps' }
-            ], footer:{ label:'Total', value:'5.84 Gbps' } }
-          ]
+      try { if (M.networkMessages) {
+        M.networkMessages(document.getElementById('network'), {
+          nodes: [
+            { id:'gateway', label:'Gateway', x:100, y:150 },
+            { id:'firewall', label:'Firewall', x:250, y:150 },
+            { id:'web1', label:'Web-01', x:400, y:80 },
+            { id:'web2', label:'Web-02', x:400, y:220 },
+            { id:'api', label:'API-01', x:550, y:100 },
+            { id:'db', label:'DB Primary', x:700, y:150 },
+            { id:'redis', label:'Redis', x:550, y:200 }
+          ],
+          connections: [
+            { from:'gateway', to:'firewall' },
+            { from:'firewall', to:'web1' },
+            { from:'firewall', to:'web2' },
+            { from:'web1', to:'api' },
+            { from:'web2', to:'api' },
+            { from:'api', to:'db' },
+            { from:'api', to:'redis' }
+          ],
+          width:800,
+          height:300
         });
-      } } catch(e) { console.warn('strip:', e.message); }
-
-      try { if (M.systemStatus) {
-        M.systemStatus(document.getElementById('status'), {
-          version: 'v2.8.1',
-          environment: 'Production',
-          services: [
-            { name:'API Gateway', status:'healthy', latency:14, uptime:99.98 },
-            { name:'Auth Service', status:'healthy', latency:9, uptime:99.96 },
-            { name:'Database Primary', status:'healthy', latency:4, uptime:99.99 },
-            { name:'Cache Layer', status:'degraded', latency:41, uptime:98.82 },
-            { name:'Queue Service', status:'healthy', latency:18, uptime:99.94 },
-            { name:'Storage', status:'healthy', latency:22, uptime:99.97 }
-          ]
-        });
-      } } catch(e) { console.warn('systemStatus:', e.message); }
-
-      try { if (M.charts && M.charts.barChart) {
-        var bar = document.getElementById('bar');
-        if (bar) {
-          M.charts.barChart(bar, [
-            { label:'Gateway', value:342 },
-            { label:'Auth', value:128 },
-            { label:'API', value:584 },
-            { label:'Database', value:92 },
-            { label:'Cache', value:217 },
-            { label:'Queue', value:64 }
-          ], { showLabels:true, showValues:true });
-        }
-      } } catch(e) { console.warn('barChart:', e.message); }
+      } } catch(e) { console.warn('networkMessages:', e.message); }
 
       try { if (M.dataTable) {
         M.dataTable(document.getElementById('tbl'), {
           columns:[
-            {key:'id',label:'ID',sortable:true},
-            {key:'title',label:'Incident'},
-            {key:'severity',label:'Severity',type:'status'},
-            {key:'status',label:'Status',type:'badge'},
-            {key:'duration',label:'Duration',align:'right'},
-            {key:'assignee',label:'Assignee'}
+            {key:'cve',label:'CVE ID',sortable:true},
+            {key:'vuln',label:'Vulnerability'},
+            {key:'cvss',label:'CVSS',type:'status'},
+            {key:'host',label:'Affected Host'},
+            {key:'status',label:'Status',type:'badge'}
           ],
           data:[
-            {id:'INC-842',title:'Cache layer degraded performance',severity:'Warning',status:'Investigating',duration:'12m',assignee:'Alex Chen'},
-            {id:'INC-841',title:'High memory usage on web-03',severity:'Info',status:'Monitoring',duration:'1h 24m',assignee:'Jordan Lee'},
-            {id:'INC-839',title:'Increased API latency EU region',severity:'Warning',status:'Mitigating',duration:'2h 18m',assignee:'Taylor Kim'},
-            {id:'INC-837',title:'Database connection pool saturation',severity:'Critical',status:'Resolved',duration:'45m',assignee:'Morgan Wu'},
-            {id:'INC-835',title:'SSL certificate renewal pending',severity:'Info',status:'Scheduled',duration:'3d',assignee:'Casey Park'}
+            {cve:'CVE-2024-3847',vuln:'OpenSSL buffer overflow',cvss:'Critical',host:'web-01',status:'Patching'},
+            {cve:'CVE-2024-2156',vuln:'nginx path traversal',cvss:'High',host:'web-02',status:'Mitigated'},
+            {cve:'CVE-2024-1832',vuln:'Redis auth bypass',cvss:'Critical',host:'redis',status:'Investigating'},
+            {cve:'CVE-2024-0942',vuln:'PostgreSQL injection',cvss:'High',host:'db-primary',status:'Patched'},
+            {cve:'CVE-2023-8721',vuln:'API rate limit bypass',cvss:'Medium',host:'api-01',status:'Monitoring'},
+            {cve:'CVE-2023-7834',vuln:'Docker escape vulnerability',cvss:'High',host:'web-01',status:'Scheduled'},
+            {cve:'CVE-2023-6492',vuln:'Kernel privilege escalation',cvss:'Critical',host:'gateway',status:'Patching'},
+            {cve:'CVE-2023-5219',vuln:'TLS downgrade attack',cvss:'Medium',host:'firewall',status:'Patched'}
           ],
-          ariaLabel:'Active incidents table',
+          ariaLabel:'CVE vulnerabilities table',
           compact:true,
-          onRowClick:function(r){ if(M.toast) M.toast({type:'info',title:r.id,message:r.title+' - '+r.status}); }
+          onRowClick:function(r){ if(M.toast) M.toast({type:'warning',title:r.cve,message:r.vuln+' on '+r.host}); }
         });
       } } catch(e) { console.warn('dataTable:', e.message); }
 
+      try { if (M.systemStatus) {
+        M.systemStatus(document.getElementById('status'), {
+          version: 'SecOps v3.2',
+          environment: 'Production',
+          services: [
+            { name:'IDS/IPS', status:'healthy', latency:16, uptime:99.94 },
+            { name:'SIEM', status:'healthy', latency:21, uptime:99.89 },
+            { name:'WAF', status:'healthy', latency:8, uptime:99.97 },
+            { name:'Threat Intel', status:'degraded', latency:47, uptime:98.76 },
+            { name:'Endpoint Protection', status:'healthy', latency:12, uptime:99.92 },
+            { name:'Email Gateway', status:'healthy', latency:18, uptime:99.95 }
+          ]
+        });
+      } } catch(e) { console.warn('systemStatus:', e.message); }
+
       try { if (M.activityFeed) {
         M.activityFeed(document.getElementById('feed'), [
-          {id:'1',title:'Deployment Successful',body:'API v2.8.1 deployed to production',meta:'8m ago',type:'success'},
-          {id:'2',title:'Auto-scaling Event',body:'Added 2 instances to web tier',meta:'23m ago',type:'info'},
-          {id:'3',title:'Certificate Renewed',body:'SSL cert for api.example.com renewed',meta:'1h ago',type:'success'},
-          {id:'4',title:'Backup Completed',body:'Daily database backup finished',meta:'2h ago',type:'success'},
-          {id:'5',title:'Alert Triggered',body:'Cache hit ratio below threshold',meta:'3h ago',type:'warning'},
-          {id:'6',title:'Deployment Started',body:'Worker v1.4.2 deployment initiated',meta:'4h ago',type:'info'},
-          {id:'7',title:'Maintenance Window',body:'Scheduled maintenance completed',meta:'6h ago',type:'success'},
-          {id:'8',title:'Config Updated',body:'Load balancer rules updated',meta:'8h ago',type:'info'}
+          {id:'1',title:'Critical Alert',body:'APT-Phantom lateral movement detected on web-01',meta:'23m ago',type:'danger'},
+          {id:'2',title:'Blocked Attack',body:'SQL injection attempt from 203.0.113.42 blocked',meta:'1h ago',type:'warning'},
+          {id:'3',title:'Patch Applied',body:'CVE-2024-0942 patched on db-primary',meta:'2h ago',type:'success'},
+          {id:'4',title:'Anomaly Detected',body:'Unusual outbound traffic from API-01 to unknown IP',meta:'3h ago',type:'warning'},
+          {id:'5',title:'Scan Complete',body:'Weekly vulnerability scan completed: 12 issues found',meta:'4h ago',type:'info'},
+          {id:'6',title:'Rule Updated',body:'New YARA rule deployed for ransomware detection',meta:'6h ago',type:'success'},
+          {id:'7',title:'Firewall Block',body:'Blocked 1,284 malicious IPs in last hour',meta:'8h ago',type:'success'},
+          {id:'8',title:'Certificate Expiry',body:'SSL certificate for api.internal.local expires in 7d',meta:'12h ago',type:'info'}
         ], {maxItems:10});
       } } catch(e) { console.warn('activityFeed:', e.message); }
     })();

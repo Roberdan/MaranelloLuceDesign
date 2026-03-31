@@ -3,431 +3,419 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Executive Cockpit — Maranello Luce Design</title>
+  <title>Executive Cockpit — Maranello Luce</title>
   <link rel="icon" href="../src/assets/favicon.svg">
   <link rel="stylesheet" href="../src/fonts/local-fonts.css">
   <link rel="stylesheet" href="../dist/css/maranello.css">
   <style>
-    body { margin: 0; padding: 0; background: var(--mn-surface); color: var(--mn-text); }
-    .demo-wrap { max-width: 1400px; margin: 0 auto; padding: 0 20px 60px; }
-    .demo-back {
-      display: inline-block; font-family: var(--font-mono); font-size: 0.7rem;
-      text-transform: uppercase; letter-spacing: 0.05em; color: var(--mn-text-muted);
-      text-decoration: none; padding: 16px 0; transition: color 0.15s;
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body { background: var(--mn-surface); color: var(--mn-text); font-family: var(--font-body, sans-serif); overflow: hidden; }
+
+    .app {
+      display: grid; grid-template-rows: 48px 1fr;
+      grid-template-columns: 220px 1fr;
+      grid-template-areas: "side top" "side main";
+      height: 100vh; transition: grid-template-columns 0.18s ease;
     }
-    .demo-back:hover { color: var(--mn-accent); }
-    .demo-section { margin-bottom: 48px; }
-    .demo-title {
-      font-family: var(--font-display); font-size: 0.7rem; text-transform: uppercase;
-      letter-spacing: 0.1em; color: var(--mn-accent); margin-bottom: 8px;
+    .app.is-collapsed { grid-template-columns: 0px 1fr; }
+
+    /* ── Top bar ── */
+    .top {
+      grid-area: top; display: flex; align-items: center; gap: 16px;
+      padding: 0 24px; height: 48px;
+      border-bottom: 1px solid var(--mn-border);
     }
-    .demo-desc {
-      font-family: var(--font-display); font-size: 0.8rem;
-      color: var(--mn-text-muted); margin-bottom: 24px;
+    .top__crumb { font-size: 0.85rem; color: var(--mn-text-muted); }
+    .top__crumb b { color: var(--mn-text); font-weight: 600; }
+    .top__spacer { flex: 1; }
+    .top__search {
+      display: flex; align-items: center; gap: 6px;
+      padding: 5px 12px; border-radius: var(--radius-md);
+      border: 1px solid var(--mn-border); background: var(--mn-surface-raised);
+      color: var(--mn-text-muted); font-size: 0.78rem; cursor: text;
+      min-width: 220px; transition: border-color 0.12s;
     }
-    .demo-controls {
-      display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 32px;
+    .top__search:focus-within { border-color: var(--mn-accent); }
+    .top__search svg { width: 14px; height: 14px; opacity: 0.4; flex-shrink: 0; }
+    .top__search input {
+      flex: 1; border: none; background: none; color: var(--mn-text);
+      font-size: 0.78rem; font-family: inherit; outline: none;
     }
-    .demo-controls button {
-      font-family: var(--font-mono); font-size: 0.7rem; text-transform: uppercase;
-      letter-spacing: 0.05em; padding: 6px 14px; border: 1px solid var(--mn-border);
+    .top__search input::placeholder { color: var(--mn-text-muted); }
+    .top__kbd { font-family: var(--font-mono); font-size: 0.55rem; color: var(--mn-text-muted); opacity: 0.5; }
+    .ib {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 32px; height: 32px; border: none; background: none;
+      color: var(--mn-text-muted); border-radius: var(--radius-md);
+      cursor: pointer; flex-shrink: 0;
+    }
+    .ib:hover { color: var(--mn-text); }
+    .ib:focus-visible { outline: 2px solid var(--mn-accent); outline-offset: -2px; }
+    .ib svg { width: 16px; height: 16px; }
+    .top__av {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: color-mix(in srgb, var(--mn-accent) 18%, var(--mn-surface-raised));
+      color: var(--mn-accent); display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-display); font-size: 0.6rem; font-weight: 700; cursor: pointer;
+    }
+    .tsel {
+      font-size: 0.72rem; padding: 3px 6px; border-radius: var(--radius-sm, 4px);
+      border: 1px solid var(--mn-border); background: var(--mn-surface-raised);
+      color: var(--mn-text-muted); font-family: inherit; cursor: pointer;
+    }
+
+    /* ── Sidebar ── */
+    .side {
+      grid-area: side; background: var(--mn-surface-raised);
+      border-right: 1px solid var(--mn-border);
+      display: flex; flex-direction: column; padding: 12px 8px;
+      overflow-y: auto; min-width: 0; transition: opacity 0.18s;
+    }
+    .app.is-collapsed .side { opacity: 0; pointer-events: none; }
+    .side__brand {
+      display: flex; align-items: center; gap: 8px; padding: 4px 10px 14px;
+      font-family: var(--font-display); font-weight: 700; font-size: 0.82rem; color: var(--mn-text);
+    }
+    .side__v { font-family: var(--font-mono); font-size: 0.5rem; color: var(--mn-text-muted); margin-left: auto; }
+    .side__sep { font-size: 0.58rem; font-weight: 500; color: var(--mn-text-muted); padding: 14px 10px 4px; letter-spacing: 0.03em; }
+    .side__it {
+      display: flex; align-items: center; gap: 8px; padding: 6px 10px;
+      border-radius: var(--radius-md); font-size: 0.8rem; color: var(--mn-text-muted);
+      cursor: pointer; border: none; background: none; width: 100%; text-align: left;
+      font-family: inherit; transition: background 0.1s, color 0.1s; min-height: 32px;
+    }
+    .side__it:hover { background: var(--mn-surface); color: var(--mn-text); }
+    .side__it:focus-visible { outline: 2px solid var(--mn-accent); outline-offset: -2px; }
+    .side__it.on { background: var(--mn-surface); color: var(--mn-text); font-weight: 500; }
+    .side__it svg { width: 15px; height: 15px; flex-shrink: 0; opacity: 0.45; }
+    .side__it.on svg { opacity: 0.75; }
+    .side__it span:last-child:not(:first-child) { flex: 1; }
+    .side__badge { font-family: var(--font-mono); font-size: 0.55rem; color: var(--mn-text-muted); background: var(--mn-surface); padding: 1px 5px; border-radius: 6px; }
+    .side__foot { margin-top: auto; padding-top: 8px; border-top: 1px solid var(--mn-border); }
+
+    /* ── Main ── */
+    .main { grid-area: main; overflow-y: auto; padding: 24px 28px 56px; }
+
+    /* ── Page title ── */
+    .ptitle { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+    .ptitle h1 { font-family: var(--font-display); font-size: 1.15rem; font-weight: 700; }
+    .ptitle__meta { display: flex; align-items: center; gap: 10px; }
+    .live { display: inline-flex; align-items: center; gap: 5px; font-size: 0.68rem; color: var(--mn-success); font-weight: 500; }
+    .live::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--mn-success); }
+    .ts { font-size: 0.7rem; color: var(--mn-text-muted); }
+
+    /* ── Metrics row ── */
+    .mrow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
+    .mcard {
+      padding: 14px 16px; border-radius: var(--radius-md);
+      background: var(--mn-surface-raised); border: 1px solid var(--mn-border);
+      position: relative; overflow: hidden; cursor: pointer; transition: border-color 0.12s;
+    }
+    .mcard:hover { border-color: color-mix(in srgb, var(--mn-accent) 25%, var(--mn-border)); }
+    .mcard__sp { position: absolute; bottom: 0; right: 0; width: 80px; height: 32px; opacity: 0.2; }
+    .mcard__lab { font-size: 0.7rem; color: var(--mn-text-muted); margin-bottom: 4px; }
+    .mcard__val { font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; line-height: 1; }
+    .mcard__row { display: flex; gap: 10px; margin-top: 6px; }
+    .mcard__d { font-family: var(--font-mono); font-size: 0.6rem; }
+    .d-up { color: var(--mn-success); } .d-dn { color: var(--mn-error); } .d-fl { color: var(--mn-text-muted); }
+
+    /* ── Grid ── */
+    .g { display: grid; gap: 10px; margin-bottom: 20px; }
+    .g1 { grid-template-columns: 1fr; }
+    .g2 { grid-template-columns: 1fr 1fr; }
+    .g73 { grid-template-columns: 3fr 2fr; }
+    .g82 { grid-template-columns: 2fr 1fr; }
+    .pn {
       border-radius: var(--radius-md); background: var(--mn-surface-raised);
-      color: var(--mn-text); cursor: pointer; transition: all 0.15s;
+      border: 1px solid var(--mn-border); padding: 14px 16px;
     }
-    .demo-controls button:hover { border-color: var(--mn-accent); color: var(--mn-accent); }
+    .pn__lab { font-size: 0.7rem; color: var(--mn-text-muted); margin-bottom: 10px; }
 
-    .hero-kpi-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 24px;
+    /* ── Responsive ── */
+    @media (max-width: 1100px) { .mrow { grid-template-columns: 1fr 1fr; } .g2,.g73,.g82 { grid-template-columns: 1fr; } }
+    @media (max-width: 768px) {
+      .app { grid-template-columns: 0px 1fr; } .app .side { opacity: 0; pointer-events: none; }
+      .mrow { grid-template-columns: 1fr 1fr; } .main { padding: 16px; }
     }
-    .hero-kpi-card {
-      background: var(--mn-surface-raised); border: 1px solid var(--mn-border);
-      border-radius: var(--radius-md); padding: 24px; text-align: center;
-    }
-    .hero-kpi-card canvas { display: block; margin: 0 auto 12px; }
-    .hero-kpi-label {
-      font-family: var(--font-mono); font-size: 0.65rem; text-transform: uppercase;
-      letter-spacing: 0.08em; color: var(--mn-text-muted);
-    }
-
-    .charts-grid {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
-    }
-    .chart-card {
-      background: var(--mn-surface-raised); border: 1px solid var(--mn-border);
-      border-radius: var(--radius-md); padding: 24px;
-    }
-    .chart-card canvas { display: block; margin: 0 auto; }
-
-    .donut-legend { list-style: none; margin: 16px 0 0; padding: 0; }
-    .donut-legend li {
-      font-family: var(--font-mono); font-size: 0.7rem;
-      color: var(--mn-text-muted); margin-bottom: 6px;
-      display: flex; align-items: center; gap: 8px;
-    }
-    .donut-legend .swatch {
-      display: inline-block; width: 10px; height: 10px; border-radius: 2px;
-    }
-
-    .demo-strip-mount { margin-bottom: 40px; }
-
-    .sr-only {
-      position: absolute; width: 1px; height: 1px; padding: 0;
-      margin: -1px; overflow: hidden; clip: rect(0,0,0,0);
-      white-space: nowrap; border: 0;
-    }
-
-    @media (max-width: 640px) {
-      .charts-grid { grid-template-columns: 1fr; }
-      .hero-kpi-grid { grid-template-columns: 1fr 1fr; }
-    }
+    @media (prefers-reduced-motion: reduce) { .app,.side,.mcard { transition: none; } }
   </style>
 </head>
 <body>
-  <script>
-    try {
-      var t = localStorage.getItem('mn-theme');
-      if (t && t !== 'editorial') document.body.classList.add('mn-' + t);
-    } catch (_) {}
-  </script>
+  <script>try{var t=localStorage.getItem('mn-theme');if(t&&t!=='editorial')document.body.classList.add('mn-'+t)}catch(e){}</script>
 
-  <!-- Header Shell -->
-  <div id="header-mount"></div>
-
-  <div class="demo-wrap">
-    <a class="demo-back" href="index.html">&larr; Back to Gallery</a>
-
-    <!-- Theme Controls -->
-    <div class="demo-controls">
-      <button onclick="Maranello.setTheme('editorial')">Editorial</button>
-      <button onclick="Maranello.setTheme('nero')">Nero</button>
-      <button onclick="Maranello.setTheme('avorio')">Avorio</button>
-      <button onclick="Maranello.setTheme('colorblind')">Colorblind</button>
-      <button onclick="Maranello.setTheme('sugar')">Sugar</button>
-      <button onclick="Maranello.setTheme('navy')">Navy</button>
+  <div class="app" id="app">
+    <div class="top">
+      <button class="ib" id="tog" aria-label="Toggle sidebar"></button>
+      <span class="top__crumb">Executive / <b id="bc">Cockpit</b></span>
+      <div class="top__spacer"></div>
+      <label class="top__search">
+        <span id="si"></span>
+        <input type="text" placeholder="Search..." aria-label="Search">
+        <span class="top__kbd" id="sk"></span>
+      </label>
+      <select class="tsel" id="tp" aria-label="Theme">
+        <option value="editorial">Editorial</option><option value="nero">Nero</option>
+        <option value="avorio">Avorio</option><option value="colorblind">Colorblind</option>
+        <option value="sugar">Sugar</option><option value="navy">Navy</option>
+      </select>
+      <button class="ib" id="ib" aria-label="Notifications"></button>
+      <button class="ib" id="is" aria-label="Settings"></button>
+      <div class="top__av" title="Clara Visconti">CV</div>
     </div>
 
-    <!-- Hero KPI Gauges -->
-    <section class="demo-section">
-      <h2 class="demo-title">Executive KPIs</h2>
-      <p class="demo-desc">C-suite performance gauges — revenue, margins, customer satisfaction, and growth.</p>
-      <div class="hero-kpi-grid">
-        <div class="hero-kpi-card mn-card">
-          <canvas id="gauge-revenue" width="200" height="200" role="img"
-                  aria-label="Revenue gauge at 84.6 percent of target"></canvas>
-          <span class="sr-only">Revenue: $42.3M of $50M target (84.6%)</span>
-          <p class="hero-kpi-label">Revenue</p>
+    <nav class="side" id="side" aria-label="Navigation">
+      <div class="side__brand"><img src="../src/assets/favicon.svg" alt="" width="18" height="18"> Maranello Luce <span class="side__v">6.5</span></div>
+      <div class="side__sep">Views</div>
+      <button class="side__it on" data-p="Cockpit"><span id="n1"></span><span>Cockpit</span></button>
+      <button class="side__it" data-p="Portfolio"><span id="n2"></span><span>Portfolio</span></button>
+      <button class="side__it" data-p="Market"><span id="n3"></span><span>Market</span></button>
+      <button class="side__it" data-p="Board"><span id="n4"></span><span>Board</span></button>
+      <div class="side__sep">Insights</div>
+      <button class="side__it" data-p="Pipeline"><span id="n5"></span><span>Pipeline</span></button>
+      <button class="side__it" data-p="Heatmap"><span id="n6"></span><span>Heatmap</span></button>
+      <button class="side__it" data-p="Risks"><span id="n7"></span><span>Risks</span><span class="side__badge">2</span></button>
+      <div class="side__foot"><button class="side__it" data-p="Settings"><span id="n8"></span><span>Settings</span></button></div>
+    </nav>
+
+    <main class="main">
+      <div class="ptitle">
+        <h1>Q1 2026 Performance</h1>
+        <div class="ptitle__meta"><span class="live">Live</span><span class="ts">Updated 2 min ago</span></div>
+      </div>
+
+      <!-- KPIs — 4 across, full width -->
+      <div class="mrow" id="kpis">
+        <div class="mcard" data-k="Revenue: $14.2M, +8.3% YoY growth">
+          <canvas class="mcard__sp" id="s0" aria-hidden="true"></canvas>
+          <div class="mcard__lab">Revenue</div>
+          <div class="mcard__val">$14.2M</div>
+          <div class="mcard__row"><span class="mcard__d d-up">+8.3% YoY</span><span class="mcard__d d-up">+2.1% QoQ</span></div>
         </div>
-        <div class="hero-kpi-card mn-card">
-          <canvas id="gauge-margin" width="200" height="200" role="img"
-                  aria-label="Gross margin gauge at 68.2 percent"></canvas>
-          <span class="sr-only">Gross Margin: 68.2% of 70% target</span>
-          <p class="hero-kpi-label">Gross Margin</p>
+        <div class="mcard" data-k="EBITDA margin: 23.7%, +1.2pp YoY">
+          <canvas class="mcard__sp" id="s1" aria-hidden="true"></canvas>
+          <div class="mcard__lab">EBITDA Margin</div>
+          <div class="mcard__val">23.7%</div>
+          <div class="mcard__row"><span class="mcard__d d-up">+1.2pp YoY</span><span class="mcard__d d-fl">0.0pp QoQ</span></div>
         </div>
-        <div class="hero-kpi-card mn-card">
-          <canvas id="gauge-nps" width="200" height="200" role="img"
-                  aria-label="Customer NPS gauge at 72"></canvas>
-          <span class="sr-only">Customer NPS: 72 out of 100</span>
-          <p class="hero-kpi-label">Customer NPS</p>
+        <div class="mcard" data-k="Active clients: 1,247 across 5 regions">
+          <canvas class="mcard__sp" id="s2" aria-hidden="true"></canvas>
+          <div class="mcard__lab">Active Clients</div>
+          <div class="mcard__val">1,247</div>
+          <div class="mcard__row"><span class="mcard__d d-up">+42 QoQ</span><span class="mcard__d d-up">+156 YoY</span></div>
         </div>
-        <div class="hero-kpi-card mn-card">
-          <canvas id="gauge-growth" width="200" height="200" role="img"
-                  aria-label="Year over year growth gauge at 23.4 percent"></canvas>
-          <span class="sr-only">YoY Growth: 23.4% of 50% scale</span>
-          <p class="hero-kpi-label">YoY Growth</p>
+        <div class="mcard" data-k="Employee NPS: 72, down 3 from prior quarter">
+          <canvas class="mcard__sp" id="s3" aria-hidden="true"></canvas>
+          <div class="mcard__lab">Employee NPS</div>
+          <div class="mcard__val">72</div>
+          <div class="mcard__row"><span class="mcard__d d-dn">-3 prior</span><span class="mcard__d d-up">+8 YoY</span></div>
         </div>
       </div>
-    </section>
 
-    <!-- Dashboard Strip -->
-    <section class="demo-section">
-      <h2 class="demo-title">Instrument Strip</h2>
-      <p class="demo-desc">Portfolio health, revenue and margin trends, and active program status.</p>
-      <div id="strip-exec" class="demo-strip-mount"></div>
-    </section>
-
-    <!-- Charts -->
-    <section class="demo-section">
-      <h2 class="demo-title">Performance Charts</h2>
-      <p class="demo-desc">Quarterly revenue trend and business unit revenue split.</p>
-      <div class="charts-grid">
-        <div class="chart-card mn-card">
-          <h3 class="mn-title-sm">Quarterly Revenue Trend</h3>
-          <canvas id="spark-revenue" width="360" height="80" role="img"
-                  aria-label="Quarterly revenue sparkline showing upward trend"></canvas>
-          <span class="sr-only">Revenue trend: Q1 $31.2M, Q2 $34.8M, Q3 $38.1M, Q4 $42.3M</span>
-          <p class="mn-micro" style="margin-top: 8px; color: var(--mn-text-muted);">Q1 – Q4 FY2024</p>
-        </div>
-        <div class="chart-card mn-card">
-          <h3 class="mn-title-sm">Revenue by Business Unit</h3>
-          <canvas id="donut-revenue" width="180" height="180" role="img"
-                  aria-label="Revenue donut chart: SaaS 45%, Services 30%, Platform 25%"></canvas>
-          <span class="sr-only">SaaS Platform 45%, Professional Services 30%, Data Analytics 25%</span>
-          <ul class="donut-legend">
-            <li><span class="swatch" style="background: var(--mn-accent);"></span> SaaS Platform — 45%</li>
-            <li><span class="swatch" style="background: var(--mn-info);"></span> Prof. Services — 30%</li>
-            <li><span class="swatch" style="background: var(--mn-text-muted);"></span> Data Analytics — 25%</li>
-          </ul>
-        </div>
+      <!-- Dashboard strip — full width -->
+      <div class="pn g1" style="margin-bottom:20px">
+        <div class="pn__lab">Instrument strip</div>
+        <div id="strip"></div>
       </div>
-    </section>
 
-    <!-- Heatmap -->
-    <section class="demo-section">
-      <h2 class="demo-title">Market Opportunity Matrix</h2>
-      <p class="demo-desc">Regional product opportunity scores across business units.</p>
-      <div id="heatmap-mount"></div>
-    </section>
+      <!-- Heatmap + Funnel -->
+      <div class="g g73">
+        <div class="pn"><div class="pn__lab">Regional performance</div><div id="heat"></div></div>
+        <div class="pn"><div class="pn__lab">Sales pipeline</div><div id="funnel"></div></div>
+      </div>
 
-    <!-- Data Table -->
-    <section class="demo-section">
-      <h2 class="demo-title">Board Summary</h2>
-      <p class="demo-desc">Strategic initiatives overview for board review.</p>
-      <div id="table-mount"></div>
-    </section>
+      <!-- Gantt + Activity -->
+      <div class="g g82">
+        <div class="pn"><div class="pn__lab">Strategic initiatives</div><div id="gantt" style="min-height:200px"></div></div>
+        <div class="pn"><div class="pn__lab">Board updates</div><div id="feed"></div></div>
+      </div>
+
+      <!-- Table — full width -->
+      <div class="pn" style="margin-bottom:20px">
+        <div class="pn__lab">Portfolio overview</div>
+        <div id="tbl"></div>
+      </div>
+
+      <!-- Controls -->
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;padding-top:12px;border-top:1px solid var(--mn-border)">
+        <div class="mn-segmented" role="tablist" id="seg">
+          <button class="mn-segmented__item" role="tab">Day</button>
+          <button class="mn-segmented__item" role="tab">Week</button>
+          <button class="mn-segmented__item mn-segmented__item--active" role="tab" aria-selected="true">Month</button>
+          <button class="mn-segmented__item" role="tab">Quarter</button>
+        </div>
+        <button class="mn-btn mn-btn--accent mn-btn--sm" id="exp">Export Report</button>
+      </div>
+    </main>
   </div>
 
   <script src="../dist/iife/maranello.min.js"></script>
   <script>
-    var M = window.Maranello;
+    (function () {
+      var M = window.Maranello;
+      if (!M) return;
 
-    /* ── Header Shell ── */
-    M.header.init(document.getElementById('header-mount'), {
-      brand: { label: 'ConvergIO Executive Cockpit' },
-      left: [
-        { id: 'nav-overview', label: 'Overview', active: true, onClick: function() {} },
-        { id: 'nav-markets', label: 'Markets', onClick: function() {} },
-        { id: 'nav-portfolio', label: 'Portfolio', onClick: function() {} },
-        { id: 'nav-board', label: 'Board', onClick: function() {} }
-      ]
-    });
+      // Icons
+      function ic(id, n) { var e = document.getElementById(id); if (e && M.icons[n]) e.innerHTML = M.icons[n](); }
+      ic('tog','menu'); ic('si','search'); ic('ib','bell'); ic('is','settings');
+      ic('n1','gauge'); ic('n2','layers'); ic('n3','trendUp'); ic('n4','grid');
+      ic('n5','funnel'); ic('n6','heatmap'); ic('n7','alertTriangle'); ic('n8','settings');
 
-    /* ── Hero KPI Gauges ── */
-    [
-      {
-        target: '#gauge-revenue',
-        config: {
-          value: 84.6, max: 100, color: '#00A651',
-          colorMode: 'higher-better', ticks: 10, subticks: 5,
-          startAngle: -225, endAngle: 45, showNeedle: true,
-          numbers: [0, 25, 50, 75, 100],
-          complications: {
-            centerValue: '$42.3M', centerUnit: '', centerLabel: 'REVENUE',
-            arcBar: { labelLeft: '0', labelRight: '$50M' },
-            statusLed: { color: '#00A651', label: 'ON TRACK' }
-          }
-        },
-        size: 'md'
-      },
-      {
-        target: '#gauge-margin',
-        config: {
-          value: 97.4, max: 100, color: '#FFC72C',
-          colorMode: 'higher-better', ticks: 10, subticks: 5,
-          startAngle: -225, endAngle: 45, showNeedle: true,
-          numbers: [0, 25, 50, 75, 100],
-          complications: {
-            centerValue: '68.2', centerUnit: '%', centerLabel: 'GROSS MARGIN',
-            arcBar: { labelLeft: '0%', labelRight: '70%' },
-            statusLed: { color: '#FFC72C', label: 'NEAR TARGET' }
-          }
-        },
-        size: 'md'
-      },
-      {
-        target: '#gauge-nps',
-        config: {
-          value: 72, max: 100, color: '#448AFF',
-          colorMode: 'higher-better', ticks: 10, subticks: 5,
-          startAngle: -225, endAngle: 45, showNeedle: true,
-          numbers: [0, 25, 50, 75, 100],
-          complications: {
-            centerValue: '72', centerUnit: 'pts', centerLabel: 'CUSTOMER NPS',
-            arcBar: { labelLeft: '0', labelRight: '100' },
-            statusLed: { color: '#448AFF', label: 'GOOD' }
-          }
-        },
-        size: 'md'
-      },
-      {
-        target: '#gauge-growth',
-        config: {
-          value: 46.8, max: 100, color: '#7C4DFF',
-          colorMode: 'higher-better', ticks: 10, subticks: 5,
-          startAngle: -225, endAngle: 45, showNeedle: true,
-          numbers: [0, 25, 50, 75, 100],
-          complications: {
-            centerValue: '23.4', centerUnit: '%', centerLabel: 'YOY GROWTH',
-            arcBar: { labelLeft: '0%', labelRight: '50%' },
-            statusLed: { color: '#7C4DFF', label: 'STRONG' }
-          }
-        },
-        size: 'md'
+      var sk = document.getElementById('sk');
+      if (sk) sk.textContent = navigator.userAgent.indexOf('Mac') !== -1 ? '\u2318K' : 'Ctrl+K';
+
+      // Theme
+      var tp = document.getElementById('tp');
+      tp.value = localStorage.getItem('mn-theme') || 'editorial';
+      tp.addEventListener('change', function () { M.setTheme(tp.value); localStorage.setItem('mn-theme', tp.value); });
+
+      // Sidebar toggle
+      var app = document.getElementById('app');
+      document.getElementById('tog').addEventListener('click', function () {
+        if (app.className.indexOf('is-collapsed') !== -1) app.className = app.className.replace('is-collapsed','').trim();
+        else app.className = app.className.trim() + ' is-collapsed';
+      });
+
+      // Nav
+      var navs = document.querySelectorAll('.side__it');
+      var bc = document.getElementById('bc');
+      for (var i = 0; i < navs.length; i++) {
+        navs[i].addEventListener('click', function () {
+          for (var j = 0; j < navs.length; j++) navs[j].className = navs[j].className.replace(' on', '');
+          this.className += ' on';
+          if (bc) bc.textContent = this.getAttribute('data-p');
+        });
       }
-    ].forEach(function(gc) { M.createGauge(gc); });
 
-    /* ── Dashboard Strip ── */
-    M.dashboardStrip('strip-exec', {
-      ariaLabel: 'Executive Instrument Strip',
-      zones: [
-        {
-          type: 'gauge',
-          label: 'PORTFOLIO HEALTH',
-          gaugeConfig: {
-            value: 87, max: 100, color: '#00A651',
-            colorMode: 'higher-better', ticks: 10, subticks: 5,
-            startAngle: -225, endAngle: 45, showNeedle: true,
-            numbers: [0, 25, 50, 75, 100],
-            complications: {
-              centerValue: '87', centerUnit: '%', centerLabel: 'PORTFOLIO',
-              arcBar: { labelLeft: '0', labelRight: '100' },
-              statusLed: { color: '#00A651', label: 'HEALTHY' }
-            }
-          },
-          size: 'sm'
-        },
-        {
-          type: 'trend',
-          title: 'REVENUE & MARGIN TRENDS',
-          items: [
-            { label: 'REVENUE', value: 42.3, color: '#00A651', data: [31.2, 33.5, 34.8, 36.9, 38.1, 42.3] },
-            { label: 'MARGIN', value: 68.2, color: '#FFC72C', data: [62.1, 64.5, 65.8, 66.3, 67.1, 68.2] }
-          ]
-        },
-        {
-          type: 'board',
-          title: 'PROGRAM STATUS',
-          stats: [
-            { label: 'ACTIVE PROGRAMS', value: 12 },
-            { label: 'ON TRACK', value: 9 },
-            { label: 'AT RISK', value: 2 },
-            { label: 'BLOCKED', value: 1 }
-          ]
-        }
-      ]
-    });
-
-    /* ── Sparkline — Quarterly Revenue ── */
-    M.sparkline(
-      document.getElementById('spark-revenue'),
-      [31.2, 32.1, 33.5, 34.0, 34.8, 35.9, 36.9, 37.5, 38.1, 39.8, 41.0, 42.3],
-      { color: '#00A651', smooth: true, showDot: true, fillOpacity: 0.15 }
-    );
-
-    /* ── Donut — Revenue by Business Unit ── */
-    M.charts.donut(
-      document.getElementById('donut-revenue'),
-      [
-        { value: 45, color: '#FFC72C' },
-        { value: 30, color: '#448AFF' },
-        { value: 25, color: '#7C4DFF' }
-      ],
-      { thickness: 28 }
-    );
-
-    /* ── Heatmap — Market Opportunity Matrix ── */
-    M.heatmap('heatmap-mount', {
-      ariaLabel: 'Market opportunity matrix by region and product',
-      columnLabels: ['SaaS Platform', 'Prof. Services', 'Data Analytics', 'Cloud Infra'],
-      showValues: true,
-      cellSize: 'md',
-      colorScale: ['#DC0000', '#FFC72C', '#00A651'],
-      minValue: 0,
-      maxValue: 100,
-      rows: [
-        {
-          label: 'North America',
-          cells: [
-            { value: 92, label: '92' },
-            { value: 78, label: '78' },
-            { value: 85, label: '85' },
-            { value: 71, label: '71' }
-          ]
-        },
-        {
-          label: 'EMEA',
-          cells: [
-            { value: 74, label: '74' },
-            { value: 82, label: '82' },
-            { value: 68, label: '68' },
-            { value: 59, label: '59' }
-          ]
-        },
-        {
-          label: 'APAC',
-          cells: [
-            { value: 88, label: '88' },
-            { value: 55, label: '55' },
-            { value: 91, label: '91' },
-            { value: 77, label: '77' }
-          ]
-        },
-        {
-          label: 'LATAM',
-          cells: [
-            { value: 45, label: '45' },
-            { value: 62, label: '62' },
-            { value: 38, label: '38' },
-            { value: 51, label: '51' }
-          ]
-        }
-      ],
-      onCellClick: function(row, cell, ri, ci) {
-        console.log('Market opportunity:', row.label, cell.label);
+      // Segmented
+      var segs = document.querySelectorAll('#seg .mn-segmented__item');
+      for (var s = 0; s < segs.length; s++) {
+        segs[s].addEventListener('click', function () {
+          for (var k = 0; k < segs.length; k++) { segs[k].className = segs[k].className.replace(' mn-segmented__item--active',''); segs[k].removeAttribute('aria-selected'); }
+          this.className += ' mn-segmented__item--active'; this.setAttribute('aria-selected','true');
+          if (M.toast) M.toast({ type:'info', title:'Range', message:'Switched to ' + this.textContent });
+        });
       }
-    });
 
-    /* ── Data Table — Board Summary ── */
-    M.dataTable('table-mount', {
-      ariaLabel: 'Board strategic initiatives summary',
-      stickyHeader: true,
-      stripedRows: true,
-      columns: [
-        { key: 'initiative', label: 'Initiative', sortable: true },
-        { key: 'owner', label: 'Owner', type: 'person', sortable: true },
-        { key: 'status', label: 'Status', type: 'badge', sortable: true },
-        { key: 'budget', label: 'Budget', align: 'right', sortable: true },
-        { key: 'progress', label: 'Progress', type: 'progress' }
-      ],
-      data: [
-        {
-          initiative: 'Digital Transformation',
-          owner: { name: 'Sarah Chen', email: 'CEO' },
-          status: 'On Track',
-          budget: '$4.2M',
-          progress: { value: 72, max: 100, label: '72%' }
-        },
-        {
-          initiative: 'Market Expansion',
-          owner: { name: 'James Rivera', email: 'VP Sales' },
-          status: 'At Risk',
-          budget: '$2.8M',
-          progress: { value: 45, max: 100, label: '45%' }
-        },
-        {
-          initiative: 'Cost Optimization',
-          owner: { name: 'Priya Patel', email: 'CFO' },
-          status: 'On Track',
-          budget: '$1.5M',
-          progress: { value: 88, max: 100, label: '88%' }
-        },
-        {
-          initiative: 'Platform Migration',
-          owner: { name: 'Marcus Wright', email: 'CTO' },
-          status: 'In Progress',
-          budget: '$3.1M',
-          progress: { value: 34, max: 100, label: '34%' }
-        },
-        {
-          initiative: 'Talent Acquisition',
-          owner: { name: 'Elena Kowalski', email: 'COO' },
-          status: 'On Track',
-          budget: '$1.8M',
-          progress: { value: 61, max: 100, label: '61%' }
-        }
-      ]
-    });
+      // Export
+      document.getElementById('exp').addEventListener('click', function () {
+        if (M.toast) M.toast({ type:'success', title:'Export', message:'Q1 2026 report generated' });
+      });
+
+      // KPI clicks
+      var mcards = document.querySelectorAll('[data-k]');
+      for (var m = 0; m < mcards.length; m++) {
+        mcards[m].addEventListener('click', function () {
+          if (M.toast) M.toast({ type:'info', title:'KPI Detail', message: this.getAttribute('data-k') });
+        });
+      }
+
+      // KPI sparklines
+      var spd = [[10.2,10.8,11.3,11.8,12.4,12.9,13.2,13.5,13.4,13.7,14.0,14.2],[20.1,20.8,21.2,21.9,22.3,22.8,23.1,23.0,23.2,23.5,23.6,23.7],[980,1010,1040,1060,1095,1120,1145,1170,1195,1210,1230,1247],[64,66,68,71,70,73,74,72,75,74,73,72]];
+      try { if (M.sparkline) { for (var p = 0; p < 4; p++) { var sc = document.getElementById('s'+p); if (sc) M.sparkline(sc, spd[p]); } } } catch(e) { console.warn('sparkline:', e.message); }
+
+      // Resolve colors from computed styles (canvas APIs need hex, not var())
+      var cstyles = getComputedStyle(document.documentElement);
+      function resolveColor(n) { return cstyles.getPropertyValue(n).trim() || '#888888'; }
+
+      // Mount each component independently so one failure doesn't break others
+
+      // Dashboard strip
+      try { if (M.dashboardStrip) {
+        M.dashboardStrip(document.getElementById('strip'), {
+          ariaLabel: 'Executive instruments',
+          zones: [
+            { type:'gauge', label:'OPS', gaugeConfig:{ value:92, max:100, color:resolveColor("--mn-success"), ticks:10, subticks:5, startAngle:-225, endAngle:45, showNeedle:true, numbers:[0,50,100], complications:{ centerValue:'92', centerUnit:'%', statusLed:{ color:resolveColor("--mn-success"), label:'LIVE' } } }, size:'sm' },
+            { type:'pipeline', title:'REVENUE', rows:[
+              { label:'Prospect', value:49, color:resolveColor("--mn-chart-series-1"), secondary:'$2.8M' },
+              { label:'Qualified', value:36, color:resolveColor("--mn-chart-series-2"), secondary:'$1.9M' },
+              { label:'Proposal', value:22, color:resolveColor("--mn-chart-series-3"), secondary:'$1.2M' },
+              { label:'Closed', value:126, color:resolveColor("--mn-success"), secondary:'$14.2M' }
+            ], footer:{ label:'Avg cycle', value:'47d' } },
+            { type:'trend', title:'TREND', items:[
+              { label:'Rev', value:'$14.2M', trend:'up', data:[10.2,11.3,12.9,14.2] },
+              { label:'Clients', value:'1,247', trend:'up', data:[980,1060,1145,1247] },
+              { label:'Margin', value:'23.7%', trend:'flat', data:[22.3,22.8,23.1,23.7] },
+              { label:'NPS', value:'72', trend:'down', data:[68,74,75,72] }
+            ] },
+            { type:'board', title:'UNIT ECONOMICS', stats:[ { label:'ARR', value:'$18.4M' }, { label:'CAC', value:'$2,140' }, { label:'LTV', value:'$38K' }, { label:'LTV/CAC', value:'17.8x' } ] },
+            { type:'gauge', label:'CHURN', gaugeConfig:{ value:21, max:100, color:resolveColor("--mn-error"), colorMode:'lower-better', ticks:10, subticks:5, startAngle:-225, endAngle:45, showNeedle:true, numbers:[0,50,100], complications:{ centerValue:'2.1', centerUnit:'%', centerLabel:'CHURN', statusLed:{ color:resolveColor("--mn-success"), label:'LOW' }, trend:{ direction:'down', delta:'-0.3', color:resolveColor("--mn-success") } } }, size:'sm' }
+          ]
+        });
+      } } catch(e) { console.warn('strip:', e.message); }
+
+      // Heatmap
+      try { if (M.heatmap) {
+        M.heatmap(document.getElementById('heat'), {
+          columnLabels:['Q1','Q2','Q3','Q4'],
+          rows:[
+            { label:'Americas', cells:[{value:94},{value:88},{value:92},{value:96}] },
+            { label:'EMEA', cells:[{value:82},{value:91},{value:78},{value:88}] },
+            { label:'APAC', cells:[{value:65},{value:72},{value:80},{value:85}] },
+            { label:'LATAM', cells:[{value:48},{value:55},{value:62},{value:70}] },
+            { label:'MENA', cells:[{value:35},{value:42},{value:51},{value:58}] }
+          ],
+          showValues:true, ariaLabel:'Regional heatmap',
+          onCellClick:function(r,c,ri,ci){ if(M.toast) M.toast({type:'info',title:r.label+' Q'+(ci+1),message:'Score: '+c.value+'%'}); }
+        });
+      } } catch(e) { console.warn('heatmap:', e.message); }
+
+      // Funnel
+      try { if (M.funnel) {
+        M.funnel(document.getElementById('funnel'), {
+          data:{ pipeline:[{label:'Leads',count:2840},{label:'Qualified',count:1420},{label:'Proposal',count:680},{label:'Negotiation',count:340},{label:'Won',count:187}], total:2840 },
+          showCounts:true, showLabels:true,
+          onClick:function(s){ if(M.toast) M.toast({type:'info',title:s.label,message:s.count+' deals'}); }
+        });
+      } } catch(e) { console.warn('funnel:', e.message); }
+
+      // Gantt
+      try { if (M.gantt) {
+        M.gantt(document.getElementById('gantt'), [
+          {id:'1',title:'APAC Expansion',start:'2026-01-15',end:'2026-06-30'},
+          {id:'2',title:'Platform v3',start:'2026-02-01',end:'2026-08-15'},
+          {id:'3',title:'AI Phase 1',start:'2026-03-01',end:'2026-05-31'},
+          {id:'4',title:'Sustainability',start:'2026-04-01',end:'2026-09-30'},
+          {id:'5',title:'Due Diligence Volta',start:'2026-05-01',end:'2026-07-15'},
+          {id:'6',title:'Brand Refresh',start:'2026-06-01',end:'2026-08-31'}
+        ], { onClick:function(t){ if(M.toast) M.toast({type:'info',title:t.title,message:t.start+' \u2192 '+t.end}); } });
+      } } catch(e) { console.warn('gantt:', e.message); }
+
+      // Activity
+      try { if (M.activityFeed) {
+        M.activityFeed(document.getElementById('feed'), [
+          {id:'1',title:'Board Meeting',body:'Q1 approved unanimously',meta:'2d ago',type:'success'},
+          {id:'2',title:'IR Update',body:'Goldman coverage initiated',meta:'4d ago',type:'info'},
+          {id:'3',title:'Risk Alert',body:'APAC FX above threshold',meta:'1w ago',type:'warning'},
+          {id:'4',title:'Compliance',body:'SOC 2 II completed',meta:'2w ago',type:'success'},
+          {id:'5',title:'M&A',body:'Volta NDA signed',meta:'3w ago',type:'info'}
+        ], {maxItems:8});
+      } } catch(e) { console.warn('activityFeed:', e.message); }
+
+      // Table
+      try { if (M.dataTable) {
+        M.dataTable(document.getElementById('tbl'), {
+          columns:[
+            {key:'unit',label:'Business Unit',sortable:true},
+            {key:'lead',label:'Lead'},
+            {key:'revenue',label:'Revenue',align:'right'},
+            {key:'margin',label:'Margin',align:'right'},
+            {key:'growth',label:'Growth',type:'status'},
+            {key:'clients',label:'Clients',align:'right'},
+            {key:'nps',label:'NPS',align:'right'}
+          ],
+          data:[
+            {unit:'Enterprise SaaS',lead:'Elena Rossi',revenue:'$5.8M',margin:'28.2%',growth:'On Track',clients:'142',nps:'78'},
+            {unit:'Platform Services',lead:'Marco Bianchi',revenue:'$4.1M',margin:'22.5%',growth:'On Track',clients:'438',nps:'71'},
+            {unit:'Data & Analytics',lead:'Yuki Watanabe',revenue:'$2.6M',margin:'31.4%',growth:'Above Target',clients:'89',nps:'82'},
+            {unit:'Professional Svcs',lead:'Ravi Kumar',revenue:'$1.2M',margin:'15.8%',growth:'At Risk',clients:'367',nps:'64'},
+            {unit:'Partnerships',lead:'Amara Okafor',revenue:'$0.5M',margin:'41.2%',growth:'On Track',clients:'211',nps:'76'}
+          ],
+          ariaLabel:'Portfolio overview',
+          onRowClick:function(r){ if(M.toast) M.toast({type:'info',title:r.unit,message:r.revenue+' rev, '+r.margin+' margin'}); }
+        });
+      } } catch(e) { console.warn('dataTable:', e.message); }
+    })();
   </script>
 </body>
 </html>
