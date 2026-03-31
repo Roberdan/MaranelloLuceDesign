@@ -2,7 +2,7 @@
 
 Ferrari Luce-inspired design system for AI agent dashboards. Zero runtime dependencies. 6 adaptive themes. WCAG 2.2 AA. Framework-agnostic.
 
-**v6.5.0** | [Live Demo](https://roberdan.github.io/convergio-design/) | [CHANGELOG](CHANGELOG.md)
+**v6.5.1** | [Live Demo](https://roberdan.github.io/convergio-design/) | [CHANGELOG](CHANGELOG.md)
 
 ## Install
 
@@ -58,9 +58,9 @@ import '@convergio/design-elements/wc/mn-gantt';
 ### 4. IIFE (CDN, no bundler)
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@convergio/design-tokens@6.5.0/dist/css/index.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@convergio/design-elements@6.5.0/dist/css/index.css">
-<script src="https://cdn.jsdelivr.net/npm/@convergio/design-elements@6.5.0/dist/iife/maranello.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@convergio/design-tokens@6.5.1/dist/css/index.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@convergio/design-elements@6.5.1/dist/css/index.css">
+<script src="https://cdn.jsdelivr.net/npm/@convergio/design-elements@6.5.1/dist/iife/maranello.min.js"></script>
 <script>
   Maranello.sparkline(document.getElementById('chart'), [10, 20, 15, 30]);
   new Maranello.FerrariGauge(document.getElementById('gauge'));
@@ -74,7 +74,7 @@ Two packages in a pnpm monorepo. Use together or separately.
 | Package | Import | What you get |
 |---|---|---|
 | `@convergio/design-tokens` | `@convergio/design-tokens` | CSS variables, 6 themes, setTheme/cycleTheme/palette, shadcn/ui bridge |
-| `@convergio/design-elements` | `@convergio/design-elements` | 100+ exports: charts, gauges, controls, forms, data binding + 31 `mn-*` WC tags |
+| `@convergio/design-elements` | `@convergio/design-elements` | 100+ exports: charts, gauges, controls, forms, data binding + 32 `mn-*` WC tags |
 
 ### @convergio/design-tokens Exports
 
@@ -90,7 +90,7 @@ Two packages in a pnpm monorepo. Use together or separately.
 |---|---|
 | `.` | Main ESM/CJS entry (100+ exports) with TypeScript types |
 | `./css` | Component CSS (responsive + layouts) |
-| `./register-all` | All 31 Web Component tags with auto-registration |
+| `./register-all` | All 32 Web Component tags with auto-registration |
 | `./wc/*` | Individual Web Components (per-element tree-shaking) |
 | `./charts` | Chart sub-package (sparkline, donut, bar, area, radar, bubble, etc.) |
 | `./gantt` | Gantt chart |
@@ -109,7 +109,7 @@ The CKB is a machine-readable JSON catalog of every component, data shape, compo
 // Import the CKB programmatically
 import ckb from '@convergio/design-elements/knowledge';
 
-console.log(ckb.webComponents.length);        // 31 Web Components
+console.log(ckb.webComponents.length);        // 32 Web Components
 console.log(ckb.compositionRules.length);      // 12 composition patterns
 console.log(ckb.mappingHints.length);          // 10 API→component mappings
 console.log(ckb.themes.length);               // 6 themes
@@ -130,7 +130,7 @@ These semantic recipe files are intended for starter generation, agent selection
 
 | Section | What | Use case |
 |---------|------|----------|
-| `webComponents` | 31 WC tags with attributes, events, bestFor | Component selection |
+| `webComponents` | 32 WC tags with attributes, events, bestFor | Component selection |
 | `tsModules` | 79 TS modules with exports and types | API integration |
 | `compositionRules` | 12 patterns (e.g., Filterable Table, AI Chat) | Component composition |
 | `mappingHints` | 10 API shape → component heuristics | Automated UI generation |
@@ -343,6 +343,8 @@ Each starter has a self-contained HTML demo with realistic data and all 6 themes
 - [Ops Dashboard](demo/starter-ops-dashboard.html) — dashboard strip, system-status, charts
 - [Executive Cockpit](demo/starter-executive-cockpit.html) — Ferrari gauges, heatmap, KPI strip
 - [Program Management](demo/starter-program-management.html) — gantt, gauges, portfolio table
+- [Hacker Terminal](demo/starter-hacker-terminal.html) — cybersecurity ops center, threat monitoring
+- [App Template](demo/starter-app-template.html) — generic admin dashboard, starter scaffold
 
 ### Web Components (any framework, zero adapter)
 
@@ -469,7 +471,7 @@ Use the imperative API for framework wrappers or direct DOM integrations. Use `<
 
 ### SSR Safety
 
-The root barrel of both packages is SSR-safe as of v6.5.0:
+The root barrel of both packages is SSR-safe as of v6.5.1:
 
 ```ts
 // Safe in Node.js / Next.js server components

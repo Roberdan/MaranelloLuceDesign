@@ -1,5 +1,5 @@
 <!-- Reference catalog — not loaded in context, use for lookup -->
-# API Catalog — v6.1.1
+# API Catalog — v6.5.1
 
 ## Themes (6)
 
@@ -45,6 +45,7 @@ Inputs (1): `dateRangePicker`
 Feed/Notify (2): `activityFeed` · `notificationCenter`
 
 ## Web Components (32)
+
 
 | Tag | Attrs |
 |---|---|

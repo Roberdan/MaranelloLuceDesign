@@ -1,7 +1,7 @@
-<!-- v6.2.0 | 2026-03-29 -->
+<!-- v6.5.1 | 2026-03-29 -->
 # convergio-design
 
-Ferrari Luce-inspired DS monorepo: `@convergio/design-tokens` + `@convergio/design-elements`. 6 themes. 31 WC. WCAG 2.2 AA.
+Ferrari Luce-inspired DS monorepo: `@convergio/design-tokens` + `@convergio/design-elements`. 6 themes. 32 WC. WCAG 2.2 AA.
 
 ## Commands
 
@@ -9,7 +9,7 @@ Ferrari Luce-inspired DS monorepo: `@convergio/design-tokens` + `@convergio/desi
 
 ## Architecture
 
-`packages/tokens/` design tokens, themes, setTheme/cycleTheme, shadcn bridge | `packages/elements/` headless viz/domain JS + 31 `mn-*` WC + component CSS | `dist/` build output
+`packages/tokens/` design tokens, themes, setTheme/cycleTheme, shadcn bridge | `packages/elements/` headless viz/domain JS + 32 `mn-*` WC + component CSS | `dist/` build output
 
 Key: `layout.ts`+`layout-slot.ts` (state machine) · `header.ts` (navbar) · `tokens.css` · `themes-*.css` · `layouts-mn-layout.css` (grid `:has()`)
 
@@ -87,7 +87,7 @@ Docs: `docs/starters/` — selection guide, deployment, agent semantics.
 
 Root barrel imports are SSR-safe (v6.5.0+). No `document`/`window` at module scope.
 `registerAll()` no-ops in Node. Call it in `useEffect` / client boundary only.
-Starter demos: `demo/starter-workspace.html`, `demo/starter-ops-dashboard.html`, `demo/starter-executive-cockpit.html`, `demo/starter-program-management.html`.
+Starter demos: `demo/starter-workspace.html`, `demo/starter-ops-dashboard.html`, `demo/starter-executive-cockpit.html`, `demo/starter-program-management.html`, `demo/starter-hacker-terminal.html`, `demo/starter-app-template.html`.
 
 ## Agent
 

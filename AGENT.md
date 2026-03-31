@@ -1,6 +1,6 @@
 # Maranello Luce Design — Agent Reference
 
-> Ferrari Luce-inspired design system monorepo: `@convergio/design-tokens` + `@convergio/design-elements`. Zero deps. 6 themes. 31 WC tags. v6.4.0
+> Ferrari Luce-inspired design system monorepo: `@convergio/design-tokens` + `@convergio/design-elements`. Zero deps. 6 themes. 32 WC tags. v6.5.1
 > Repo: github.com/Roberdan/convergio-design
 > Demo: roberdan.github.io/convergio-design/
 > AI Expert: @NaSra (see `.github/agents/NaSra.agent.md`)
@@ -33,7 +33,7 @@ npm install @convergio/design-tokens @convergio/design-elements
 | `@convergio/design-elements/controls` | manettino, cruiseLever, toggleLever, steppedRotary, initRotary, initSlider, openDrawer, openDetailPanel |
 | `@convergio/design-elements/forms` | initForms, validateField, validateForm, initTagInput, initFileUpload, initFormSteps |
 | `@convergio/design-elements/gantt` | Gantt timeline renderer |
-| `@convergio/design-elements/register-all` | All 31 Web Component tags |
+| `@convergio/design-elements/register-all` | All 32 Web Component tags |
 | `@convergio/design-elements/wc/mn-*` | Individual Web Components |
 | `@convergio/design-elements/knowledge` | CKB — machine-readable component catalog (JSON) |
 

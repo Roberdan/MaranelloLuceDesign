@@ -113,6 +113,8 @@ Each starter has a self-contained HTML demo with realistic data and all 6 themes
 - [Ops Dashboard](../../demo/starter-ops-dashboard.html) — dashboard strip, system-status, charts
 - [Executive Cockpit](../../demo/starter-executive-cockpit.html) — Ferrari gauges, heatmap, KPI strip
 - [Program Management](../../demo/starter-program-management.html) — gantt, gauges, portfolio table
+- [Hacker Terminal](../../demo/starter-hacker-terminal.html) — cybersecurity ops center, threat monitoring
+- [App Template](../../demo/starter-app-template.html) — generic admin dashboard, starter scaffold
 
 ## Further Reading
 
